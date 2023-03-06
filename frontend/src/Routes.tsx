@@ -1,12 +1,12 @@
-import { Navigate, Route, Routes } from "react-router-dom";
-import { Page } from "./constant/Page";
-import AboutUs from "./page/aboutUs";
-import AuthLogin from "./page/authLogin";
-import AuthRegister from "./page/authRegister";
-import ContactUs from "./page/contactUs";
-import Explore from "./page/explore";
-import Faq from "./page/faq";
-import Home from "./page/home";
+import { Navigate, Route, Routes } from 'react-router-dom';
+import { Page } from './constant/Page';
+import AboutUs from './page/aboutUs';
+import AuthLogin from './page/authLogin';
+import AuthRegister from './page/authRegister';
+import ContactUs from './page/contactUs';
+import Explore from './page/explore';
+import Faq from './page/faq';
+import Home from './page/home';
 
 const AppRoutes = () => (
   <Routes>

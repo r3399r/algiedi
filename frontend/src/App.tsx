@@ -1,3 +1,11 @@
-const App = () => <div className="bg-yellow-200">hi</div>;
+import Navbar from './component/Navbar';
+import AppRoutes from './Routes';
+
+const App = () => (
+  <>
+    <Navbar />
+    <AppRoutes />
+  </>
+);
 
 export default App;
