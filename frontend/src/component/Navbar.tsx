@@ -11,7 +11,7 @@ const Navbar = () => {
 
   return (
     <>
-      <div className="flex justify-between items-center mx-4">
+      <div className="flex flex-wrap justify-between items-center mx-4">
         <img src={Logo} className="pt-2 cursor-pointer" onClick={() => navigate(Page.Home)} />
         <div className="hidden sm:flex items-center gap-10">
           <div
