@@ -28,7 +28,7 @@ const Home = () => (
         <Button className="text-2xl sm:mt-10">CREATE NOW</Button>
       </div>
       <div>
-        <div className="max-w-[800px]">
+        <div className="sm:max-w-[800px]">
           <img src={PicHero} className="mx-auto" />
         </div>
       </div>
