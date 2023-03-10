@@ -1,0 +1,84 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: "AWS::Serverless-2016-10-31"
+Description: gotron deployment cloudformation script
+    
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+      Timeout: 30  # in seconds
+Parameters:
+  NodeJsVer:
+    Type: String
+    Default: nodejs14.x
+  Project:
+    Type: String
+  TargetEnvr:
+    Type: String
+    Description: The target environment for API Gateway deployment.
+  SubDomain:
+    Type: String
+  Domain:
+    Type: String
+Conditions: 
+  IsProd: !Equals [ !Ref TargetEnvr, prod ]
+Resources:
+  #########################################
+  ##### Cloudfront and Route53 config #####
+  #########################################
+  CloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    DependsOn: [S3Bucket]
+    Properties:
+      DistributionConfig:
+        Origins:
+        - DomainName: !Select [1, !Split ["//", !GetAtt S3Bucket.WebsiteURL]]
+          Id: S3-hosted-website-ID
+          CustomOriginConfig:
+            OriginProtocolPolicy: http-only
+        Enabled: 'true'
+        HttpVersion: http2
+        DefaultRootObject: index.html
+        DefaultCacheBehavior:
+          AllowedMethods: [ "GET", "HEAD", "OPTIONS", "PUT", "PATCH", "POST", "DELETE"]
+          TargetOriginId: S3-hosted-website-ID
+          ForwardedValues:
+            QueryString: 'false'
+            Cookies:
+              Forward: none
+          ViewerProtocolPolicy: redirect-to-https
+          DefaultTTL: 0
+          MinTTL: 0
+          MaxTTL: 0
+        PriceClass: PriceClass_200
+  ####################################
+  ##### S3 Bucket and its policy #####
+  ####################################
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub ${Project}-${TargetEnvr}
+      WebsiteConfiguration:
+        ErrorDocument: index.html
+        IndexDocument: index.html
+  S3BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    DependsOn: [S3Bucket]
+    Properties:
+      Bucket: !Ref S3Bucket
+      PolicyDocument: !Join
+      - ''
+      - - '{
+            "Version": "2012-10-17",
+            "Id": "PolicyForCloudFrontPrivateContent",
+            "Statement": [
+                {
+                    "Sid": "Allow-OAI-Access-To-Bucket",
+                    "Effect": "Allow",
+                    "Principal": "*",
+                    "Action": "s3:GetObject",
+                    "Resource": "'
+        - !GetAtt S3Bucket.Arn
+        - '/*"
+                }
+            ]
+          }'
