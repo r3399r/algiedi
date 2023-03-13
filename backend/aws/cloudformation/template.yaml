@@ -72,7 +72,7 @@ Resources:
                 "x-amazon-apigateway-integration": {
                   "type": "aws_proxy",
                   "httpMethod": "POST",
-                  "uri": !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:278497686406:function:${Project}-${TargetEnvr}-sns/invocations",
+                  "uri": !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:895765789249:function:${Project}-${TargetEnvr}-sns/invocations",
                   "responses": {
                     "default": {
                       "statusCode": "200",
