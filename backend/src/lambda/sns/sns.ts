@@ -27,8 +27,6 @@ export async function sns(
     return successOutput(res);
   } catch (e) {
     return errorOutput(e);
-  } finally {
-    // await service?.cleanup();
   }
 }
 

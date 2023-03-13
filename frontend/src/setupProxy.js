@@ -4,7 +4,7 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 module.exports = function (app) {
   app.use(
     createProxyMiddleware('/api', {
-      target: 'https://d3caxkxjy74gqp.cloudfront.net/',
+      target: 'https://d1m7mcx00iparg.cloudfront.net/',
       changeOrigin: true,
     }),
   );

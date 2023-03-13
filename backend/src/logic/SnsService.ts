@@ -11,10 +11,10 @@ export class SnsService {
   private readonly sns!: SNS;
 
   public async sendSns(data: PostSnsRequest) {
-    await this.sns
+    return await this.sns
       .publish({
         TopicArn: process.env.SNS_TOPIC_ARN,
-        Subject: `contact from ${data.email}`,
+        Subject: 'GoTron Music General Enquiry',
         Message: [
           `First name: ${data.firstName}`,
           `Surname: ${data.surname}`,

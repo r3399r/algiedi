@@ -216,14 +216,16 @@ Resources:
                 }
             ]
           }'
-  ####################################
-  ##### S3 Bucket and its policy #####
-  ####################################
+  #######################################
+  ##### SNS Topic and Subscriptions #####
+  #######################################
   ContactUsSNSTopic:
     Type: AWS::SNS::Topic
     Properties:
       DisplayName: !Sub ${Project}-${TargetEnvr}-contact-us-topic
       Subscription:
+        - Endpoint: gotronmusic@gmail.com
+          Protocol: email
         - Endpoint: lamplighter.planet@gmail.com
           Protocol: email
       TopicName: !Sub ${Project}-${TargetEnvr}-contact-us-topic
