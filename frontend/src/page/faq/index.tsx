@@ -1,7 +1,7 @@
 import Button from 'src/component/Button';
 import Footer from 'src/component/Footer';
-import IcPlus from 'src/image/ic-plus.svg';
 import PicFaqBg from 'src/image/pic-faq-bg.png';
+import Question from './Question';
 
 const Faq = () => (
   <div>
@@ -11,36 +11,26 @@ const Faq = () => (
         General
       </div>
       <div className="sm:w-2/3">
-        <div className="border-t-2 border-t-black flex items-center justify-between h-[60px]">
-          <div>How does your service work?</div>
-          <div className="w-[35px]">
-            <img src={IcPlus} />
-          </div>
-        </div>
-        <div className="border-t-2 border-t-black flex items-center justify-between h-[60px]">
-          <div>How do I find a partner?</div>
-          <div className="w-[35px]">
-            <img src={IcPlus} />
-          </div>
-        </div>
-        <div className="border-t-2 border-t-black flex items-center justify-between h-[60px]">
-          <div>Can I join multiple projects?</div>
-          <div className="w-[35px]">
-            <img src={IcPlus} />
-          </div>
-        </div>
-        <div className="border-t-2 border-t-black flex items-center justify-between h-[60px]">
-          <div>Who can join GoTron?</div>
-          <div className="w-[35px]">
-            <img src={IcPlus} />
-          </div>
-        </div>
-        <div className="border-t-2 border-t-black flex items-center justify-between h-[60px]">
-          <div>How to track the order?</div>
-          <div className="w-[35px]">
-            <img src={IcPlus} />
-          </div>
-        </div>
+        <Question
+          question={'How does your service work?'}
+          answer={'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed'}
+        />
+        <Question
+          question={'How do I find a partner?'}
+          answer={'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed'}
+        />
+        <Question
+          question={'Can I join multiple projects?'}
+          answer={'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed'}
+        />
+        <Question
+          question={'Who can join GoTron?'}
+          answer={'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed'}
+        />
+        <Question
+          question={'How to track the order?'}
+          answer={'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed'}
+        />
       </div>
     </div>
     <div className="mx-10 sm:flex mt-10 gap-8">
@@ -48,36 +38,26 @@ const Faq = () => (
         Account
       </div>
       <div className="sm:w-2/3">
-        <div className="border-t-2 border-t-black flex items-center justify-between h-[60px]">
-          <div>How to sign up account?</div>
-          <div className="w-[35px]">
-            <img src={IcPlus} />
-          </div>
-        </div>
-        <div className="border-t-2 border-t-black flex items-center justify-between h-[60px]">
-          <div>How to reset password?</div>
-          <div className="w-[35px]">
-            <img src={IcPlus} />
-          </div>
-        </div>
-        <div className="border-t-2 border-t-black flex items-center justify-between h-[60px]">
-          <div>Can I change my username?</div>
-          <div className="w-[35px]">
-            <img src={IcPlus} />
-          </div>
-        </div>
-        <div className="border-t-2 border-t-black flex items-center justify-between h-[60px]">
-          <div>How to change my profile picture?</div>
-          <div className="w-[35px]">
-            <img src={IcPlus} />
-          </div>
-        </div>
-        <div className="border-t-2 border-t-black flex items-center justify-between h-[60px]">
-          <div>How to track the order?</div>
-          <div className="w-[35px]">
-            <img src={IcPlus} />
-          </div>
-        </div>
+        <Question
+          question={'How to sign up account?'}
+          answer={'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed'}
+        />
+        <Question
+          question={'How to reset password?'}
+          answer={'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed'}
+        />
+        <Question
+          question={'Can I change my username?'}
+          answer={'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed'}
+        />
+        <Question
+          question={'How to change my profile picture?'}
+          answer={'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed'}
+        />
+        <Question
+          question={'How to track the order?'}
+          answer={'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed'}
+        />
       </div>
     </div>
     <div className="relative h-fit">
