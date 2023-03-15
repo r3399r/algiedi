@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Button from 'src/component/Button';
 import Footer from 'src/component/Footer';
@@ -13,9 +14,13 @@ import { sendMessage } from 'src/service/ContactUsService';
 
 const ContactUs = () => {
   const methods = useForm<ContactForm>();
+  const [checked, setChecked] = useState<boolean>(false);
 
   const onSubmit = (data: ContactForm) => {
-    sendMessage(data);
+    sendMessage(data).then(() => {
+      setChecked(true);
+      methods.reset();
+    });
   };
 
   return (
@@ -60,10 +65,11 @@ const ContactUs = () => {
             </div>
             <FormInput className="my-5 w-full" name="email" placeholder="Email" required />
             <FormInput name="message" placeholder="Message..." required />
-            <div className="flex justify-center mt-5">
+            <div className="text-center mt-5">
               <Button appearance="border" type="submit">
                 Send
               </Button>
+              {checked && <div>sent!</div>}
             </div>
           </Form>
           <div className="sm:w-1/2">

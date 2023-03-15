@@ -1,15 +1,23 @@
 import { createRoot } from 'react-dom/client';
+import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
+import Loader from './component/Loader';
+import { configStore } from './redux/store';
 import reportWebVitals from './reportWebVitals';
 import './index.css';
+
+const store = configStore();
 
 const root = createRoot(document.getElementById('root') as Element);
 
 root.render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>,
+  <Provider store={store}>
+    <BrowserRouter>
+      <App />
+      <Loader />
+    </BrowserRouter>
+  </Provider>,
 );
 
 // If you want to start measuring performance in your app, pass a function
