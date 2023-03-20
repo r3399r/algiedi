@@ -1,11 +1,12 @@
 import Button from 'src/component/Button';
+import Footer from 'src/component/Footer';
 import Input from 'src/component/Input';
 import IcLoginFacebook from 'src/image/ic-login-facebook.svg';
 import IcLoginGoogle from 'src/image/ic-login-google.svg';
 
 const AuthLogin = () => (
   <div className="mt-16">
-    <div className="md:w-[1000px] mx-auto flex">
+    <div className="max-w-[1000px] mx-auto flex">
       <div className="rounded-l-[30px] bg-[#eaeaea] w-[600px] p-12">
         <div className="w-[400px] mx-auto">
           <div className="text-[#7ba0ff] font-bold text-[40px] text-center">Login</div>
@@ -34,6 +35,9 @@ const AuthLogin = () => (
           <Button>Sign up</Button>
         </div>
       </div>
+    </div>
+    <div className="max-w-[630px] mx-auto my-16">
+      <Footer />
     </div>
   </div>
 );
