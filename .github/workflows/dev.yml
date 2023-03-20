@@ -44,4 +44,4 @@ jobs:
       - name: Deploy to production environment
         run: |
           cd deployment
-          sh deploy.sh test
+          sh deploy_east.sh test
