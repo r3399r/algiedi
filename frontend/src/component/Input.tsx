@@ -7,6 +7,7 @@ export type Props = InputHTMLAttributes<HTMLInputElement> & {
   error?: boolean | string;
   regex?: RegExp;
   startsWith?: string;
+  appearance?: 'outline' | 'underline';
 };
 
 const Input = forwardRef<HTMLInputElement, Props>(
@@ -21,6 +22,7 @@ const Input = forwardRef<HTMLInputElement, Props>(
       defaultValue,
       className,
       startsWith,
+      appearance = 'outline',
       ...props
     },
     ref,
@@ -46,9 +48,13 @@ const Input = forwardRef<HTMLInputElement, Props>(
         )}
         <input
           className={classNames(
-            'rounded bg-transparent outline-none p-2 h-[40px] w-full border-solid border-[1px] border-black placeholder:text-black',
+            'rounded bg-transparent outline-none p-2 h-[40px] w-full',
             className,
             {
+              'border-solid border-[1px] border-black placeholder:text-black':
+                appearance === 'outline',
+              'border-solid border-b-[1px] border-[#7ba0ff] placeholder:text-[#7ba0ff]':
+                appearance === 'underline',
               'border-tomato-500': !!error,
               'border-grey-200': !error,
               'text-grey-500': !!disabled,

@@ -1,0 +1,54 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: "AWS::Serverless-2016-10-31"
+Description: gotron deployment cloudformation script for ap-southeast-1
+    
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+      Timeout: 30  # in seconds
+Parameters:
+  LambdaExecutionRole:
+    Type: String
+    Default: BackendProcess
+  NodeJsVer:
+    Type: String
+    Default: nodejs14.x
+  Project:
+    Type: String
+  TargetEnvr:
+    Type: String
+  SubDomain:
+    Type: String
+  Domain:
+    Type: String
+Conditions: 
+  IsProd: !Equals [ !Ref TargetEnvr, prod ]
+Resources:
+  #############################
+  ##### Cognito User Pool #####
+  #############################
+  CognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      AccountRecoverySetting:
+        RecoveryMechanisms:
+        - Name: verified_email
+          Priority: 1
+      AutoVerifiedAttributes: [email]
+      EmailVerificationMessage: Your code is {####}
+      EmailVerificationSubject: GoTron Music
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: false
+          RequireUppercase: true
+          TemporaryPasswordValidityDays: 7
+      UsernameAttributes: [email]
+      UserPoolName: !Sub ${Project}-${TargetEnvr}
+  CognitoUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    DependsOn: [CognitoUserPool]
+    Properties:
+      UserPoolId: !Sub ${CognitoUserPool}
