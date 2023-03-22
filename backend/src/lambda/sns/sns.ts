@@ -3,7 +3,7 @@ import { SnsService } from 'src/logic/SnsService';
 import { PostSnsRequest } from 'src/model/api/Sns';
 import { BadRequestError, InternalServerError } from 'src/model/error';
 import { LambdaContext, LambdaEvent, LambdaOutput } from 'src/model/Lambda';
-import { errorOutput, successOutput } from 'src/util/outputHelper';
+import { errorOutput, successOutput } from 'src/util/lambdaHelper';
 
 export async function sns(
   event: LambdaEvent,

@@ -6,4 +6,5 @@ export enum Page {
   Explore = '/explore',
   Login = '/auth/login',
   Register = '/auth/register',
+  Confirmation = '/auth/confirmation',
 }

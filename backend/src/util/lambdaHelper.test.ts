@@ -1,10 +1,10 @@
 import { BadRequestError } from 'src/model/error';
-import { errorOutput, successOutput } from './outputHelper';
+import { errorOutput, successOutput } from './lambdaHelper';
 
 /**
- * Tests of output helper.test
+ * Tests of lambda helper
  */
-describe('outputHelper.test', () => {
+describe('lambdaHelper', () => {
   it('successOutput should work', () => {
     expect(successOutput({ a: 1 })).toEqual({
       statusCode: 200,

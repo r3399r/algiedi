@@ -4,3 +4,14 @@ export type ContactForm = {
   email: string;
   message: string;
 };
+
+export type RegistrationForm = {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+};
+
+export type ConfirmationForm = {
+  code: string;
+};

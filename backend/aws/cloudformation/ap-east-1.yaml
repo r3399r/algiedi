@@ -72,7 +72,52 @@ Resources:
                 "x-amazon-apigateway-integration": {
                   "type": "aws_proxy",
                   "httpMethod": "POST",
-                  "uri": !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:895765789249:function:${Project}-${TargetEnvr}-sns/invocations",
+                  "uri": !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${Project}-${TargetEnvr}-sns/invocations",
+                  "responses": {
+                    "default": {
+                      "statusCode": "200",
+                      "responseParameters": {
+                        "method.response.header.Access-Control-Allow-Origin": "'*'"
+                      }
+                    }
+                  },
+                  "passthroughBehavior": "when_no_match",
+                  "contentHandling": "CONVERT_TO_TEXT"
+                }
+              }
+            },
+            "/api/variable": {
+              "get": {
+                "parameters" : [ {
+                  "name" : "name",
+                  "in" : "query",
+                  "required" : true,
+                  "schema" : {
+                    "type" : "string"
+                  }
+                }],
+                "responses": {
+                  "200": {
+                    "description": "200 response",
+                    "headers": {
+                      "Access-Control-Allow-Origin": {
+                        "schema": {"type": "string"}
+                      }
+                    },
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/Empty"
+                        }
+                      }
+                    }
+                  }
+                },
+                "x-amazon-apigateway-request-validator" : "Validate query string parameters and headers",
+                "x-amazon-apigateway-integration": {
+                  "type": "aws_proxy",
+                  "httpMethod": "POST",
+                  "uri": !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${Project}-${TargetEnvr}-variable/invocations",
                   "responses": {
                     "default": {
                       "statusCode": "200",
@@ -134,6 +179,29 @@ Resources:
     DependsOn: [ServerlessApi, LambdaSns]
     Properties:
       FunctionName: !Sub ${Project}-${TargetEnvr}-sns
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ServerlessApi}/*
+  LambdaVariable:
+    Type: AWS::Serverless::Function
+    DependsOn: [CognitoUserPool, CognitoUserPoolClient]
+    Properties:
+      Architectures: [arm64]
+      Handler: index.variable
+      Runtime: !Sub ${NodeJsVer}
+      FunctionName: !Sub ${Project}-${TargetEnvr}-variable
+      Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/${LambdaExecutionRole}"
+      CodeUri: ../../dist/webpack/lambda
+      MemorySize: 128
+      Environment:
+        Variables:
+          USER_POOL_ID: !Sub ${CognitoUserPool}
+          USER_POOL_CLIENT_ID: !Sub ${CognitoUserPoolClient}
+  InvokePermissionVariable:
+    Type: AWS::Lambda::Permission
+    DependsOn: [ServerlessApi, LambdaVariable]
+    Properties:
+      FunctionName: !Sub ${Project}-${TargetEnvr}-variable
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com
       SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ServerlessApi}/*
@@ -229,3 +297,31 @@ Resources:
         - Endpoint: lamplighter.planet@gmail.com
           Protocol: email
       TopicName: !Sub ${Project}-${TargetEnvr}-contact-us-topic
+  #############################
+  ##### Cognito User Pool #####
+  #############################
+  CognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      AccountRecoverySetting:
+        RecoveryMechanisms:
+        - Name: verified_email
+          Priority: 1
+      AutoVerifiedAttributes: [email]
+      EmailVerificationMessage: Your code is {####}
+      EmailVerificationSubject: GoTron Music
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: false
+          RequireUppercase: true
+          TemporaryPasswordValidityDays: 7
+      UsernameAttributes: [email]
+      UserPoolName: !Sub ${Project}-${TargetEnvr}
+  CognitoUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    DependsOn: [CognitoUserPool]
+    Properties:
+      UserPoolId: !Sub ${CognitoUserPool}

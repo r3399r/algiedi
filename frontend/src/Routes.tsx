@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { Page } from './constant/Page';
 import AboutUs from './page/aboutUs';
+import AuthConfirmation from './page/authConfirmation';
 import AuthLogin from './page/authLogin';
 import AuthRegister from './page/authRegister';
 import ContactUs from './page/contactUs';
@@ -17,6 +18,7 @@ const AppRoutes = () => (
     <Route path={Page.Explore} element={<Explore />} />
     <Route path={Page.Login} element={<AuthLogin />} />
     <Route path={Page.Register} element={<AuthRegister />} />
+    <Route path={Page.Confirmation} element={<AuthConfirmation />} />
     <Route path="/*" element={<Navigate to={Page.Home} />} />
   </Routes>
 );

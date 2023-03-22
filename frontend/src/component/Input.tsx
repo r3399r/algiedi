@@ -47,20 +47,16 @@ const Input = forwardRef<HTMLInputElement, Props>(
           </div>
         )}
         <input
-          className={classNames(
-            'rounded bg-transparent outline-none p-2 h-[40px] w-full',
-            className,
-            {
-              'border-solid border-[1px] border-black placeholder:text-black':
-                appearance === 'outline',
-              'border-solid border-b-[1px] border-[#7ba0ff] placeholder:text-[#7ba0ff]':
-                appearance === 'underline',
-              'border-tomato-500': !!error,
-              'border-grey-200': !error,
-              'text-grey-500': !!disabled,
-              'text-navy-900': !disabled,
-            },
-          )}
+          className={classNames('bg-transparent outline-none p-2 h-[40px] w-full', className, {
+            'rounded border-solid border-[1px] border-black placeholder:text-black':
+              appearance === 'outline',
+            'border-solid border-b-[1px] border-[#7ba0ff] placeholder:text-[#7ba0ff]':
+              appearance === 'underline',
+            'border-tomato-500': !!error,
+            'border-grey-200': !error,
+            'text-grey-500': !!disabled,
+            'text-navy-900': !disabled,
+          })}
           ref={ref}
           disabled={disabled}
           autoComplete="off"
