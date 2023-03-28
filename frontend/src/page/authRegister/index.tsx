@@ -15,8 +15,8 @@ const AuthRegister = () => {
   const methods = useForm<RegistrationForm>();
 
   const onSubmit = (data: RegistrationForm) => {
-    register(data.email, data.password).then(() => {
-      navigate(Page.Confirmation, { state: data });
+    register(data).then(() => {
+      navigate(Page.Confirmation, { state: data.email });
     });
   };
 

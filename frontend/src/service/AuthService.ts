@@ -1,5 +1,6 @@
-import { CognitoUser, CognitoUserPool } from 'amazon-cognito-identity-js';
+import { CognitoUser, CognitoUserAttribute, CognitoUserPool } from 'amazon-cognito-identity-js';
 import variableEndpoint from 'src/api/variableEndpoint';
+import { RegistrationForm } from 'src/model/Form';
 import { dispatch, getState } from 'src/redux/store';
 import { setVariable, VariableState } from 'src/redux/variableSlice';
 
@@ -19,17 +20,39 @@ const getUserPoolVariable = async (): Promise<VariableState> => {
   return state;
 };
 
-export const register = async (email: string, password: string) => {
+export const register = async (data: RegistrationForm) => {
   const { userPoolClientId, userPoolId } = await getUserPoolVariable();
   const userPool = new CognitoUserPool({
     UserPoolId: userPoolId ?? '',
     ClientId: userPoolClientId ?? '',
   });
 
+  const firstName = new CognitoUserAttribute({ Name: 'custom:first_name', Value: data.firstName });
+  const lastName = new CognitoUserAttribute({ Name: 'custom:last_name', Value: data.lastName });
+
   await new Promise((resolve, reject) => {
-    userPool.signUp(email, password, [], [], (err, result) => {
+    userPool.signUp(data.email, data.password, [firstName, lastName], [], (err, result) => {
       if (err || result === undefined) reject(err);
       else resolve(result.user);
+    });
+  });
+};
+
+export const resendVerificationEmail = async (email: string) => {
+  const { userPoolClientId, userPoolId } = await getUserPoolVariable();
+  const userPool = new CognitoUserPool({
+    UserPoolId: userPoolId ?? '',
+    ClientId: userPoolClientId ?? '',
+  });
+  const cognitoUser = new CognitoUser({
+    Username: email,
+    Pool: userPool,
+  });
+
+  await new Promise((resolve, reject) => {
+    cognitoUser.resendConfirmationCode((err) => {
+      if (err) reject(err);
+      else resolve(undefined);
     });
   });
 };

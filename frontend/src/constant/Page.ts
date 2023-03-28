@@ -7,4 +7,5 @@ export enum Page {
   Login = '/auth/login',
   Register = '/auth/register',
   Confirmation = '/auth/confirmation',
+  Questionnaire = '/auth/questionnaire',
 }

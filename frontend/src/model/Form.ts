@@ -12,6 +12,6 @@ export type RegistrationForm = {
   lastName: string;
 };
 
-export type ConfirmationForm = {
+export type VerifyForm = {
   code: string;
 };

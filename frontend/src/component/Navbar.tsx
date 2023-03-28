@@ -38,7 +38,9 @@ const Navbar = () => {
           >
             Contact Us
           </div>
-          <Button appearance="border">CREATE NOW</Button>
+          <Button appearance="border" onClick={() => navigate(Page.Login)}>
+            CREATE NOW
+          </Button>
         </div>
         <div className="sm:hidden" onClick={() => setOpen(true)}>
           Menu

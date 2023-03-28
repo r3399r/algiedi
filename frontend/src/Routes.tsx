@@ -3,6 +3,7 @@ import { Page } from './constant/Page';
 import AboutUs from './page/aboutUs';
 import AuthConfirmation from './page/authConfirmation';
 import AuthLogin from './page/authLogin';
+import AuthQuestionnaire from './page/authQuestionnaire';
 import AuthRegister from './page/authRegister';
 import ContactUs from './page/contactUs';
 import Explore from './page/explore';
@@ -19,6 +20,7 @@ const AppRoutes = () => (
     <Route path={Page.Login} element={<AuthLogin />} />
     <Route path={Page.Register} element={<AuthRegister />} />
     <Route path={Page.Confirmation} element={<AuthConfirmation />} />
+    <Route path={Page.Questionnaire} element={<AuthQuestionnaire />} />
     <Route path="/*" element={<Navigate to={Page.Home} />} />
   </Routes>
 );

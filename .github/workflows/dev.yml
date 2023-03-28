@@ -27,7 +27,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       # Runs a single command using the runners shell
-      - name: Deploy to ap-southeast-1 environment
+      - name: Deploy to dev environment
         run: |
           cd deployment
-          sh deploy_east.sh test
+          sh deploy.sh test

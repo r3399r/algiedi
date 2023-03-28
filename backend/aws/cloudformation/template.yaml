@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: "AWS::Serverless-2016-10-31"
-Description: gotron deployment cloudformation script for ap-east-1
+Description: gotron deployment cloudformation script
     
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
@@ -258,7 +258,7 @@ Resources:
   S3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub ${Project}-${TargetEnvr}-2
+      BucketName: !Sub ${Project}-${TargetEnvr}
       WebsiteConfiguration:
         ErrorDocument: index.html
         IndexDocument: index.html
@@ -306,8 +306,6 @@ Resources:
         - Name: verified_email
           Priority: 1
       AutoVerifiedAttributes: [email]
-      EmailVerificationMessage: Your code is {####}
-      EmailVerificationSubject: GoTron Music
       Policies:
         PasswordPolicy:
           MinimumLength: 8
@@ -316,8 +314,43 @@ Resources:
           RequireSymbols: false
           RequireUppercase: true
           TemporaryPasswordValidityDays: 7
+      Schema:
+        - Name: first_name
+          AttributeDataType: String
+          Mutable: true
+        - Name: last_name
+          AttributeDataType: String
+          Mutable: true
+        - Name: role
+          AttributeDataType: String
+          Mutable: true
+        - Name: age
+          AttributeDataType: Number
+          Mutable: true
+        - Name: language
+          AttributeDataType: String
+          Mutable: true
+        - Name: bio
+          AttributeDataType: String
+          Mutable: true
+        - Name: tag
+          AttributeDataType: String
+          Mutable: true
+        - Name: facebook
+          AttributeDataType: String
+          Mutable: true
+        - Name: instagram
+          AttributeDataType: String
+          Mutable: true
+        - Name: youtube
+          AttributeDataType: String
+          Mutable: true
       UsernameAttributes: [email]
       UserPoolName: !Sub ${Project}-${TargetEnvr}
+      VerificationMessageTemplate:
+        DefaultEmailOption: CONFIRM_WITH_CODE
+        EmailMessage: "Here is the code to verify your account: {####}"
+        EmailSubject: GoTron Music Verification
   CognitoUserPoolClient:
     Type: AWS::Cognito::UserPoolClient
     DependsOn: [CognitoUserPool]
