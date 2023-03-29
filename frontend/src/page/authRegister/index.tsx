@@ -16,7 +16,7 @@ const AuthRegister = () => {
 
   const onSubmit = (data: RegistrationForm) => {
     register(data).then(() => {
-      navigate(Page.Confirmation, { state: data.email });
+      navigate(Page.Confirmation, { state: data });
     });
   };
 

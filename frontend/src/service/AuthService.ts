@@ -1,4 +1,10 @@
-import { CognitoUser, CognitoUserAttribute, CognitoUserPool } from 'amazon-cognito-identity-js';
+import {
+  AuthenticationDetails,
+  CognitoUser,
+  CognitoUserAttribute,
+  CognitoUserPool,
+  CognitoUserSession,
+} from 'amazon-cognito-identity-js';
 import variableEndpoint from 'src/api/variableEndpoint';
 import { RegistrationForm } from 'src/model/Form';
 import { dispatch, getState } from 'src/redux/store';
@@ -20,12 +26,26 @@ const getUserPoolVariable = async (): Promise<VariableState> => {
   return state;
 };
 
-export const register = async (data: RegistrationForm) => {
+const getUserPool = async () => {
   const { userPoolClientId, userPoolId } = await getUserPoolVariable();
-  const userPool = new CognitoUserPool({
+
+  return new CognitoUserPool({
     UserPoolId: userPoolId ?? '',
     ClientId: userPoolClientId ?? '',
   });
+};
+
+const getCognitoUser = async (email: string) => {
+  const userPool = await getUserPool();
+
+  return new CognitoUser({
+    Username: email,
+    Pool: userPool,
+  });
+};
+
+export const register = async (data: RegistrationForm) => {
+  const userPool = await getUserPool();
 
   const firstName = new CognitoUserAttribute({ Name: 'custom:first_name', Value: data.firstName });
   const lastName = new CognitoUserAttribute({ Name: 'custom:last_name', Value: data.lastName });
@@ -39,15 +59,7 @@ export const register = async (data: RegistrationForm) => {
 };
 
 export const resendVerificationEmail = async (email: string) => {
-  const { userPoolClientId, userPoolId } = await getUserPoolVariable();
-  const userPool = new CognitoUserPool({
-    UserPoolId: userPoolId ?? '',
-    ClientId: userPoolClientId ?? '',
-  });
-  const cognitoUser = new CognitoUser({
-    Username: email,
-    Pool: userPool,
-  });
+  const cognitoUser = await getCognitoUser(email);
 
   await new Promise((resolve, reject) => {
     cognitoUser.resendConfirmationCode((err) => {
@@ -57,19 +69,51 @@ export const resendVerificationEmail = async (email: string) => {
   });
 };
 
-export const verify = async (email: string, code: string) => {
-  const { userPoolClientId, userPoolId } = await getUserPoolVariable();
-  const userPool = new CognitoUserPool({
-    UserPoolId: userPoolId ?? '',
-    ClientId: userPoolClientId ?? '',
-  });
-  const cognitoUser = new CognitoUser({
-    Username: email,
-    Pool: userPool,
-  });
+export const verify = async (email: string, password: string, code: string) => {
+  const cognitoUser = await getCognitoUser(email);
 
   await new Promise((resolve, reject) => {
     cognitoUser.confirmRegistration(code, true, (err) => {
+      if (err) reject(err);
+      else resolve(undefined);
+    });
+  });
+
+  const authenticationDetails = new AuthenticationDetails({
+    Username: email,
+    Password: password,
+  });
+  await new Promise((resolve, reject) => {
+    cognitoUser.authenticateUser(authenticationDetails, {
+      onSuccess: (r) => resolve(r),
+      onFailure: (e) => reject(e),
+    });
+  });
+};
+
+export const updateUserAttributes = async (
+  email: string,
+  data: { role: string; language: string; instrument: string; favoriate: string },
+) => {
+  const role = new CognitoUserAttribute({ Name: 'custom:role', Value: data.role });
+  const language = new CognitoUserAttribute({ Name: 'custom:language', Value: data.language });
+  const bio = new CognitoUserAttribute({
+    Name: 'custom:bio',
+    Value: `I love ${data.favoriate}. I play the ${data.instrument}.`,
+  });
+
+  const pool = await getUserPool();
+  const cognitoUser = pool.getCurrentUser();
+  if (cognitoUser === null) throw new Error('no user found');
+
+  await new Promise((resolve, reject) => {
+    cognitoUser.getSession((err: any, session: CognitoUserSession) => {
+      if (err) reject(err);
+      else resolve(session);
+    });
+  });
+  await new Promise((resolve, reject) => {
+    cognitoUser.updateAttributes([role, language, bio], (err) => {
       if (err) reject(err);
       else resolve(undefined);
     });

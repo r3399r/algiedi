@@ -6,27 +6,29 @@ import Footer from 'src/component/Footer';
 import Form from 'src/component/Form';
 import FormInput from 'src/component/FormInput';
 import { Page } from 'src/constant/Page';
-import { VerifyForm } from 'src/model/Form';
+import { RegistrationForm, VerifyForm } from 'src/model/Form';
 import { resendVerificationEmail, verify } from 'src/service/AuthService';
 
 const AuthConfirmation = () => {
   const navigate = useNavigate();
   const methods = useForm<VerifyForm>();
   const location = useLocation();
-  const email = location.state as string | null;
+  const state = location.state as RegistrationForm | null;
 
   useEffect(() => {
-    if (email === null) navigate(-1);
-  }, [email]);
+    if (state === null) navigate(-1);
+  }, [state]);
 
   const onSubmit = (data: VerifyForm) => {
-    if (email === null) return;
-    verify(email, data.code).then(() => navigate(Page.Questionnaire));
+    if (state === null) return;
+    verify(state.email, state.password, data.code).then(() =>
+      navigate(Page.Questionnaire, { state }),
+    );
   };
 
   const onResend = () => {
-    if (email === null) return;
-    resendVerificationEmail(email);
+    if (state === null) return;
+    resendVerificationEmail(state.email);
   };
 
   return (
@@ -39,7 +41,7 @@ const AuthConfirmation = () => {
         <div className="text-[#8ea1d0] font-bold text-[40px] text-center">Email Confirmation</div>
         <div className="text-[#2d2d2d] text-center">
           Please confirm the email sent to your email{' '}
-          <span className="text-[#00c3ff]">{email}</span> for security consideration
+          <span className="text-[#00c3ff]">{state?.email}</span> for security consideration
         </div>
         <div className="text-[#2d2d2d] flex justify-center gap-2">
           <div>Do not receive the Email?</div>
