@@ -47,13 +47,20 @@ const AuthRegister = () => {
                 <div>Sign in with Google</div>
               </div>
             </div>
-            <FormInput name="email" className="mt-5" placeholder="Email" appearance="underline" />
+            <FormInput
+              name="email"
+              className="mt-5"
+              placeholder="Email"
+              appearance="underline"
+              required
+            />
             <FormInput
               name="password"
               className="mt-5"
               placeholder="Password"
               type="password"
               appearance="underline"
+              required
             />
             <FormInput
               name="firstName"
@@ -61,6 +68,7 @@ const AuthRegister = () => {
               placeholder="First name"
               type="text"
               appearance="underline"
+              required
             />
             <FormInput
               name="lastName"
@@ -68,6 +76,7 @@ const AuthRegister = () => {
               placeholder="Last name"
               type="text"
               appearance="underline"
+              required
             />
             <div className="text-center mt-10">
               <Button type="submit">Sign up</Button>

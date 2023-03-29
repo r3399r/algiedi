@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Button from 'src/component/Button';
 import Footer from 'src/component/Footer';
 import Form from 'src/component/Form';
@@ -13,9 +13,19 @@ import { login } from 'src/service/AuthService';
 const AuthLogin = () => {
   const navigate = useNavigate();
   const methods = useForm<LoginForm>();
+  const location = useLocation();
+  const redirectPath = location.state as { from: string } | undefined;
 
   const onSubmit = (data: LoginForm) => {
-    login(data.email, data.password).then(() => navigate(Page.Home));
+    login(data.email, data.password).then(() => {
+      if (redirectPath) {
+        navigate(redirectPath.from);
+
+        return;
+      }
+
+      navigate(Page.Home);
+    });
   };
 
   return (

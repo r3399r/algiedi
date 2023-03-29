@@ -29,8 +29,8 @@ const AuthQuestionnaire = () => {
 
       return;
     }
-    updateUserAttributes(state.email, { role, language, instrument, favoriate }).then(() =>
-      navigate(Page.Home),
+    updateUserAttributes({ role, language, instrument, favoriate }).then(() =>
+      navigate(Page.Profile),
     );
   };
 

@@ -8,6 +8,7 @@ import {
 import variableEndpoint from 'src/api/variableEndpoint';
 import { RegistrationForm } from 'src/model/Form';
 import { dispatch, getState } from 'src/redux/store';
+import { setIsLogin } from 'src/redux/uiSlice';
 import { setVariable, VariableState } from 'src/redux/variableSlice';
 
 const getUserPoolVariable = async (): Promise<VariableState> => {
@@ -44,6 +45,21 @@ const getCognitoUser = async (email: string) => {
   });
 };
 
+const getCurrentUser = async () => {
+  const userPool = await getUserPool();
+  const cognitoUser = userPool.getCurrentUser();
+  if (cognitoUser === null) throw new Error('no user found');
+
+  await new Promise((resolve, reject) => {
+    cognitoUser.getSession((err: unknown, session: CognitoUserSession) => {
+      if (err) reject(err);
+      else resolve(session);
+    });
+  });
+
+  return cognitoUser;
+};
+
 const authenticateUser = async (email: string, password: string): Promise<CognitoUserSession> => {
   const cognitoUser = await getCognitoUser(email);
   const authenticationDetails = new AuthenticationDetails({
@@ -62,6 +78,7 @@ const authenticateUser = async (email: string, password: string): Promise<Cognit
 export const login = async (email: string, password: string) => {
   const result = await authenticateUser(email, password);
   localStorage.setItem('token', result.getIdToken().getJwtToken());
+  dispatch(setIsLogin(true));
 };
 
 export const register = async (data: RegistrationForm) => {
@@ -99,13 +116,31 @@ export const verify = async (email: string, password: string, code: string) => {
     });
   });
 
-  await authenticateUser(email, password);
+  const result = await authenticateUser(email, password);
+  localStorage.setItem('token', result.getIdToken().getJwtToken());
+  dispatch(setIsLogin(true));
 };
 
-export const updateUserAttributes = async (
-  email: string,
-  data: { role: string; language: string; instrument: string; favoriate: string },
-) => {
+export const getUserAttributes = async () => {
+  const cognitoUser = await getCurrentUser();
+  const userAttributes: CognitoUserAttribute[] | undefined = await new Promise(
+    (resolve, reject) => {
+      cognitoUser.getUserAttributes((err, res: CognitoUserAttribute[] | undefined) => {
+        if (err) reject(err);
+        else resolve(res);
+      });
+    },
+  );
+
+  return (userAttributes ?? []).map((v) => ({ name: v.Name, value: v.Value }));
+};
+
+export const updateUserAttributes = async (data: {
+  role: string;
+  language: string;
+  instrument: string;
+  favoriate: string;
+}) => {
   const role = new CognitoUserAttribute({ Name: 'custom:role', Value: data.role });
   const language = new CognitoUserAttribute({ Name: 'custom:language', Value: data.language });
   const bio = new CognitoUserAttribute({
@@ -113,16 +148,7 @@ export const updateUserAttributes = async (
     Value: `I love ${data.favoriate}. I play the ${data.instrument}.`,
   });
 
-  const pool = await getUserPool();
-  const cognitoUser = pool.getCurrentUser();
-  if (cognitoUser === null) throw new Error('no user found');
-
-  await new Promise((resolve, reject) => {
-    cognitoUser.getSession((err: any, session: CognitoUserSession) => {
-      if (err) reject(err);
-      else resolve(session);
-    });
-  });
+  const cognitoUser = await getCurrentUser();
   await new Promise((resolve, reject) => {
     cognitoUser.updateAttributes([role, language, bio], (err) => {
       if (err) reject(err);

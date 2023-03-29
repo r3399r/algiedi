@@ -9,4 +9,8 @@ export enum Page {
   Confirmation = '/auth/confirmation',
   Questionnaire = '/auth/questionnaire',
   Forget = '/auth/forget',
+  Profile = '/profile',
 }
+
+// pages with sideMenu
+export const DashboardPage = [Page.Profile];

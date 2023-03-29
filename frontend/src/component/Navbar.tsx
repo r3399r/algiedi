@@ -38,7 +38,7 @@ const Navbar = () => {
           >
             Contact Us
           </div>
-          <Button appearance="border" onClick={() => navigate(Page.Login)}>
+          <Button appearance="border" onClick={() => navigate(Page.Profile)}>
             CREATE NOW
           </Button>
         </div>
