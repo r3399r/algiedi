@@ -45,7 +45,7 @@ const getCognitoUser = async (email: string) => {
   });
 };
 
-const getCurrentUser = async () => {
+export const getCurrentUser = async () => {
   const userPool = await getUserPool();
   const cognitoUser = userPool.getCurrentUser();
   if (cognitoUser === null) throw new Error('no user found');

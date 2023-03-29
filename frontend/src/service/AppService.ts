@@ -18,6 +18,7 @@ export const init = async () => {
       language: res['custom:language'].split(','),
       role: res['custom:role'].split(','),
       email: res.email,
+      age: res['custom:age'],
     }),
   );
 };

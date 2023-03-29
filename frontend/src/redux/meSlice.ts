@@ -9,6 +9,7 @@ export type MeState = {
   language: string[];
   role: string[];
   email: string;
+  age: string;
 };
 
 const initialState: MeState = {
@@ -20,6 +21,7 @@ const initialState: MeState = {
   language: [],
   role: [],
   email: '',
+  age: '',
 };
 
 export const meSlice = createSlice({
@@ -35,10 +37,23 @@ export const meSlice = createSlice({
       state.language = action.payload.language;
       state.role = action.payload.role;
       state.email = action.payload.email;
+      state.age = action.payload.age;
+    },
+    setRole: (state: MeState, action: PayloadAction<string[]>) => {
+      state.role = action.payload;
+    },
+    setAge: (state: MeState, action: PayloadAction<string>) => {
+      state.age = action.payload;
+    },
+    setLanguage: (state: MeState, action: PayloadAction<string[]>) => {
+      state.language = action.payload;
+    },
+    setBio: (state: MeState, action: PayloadAction<string>) => {
+      state.bio = action.payload;
     },
   },
 });
 
-export const { setMe } = meSlice.actions;
+export const { setMe, setRole, setAge, setLanguage, setBio } = meSlice.actions;
 
 export default meSlice.reducer;
