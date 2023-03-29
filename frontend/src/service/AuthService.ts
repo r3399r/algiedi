@@ -44,6 +44,26 @@ const getCognitoUser = async (email: string) => {
   });
 };
 
+const authenticateUser = async (email: string, password: string): Promise<CognitoUserSession> => {
+  const cognitoUser = await getCognitoUser(email);
+  const authenticationDetails = new AuthenticationDetails({
+    Username: email,
+    Password: password,
+  });
+
+  return await new Promise((resolve, reject) => {
+    cognitoUser.authenticateUser(authenticationDetails, {
+      onSuccess: (r) => resolve(r),
+      onFailure: (e) => reject(e),
+    });
+  });
+};
+
+export const login = async (email: string, password: string) => {
+  const result = await authenticateUser(email, password);
+  localStorage.setItem('token', result.getIdToken().getJwtToken());
+};
+
 export const register = async (data: RegistrationForm) => {
   const userPool = await getUserPool();
 
@@ -79,16 +99,7 @@ export const verify = async (email: string, password: string, code: string) => {
     });
   });
 
-  const authenticationDetails = new AuthenticationDetails({
-    Username: email,
-    Password: password,
-  });
-  await new Promise((resolve, reject) => {
-    cognitoUser.authenticateUser(authenticationDetails, {
-      onSuccess: (r) => resolve(r),
-      onFailure: (e) => reject(e),
-    });
-  });
+  await authenticateUser(email, password);
 };
 
 export const updateUserAttributes = async (
