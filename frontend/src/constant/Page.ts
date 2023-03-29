@@ -8,4 +8,5 @@ export enum Page {
   Register = '/auth/register',
   Confirmation = '/auth/confirmation',
   Questionnaire = '/auth/questionnaire',
+  Forget = '/auth/forget',
 }

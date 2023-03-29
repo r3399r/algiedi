@@ -49,7 +49,13 @@ const AuthConfirmation = () => {
             Re-send
           </div>
         </div>
-        <FormInput name="code" className="mt-5" placeholder="code" appearance="underline" />
+        <FormInput
+          name="code"
+          className="mt-5"
+          placeholder="code"
+          appearance="underline"
+          required
+        />
         <div className="text-center mt-10">
           <Button type="submit">Verify</Button>
         </div>

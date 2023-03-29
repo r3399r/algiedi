@@ -28,7 +28,11 @@ const AuthLogin = () => {
             </div>
             <Input className="mt-5" placeholder="Email" appearance="underline" />
             <Input className="mt-5" placeholder="Password" type="password" appearance="underline" />
-            <div className="text-right mt-5 text-[#7ba0ff]">Forget Password?</div>
+            <div className="flex justify-end mt-5 text-[#7ba0ff]">
+              <div className="cursor-pointer" onClick={() => navigate(Page.Forget)}>
+                Forget Password?
+              </div>
+            </div>
             <div className="text-center mt-10">
               <Button>Login</Button>
             </div>

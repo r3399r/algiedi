@@ -119,3 +119,25 @@ export const updateUserAttributes = async (
     });
   });
 };
+
+export const sendForgot = async (email: string) => {
+  const cognitoUser = await getCognitoUser(email);
+
+  await new Promise((resolve, reject) => {
+    cognitoUser.forgotPassword({
+      onSuccess: (data) => resolve(data),
+      onFailure: (err) => reject(err),
+    });
+  });
+};
+
+export const confirmForgot = async (email: string, newPassword: string, code: string) => {
+  const cognitoUser = await getCognitoUser(email);
+
+  await new Promise((resolve, reject) => {
+    cognitoUser.confirmPassword(code, newPassword, {
+      onSuccess: () => resolve(undefined),
+      onFailure: (err) => reject(err),
+    });
+  });
+};

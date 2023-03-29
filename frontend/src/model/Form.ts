@@ -15,3 +15,9 @@ export type RegistrationForm = {
 export type VerifyForm = {
   code: string;
 };
+
+export type ResetPasswordForm = {
+  email: string;
+  code: string;
+  password: string;
+};
