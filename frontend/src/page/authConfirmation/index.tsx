@@ -7,7 +7,7 @@ import Form from 'src/component/Form';
 import FormInput from 'src/component/FormInput';
 import { Page } from 'src/constant/Page';
 import { RegistrationForm, VerifyForm } from 'src/model/Form';
-import { resendVerificationEmail, verify } from 'src/service/AuthService';
+import { resendConfirmationEmail, verify } from 'src/service/AuthService';
 
 const AuthConfirmation = () => {
   const navigate = useNavigate();
@@ -28,7 +28,7 @@ const AuthConfirmation = () => {
 
   const onResend = () => {
     if (state === null) return;
-    resendVerificationEmail(state.email);
+    resendConfirmationEmail(state.email);
   };
 
   return (

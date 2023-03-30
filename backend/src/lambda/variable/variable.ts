@@ -38,7 +38,7 @@ async function apiVariable(event: LambdaEvent, service: VariableService) {
       if (event.queryStringParameters === null)
         throw new BadRequestError('queryStringParameters should not be empty');
 
-      return service.getVariable(
+      return service.getVariables(
         event.queryStringParameters as GetVariableParam
       );
     default:

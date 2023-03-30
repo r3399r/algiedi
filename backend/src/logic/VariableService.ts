@@ -6,7 +6,7 @@ import { GetVariableParam, GetVariableResponse } from 'src/model/api/Variable';
  */
 @injectable()
 export class VariableService {
-  public async getVariable(
+  public async getVariables(
     param: GetVariableParam
   ): Promise<GetVariableResponse> {
     const items = param.name.split(',');
