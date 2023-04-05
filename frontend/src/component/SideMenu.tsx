@@ -4,6 +4,7 @@ import { Page } from 'src/constant/Page';
 import IcProfile from 'src/image/ic-profile.svg';
 import Logo from 'src/image/logo.svg';
 import { RootState } from 'src/redux/store';
+import { logout } from 'src/service/AuthService';
 import Divider from './Divider';
 
 const SideMenu = () => {
@@ -36,7 +37,11 @@ const SideMenu = () => {
         <div>Lyrics</div>
         <div>Music</div>
         <div>Add Group</div>
-      </div>{' '}
+      </div>
+      <Divider className="bg-gray-600" />
+      <div className="p-4 cursor-pointer hover:bg-gray-500" onClick={logout}>
+        Sign out
+      </div>
     </div>
   );
 };

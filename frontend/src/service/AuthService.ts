@@ -216,3 +216,15 @@ export const confirmForgot = async (email: string, newPassword: string, code: st
     dispatch(finishWaiting());
   }
 };
+
+export const logout = async () => {
+  try {
+    dispatch(startWaiting());
+    const cognitoUser = await getCurrentUser();
+    cognitoUser.signOut();
+    localStorage.removeItem('token');
+    dispatch(setIsLogin(false));
+  } finally {
+    dispatch(finishWaiting());
+  }
+};
