@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
 import Button from 'src/component/Button';
 import Footer from 'src/component/Footer';
 import Form from 'src/component/Form';
@@ -10,17 +10,20 @@ import IcInvite from 'src/image/ic-invite.svg';
 import IcTwitter from 'src/image/ic-twitter.svg';
 import PicLocation from 'src/image/pic-location.png';
 import { ContactForm } from 'src/model/Form';
+import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
 import { sendMessage } from 'src/service/ContactUsService';
 
 const ContactUs = () => {
+  const dispatch = useDispatch();
   const methods = useForm<ContactForm>();
-  const [checked, setChecked] = useState<boolean>(false);
 
   const onSubmit = (data: ContactForm) => {
-    sendMessage(data).then(() => {
-      setChecked(true);
-      methods.reset();
-    });
+    sendMessage(data)
+      .then(() => {
+        dispatch(openSuccessSnackbar('Sent successfully'));
+        methods.reset();
+      })
+      .catch((err) => dispatch(openFailSnackbar(err)));
   };
 
   return (
@@ -69,7 +72,6 @@ const ContactUs = () => {
               <Button appearance="border" type="submit">
                 Send
               </Button>
-              {checked && <div>sent!</div>}
             </div>
           </Form>
           <div className="sm:w-1/2">

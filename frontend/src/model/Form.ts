@@ -13,8 +13,8 @@ export type LoginForm = {
 export type RegistrationForm = {
   email: string;
   password: string;
-  firstName: string;
-  lastName: string;
+  confirmPassword: string;
+  userName: string;
 };
 
 export type VerifyForm = {

@@ -315,10 +315,7 @@ Resources:
           RequireUppercase: true
           TemporaryPasswordValidityDays: 7
       Schema:
-        - Name: first_name
-          AttributeDataType: String
-          Mutable: true
-        - Name: last_name
+        - Name: user_name
           AttributeDataType: String
           Mutable: true
         - Name: role

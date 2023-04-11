@@ -81,6 +81,8 @@ export const login = async (email: string, password: string) => {
     const result = await authenticateUser(email, password);
     localStorage.setItem('token', result.getIdToken().getJwtToken());
     dispatch(setIsLogin(true));
+  } catch (err) {
+    throw (err as Error).message;
   } finally {
     dispatch(finishWaiting());
   }
@@ -91,18 +93,19 @@ export const register = async (data: RegistrationForm) => {
     dispatch(startWaiting());
     const userPool = await getUserPool();
 
-    const firstName = new CognitoUserAttribute({
-      Name: 'custom:first_name',
-      Value: data.firstName,
+    const userName = new CognitoUserAttribute({
+      Name: 'custom:user_name',
+      Value: data.userName,
     });
-    const lastName = new CognitoUserAttribute({ Name: 'custom:last_name', Value: data.lastName });
 
     await new Promise((resolve, reject) => {
-      userPool.signUp(data.email, data.password, [firstName, lastName], [], (err, result) => {
+      userPool.signUp(data.email, data.password, [userName], [], (err, result) => {
         if (err || result === undefined) reject(err);
         else resolve(result.user);
       });
     });
+  } catch (err) {
+    throw (err as Error).message;
   } finally {
     dispatch(finishWaiting());
   }

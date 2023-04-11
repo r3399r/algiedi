@@ -1,4 +1,5 @@
 import { useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Button from 'src/component/Button';
 import Footer from 'src/component/Footer';
@@ -8,16 +9,24 @@ import { Page } from 'src/constant/Page';
 import IcLoginFacebook from 'src/image/ic-login-facebook.svg';
 import IcLoginGoogle from 'src/image/ic-login-google.svg';
 import { RegistrationForm } from 'src/model/Form';
+import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
 import { register } from 'src/service/AuthService';
 
 const AuthRegister = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const methods = useForm<RegistrationForm>();
 
   const onSubmit = (data: RegistrationForm) => {
-    register(data).then(() => {
-      navigate(Page.Confirmation, { state: data });
-    });
+    if (data.password !== data.confirmPassword)
+      methods.setError('confirmPassword', {}, { shouldFocus: true });
+    else
+      register(data)
+        .then(() => {
+          dispatch(openSuccessSnackbar('Register Successfully'));
+          navigate(Page.Confirmation, { state: data });
+        })
+        .catch((err) => dispatch(openFailSnackbar(err)));
   };
 
   return (
@@ -61,19 +70,20 @@ const AuthRegister = () => {
               type="password"
               appearance="underline"
               required
+              helper="At least 1 upper case charater, 1 lower case character, 1 number, and 8 characters"
             />
             <FormInput
-              name="firstName"
+              name="confirmPassword"
               className="mt-5"
-              placeholder="First name"
-              type="text"
+              placeholder="Confirm Password"
+              type="password"
               appearance="underline"
               required
             />
             <FormInput
-              name="lastName"
+              name="username"
               className="mt-5"
-              placeholder="Last name"
+              placeholder="User Name"
               type="text"
               appearance="underline"
               required

@@ -7,6 +7,8 @@ export const sendMessage = async (data: PostSnsRequest) => {
   try {
     dispatch(startWaiting());
     await snsEndpoint.postSns(data);
+  } catch (err) {
+    throw (err as Error).message;
   } finally {
     dispatch(finishWaiting());
   }

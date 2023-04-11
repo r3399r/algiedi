@@ -3,6 +3,7 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import Loader from './component/Loader';
+import Snackbar from './component/Snackbar';
 import { configStore } from './redux/store';
 import reportWebVitals from './reportWebVitals';
 import './index.css';
@@ -16,6 +17,7 @@ root.render(
     <BrowserRouter>
       <App />
       <Loader />
+      <Snackbar />
     </BrowserRouter>
   </Provider>,
 );
