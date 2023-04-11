@@ -14,12 +14,11 @@ export const init = async () => {
     dispatch(
       setMe({
         sub: res.sub,
-        firstName: res['custom:first_name'],
-        lastName: res['custom:last_name'],
+        userName: res['custom:userName_name'],
         bio: res['custom:bio'],
         emailVerified: Boolean(res.email_verified),
-        language: res['custom:language'].split(','),
-        role: res['custom:role'].split(','),
+        language: res['custom:language']?.split(',') ?? [],
+        role: res['custom:role']?.split(',') ?? [],
         email: res.email,
         age: res['custom:age'],
       }),

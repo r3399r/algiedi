@@ -9,7 +9,7 @@ import Divider from './Divider';
 
 const SideMenu = () => {
   const navigate = useNavigate();
-  const { firstName, lastName } = useSelector((rootState: RootState) => rootState.me);
+  const { userName } = useSelector((rootState: RootState) => rootState.me);
 
   return (
     <div className="h-screen w-[256px] box-border bg-[#2d2d2d] text-white">
@@ -17,9 +17,7 @@ const SideMenu = () => {
         <img src={Logo} className="cursor-pointer" onClick={() => navigate(Page.Home)} />
         <div className="flex gap-4 items-center my-2">
           <img src={IcProfile} />
-          <div>
-            {firstName} {lastName}
-          </div>
+          <div>{userName}</div>
         </div>
       </div>
       <Divider className="bg-gray-600" />

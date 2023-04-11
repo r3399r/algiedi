@@ -12,7 +12,7 @@ import { editProfile } from 'src/service/ProfileService';
 const Profile = () => {
   const dispatch = useDispatch();
   const [isEdit, setIsEdit] = useState<boolean>(false);
-  const { role, firstName, lastName, email, language, bio, age } = useSelector(
+  const { role, userName, email, language, bio, age } = useSelector(
     (rootState: RootState) => rootState.me,
   );
   const selectedRole = useMemo(
@@ -47,7 +47,7 @@ const Profile = () => {
   };
 
   const onSave = () => {
-    editProfile(role, age, language, bio);
+    editProfile(role, age ?? '', language, bio ?? '');
   };
 
   return (
@@ -63,9 +63,7 @@ const Profile = () => {
         <div className="flex items-center gap-6">
           <img src={IcProfile} />
           <div>
-            <div className="text-[20px] font-bold">
-              {firstName} {lastName}
-            </div>
+            <div className="text-[20px] font-bold">{userName}</div>
             {isEdit ? (
               <div className="border-[1px] border-[#c2c2c2] rounded-[20px] h-[21px] px-2 text-[10px] flex gap-2">
                 <Checkbox

@@ -71,7 +71,7 @@ const Faq = () => (
         <Button className="mt-2">Join Us</Button>
       </div>
     </div>
-    <div className="max-w-[630px] mx-auto my-16">
+    <div className="max-w-[630px] mx-auto py-16">
       <Footer />
     </div>
   </div>

@@ -57,3 +57,33 @@ export type CognitoEvent = {
   };
   response: unknown;
 };
+
+export type CognitoMessageEvent = {
+  version: string;
+  region: string;
+  userPoolId: string;
+  userName: string;
+  callerContext: {
+    awsSdkVersion: string;
+    clientId: string;
+  };
+  triggerSource: 'CustomMessage_SignUp' | 'CustomMessage_ResendCode';
+  request: {
+    userAttributes: {
+      sub: string;
+      'custom:user_name': string;
+      'cognito:email_alias': string;
+      email_verified: string;
+      'cognito:user_status': string;
+      email: string;
+    };
+    codeParameter: string;
+    linkParameter: string;
+    usernameParameter: null;
+  };
+  response: {
+    smsMessage: string | null;
+    emailMessage: string | null;
+    emailSubject: string | null;
+  };
+};

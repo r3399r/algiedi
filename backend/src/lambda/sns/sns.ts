@@ -9,7 +9,6 @@ export async function sns(
   event: LambdaEvent,
   _context?: LambdaContext
 ): Promise<LambdaOutput> {
-  console.log(event);
   let service: SnsService | null = null;
   try {
     service = bindings.get(SnsService);

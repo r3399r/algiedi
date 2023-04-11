@@ -81,6 +81,7 @@ export const login = async (email: string, password: string) => {
     const result = await authenticateUser(email, password);
     localStorage.setItem('token', result.getIdToken().getJwtToken());
     dispatch(setIsLogin(true));
+    await new Promise((resolve) => setTimeout(resolve, 100));
   } catch (err) {
     throw (err as Error).message;
   } finally {
@@ -122,12 +123,14 @@ export const resendConfirmationEmail = async (email: string) => {
         else resolve(undefined);
       });
     });
+  } catch (err) {
+    throw (err as Error).message;
   } finally {
     dispatch(finishWaiting());
   }
 };
 
-export const verify = async (email: string, password: string, code: string) => {
+export const verifyAccount = async (email: string, code: string) => {
   try {
     dispatch(startWaiting());
     const cognitoUser = await getCognitoUser(email);
@@ -138,10 +141,13 @@ export const verify = async (email: string, password: string, code: string) => {
         else resolve(undefined);
       });
     });
+    //https://algiedi.auth.ap-southeast-1.amazoncognito.com/confirmUser?client_id=1ht042mk2rc7sehb6ug6k6svia&user_name=033cf1c5-9c9e-4275-9436-290d7e3b5d9a&confirmation_code=990851
 
-    const result = await authenticateUser(email, password);
-    localStorage.setItem('token', result.getIdToken().getJwtToken());
-    dispatch(setIsLogin(true));
+    // const result = await authenticateUser(email, password);
+    // localStorage.setItem('token', result.getIdToken().getJwtToken());
+    // dispatch(setIsLogin(true));
+  } catch (err) {
+    throw (err as Error).message;
   } finally {
     dispatch(finishWaiting());
   }

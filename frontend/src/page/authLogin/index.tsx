@@ -28,10 +28,13 @@ const AuthLogin = () => {
 
           return;
         }
-
-        navigate(Page.Home);
+        navigate(Page.Profile);
       })
-      .catch((err) => dispatch(openFailSnackbar(err)));
+      .catch((err) => {
+        if (err === 'User is not confirmed.')
+          navigate(Page.Confirmation, { state: { email: data.email } });
+        dispatch(openFailSnackbar(err));
+      });
   };
 
   return (
@@ -76,7 +79,7 @@ const AuthLogin = () => {
           </div>
         </div>
       </div>
-      <div className="max-w-[630px] mx-auto my-16">
+      <div className="max-w-[630px] mx-auto py-16">
         <Footer />
       </div>
     </div>

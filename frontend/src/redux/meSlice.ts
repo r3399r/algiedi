@@ -2,20 +2,18 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export type MeState = {
   sub: string;
-  firstName: string;
-  lastName: string;
-  bio: string;
+  userName: string;
+  bio: string | undefined;
   emailVerified: boolean;
   language: string[];
   role: string[];
   email: string;
-  age: string;
+  age: string | undefined;
 };
 
 const initialState: MeState = {
   sub: '',
-  firstName: '',
-  lastName: '',
+  userName: '',
   bio: '',
   emailVerified: false,
   language: [],
@@ -30,8 +28,7 @@ export const meSlice = createSlice({
   reducers: {
     setMe: (state: MeState, action: PayloadAction<MeState>) => {
       state.sub = action.payload.sub;
-      state.firstName = action.payload.firstName;
-      state.lastName = action.payload.lastName;
+      state.userName = action.payload.userName;
       state.bio = action.payload.bio;
       state.emailVerified = action.payload.emailVerified;
       state.language = action.payload.language;

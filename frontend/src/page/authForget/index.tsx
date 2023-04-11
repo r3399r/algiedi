@@ -60,7 +60,7 @@ const AuthForget = () => {
           <Button type="submit">{sent ? 'Reset Password' : 'Send'}</Button>
         </div>
       </Form>
-      <div className="max-w-[630px] mx-auto my-16">
+      <div className="max-w-[630px] mx-auto py-16">
         <Footer />
       </div>
     </div>

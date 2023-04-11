@@ -81,7 +81,7 @@ const AuthRegister = () => {
               required
             />
             <FormInput
-              name="username"
+              name="userName"
               className="mt-5"
               placeholder="User Name"
               type="text"
@@ -94,7 +94,7 @@ const AuthRegister = () => {
           </div>
         </Form>
       </div>
-      <div className="max-w-[630px] mx-auto my-16">
+      <div className="max-w-[630px] mx-auto py-16">
         <Footer />
       </div>
     </div>

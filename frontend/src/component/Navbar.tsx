@@ -1,13 +1,16 @@
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Page } from 'src/constant/Page';
 import Logo from 'src/image/logo.svg';
+import { RootState } from 'src/redux/store';
 import Button from './Button';
 import NavbarDrawer from './NavbarDrawer';
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState<boolean>(false);
+  const { isLogin } = useSelector((rootState: RootState) => rootState.ui);
 
   return (
     <>
@@ -38,7 +41,7 @@ const Navbar = () => {
           >
             Contact Us
           </div>
-          <Button appearance="border" onClick={() => navigate(Page.Profile)}>
+          <Button appearance="border" onClick={() => navigate(isLogin ? Page.Profile : Page.Login)}>
             CREATE NOW
           </Button>
         </div>
