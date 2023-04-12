@@ -107,6 +107,7 @@ const Profile = () => {
             className="border-[1px] border-[#c2c2c2] bg-[#eaeaea] rounded-[20px] h-[21px] w-[300px] px-2 text-[10px]"
             value={editAge}
             onChange={(e) => setEditAge(e.target.value)}
+            type="number"
           />
         ) : (
           <div>{age}</div>
