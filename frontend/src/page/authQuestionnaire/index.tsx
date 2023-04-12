@@ -1,17 +1,14 @@
 import { useMemo, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Button from 'src/component/Button';
 import Footer from 'src/component/Footer';
 import MultiSelect from 'src/component/MultiSelect';
 import MultiSelectOption from 'src/component/MultiSelectOption';
 import { Page } from 'src/constant/Page';
-import { RegistrationForm } from 'src/model/Form';
 import { updateUserAttributes } from 'src/service/AuthService';
 
 const AuthQuestionnaire = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const state = location.state as RegistrationForm | null;
   const [start, setStart] = useState<boolean>(false);
   const [role, setRole] = useState<string>('');
   const [language, setLanguage] = useState<string>('');
@@ -24,11 +21,6 @@ const AuthQuestionnaire = () => {
   );
 
   const onNext = () => {
-    if (state === null) {
-      navigate(-1);
-
-      return;
-    }
     updateUserAttributes({ role, language, instrument, favoriate }).then(() =>
       navigate(Page.Profile),
     );

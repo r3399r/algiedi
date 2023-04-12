@@ -1,22 +1,13 @@
-import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import Navbar from './component/Navbar';
 import SideMenu from './component/SideMenu';
 import { DashboardPage } from './constant/Page';
-import { RootState } from './redux/store';
 import AppRoutes from './Routes';
-import { init } from './service/AppService';
 
 const App = () => {
-  const { isLogin } = useSelector((rootState: RootState) => rootState.ui);
   const location = useLocation();
   const isDashboard =
     DashboardPage.find((value) => location.pathname.startsWith(value)) !== undefined;
-
-  useEffect(() => {
-    if (isLogin) init();
-  }, [isLogin]);
 
   if (isDashboard)
     return (

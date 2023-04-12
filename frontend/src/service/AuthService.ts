@@ -7,9 +7,11 @@ import {
 } from 'amazon-cognito-identity-js';
 import variableEndpoint from 'src/api/variableEndpoint';
 import { RegistrationForm } from 'src/model/Form';
+import { setMe } from 'src/redux/meSlice';
 import { dispatch, getState } from 'src/redux/store';
 import { finishWaiting, setIsLogin, startWaiting } from 'src/redux/uiSlice';
 import { setVariable, VariableState } from 'src/redux/variableSlice';
+import { sleep } from 'src/util/sleep';
 
 const getUserPoolVariable = async (): Promise<VariableState> => {
   const state = getState().variable;
@@ -81,7 +83,10 @@ export const login = async (email: string, password: string) => {
     const result = await authenticateUser(email, password);
     localStorage.setItem('token', result.getIdToken().getJwtToken());
     dispatch(setIsLogin(true));
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await sleep(100);
+    const attributes = await getUserAttributes();
+
+    return attributes.find((v) => v.name === 'custom:questionnaire_filled')?.value;
   } catch (err) {
     throw (err as Error).message;
   } finally {
@@ -167,6 +172,27 @@ export const getUserAttributes = async () => {
   return (userAttributes ?? []).map((v) => ({ name: v.Name, value: v.Value }));
 };
 
+export const loadUserAttributes = async () => {
+  const userAttributes = await getUserAttributes();
+  const res: { [key: string]: string } = {};
+  userAttributes.forEach((v) => {
+    res[v.name] = v.value;
+  });
+  dispatch(
+    setMe({
+      sub: res.sub,
+      userName: res['custom:user_name'],
+      bio: res['custom:bio'],
+      emailVerified: Boolean(res.email_verified),
+      language: res['custom:language']?.split(',') ?? [],
+      role: res['custom:role']?.split(',') ?? [],
+      email: res.email,
+      age: res['custom:age'],
+      tag: res['custom:tag']?.split(',') ?? [],
+    }),
+  );
+};
+
 export const updateUserAttributes = async (data: {
   role: string;
   language: string;
@@ -179,12 +205,20 @@ export const updateUserAttributes = async (data: {
     const language = new CognitoUserAttribute({ Name: 'custom:language', Value: data.language });
     const bio = new CognitoUserAttribute({
       Name: 'custom:bio',
-      Value: `I love ${data.favoriate}. I play the ${data.instrument}.`,
+      Value: `I am good at playing the ${data.instrument}.`,
+    });
+    const tag = new CognitoUserAttribute({
+      Name: 'custom:tag',
+      Value: data.favoriate,
+    });
+    const questionnaireFilled = new CognitoUserAttribute({
+      Name: 'custom:questionnaire_filled',
+      Value: 'true',
     });
 
     const cognitoUser = await getCurrentUser();
     await new Promise((resolve, reject) => {
-      cognitoUser.updateAttributes([role, language, bio], (err) => {
+      cognitoUser.updateAttributes([role, language, bio, tag, questionnaireFilled], (err) => {
         if (err) reject(err);
         else resolve(undefined);
       });

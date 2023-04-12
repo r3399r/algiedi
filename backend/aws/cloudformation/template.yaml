@@ -342,6 +342,9 @@ Resources:
         - Name: age
           AttributeDataType: Number
           Mutable: true
+        - Name: questionnaire_filled
+          AttributeDataType: Boolean
+          Mutable: true
         - Name: language
           AttributeDataType: String
           Mutable: true

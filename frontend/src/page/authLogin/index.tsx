@@ -21,14 +21,17 @@ const AuthLogin = () => {
 
   const onSubmit = (data: LoginForm) => {
     login(data.email, data.password)
-      .then(() => {
+      .then((res) => {
         dispatch(openSuccessSnackbar('Login Successfully'));
-        if (redirectPath) {
-          navigate(redirectPath.from);
+        if (res !== 'true') navigate(Page.Questionnaire);
+        else {
+          if (redirectPath) {
+            navigate(redirectPath.from);
 
-          return;
+            return;
+          }
+          navigate(Page.Profile);
         }
-        navigate(Page.Profile);
       })
       .catch((err) => {
         if (err === 'User is not confirmed.')
