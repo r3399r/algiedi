@@ -4,6 +4,7 @@ import { Page } from './constant/Page';
 import AboutUs from './page/aboutUs';
 import AuthConfirmation from './page/authConfirmation';
 import AuthForget from './page/authForget';
+import AuthForgetReset from './page/authForgetReset';
 import AuthLogin from './page/authLogin';
 import AuthQuestionnaire from './page/authQuestionnaire';
 import AuthRegister from './page/authRegister';
@@ -33,6 +34,7 @@ const AppRoutes = () => {
           <Route path={Page.Confirmation} element={<AuthConfirmation />} />
           <Route path={Page.Verify} element={<AuthVerify />} />
           <Route path={Page.Forget} element={<AuthForget />} />
+          <Route path={Page.ForgetReset} element={<AuthForgetReset />} />
           <Route
             path="*"
             element={<Navigate to={Page.Login} state={{ from: location.pathname }} />}

@@ -52,10 +52,7 @@ const Input = forwardRef<HTMLInputElement, Props>(
               appearance === 'outline',
             'border-solid border-b-[1px] border-[#7ba0ff] placeholder:text-[#7ba0ff]':
               appearance === 'underline',
-            'border-tomato-500': !!error,
-            'border-grey-200': !error,
-            'text-grey-500': !!disabled,
-            'text-navy-900': !disabled,
+            'border-red-500': !!error,
           })}
           ref={ref}
           disabled={disabled}
@@ -67,9 +64,9 @@ const Input = forwardRef<HTMLInputElement, Props>(
         {(typeof error === 'string' || helper) && (
           <div className="mt-[5px]">
             {typeof error === 'string' && (
-              <div className="text-tomato-500 text-[12px] leading-normal">{error}</div>
+              <div className="text-red-500 text-[12px] leading-normal">{error}</div>
             )}
-            {helper && <div className="text-navy-300 text-[12px] leading-normal">{helper}</div>}
+            {helper && <div className="text-black text-[12px] leading-normal">{helper}</div>}
           </div>
         )}
       </div>

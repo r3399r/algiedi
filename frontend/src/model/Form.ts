@@ -17,8 +17,13 @@ export type RegistrationForm = {
   userName: string;
 };
 
-export type ResetPasswordForm = {
+export type ForgetPasswordForm = {
   email: string;
   code: string;
   password: string;
+};
+
+export type ResetPasswordForm = {
+  password: string;
+  confirmPassword: string;
 };

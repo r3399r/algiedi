@@ -19,7 +19,11 @@ const AuthRegister = () => {
 
   const onSubmit = (data: RegistrationForm) => {
     if (data.password !== data.confirmPassword)
-      methods.setError('confirmPassword', {}, { shouldFocus: true });
+      methods.setError(
+        'confirmPassword',
+        { message: 'It should be as same as Password' },
+        { shouldFocus: true },
+      );
     else
       register(data)
         .then(() => {

@@ -33,7 +33,7 @@ const FormInput = ({
       control={control}
       name={name}
       defaultValue={defaultValue ?? ''}
-      rules={{ required, minLength, maxLength }}
+      rules={{ required: required === true ? 'Required' : undefined, minLength, maxLength }}
       render={({ field }) => (
         <Input {...field} {...props} error={errors[name]?.message?.toString() || !!errors[name]} />
       )}

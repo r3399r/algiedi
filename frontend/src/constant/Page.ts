@@ -10,6 +10,7 @@ export enum Page {
   Verify = '/auth/verify',
   Questionnaire = '/auth/questionnaire',
   Forget = '/auth/forget',
+  ForgetReset = '/auth/forget/reset',
   Profile = '/profile',
 }
 
