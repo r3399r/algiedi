@@ -178,6 +178,7 @@ export const loadUserAttributes = async () => {
   userAttributes.forEach((v) => {
     res[v.name] = v.value;
   });
+
   dispatch(
     setMe({
       sub: res.sub,
@@ -189,6 +190,10 @@ export const loadUserAttributes = async () => {
       email: res.email,
       age: res['custom:age'],
       tag: res['custom:tag']?.split(',') ?? [],
+      facebook: res['custom:facebook'],
+      instagram: res['custom:instagram'],
+      youtube: res['custom:youtube'],
+      soundcloud: res['custom:soundcloud'],
     }),
   );
 };

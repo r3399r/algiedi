@@ -18,6 +18,10 @@ export const editProfile = async (
   language: string[],
   bio: string,
   tag: string[],
+  facebook: string,
+  instagram: string,
+  youtube: string,
+  soundcloud: string,
 ) => {
   try {
     dispatch(startWaiting());
@@ -38,17 +42,45 @@ export const editProfile = async (
       Name: 'custom:tag',
       Value: tag.join(),
     });
+    const facebookAttribute = new CognitoUserAttribute({
+      Name: 'custom:facebook',
+      Value: facebook,
+    });
+    const instagramAttribute = new CognitoUserAttribute({
+      Name: 'custom:instagram',
+      Value: instagram,
+    });
+    const youtubeAttribute = new CognitoUserAttribute({
+      Name: 'custom:youtube',
+      Value: youtube,
+    });
+    const soundcloudAttribute = new CognitoUserAttribute({
+      Name: 'custom:soundcloud',
+      Value: soundcloud,
+    });
 
     const cognitoUser = await getCurrentUser();
     await new Promise((resolve, reject) => {
       cognitoUser.updateAttributes(
-        [roleAttribute, languageAttribute, bioAttribute, ageAttribute, tagAttribute],
+        [
+          roleAttribute,
+          languageAttribute,
+          bioAttribute,
+          ageAttribute,
+          tagAttribute,
+          facebookAttribute,
+          instagramAttribute,
+          youtubeAttribute,
+          soundcloudAttribute,
+        ],
         (err) => {
           if (err) reject(err);
           else resolve(undefined);
         },
       );
     });
+  } catch (err) {
+    throw (err as Error).message;
   } finally {
     dispatch(finishWaiting());
   }

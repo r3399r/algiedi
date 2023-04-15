@@ -10,6 +10,10 @@ export type MeState = {
   email: string;
   age: string | undefined;
   tag: string[];
+  facebook: string;
+  instagram: string;
+  youtube: string;
+  soundcloud: string;
 };
 
 const initialState: MeState = {
@@ -22,6 +26,10 @@ const initialState: MeState = {
   email: '',
   age: '',
   tag: [],
+  facebook: '',
+  instagram: '',
+  youtube: '',
+  soundcloud: '',
 };
 
 export const meSlice = createSlice({
@@ -38,6 +46,10 @@ export const meSlice = createSlice({
       state.email = action.payload.email;
       state.age = action.payload.age;
       state.tag = action.payload.tag;
+      state.facebook = action.payload.facebook;
+      state.instagram = action.payload.instagram;
+      state.youtube = action.payload.youtube;
+      state.soundcloud = action.payload.soundcloud;
     },
   },
 });

@@ -363,6 +363,9 @@ Resources:
         - Name: youtube
           AttributeDataType: String
           Mutable: true
+        - Name: soundcloud
+          AttributeDataType: String
+          Mutable: true
       UsernameAttributes: [email]
       UserPoolName: !Sub ${Project}-${TargetEnvr}
       LambdaConfig:
