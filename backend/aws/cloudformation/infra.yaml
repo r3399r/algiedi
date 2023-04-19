@@ -1,0 +1,89 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: "AWS::Serverless-2016-10-31"
+Description: gotron infrastructure cloudformation script
+    
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+      Timeout: 30  # in seconds
+Parameters:
+  Project:
+    Type: String
+  TargetEnvr:
+    Type: String
+Resources:
+  #############################
+  ##### Cognito User Pool #####
+  #############################
+  CognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      AccountRecoverySetting:
+        RecoveryMechanisms:
+        - Name: verified_email
+          Priority: 1
+      AutoVerifiedAttributes: [email]
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: false
+          RequireUppercase: true
+          TemporaryPasswordValidityDays: 7
+      Schema:
+        - Name: user_name
+          AttributeDataType: String
+          Mutable: true
+        - Name: role
+          AttributeDataType: String
+          Mutable: true
+        - Name: age
+          AttributeDataType: Number
+          Mutable: true
+        - Name: questionnaire_filled
+          AttributeDataType: Boolean
+          Mutable: true
+        - Name: language
+          AttributeDataType: String
+          Mutable: true
+        - Name: bio
+          AttributeDataType: String
+          Mutable: true
+        - Name: tag
+          AttributeDataType: String
+          Mutable: true
+        - Name: facebook
+          AttributeDataType: String
+          Mutable: true
+        - Name: instagram
+          AttributeDataType: String
+          Mutable: true
+        - Name: youtube
+          AttributeDataType: String
+          Mutable: true
+        - Name: soundcloud
+          AttributeDataType: String
+          Mutable: true
+      UsernameAttributes: [email]
+      UserPoolName: !Sub ${Project}-${TargetEnvr}
+      LambdaConfig:
+        CustomMessage: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${Project}-${TargetEnvr}-cognitoMessage
+  CognitoUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    DependsOn: [CognitoUserPool]
+    Properties:
+      UserPoolId: !Sub ${CognitoUserPool}
+Outputs:
+  UserPool:
+    Value: !Sub ${CognitoUserPool}
+    Export:
+      Name: !Sub ${Project}-${TargetEnvr}-cognito-user-pool-id
+  UserPoolClient:
+    Value: !Sub ${CognitoUserPoolClient}
+    Export:
+      Name: !Sub ${Project}-${TargetEnvr}-cognito-user-pool-client-id
+  UserPoolArn:
+    Value: !GetAtt CognitoUserPool.Arn
+    Export:
+      Name: !Sub ${Project}-${TargetEnvr}-cognito-user-pool-arn

@@ -48,18 +48,23 @@ const getCognitoUser = async (email: string) => {
 };
 
 export const getCurrentUser = async () => {
-  const userPool = await getUserPool();
-  const cognitoUser = userPool.getCurrentUser();
-  if (cognitoUser === null) throw new Error('no user found');
+  try {
+    const userPool = await getUserPool();
+    const cognitoUser = userPool.getCurrentUser();
+    if (cognitoUser === null) throw new Error('no user found');
 
-  await new Promise((resolve, reject) => {
-    cognitoUser.getSession((err: unknown, session: CognitoUserSession) => {
-      if (err) reject(err);
-      else resolve(session);
+    await new Promise((resolve, reject) => {
+      cognitoUser.getSession((err: unknown, session: CognitoUserSession) => {
+        if (err) reject(err);
+        else resolve(session);
+      });
     });
-  });
 
-  return cognitoUser;
+    return cognitoUser;
+  } catch (err) {
+    localStorage.removeItem('token');
+    throw err;
+  }
 };
 
 const authenticateUser = async (email: string, password: string): Promise<CognitoUserSession> => {

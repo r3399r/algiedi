@@ -10,9 +10,6 @@ Parameters:
   LambdaExecutionRole:
     Type: String
     Default: BackendProcess
-  NodeJsVer:
-    Type: String
-    Default: nodejs14.x
   Project:
     Type: String
   TargetEnvr:
@@ -162,26 +159,31 @@ Resources:
     Properties:
       Architectures: [arm64]
       Handler: index.cognitoMessage
-      Runtime: !Sub ${NodeJsVer}
+      Runtime: nodejs18.x
       FunctionName: !Sub ${Project}-${TargetEnvr}-cognitoMessage
       Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/${LambdaExecutionRole}"
       CodeUri: ../../dist/webpack/lambda
       MemorySize: 128
+      Environment:
+        Variables:
+          ENVR: !Sub ${TargetEnvr}
+          DOMAIN: !Sub ${Domain}
   InvokePermissionCognitoMessage:
     Type: AWS::Lambda::Permission
-    DependsOn: [CognitoUserPool, LambdaCognitoMessage]
+    DependsOn: [LambdaCognitoMessage]
     Properties:
       FunctionName: !Sub ${Project}-${TargetEnvr}-cognitoMessage
       Action: 'lambda:InvokeFunction'
       Principal: cognito-idp.amazonaws.com
-      SourceArn: !GetAtt CognitoUserPool.Arn
+      SourceArn:
+        Fn::ImportValue: !Sub ${Project}-${TargetEnvr}-cognito-user-pool-arn
   LambdaSns:
     Type: AWS::Serverless::Function
     DependsOn: [ContactUsSNSTopic]
     Properties:
       Architectures: [arm64]
       Handler: index.sns
-      Runtime: !Sub ${NodeJsVer}
+      Runtime: nodejs18.x
       FunctionName: !Sub ${Project}-${TargetEnvr}-sns
       Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/${LambdaExecutionRole}"
       CodeUri: ../../dist/webpack/lambda
@@ -200,19 +202,20 @@ Resources:
       SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ServerlessApi}/*
   LambdaVariable:
     Type: AWS::Serverless::Function
-    DependsOn: [CognitoUserPool, CognitoUserPoolClient]
     Properties:
       Architectures: [arm64]
       Handler: index.variable
-      Runtime: !Sub ${NodeJsVer}
+      Runtime: nodejs18.x
       FunctionName: !Sub ${Project}-${TargetEnvr}-variable
       Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/${LambdaExecutionRole}"
       CodeUri: ../../dist/webpack/lambda
       MemorySize: 128
       Environment:
         Variables:
-          USER_POOL_ID: !Sub ${CognitoUserPool}
-          USER_POOL_CLIENT_ID: !Sub ${CognitoUserPoolClient}
+          USER_POOL_ID:
+            Fn::ImportValue: !Sub ${Project}-${TargetEnvr}-cognito-user-pool-id
+          USER_POOL_CLIENT_ID:
+            Fn::ImportValue: !Sub ${Project}-${TargetEnvr}-cognito-user-pool-client-id
   InvokePermissionVariable:
     Type: AWS::Lambda::Permission
     DependsOn: [ServerlessApi, LambdaVariable]
@@ -313,65 +316,3 @@ Resources:
         - Endpoint: gotronmusic@gmail.com
           Protocol: email
       TopicName: !Sub ${Project}-${TargetEnvr}-contact-us-topic
-  #############################
-  ##### Cognito User Pool #####
-  #############################
-  CognitoUserPool:
-    Type: AWS::Cognito::UserPool
-    Properties:
-      AccountRecoverySetting:
-        RecoveryMechanisms:
-        - Name: verified_email
-          Priority: 1
-      AutoVerifiedAttributes: [email]
-      Policies:
-        PasswordPolicy:
-          MinimumLength: 8
-          RequireLowercase: true
-          RequireNumbers: true
-          RequireSymbols: false
-          RequireUppercase: true
-          TemporaryPasswordValidityDays: 7
-      Schema:
-        - Name: user_name
-          AttributeDataType: String
-          Mutable: true
-        - Name: role
-          AttributeDataType: String
-          Mutable: true
-        - Name: age
-          AttributeDataType: Number
-          Mutable: true
-        - Name: questionnaire_filled
-          AttributeDataType: Boolean
-          Mutable: true
-        - Name: language
-          AttributeDataType: String
-          Mutable: true
-        - Name: bio
-          AttributeDataType: String
-          Mutable: true
-        - Name: tag
-          AttributeDataType: String
-          Mutable: true
-        - Name: facebook
-          AttributeDataType: String
-          Mutable: true
-        - Name: instagram
-          AttributeDataType: String
-          Mutable: true
-        - Name: youtube
-          AttributeDataType: String
-          Mutable: true
-        - Name: soundcloud
-          AttributeDataType: String
-          Mutable: true
-      UsernameAttributes: [email]
-      UserPoolName: !Sub ${Project}-${TargetEnvr}
-      LambdaConfig:
-        CustomMessage: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${Project}-${TargetEnvr}-cognitoMessage
-  CognitoUserPoolClient:
-    Type: AWS::Cognito::UserPoolClient
-    DependsOn: [CognitoUserPool]
-    Properties:
-      UserPoolId: !Sub ${CognitoUserPool}
