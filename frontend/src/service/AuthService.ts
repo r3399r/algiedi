@@ -151,11 +151,6 @@ export const verifyAccount = async (email: string, code: string) => {
         else resolve(undefined);
       });
     });
-    //https://algiedi.auth.ap-southeast-1.amazoncognito.com/confirmUser?client_id=1ht042mk2rc7sehb6ug6k6svia&user_name=033cf1c5-9c9e-4275-9436-290d7e3b5d9a&confirmation_code=990851
-
-    // const result = await authenticateUser(email, password);
-    // localStorage.setItem('token', result.getIdToken().getJwtToken());
-    // dispatch(setIsLogin(true));
   } catch (err) {
     throw (err as Error).message;
   } finally {
@@ -265,6 +260,8 @@ export const confirmForgot = async (email: string, newPassword: string, code: st
         onFailure: (err) => reject(err),
       });
     });
+  } catch (err) {
+    throw (err as Error).message;
   } finally {
     dispatch(finishWaiting());
   }

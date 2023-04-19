@@ -10,7 +10,7 @@ import Input from 'src/component/Input';
 import { Page } from 'src/constant/Page';
 import useQuery from 'src/hook/useQuery';
 import { ResetPasswordForm } from 'src/model/Form';
-import { openSuccessSnackbar } from 'src/redux/uiSlice';
+import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
 import { confirmForgot } from 'src/service/AuthService';
 
 const AuthForgetReset = () => {
@@ -31,10 +31,12 @@ const AuthForgetReset = () => {
         { shouldFocus: true },
       );
     else
-      confirmForgot(query.email, data.password, query.code).then(() => {
-        dispatch(openSuccessSnackbar('Password Reset Successfully'));
-        navigate(Page.Login);
-      });
+      confirmForgot(query.email, data.password, query.code)
+        .then(() => {
+          dispatch(openSuccessSnackbar('Password Reset Successfully'));
+          navigate(Page.Login);
+        })
+        .catch((err) => dispatch(openFailSnackbar(err)));
   };
 
   return (
