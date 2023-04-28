@@ -12,6 +12,22 @@ Parameters:
   TargetEnvr:
     Type: String
 Resources:
+  ###################
+  ##### AWS RDS #####
+  ###################
+  RdsDatabase:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      Engine: mysql
+      EngineVersion: 8.0.32
+      MultiAZ: false
+      DBClusterIdentifier: !Sub ${Project}-${TargetEnvr}
+      MasterUsername: admin
+      MasterUserPassword: temp12345678
+      DBInstanceClass: db.t3.micro
+      StorageType: gp2
+      AllocatedStorage: 20
+      VPCSecurityGroups: [sg-00a1e2a1668125d11]
   #############################
   ##### Cognito User Pool #####
   #############################

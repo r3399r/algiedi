@@ -1,0 +1,7 @@
+CREATE TABLE project (
+	id BINARY(16) NOT NULL DEFAULT UUID_TO_BIN(UUID()),
+	name STRING NOT NULL,
+	date_created TIMESTAMP NULL,
+	date_updated TIMESTAMP NULL,
+	PRIMARY KEY (id ASC)
+);

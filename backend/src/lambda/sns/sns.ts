@@ -25,6 +25,8 @@ export async function sns(
 
     return successOutput(res);
   } catch (e) {
+    console.log(e);
+
     return errorOutput(e);
   }
 }
