@@ -12,22 +12,33 @@ Parameters:
   TargetEnvr:
     Type: String
 Resources:
-  ###################
-  ##### AWS RDS #####
-  ###################
+  ########################################
+  ##### AWS RDS and related services #####
+  ########################################
+  RdsSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupName: !Sub ${Project}-${TargetEnvr}-subnet-group
+      DBSubnetGroupDescription: Subnet Group
+      SubnetIds:
+      - subnet-0ae38472a33a75137
+      - subnet-0dfc7a78154dec1f1
+      - subnet-0b77ba257fb40880b
   RdsDatabase:
     Type: AWS::RDS::DBInstance
     Properties:
       Engine: mysql
       EngineVersion: 8.0.32
       MultiAZ: false
-      DBClusterIdentifier: !Sub ${Project}-${TargetEnvr}
+      DBInstanceIdentifier: !Sub ${Project}-${TargetEnvr}
       MasterUsername: admin
       MasterUserPassword: temp12345678
       DBInstanceClass: db.t3.micro
       StorageType: gp2
       AllocatedStorage: 20
+      PubliclyAccessible: true
       VPCSecurityGroups: [sg-00a1e2a1668125d11]
+      DBSubnetGroupName: !Ref RdsSubnetGroup
   #############################
   ##### Cognito User Pool #####
   #############################
@@ -103,3 +114,15 @@ Outputs:
     Value: !GetAtt CognitoUserPool.Arn
     Export:
       Name: !Sub ${Project}-${TargetEnvr}-cognito-user-pool-arn
+  DbEndpoint:
+    Value: !GetAtt RdsDatabase.Endpoint.Address
+    Export:
+      Name: !Sub ${Project}-${TargetEnvr}-db-endpoint
+  DbPort:
+    Value: !GetAtt RdsDatabase.Endpoint.Port
+    Export:
+      Name: !Sub ${Project}-${TargetEnvr}-db-port
+  DbUsername:
+    Value: admin
+    Export:
+      Name: !Sub ${Project}-${TargetEnvr}-db-username

@@ -188,10 +188,23 @@ Resources:
       Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/${LambdaExecutionRole}"
       CodeUri: ../../dist/webpack/lambda
       MemorySize: 128
+      VpcConfig:
+        SecurityGroupIds: [sg-00a1e2a1668125d11]
+        SubnetIds: 
+        - subnet-0ae38472a33a75137
+        - subnet-0dfc7a78154dec1f1
+        - subnet-0b77ba257fb40880b
       Environment:
         Variables:
           PROJECT: !Sub ${Project}
           SNS_TOPIC_ARN: !Ref ContactUsSNSTopic
+          DB_ENDPOINT:
+            Fn::ImportValue: !Sub ${Project}-${TargetEnvr}-db-endpoint
+          DB_PORT:
+            Fn::ImportValue: !Sub ${Project}-${TargetEnvr}-db-port
+          DB_USERNAME:
+            Fn::ImportValue: !Sub ${Project}-${TargetEnvr}-db-username
+          DB_PASSWORD: !Sub '{{resolve:ssm:${Project}-${TargetEnvr}-db-pwd}}'
   InvokePermissionSns:
     Type: AWS::Lambda::Permission
     DependsOn: [ServerlessApi, LambdaSns]

@@ -11,14 +11,14 @@ echo project: $project
 echo domain: $domain
 echo ====================================================================================
 
-# echo execute db scripts...
-# cd ../db
-# host=$(aws ssm get-parameter --name $env-db-host | jq .Parameter.Value | sed -e 's/^"//' -e 's/"$//')
-# user=$(aws ssm get-parameter --name $env-db-user | jq .Parameter.Value | sed -e 's/^"//' -e 's/"$//')
-# pwd=$(aws ssm get-parameter --name $env-db-pwd | jq .Parameter.Value | sed -e 's/^"//' -e 's/"$//')
-# cluster=$(aws ssm get-parameter --name $env-db-cluster | jq .Parameter.Value | sed -e 's/^"//' -e 's/"$//')
-# psql postgresql://$user:$pwd@$host:26257/$cluster.$project -f deploy.sql
-# echo ====================================================================================
+echo execute db scripts...
+cd ../db
+host=$(aws cloudformation list-exports --query "Exports[?Name=='$project-$env-db-endpoint'].Value" --no-paginate --output text)
+port=$(aws cloudformation list-exports --query "Exports[?Name=='$project-$env-db-port'].Value" --no-paginate --output text)
+user=$(aws cloudformation list-exports --query "Exports[?Name=='$project-$env-db-username'].Value" --no-paginate --output text)
+pwd=$(aws ssm get-parameter --name $project-$env-db-pwd | jq .Parameter.Value | sed -e 's/^"//' -e 's/"$//')
+mysqlsh --host $host --user=$user --password=$pwd --database=$project --file deploy.sql
+echo ====================================================================================
 
 echo deploy backend AWS...
 cd ../backend

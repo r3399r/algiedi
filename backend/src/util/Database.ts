@@ -19,12 +19,11 @@ export class Database {
     if (this.dataSource === undefined)
       this.dataSource = new DataSource({
         type: 'mysql',
-        host: 'gotron-test-free.chuqajt3pq1h.ap-southeast-1.rds.amazonaws.com',
-        port: 3306,
-        username: 'admin',
-        password: 'tNk5wF8ON4U3Y5BWJpr0',
-        database: 'gotron',
-        // ssl: true,
+        host: process.env.DB_ENDPOINT,
+        port: Number(process.env.DB_PORT),
+        username: process.env.DB_USERNAME,
+        password: process.env.DB_PASSWORD,
+        database: process.env.PROJECT,
         entities: this.entities,
         synchronize: false,
         logging: false,
