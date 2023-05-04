@@ -12,8 +12,9 @@ export enum Page {
   Forget = '/auth/forget',
   ForgetReset = '/auth/forget/reset',
   Profile = '/profile',
+  Project = '/project',
   Upload = '/upload',
 }
 
 // pages with sideMenu
-export const DashboardPage = [Page.Profile, Page.Upload];
+export const DashboardPage = [Page.Profile, Page.Upload, Page.Project];

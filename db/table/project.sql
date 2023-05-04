@@ -1,7 +1,13 @@
 CREATE TABLE project (
 	id VARCHAR(36) NOT NULL,
-	name TEXT NOT NULL,
-	date_created TIMESTAMP NULL,
-	date_updated TIMESTAMP NULL,
+	name VARCHAR(255) NOT NULL,
+	description VARCHAR(255) NOT NULL,
+	theme VARCHAR(255) NOT NULL,
+	genre VARCHAR(255) NOT NULL,
+	language VARCHAR(255) NOT NULL,
+	caption VARCHAR(255) NOT NULL,
+	cover_file_uri VARCHAR(255),
+	created_at TIMESTAMP NULL,
+	updated_at TIMESTAMP NULL,
 	PRIMARY KEY (id ASC)
 );

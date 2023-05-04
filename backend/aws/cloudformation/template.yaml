@@ -81,6 +81,53 @@ Resources:
                 }
               }
             },
+            "/api/upload": {
+              "post": {
+                "requestBody": {
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/postUpload"
+                      }
+                    }
+                  },
+                  "required": true
+                },
+                "responses": {
+                  "200": {
+                    "description": "200 response",
+                    "headers": {
+                      "Access-Control-Allow-Origin": {
+                        "schema": {"type": "string"}
+                      }
+                    },
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/Empty"
+                        }
+                      }
+                    }
+                  }
+                },
+                "x-amazon-apigateway-request-validator" : "Validate body, query string parameters, and headers",
+                "x-amazon-apigateway-integration": {
+                  "type": "aws_proxy",
+                  "httpMethod": "POST",
+                  "uri": !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${Project}-${TargetEnvr}-upload/invocations",
+                  "responses": {
+                    "default": {
+                      "statusCode": "200",
+                      "responseParameters": {
+                        "method.response.header.Access-Control-Allow-Origin": "'*'"
+                      }
+                    }
+                  },
+                  "passthroughBehavior": "when_no_match",
+                  "contentHandling": "CONVERT_TO_TEXT"
+                }
+              }
+            },
             "/api/variable": {
               "get": {
                 "parameters" : [ {
@@ -141,6 +188,18 @@ Resources:
                 "message":{"type": "string"}
               },
               "required": ["firstName","surname","email","message"]
+            },
+            "postUpload": {
+              "type": "object",
+              "properties": {
+                "name": {"type": "string"},
+                "description": {"type": "string"},
+                "theme":{"type": "string"},
+                "genre":{"type": "string"},
+                "language":{"type": "string"},
+                "caption":{"type": "string"}
+              },
+              "required": ["name","description","theme","genre","language","caption"]
             }
           },
           "x-amazon-apigateway-request-validators" : {
@@ -188,6 +247,28 @@ Resources:
       Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/${LambdaExecutionRole}"
       CodeUri: ../../dist/webpack/lambda
       MemorySize: 128
+      Environment:
+        Variables:
+          PROJECT: !Sub ${Project}
+          SNS_TOPIC_ARN: !Ref ContactUsSNSTopic
+  InvokePermissionSns:
+    Type: AWS::Lambda::Permission
+    DependsOn: [ServerlessApi, LambdaSns]
+    Properties:
+      FunctionName: !Sub ${Project}-${TargetEnvr}-sns
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ServerlessApi}/*
+  LambdaUpload:
+    Type: AWS::Serverless::Function
+    Properties:
+      Architectures: [arm64]
+      Handler: index.upload
+      Runtime: nodejs18.x
+      FunctionName: !Sub ${Project}-${TargetEnvr}-upload
+      Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/${LambdaExecutionRole}"
+      CodeUri: ../../dist/webpack/lambda
+      MemorySize: 128
       VpcConfig:
         SecurityGroupIds: [sg-00a1e2a1668125d11]
         SubnetIds: 
@@ -197,7 +278,7 @@ Resources:
       Environment:
         Variables:
           PROJECT: !Sub ${Project}
-          SNS_TOPIC_ARN: !Ref ContactUsSNSTopic
+          ENVR: !Sub ${TargetEnvr}
           DB_ENDPOINT:
             Fn::ImportValue: !Sub ${Project}-${TargetEnvr}-db-endpoint
           DB_PORT:
@@ -205,11 +286,11 @@ Resources:
           DB_USERNAME:
             Fn::ImportValue: !Sub ${Project}-${TargetEnvr}-db-username
           DB_PASSWORD: !Sub '{{resolve:ssm:${Project}-${TargetEnvr}-db-pwd}}'
-  InvokePermissionSns:
+  InvokePermissionUpload:
     Type: AWS::Lambda::Permission
-    DependsOn: [ServerlessApi, LambdaSns]
+    DependsOn: [ServerlessApi, LambdaUpload]
     Properties:
-      FunctionName: !Sub ${Project}-${TargetEnvr}-sns
+      FunctionName: !Sub ${Project}-${TargetEnvr}-upload
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com
       SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ServerlessApi}/*
