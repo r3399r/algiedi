@@ -12,32 +12,36 @@ const SideMenu = () => {
   const { userName } = useSelector((rootState: RootState) => rootState.me);
 
   return (
-    <div className="h-screen w-[256px] box-border bg-[#2d2d2d] text-white">
+    <div className="h-screen w-[256px] box-border bg-[#2d2d2d] text-white overflow-y-auto">
       <div className="px-4 py-2">
         <img src={Logo} className="cursor-pointer" onClick={() => navigate(Page.Home)} />
-        <div className="flex gap-4 items-center my-2">
-          <img src={IcProfile} />
-          <div>{userName}</div>
-        </div>
+      </div>
+      <div
+        className="flex gap-4 items-center px-4 py-2 cursor-pointer hover:bg-gray-500"
+        onClick={() => navigate(Page.Profile)}
+      >
+        <img src={IcProfile} />
+        <div>{userName}</div>
       </div>
       <Divider className="bg-gray-600" />
-      <div className="p-4">
-        <div>Overall</div>
-        <div>Projects</div>
-        <div>Upload</div>
-        <div>Practice Room</div>
-        <div>Notifications</div>
-        <div>Explore</div>
+      <div className="px-4 py-2 cursor-pointer hover:bg-gray-500">Overall</div>
+      <div className="px-4 py-2 cursor-pointer hover:bg-gray-500">Projects</div>
+      <div
+        className="px-4 py-2 cursor-pointer hover:bg-gray-500"
+        onClick={() => navigate(Page.Upload)}
+      >
+        Upload
       </div>
+      <div className="px-4 py-2 cursor-pointer hover:bg-gray-500">Practice Room</div>
+      <div className="px-4 py-2 cursor-pointer hover:bg-gray-500">Notifications</div>
+      <div className="px-4 py-2 cursor-pointer hover:bg-gray-500">Explore</div>
       <Divider className="bg-gray-600" />
-      <div className="p-4">
-        <div>GROUPS</div>
-        <div>Lyrics</div>
-        <div>Music</div>
-        <div>Add Group</div>
-      </div>
+      <div className="px-4 py-2 cursor-pointer hover:bg-gray-500">GROUPS</div>
+      <div className="px-4 py-2 cursor-pointer hover:bg-gray-500">Lyrics</div>
+      <div className="px-4 py-2 cursor-pointer hover:bg-gray-500">Music</div>
+      <div className="px-4 py-2 cursor-pointer hover:bg-gray-500">Add Group</div>
       <Divider className="bg-gray-600" />
-      <div className="p-4 cursor-pointer hover:bg-gray-500" onClick={logout}>
+      <div className="px-4 py-2 cursor-pointer hover:bg-gray-500" onClick={logout}>
         Sign out
       </div>
     </div>

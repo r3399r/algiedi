@@ -27,3 +27,12 @@ export type ResetPasswordForm = {
   password: string;
   confirmPassword: string;
 };
+
+export type UploadTrackForm = {
+  name: string;
+  description: string;
+  theme: string;
+  genre: string;
+  language: string;
+  caption: string;
+};

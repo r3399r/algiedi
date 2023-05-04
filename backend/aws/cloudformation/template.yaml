@@ -316,6 +316,10 @@ Resources:
                 }
             ]
           }'
+  S3BucketStorage:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub ${Project}-${TargetEnvr}-storage
   #######################################
   ##### SNS Topic and Subscriptions #####
   #######################################

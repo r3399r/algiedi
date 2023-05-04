@@ -8,6 +8,7 @@ export type Props = InputHTMLAttributes<HTMLInputElement> & {
   regex?: RegExp;
   startsWith?: string;
   appearance?: 'outline' | 'underline';
+  divClassName?: string;
 };
 
 const Input = forwardRef<HTMLInputElement, Props>(
@@ -21,6 +22,7 @@ const Input = forwardRef<HTMLInputElement, Props>(
       regex,
       defaultValue,
       className,
+      divClassName,
       startsWith,
       appearance = 'outline',
       ...props
@@ -36,7 +38,7 @@ const Input = forwardRef<HTMLInputElement, Props>(
     };
 
     return (
-      <div>
+      <div className={divClassName}>
         {label && (
           <div
             className={classNames('text-[14px] leading-normal text-navy-700 mb-[5px]', {

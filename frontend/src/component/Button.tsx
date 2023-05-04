@@ -15,6 +15,7 @@ const Button = ({ appearance = 'primary', className, ...props }: Props) => (
       'border-[1px] border-solid border-black text-black bg-transparent hover:bg-[#00c3ff] hover:border-[#00c3ff] hover:text-white disabled:bg-white disabled:border-black disabled:text-black disabled:opacity-30':
         appearance === 'border',
     })}
+    type="button"
     {...props}
   />
 );
