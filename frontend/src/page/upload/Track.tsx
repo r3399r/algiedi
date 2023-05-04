@@ -123,7 +123,7 @@ const Track = () => {
         }}
         ref={coverInputRef}
         className="hidden"
-        accept="image/png,image/jpeg"
+        accept="image/jpeg"
         multiple={false}
       />
     </>
