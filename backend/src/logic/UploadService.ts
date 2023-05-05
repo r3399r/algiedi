@@ -1,5 +1,5 @@
 import { S3 } from 'aws-sdk';
-import { fileTypeFromBuffer } from 'file-type';
+// import { fileTypeFromBuffer } from 'file-type';
 import { inject, injectable } from 'inversify';
 import { v4 as uuidv4 } from 'uuid';
 import { DbAccess } from 'src/access/DbAccess';
@@ -41,6 +41,8 @@ export class UploadService {
 
   private async s3Upload(data: string, fileId: string) {
     const buffer = Buffer.from(data, 'base64');
+    // workaround for ES module
+    const { fileTypeFromBuffer } = require('file-type'); // eslint-disable-line
     const res = await fileTypeFromBuffer(buffer);
     const bucket = `${process.env.PROJECT}-${process.env.ENVR}-storage`;
     const key = `${fileId}.${res?.ext}`;

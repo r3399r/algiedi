@@ -4,6 +4,7 @@ import Button from 'src/component/Button';
 import Footer from 'src/component/Footer';
 import Form from 'src/component/Form';
 import FormInput from 'src/component/FormInput';
+import FormTextarea from 'src/component/FormTextarea';
 import IcFacebook from 'src/image/ic-facebook.svg';
 import IcInstagram from 'src/image/ic-instagram.svg';
 import IcInvite from 'src/image/ic-invite.svg';
@@ -67,7 +68,7 @@ const ContactUs = () => {
               </div>
             </div>
             <FormInput className="my-5 w-full" name="email" placeholder="Email" required />
-            <FormInput name="message" placeholder="Message..." required />
+            <FormTextarea name="message" placeholder="Message..." required />
             <div className="text-center mt-5">
               <Button appearance="border" type="submit">
                 Send

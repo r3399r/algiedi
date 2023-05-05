@@ -4,9 +4,10 @@ import Button from 'src/component/Button';
 import Checkbox from 'src/component/Checkbox';
 import Form from 'src/component/Form';
 import FormInput from 'src/component/FormInput';
+import FormTextarea from 'src/component/FormTextarea';
 import Input from 'src/component/Input';
-import Textarea from 'src/component/Textarea';
 import { UploadTrackForm } from 'src/model/Form';
+import { uploadTrack } from 'src/service/UploadUsService';
 
 const Track = () => {
   const [checkOriginal, setCheckOriginal] = useState<boolean>(true);
@@ -17,10 +18,16 @@ const Track = () => {
   const [trackFile, setTrackFile] = useState<File>();
   const [tabFile, setTabFile] = useState<File>();
   const [coverFile, setCoverFile] = useState<File>();
+  const [errorTrackFile, setErrorTrackFile] = useState<boolean>(false);
   const methods = useForm<UploadTrackForm>();
 
   const onSubmit = (data: UploadTrackForm) => {
-    console.log(data);
+    if (trackFile === undefined) {
+      setErrorTrackFile(true);
+
+      return;
+    }
+    uploadTrack(data, { track: trackFile, tab: tabFile ?? null, cover: coverFile ?? null });
   };
 
   return (
@@ -34,12 +41,17 @@ const Track = () => {
               placeholder="Name of your creation"
               required
             />
-            <Textarea className="h-[240px]" label="Song Description" required />
+            <FormTextarea
+              name="description"
+              className="h-[240px]"
+              label="Song Description"
+              required
+            />
           </div>
-          <div className="w-2/5">
-            <FormInput name="theme" className="mb-4" label="Theme" required />
-            <FormInput name="genre" className="mb-4" label="Genre" required />
-            <FormInput name="language" className="mb-4" label="Language" required />
+          <div className="w-2/5 flex flex-col gap-4">
+            <FormInput name="theme" label="Theme" required />
+            <FormInput name="genre" label="Genre" required />
+            <FormInput name="language" label="Language" required />
             <FormInput name="caption" label="Caption" required />
           </div>
         </div>
@@ -51,6 +63,7 @@ const Track = () => {
                 divClassName="w-3/5"
                 value={trackFile?.name ?? ''}
                 onClick={() => trackInputRef.current?.click()}
+                error={errorTrackFile}
               />
               <Button onClick={() => trackInputRef.current?.click()}>Browse...</Button>
             </div>
@@ -100,6 +113,7 @@ const Track = () => {
         type="file"
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
           if (e.target.files && e.target.files.length === 1) setTrackFile(e.target.files[0]);
+          setErrorTrackFile(false);
         }}
         ref={trackInputRef}
         className="hidden"

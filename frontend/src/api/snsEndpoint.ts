@@ -1,4 +1,4 @@
-import { PostSnsRequest } from 'src/model/api/Sns';
+import { PostSnsRequest } from 'src/model/backend/api/Sns';
 import http from 'src/util/http';
 
 const postSns = async (data: PostSnsRequest) =>

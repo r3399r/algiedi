@@ -1,5 +1,5 @@
 import snsEndpoint from 'src/api/snsEndpoint';
-import { PostSnsRequest } from 'src/model/api/Sns';
+import { PostSnsRequest } from 'src/model/backend/api/Sns';
 import { dispatch } from 'src/redux/store';
 import { finishWaiting, startWaiting } from 'src/redux/uiSlice';
 

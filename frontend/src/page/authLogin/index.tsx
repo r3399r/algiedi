@@ -71,7 +71,7 @@ const AuthLogin = () => {
               </div>
             </div>
             <div className="text-center mt-10">
-              <Button>Login</Button>
+              <Button type="submit">Login</Button>
             </div>
           </Form>
         </div>
