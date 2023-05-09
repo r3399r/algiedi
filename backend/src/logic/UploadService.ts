@@ -14,12 +14,16 @@ import {
 import { LyricsEntity } from 'src/model/entity/LyricsEntity';
 import { ProjectEntity } from 'src/model/entity/ProjectEntity';
 import { TrackEntity } from 'src/model/entity/TrackEntity';
+import { cognitoSymbol } from 'src/util/LambdaSetup';
 
 /**
  * Service class for Uplaod
  */
 @injectable()
 export class UploadService {
+  @inject(cognitoSymbol)
+  private readonly cognitoUserId!: string;
+
   @inject(S3)
   private readonly s3!: S3;
 
@@ -60,6 +64,7 @@ export class UploadService {
 
   private async uploadLyrics(data: UploadLyrics, projectId: string) {
     const lyrics = new LyricsEntity();
+    lyrics.userId = this.cognitoUserId;
     lyrics.lyrics = data.lyrics;
     lyrics.projectId = projectId;
     lyrics.inspiredProjectId = data.inspiredProjectId;
@@ -69,6 +74,7 @@ export class UploadService {
 
   private async uploadTrack(data: UploadTrack, projectId: string) {
     const track = new TrackEntity();
+    track.userId = this.cognitoUserId;
     track.projectId = projectId;
     track.inspiredProjectId = data.inspiredProjectId;
 
@@ -99,6 +105,7 @@ export class UploadService {
       // create new project if no inspired project
       if (data.inspiredProjectId === null) {
         const project = new ProjectEntity();
+        project.userId = this.cognitoUserId;
         project.name = data.name;
         project.description = data.description;
         project.theme = data.theme;

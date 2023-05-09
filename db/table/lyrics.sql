@@ -1,5 +1,6 @@
 CREATE TABLE lyrics (
 	id VARCHAR(36) NOT NULL,
+	user_id VARCHAR(36) NOT NULL,
 	lyrics VARCHAR(255) NOT NULL,
 	project_id VARCHAR(36) NOT NULL,
 	inspired_project_id VARCHAR(36),

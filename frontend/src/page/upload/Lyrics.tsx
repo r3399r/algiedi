@@ -1,14 +1,18 @@
 import { ChangeEvent, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
 import Button from 'src/component/Button';
 import Checkbox from 'src/component/Checkbox';
 import Form from 'src/component/Form';
 import FormInput from 'src/component/FormInput';
+import FormTextarea from 'src/component/FormTextarea';
 import Input from 'src/component/Input';
-import Textarea from 'src/component/Textarea';
 import { UploadLyricsForm } from 'src/model/Form';
+import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
+import { uploadLyrics } from 'src/service/UploadUsService';
 
 const Lyrics = () => {
+  const dispatch = useDispatch();
   const [checkOriginal, setCheckOriginal] = useState<boolean>(true);
   const [checkInspiration, setCheckInspiration] = useState<boolean>(false);
   const coverInputRef = useRef<HTMLInputElement>(null);
@@ -16,7 +20,9 @@ const Lyrics = () => {
   const methods = useForm<UploadLyricsForm>();
 
   const onSubmit = (data: UploadLyricsForm) => {
-    console.log(data);
+    uploadLyrics(data, coverFile ?? null)
+      .then(() => dispatch(openSuccessSnackbar('Uploaded Successfully')))
+      .catch((err) => dispatch(openFailSnackbar(err)));
   };
 
   return (
@@ -30,8 +36,13 @@ const Lyrics = () => {
               placeholder="Name of your creation"
               required
             />
-            <Textarea className="h-[100px]" label="Song Description" required />
-            <Textarea className="h-[140px]" label="Lyrics" required />
+            <FormTextarea
+              name="description"
+              className="h-[100px]"
+              label="Song Description"
+              required
+            />
+            <FormTextarea name="lyrics" className="h-[140px]" label="Lyrics" required />
           </div>
           <div className="w-2/5">
             <FormInput name="theme" className="mb-4" label="Theme" required />

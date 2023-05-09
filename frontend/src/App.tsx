@@ -1,10 +1,18 @@
-import { useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Navbar from './component/Navbar';
 import SideMenu from './component/SideMenu';
-import { DashboardPage } from './constant/Page';
+import { DashboardPage, Page } from './constant/Page';
 import AppRoutes from './Routes';
+import { emitter } from './util/eventBus';
 
 const App = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    emitter.on('auth-expired', () => navigate(Page.Login));
+  }, []);
+
   const location = useLocation();
   const isDashboard =
     DashboardPage.find((value) => location.pathname.startsWith(value)) !== undefined;

@@ -1,5 +1,6 @@
 CREATE TABLE track (
 	id VARCHAR(36) NOT NULL,
+	user_id VARCHAR(36) NOT NULL,
 	file_uri VARCHAR(255) NOT NULL,
 	tab_file_uri VARCHAR(255) NULL,
 	project_id VARCHAR(36),

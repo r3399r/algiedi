@@ -4,6 +4,7 @@ import { PostUploadRequest } from 'src/model/api/Upload';
 import { BadRequestError, InternalServerError } from 'src/model/error';
 import { LambdaContext, LambdaEvent, LambdaOutput } from 'src/model/Lambda';
 import { errorOutput, successOutput } from 'src/util/lambdaHelper';
+import { LambdaSetup } from 'src/util/LambdaSetup';
 
 export async function upload(
   event: LambdaEvent,
@@ -11,6 +12,7 @@ export async function upload(
 ): Promise<LambdaOutput> {
   let service: UploadService | null = null;
   try {
+    LambdaSetup.setup(event);
     service = bindings.get(UploadService);
 
     let res: unknown;

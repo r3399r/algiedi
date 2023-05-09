@@ -7,6 +7,9 @@ export class ProjectEntity implements Project {
   @Generated('uuid')
   id!: string;
 
+  @Column({ type: 'uuid', name: 'user_id' })
+  userId!: string;
+
   @Column({ type: 'varchar' })
   name!: string;
 

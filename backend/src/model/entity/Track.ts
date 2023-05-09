@@ -1,5 +1,6 @@
 export type Track = {
   id: string;
+  userId: string;
   fileUri: string;
   tabFileUri: string | null;
   projectId: string;

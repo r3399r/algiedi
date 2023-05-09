@@ -106,6 +106,10 @@ Outputs:
     Value: !Sub ${CognitoUserPool}
     Export:
       Name: !Sub ${Project}-${TargetEnvr}-cognito-user-pool-id
+  UserPoolArn:
+    Value: !GetAtt CognitoUserPool.Arn
+    Export:
+      Name: !Sub ${Project}-${TargetEnvr}-cognito-user-pool-arn
   UserPoolClient:
     Value: !Sub ${CognitoUserPoolClient}
     Export:

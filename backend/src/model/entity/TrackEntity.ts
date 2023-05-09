@@ -7,6 +7,9 @@ export class TrackEntity implements Track {
   @Generated('uuid')
   id!: string;
 
+  @Column({ type: 'uuid', name: 'user_id' })
+  userId!: string;
+
   @Column({ type: 'varchar', name: 'file_uri' })
   fileUri!: string;
 

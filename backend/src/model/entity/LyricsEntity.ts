@@ -10,6 +10,9 @@ export class LyricsEntity implements Lyrics {
   @Column({ type: 'varchar' })
   lyrics!: string;
 
+  @Column({ type: 'uuid', name: 'user_id' })
+  userId!: string;
+
   @Column({ type: 'uuid', name: 'project_id' })
   projectId!: string;
 

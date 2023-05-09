@@ -1,5 +1,6 @@
 import { ChangeEvent, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
 import Button from 'src/component/Button';
 import Checkbox from 'src/component/Checkbox';
 import Form from 'src/component/Form';
@@ -7,9 +8,11 @@ import FormInput from 'src/component/FormInput';
 import FormTextarea from 'src/component/FormTextarea';
 import Input from 'src/component/Input';
 import { UploadTrackForm } from 'src/model/Form';
+import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
 import { uploadTrack } from 'src/service/UploadUsService';
 
 const Track = () => {
+  const dispatch = useDispatch();
   const [checkOriginal, setCheckOriginal] = useState<boolean>(true);
   const [checkInspiration, setCheckInspiration] = useState<boolean>(false);
   const trackInputRef = useRef<HTMLInputElement>(null);
@@ -27,7 +30,9 @@ const Track = () => {
 
       return;
     }
-    uploadTrack(data, { track: trackFile, tab: tabFile ?? null, cover: coverFile ?? null });
+    uploadTrack(data, { track: trackFile, tab: tabFile ?? null, cover: coverFile ?? null })
+      .then(() => dispatch(openSuccessSnackbar('Uploaded Successfully')))
+      .catch((err) => dispatch(openFailSnackbar(err)));
   };
 
   return (
