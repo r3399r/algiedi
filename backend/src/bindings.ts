@@ -5,6 +5,7 @@ import { DbAccess } from './access/DbAccess';
 import { LyricsAccess } from './access/LyricsAccess';
 import { ProjectAccess } from './access/ProjectAccess';
 import { TrackAccess } from './access/TrackAccess';
+import { ProjectService } from './logic/ProjectService';
 import { SnsService } from './logic/SnsService';
 import { UploadService } from './logic/UploadService';
 import { VariableService } from './logic/VariableService';
@@ -29,6 +30,7 @@ container.bind<ProjectAccess>(ProjectAccess).toSelf();
 container.bind<TrackAccess>(TrackAccess).toSelf();
 
 // service
+container.bind<ProjectService>(ProjectService).toSelf();
 container.bind<SnsService>(SnsService).toSelf();
 container.bind<UploadService>(UploadService).toSelf();
 container.bind<VariableService>(VariableService).toSelf();

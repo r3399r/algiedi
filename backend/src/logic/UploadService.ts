@@ -1,5 +1,4 @@
 import { S3 } from 'aws-sdk';
-// import { fileTypeFromBuffer } from 'file-type';
 import { inject, injectable } from 'inversify';
 import { v4 as uuidv4 } from 'uuid';
 import { DbAccess } from 'src/access/DbAccess';

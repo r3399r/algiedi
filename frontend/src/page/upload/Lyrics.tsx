@@ -9,7 +9,7 @@ import FormTextarea from 'src/component/FormTextarea';
 import Input from 'src/component/Input';
 import { UploadLyricsForm } from 'src/model/Form';
 import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
-import { uploadLyrics } from 'src/service/UploadUsService';
+import { uploadLyrics } from 'src/service/UploadService';
 
 const Lyrics = () => {
   const dispatch = useDispatch();

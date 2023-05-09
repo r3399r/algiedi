@@ -17,6 +17,15 @@ export class ProjectAccess {
     return await qr.manager.find<Project>(ProjectEntity.name);
   }
 
+  public async findByUserId(userId: string) {
+    const qr = await this.database.getQueryRunner();
+
+    return await qr.manager.find<Project>(ProjectEntity.name, {
+      where: { userId },
+      order: { createdAt: 'asc' },
+    });
+  }
+
   public async save(data: Project) {
     const qr = await this.database.getQueryRunner();
     const entity = new ProjectEntity();

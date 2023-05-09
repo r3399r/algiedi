@@ -17,6 +17,15 @@ export class TrackAccess {
     return await qr.manager.find<Track>(TrackEntity.name);
   }
 
+  public async findByUserId(userId: string) {
+    const qr = await this.database.getQueryRunner();
+
+    return await qr.manager.find<Track>(TrackEntity.name, {
+      where: { userId },
+      order: { createdAt: 'asc' },
+    });
+  }
+
   public async save(data: Track) {
     const qr = await this.database.getQueryRunner();
     const entity = new TrackEntity();

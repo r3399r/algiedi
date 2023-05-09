@@ -17,6 +17,15 @@ export class LyricsAccess {
     return await qr.manager.find<Lyrics>(LyricsEntity.name);
   }
 
+  public async findByUserId(userId: string) {
+    const qr = await this.database.getQueryRunner();
+
+    return await qr.manager.find<Lyrics>(LyricsEntity.name, {
+      where: { userId },
+      order: { createdAt: 'asc' },
+    });
+  }
+
   public async save(data: Lyrics) {
     const qr = await this.database.getQueryRunner();
     const entity = new LyricsEntity();

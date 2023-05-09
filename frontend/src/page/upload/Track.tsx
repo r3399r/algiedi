@@ -9,7 +9,7 @@ import FormTextarea from 'src/component/FormTextarea';
 import Input from 'src/component/Input';
 import { UploadTrackForm } from 'src/model/Form';
 import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
-import { uploadTrack } from 'src/service/UploadUsService';
+import { uploadTrack } from 'src/service/UploadService';
 
 const Track = () => {
   const dispatch = useDispatch();
