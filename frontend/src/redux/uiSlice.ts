@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export type UiState = {
   workload: number;
+  isLoadingProfile: boolean;
   isLogin: boolean;
   showSnackbar: boolean;
   snackbarType: 'success' | 'fail';
@@ -10,6 +11,7 @@ export type UiState = {
 
 const initialState: UiState = {
   workload: 0,
+  isLoadingProfile: false,
   isLogin: !!localStorage.getItem('token'),
   showSnackbar: false,
   snackbarType: 'success',
@@ -25,6 +27,9 @@ export const uiSlice = createSlice({
     },
     finishWaiting: (state: UiState) => {
       state.workload = state.workload - 1;
+    },
+    setLoadingProfile: (state: UiState, action: PayloadAction<boolean>) => {
+      state.isLoadingProfile = action.payload;
     },
     setIsLogin: (state: UiState, action: PayloadAction<boolean>) => {
       state.isLogin = action.payload;
@@ -48,6 +53,7 @@ export const uiSlice = createSlice({
 export const {
   startWaiting,
   finishWaiting,
+  setLoadingProfile,
   setIsLogin,
   openSuccessSnackbar,
   openFailSnackbar,

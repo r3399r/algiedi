@@ -9,7 +9,7 @@ import variableEndpoint from 'src/api/variableEndpoint';
 import { RegistrationForm } from 'src/model/Form';
 import { setMe } from 'src/redux/meSlice';
 import { dispatch, getState } from 'src/redux/store';
-import { finishWaiting, setIsLogin, startWaiting } from 'src/redux/uiSlice';
+import { finishWaiting, setIsLogin, setLoadingProfile, startWaiting } from 'src/redux/uiSlice';
 import { setVariable, VariableState } from 'src/redux/variableSlice';
 import { sleep } from 'src/util/sleep';
 
@@ -173,6 +173,11 @@ export const getUserAttributes = async () => {
 };
 
 export const loadUserAttributes = async () => {
+  const isLoadingProfile = getState().ui.isLoadingProfile;
+  if (isLoadingProfile === true) return;
+
+  dispatch(setLoadingProfile(true));
+
   const userAttributes = await getUserAttributes();
   const res: { [key: string]: string } = {};
   userAttributes.forEach((v) => {
@@ -196,6 +201,8 @@ export const loadUserAttributes = async () => {
       soundcloud: res['custom:soundcloud'],
     }),
   );
+
+  dispatch(setLoadingProfile(false));
 };
 
 export const updateUserAttributes = async (data: {

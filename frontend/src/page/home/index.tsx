@@ -23,7 +23,7 @@ const Home = () => (
         <div className="text-[40px] leading-[40px] xs:text-[60px] font-bold xs:leading-[60px] my-12">
           GoTron,
           <br />
-          create togoether
+          create together
         </div>
         <Button className="text-2xl sm:mt-10">CREATE NOW</Button>
       </div>

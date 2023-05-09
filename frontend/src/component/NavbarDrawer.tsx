@@ -1,5 +1,7 @@
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Page } from 'src/constant/Page';
+import { RootState } from 'src/redux/store';
 import Drawer, { DrawerProps } from './Drawer';
 
 type NavbarDrawerProps = DrawerProps & {
@@ -8,6 +10,7 @@ type NavbarDrawerProps = DrawerProps & {
 
 const NavbarDrawer = ({ open, onClose }: NavbarDrawerProps) => {
   const navigate = useNavigate();
+  const { isLogin } = useSelector((rootState: RootState) => rootState.ui);
 
   const goto = (path: Page) => () => {
     onClose();
@@ -18,6 +21,9 @@ const NavbarDrawer = ({ open, onClose }: NavbarDrawerProps) => {
     <Drawer anchor="right" open={open} onClose={onClose}>
       <div className="ml-auto w-[30px] h-[30px]" onClick={onClose}>
         x
+      </div>
+      <div className="pt-2 px-4 pb-1" onClick={() => navigate(isLogin ? Page.Profile : Page.Login)}>
+        Create Now
       </div>
       <div className="pt-2 px-4 pb-1" onClick={goto(Page.Explore)}>
         Explore

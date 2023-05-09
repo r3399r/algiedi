@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Page } from 'src/constant/Page';
@@ -5,11 +6,16 @@ import IcProfile from 'src/image/ic-profile.svg';
 import Logo from 'src/image/logo.svg';
 import { RootState } from 'src/redux/store';
 import { logout } from 'src/service/AuthService';
+import { loadProfileData } from 'src/service/ProfileService';
 import Divider from './Divider';
 
 const SideMenu = () => {
   const navigate = useNavigate();
   const { userName } = useSelector((rootState: RootState) => rootState.me);
+
+  useEffect(() => {
+    loadProfileData();
+  }, []);
 
   return (
     <div className="h-screen w-[256px] box-border bg-[#2d2d2d] text-white overflow-y-auto">
