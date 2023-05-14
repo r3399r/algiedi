@@ -1,5 +1,6 @@
 import { bindings } from 'src/bindings';
 import { ProjectService } from 'src/logic/ProjectService';
+import { GetProjectResponse } from 'src/model/api/Project';
 import { BadRequestError, InternalServerError } from 'src/model/error';
 import { LambdaContext, LambdaEvent, LambdaOutput } from 'src/model/Lambda';
 import { errorOutput, successOutput } from 'src/util/lambdaHelper';
@@ -14,7 +15,7 @@ export async function project(
     LambdaSetup.setup(event);
     service = bindings.get(ProjectService);
 
-    let res: unknown;
+    let res: GetProjectResponse;
 
     switch (event.resource) {
       case '/api/project':
@@ -37,7 +38,7 @@ async function apiProject(event: LambdaEvent, service: ProjectService) {
     throw new BadRequestError('headers should not be empty');
   switch (event.httpMethod) {
     case 'GET':
-      return service.getProject();
+      return service.getProjects();
     default:
       throw new InternalServerError('unknown http method');
   }

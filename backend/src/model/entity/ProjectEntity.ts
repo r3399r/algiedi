@@ -37,13 +37,18 @@ export class ProjectEntity implements Project {
   @Column({ type: 'timestamp', name: 'updated_at', default: null })
   updatedAt: string | null = null;
 
+  @Column({ type: 'timestamp', name: 'last_viewed_at', default: null })
+  lastViewedAt: string | null = null;
+
   @BeforeInsert()
   setDateCreated(): void {
     this.createdAt = new Date().toISOString();
+    this.lastViewedAt = new Date().toISOString();
   }
 
   @BeforeUpdate()
   setDateUpdated(): void {
     this.updatedAt = new Date().toISOString();
+    this.lastViewedAt = new Date().toISOString();
   }
 }

@@ -4,6 +4,7 @@ import { DbAccess } from 'src/access/DbAccess';
 import { LyricsAccess } from 'src/access/LyricsAccess';
 import { ProjectAccess } from 'src/access/ProjectAccess';
 import { TrackAccess } from 'src/access/TrackAccess';
+import { GetProjectResponse } from 'src/model/api/Project';
 import { cognitoSymbol } from 'src/util/LambdaSetup';
 
 /**
@@ -33,20 +34,36 @@ export class ProjectService {
     await this.dbAccess.cleanup();
   }
 
-  public async getProject() {
-    const project = await this.projectAccess.findByUserId(this.cognitoUserId);
-    const lyrics = await this.lyricsAccess.findByUserId(this.cognitoUserId);
-    const track = await this.trackAccess.findByUserId(this.cognitoUserId);
+  private getS3SignedUrl(uri: string | null) {
     const bucket = `${process.env.PROJECT}-${process.env.ENVR}-storage`;
 
-    const url =
-      track.length > 0
-        ? this.s3.getSignedUrl('getObject', {
-            Bucket: bucket,
-            Key: track[0].fileUri,
-          })
-        : '';
+    return uri === null
+      ? null
+      : this.s3.getSignedUrl('getObject', {
+          Bucket: bucket,
+          Key: uri,
+        });
+  }
 
-    return { project, lyrics, track, url };
+  public async getProjects(): Promise<GetProjectResponse> {
+    const projects = await this.projectAccess.findByUserId(this.cognitoUserId);
+
+    return await Promise.all(
+      projects.map(async (p) => {
+        const lyrics = await this.lyricsAccess.findByProjectId(p.id);
+        const track = await this.trackAccess.findByProjectId(p.id);
+
+        return {
+          ...p,
+          coverFileUrl: this.getS3SignedUrl(p.coverFileUri),
+          lyrics,
+          track: track.map((t) => ({
+            ...t,
+            fileUrl: this.getS3SignedUrl(t.fileUri),
+            tabFileUrl: this.getS3SignedUrl(t.tabFileUri),
+          })),
+        };
+      })
+    );
   }
 }

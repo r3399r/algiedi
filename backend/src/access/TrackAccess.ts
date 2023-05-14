@@ -17,12 +17,12 @@ export class TrackAccess {
     return await qr.manager.find<Track>(TrackEntity.name);
   }
 
-  public async findByUserId(userId: string) {
+  public async findByProjectId(projectId: string) {
     const qr = await this.database.getQueryRunner();
 
     return await qr.manager.find<Track>(TrackEntity.name, {
-      where: { userId },
-      order: { createdAt: 'asc' },
+      where: { projectId },
+      order: { createdAt: 'desc' },
     });
   }
 

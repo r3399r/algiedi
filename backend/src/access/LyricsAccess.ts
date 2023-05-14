@@ -17,12 +17,12 @@ export class LyricsAccess {
     return await qr.manager.find<Lyrics>(LyricsEntity.name);
   }
 
-  public async findByUserId(userId: string) {
+  public async findByProjectId(projectId: string) {
     const qr = await this.database.getQueryRunner();
 
     return await qr.manager.find<Lyrics>(LyricsEntity.name, {
-      where: { userId },
-      order: { createdAt: 'asc' },
+      where: { projectId },
+      order: { createdAt: 'desc' },
     });
   }
 

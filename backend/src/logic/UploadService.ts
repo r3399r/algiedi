@@ -1,6 +1,5 @@
 import { S3 } from 'aws-sdk';
 import { inject, injectable } from 'inversify';
-import { v4 as uuidv4 } from 'uuid';
 import { DbAccess } from 'src/access/DbAccess';
 import { LyricsAccess } from 'src/access/LyricsAccess';
 import { ProjectAccess } from 'src/access/ProjectAccess';
@@ -80,11 +79,15 @@ export class UploadService {
     const newTrack = await this.trackAccess.save(track);
 
     // upload file
-    const fileKey = await this.s3Upload(data.file, newTrack.id);
+    const fileKey = await this.s3Upload(data.file, `track/${newTrack.id}`);
 
     // upload tab file if exists
     let tabFileKey: string | null = null;
-    if (data.tabFile) tabFileKey = await this.s3Upload(data.tabFile, uuidv4());
+    if (data.tabFile)
+      tabFileKey = await this.s3Upload(
+        data.tabFile,
+        `track-tab/${newTrack.id}`
+      );
 
     newTrack.fileUri = fileKey;
     newTrack.tabFileUri = tabFileKey;
@@ -117,7 +120,10 @@ export class UploadService {
 
         // upload coverfile if exists
         if (data.coverFile) {
-          const key = await this.s3Upload(data.coverFile, project.id);
+          const key = await this.s3Upload(
+            data.coverFile,
+            `project/${project.id}`
+          );
           newProject.coverFileUri = key;
           await this.projectAccess.save(newProject);
         }

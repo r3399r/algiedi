@@ -10,4 +10,5 @@ export type Project = {
   coverFileUri: string | null;
   createdAt: string | null;
   updatedAt: string | null;
+  lastViewedAt: string | null;
 };
