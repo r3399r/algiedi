@@ -12,6 +12,7 @@
     "clean": "del-cli dist lib -f",
     "compile": "ttsc",
     "cp:model": "cp -R lib/src/model ../frontend/src/model/backend",
+    "copy":"run-s compile cp:*",
     "test": "jest -c jest.config.js",
     "test:coverage": "npm run test -- --coverage --verbose",
     "build": "webpack --config webpack.config.js",

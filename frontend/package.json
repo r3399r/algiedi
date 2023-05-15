@@ -15,9 +15,9 @@
     "lint": "run-s lint:*",
     "fix": "run-s fix:*",
     "clean": "del-cli dist -f",
-    "prepare": "cd ../backend && npm run compile && npm run cp:model && cd ../frontend",
+    "pre:build": "cd ../backend && npm run copy && cd ../frontend",
     "pre:commit": "npm run lint",
-    "pre:deploy": "run-s clean build"
+    "pre:deploy": "run-s clean pre:build build"
   },
   "dependencies": {
     "@emotion/react": "^11.10.6",
