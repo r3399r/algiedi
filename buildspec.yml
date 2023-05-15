@@ -10,7 +10,7 @@ phases:
   install:
     commands:
       - npm install
-  deploy:
+  build:
     commands:
       - npm run pre:deploy:backend
       - aws cloudformation package --template-file backend/aws/cloudformation/template.yaml --output-template-file packaged.yaml --s3-bucket gotron-cf-midway-ap-southeast-1
