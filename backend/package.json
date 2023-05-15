@@ -11,13 +11,13 @@
     "fix": "run-s fix:*",
     "clean": "del-cli dist lib -f",
     "compile": "ttsc",
+    "cp:model": "cp -R lib/src/model ../frontend/src/model/backend",
     "test": "jest -c jest.config.js",
     "test:coverage": "npm run test -- --coverage --verbose",
     "build": "webpack --config webpack.config.js",
     "pre:commit": "run-s lint test:coverage build",
     "pre:dev": "run-s fix test:coverage",
-    "pre:deploy": "run-s clean build",
-    "post:publish": "run-s clean compile && npm publish"
+    "pre:deploy": "run-s clean build"
   },
   "license": "ISC",
   "dependencies": {

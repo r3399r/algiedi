@@ -1,10 +1,16 @@
 version: 0.2
 
+env:
+  variables:
+    PROJECT: gotron
+    ENV: dev
+    DOMAIN: gotronmusic.com
+
 phases:
-  build:
+  install:
     commands:
-      - cd backend
       - npm install
-      - npm run pre:deploy
-      - aws cloudformation package --template-file aws/cloudformation/template.yaml --output-template-file packaged.yaml --s3-bucket gotron-cf-midway-ap-southeast-1
-      - aws cloudformation deploy --template-file packaged.yaml --stack-name $project-$env-stack --parameter-overrides TargetEnvr=$env Project=$project Domain=$domain --no-fail-on-empty-changeset --s3-bucket gotron-cf-midway-ap-southeast-1 --capabilities CAPABILITY_NAMED_IAM
+  deploy:
+      - npm run pre:deploy:backend
+      - aws cloudformation package --template-file backend/aws/cloudformation/template.yaml --output-template-file packaged.yaml --s3-bucket gotron-cf-midway-ap-southeast-1
+      - aws cloudformation deploy --template-file packaged.yaml --stack-name $PROJECT-$ENV-stack --parameter-overrides TargetEnvr=$ENV Project=$PROJECT Domain=$DOMAIN --no-fail-on-empty-changeset --s3-bucket gotron-cf-midway-ap-southeast-1 --capabilities CAPABILITY_NAMED_IAM
