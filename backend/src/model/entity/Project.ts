@@ -1,6 +1,7 @@
 export type Project = {
   id: string;
   userId: string;
+  status: string;
   name: string;
   description: string;
   theme: string;

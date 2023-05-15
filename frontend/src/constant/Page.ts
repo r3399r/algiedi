@@ -11,10 +11,11 @@ export enum Page {
   Questionnaire = '/auth/questionnaire',
   Forget = '/auth/forget',
   ForgetReset = '/auth/forget/reset',
+  Overall = '/overall',
   Profile = '/profile',
   Project = '/project',
   Upload = '/upload',
 }
 
 // pages with sideMenu
-export const DashboardPage = [Page.Profile, Page.Upload, Page.Project];
+export const DashboardPage = [Page.Overall, Page.Profile, Page.Upload, Page.Project];

@@ -1,21 +1,25 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { GetProjectResponse } from 'src/model/backend/model/api/Project';
 import { openFailSnackbar } from 'src/redux/uiSlice';
-import { getProject } from 'src/service/ProjectService';
+import { getLatestProject } from 'src/service/ProjectService';
 
 const Project = () => {
   const dispatch = useDispatch();
+  const [myProject, setMyProject] = useState<GetProjectResponse[0] | null>();
   const [trackUrl, setTrackUrl] = useState<string>();
 
   useEffect(() => {
-    getProject()
-      .then((res) => setTrackUrl(res?.url ?? 'xx'))
+    getLatestProject()
+      .then((res) => setMyProject(res))
       .catch((err) => dispatch(openFailSnackbar(err)));
   }, []);
 
   const onLoadMetadata = (e: ChangeEvent<HTMLAudioElement>) => {
     console.log(e.target.duration);
   };
+
+  if (myProject === null) return <>Please upload a content first.</>;
 
   return (
     <>

@@ -4,6 +4,7 @@ import { DbAccess } from 'src/access/DbAccess';
 import { LyricsAccess } from 'src/access/LyricsAccess';
 import { ProjectAccess } from 'src/access/ProjectAccess';
 import { TrackAccess } from 'src/access/TrackAccess';
+import { Status } from 'src/constant/Project';
 import {
   PostUploadRequest,
   UploadLyrics,
@@ -108,6 +109,7 @@ export class UploadService {
       if (data.inspiredProjectId === null) {
         const project = new ProjectEntity();
         project.userId = this.cognitoUserId;
+        project.status = Status.Created;
         project.name = data.name;
         project.description = data.description;
         project.theme = data.theme;

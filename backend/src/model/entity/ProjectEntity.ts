@@ -1,4 +1,5 @@
 import { BeforeInsert, BeforeUpdate, Column, Entity, Generated } from 'typeorm';
+import { Status } from 'src/constant/Project';
 import { Project } from './Project';
 
 @Entity({ name: 'project' })
@@ -9,6 +10,9 @@ export class ProjectEntity implements Project {
 
   @Column({ type: 'uuid', name: 'user_id' })
   userId!: string;
+
+  @Column({ type: 'varchar' })
+  status!: Status;
 
   @Column({ type: 'varchar' })
   name!: string;

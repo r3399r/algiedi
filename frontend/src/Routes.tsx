@@ -13,6 +13,7 @@ import ContactUs from './page/contactUs';
 import Explore from './page/explore';
 import Faq from './page/faq';
 import Home from './page/home';
+import Overall from './page/overall/indext';
 import Profile from './page/profile';
 import Project from './page/project';
 import Upload from './page/upload';
@@ -46,6 +47,7 @@ const AppRoutes = () => {
       {isLogin && (
         <>
           <Route path={Page.Questionnaire} element={<AuthQuestionnaire />} />
+          <Route path={Page.Overall} element={<Overall />} />
           <Route path={Page.Profile} element={<Profile />} />
           <Route path={Page.Project} element={<Project />} />
           <Route path={Page.Upload} element={<Upload />} />

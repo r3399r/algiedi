@@ -7,9 +7,6 @@ Globals:
   Function:
       Timeout: 30  # in seconds
 Parameters:
-  LambdaExecutionRole:
-    Type: String
-    Default: BackendProcess
   Project:
     Type: String
   TargetEnvr:
@@ -19,6 +16,26 @@ Parameters:
 Conditions: 
   IsProd: !Equals [ !Ref TargetEnvr, prod ]
 Resources:
+  ##########################################
+  ##### AWS IAM Role to execute lambda #####
+  ##########################################
+  ExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      RoleName: !Sub ${Project}-${TargetEnvr}-lambda-execution-role
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/AmazonSNSFullAccess
   ##############################################
   ##### API Gateway and associated Lambdas #####
   ##############################################
@@ -273,7 +290,7 @@ Resources:
       Handler: index.cognitoMessage
       Runtime: nodejs18.x
       FunctionName: !Sub ${Project}-${TargetEnvr}-cognitoMessage
-      Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/${LambdaExecutionRole}"
+      Role: !GetAtt ExecutionRole.Arn
       CodeUri: ../../dist/webpack/lambda
       MemorySize: 128
       Environment:
@@ -296,7 +313,7 @@ Resources:
       Handler: index.project
       Runtime: nodejs18.x
       FunctionName: !Sub ${Project}-${TargetEnvr}-project
-      Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/${LambdaExecutionRole}"
+      Role: !GetAtt ExecutionRole.Arn
       CodeUri: ../../dist/webpack/lambda
       MemorySize: 128
       VpcConfig:
@@ -332,7 +349,7 @@ Resources:
       Handler: index.sns
       Runtime: nodejs18.x
       FunctionName: !Sub ${Project}-${TargetEnvr}-sns
-      Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/${LambdaExecutionRole}"
+      Role: !GetAtt ExecutionRole.Arn
       CodeUri: ../../dist/webpack/lambda
       MemorySize: 128
       Environment:
@@ -354,7 +371,7 @@ Resources:
       Handler: index.upload
       Runtime: nodejs18.x
       FunctionName: !Sub ${Project}-${TargetEnvr}-upload
-      Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/${LambdaExecutionRole}"
+      Role: !GetAtt ExecutionRole.Arn
       CodeUri: ../../dist/webpack/lambda
       MemorySize: 128
       VpcConfig:
@@ -389,7 +406,7 @@ Resources:
       Handler: index.variable
       Runtime: nodejs18.x
       FunctionName: !Sub ${Project}-${TargetEnvr}-variable
-      Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/${LambdaExecutionRole}"
+      Role: !GetAtt ExecutionRole.Arn
       CodeUri: ../../dist/webpack/lambda
       MemorySize: 128
       Environment:
