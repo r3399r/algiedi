@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { GetProjectResponse } from 'src/model/backend/model/api/Project';
+import { GetProjectResponse } from 'src/model/backend/api/Project';
 
 // define the type of state
 export type ApiState = {

@@ -1,4 +1,4 @@
-import { GetProjectResponse } from 'src/model/backend/model/api/Project';
+import { GetProjectResponse } from 'src/model/backend/api/Project';
 import { dispatch, getState } from 'src/redux/store';
 import { finishWaiting, startWaiting } from 'src/redux/uiSlice';
 import { loadProjects } from './OverallService';

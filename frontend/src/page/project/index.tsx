@@ -1,6 +1,6 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { GetProjectResponse } from 'src/model/backend/model/api/Project';
+import { GetProjectResponse } from 'src/model/backend/api/Project';
 import { openFailSnackbar } from 'src/redux/uiSlice';
 import { getLatestProject } from 'src/service/ProjectService';
 
