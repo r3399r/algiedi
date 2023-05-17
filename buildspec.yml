@@ -15,4 +15,3 @@ phases:
       - aws cloudformation deploy --template-file packaged.yaml --stack-name $PROJECT-$ENV-stack --parameter-overrides TargetEnvr=$ENV Project=$PROJECT Domain=$DOMAIN --no-fail-on-empty-changeset --s3-bucket gotron-cf-midway-ap-southeast-1 --capabilities CAPABILITY_NAMED_IAM
       - npm run pre:deploy:frontend
       - aws s3 sync frontend/dist s3://$PROJECT-$ENV --delete --cache-control no-cache
-
