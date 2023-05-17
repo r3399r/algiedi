@@ -11,6 +11,5 @@ CREATE TABLE IF NOT EXISTS project (
 	cover_file_uri VARCHAR(255),
 	created_at TIMESTAMP NULL,
 	updated_at TIMESTAMP NULL,
-	last_viewed_at TIMESTAMP NULL,
 	PRIMARY KEY (id ASC)
 );

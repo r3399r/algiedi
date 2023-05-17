@@ -92,6 +92,12 @@ Resources:
         - Name: soundcloud
           AttributeDataType: String
           Mutable: true
+        - Name: lastViewedProjectId
+          AttributeDataType: String
+          Mutable: true
+        - Name: last_project_id
+          AttributeDataType: String
+          Mutable: true
       UsernameAttributes: [email]
       UserPoolName: !Sub ${Project}-${TargetEnvr}
       LambdaConfig:

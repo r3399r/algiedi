@@ -1,4 +1,5 @@
 export enum Status {
   Created = 'created',
-  InPorgress = 'in-progress',
+  InProgress = 'in-progress',
+  Published = 'published',
 }
