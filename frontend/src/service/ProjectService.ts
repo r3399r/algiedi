@@ -1,4 +1,5 @@
-import { GetProjectResponse } from 'src/model/backend/api/Project';
+import projectEndpoint from 'src/api/projectEndpoint';
+import { GetProjectResponse, PutProjectRequest } from 'src/model/backend/api/Project';
 import { CombinedProject } from 'src/model/backend/Project';
 import { dispatch, getState } from 'src/redux/store';
 import { finishWaiting, startWaiting } from 'src/redux/uiSlice';
@@ -49,6 +50,20 @@ export const getProject = async (projectId?: string): Promise<CombinedProject | 
     await updateLastProjectId(myProjects[0].id);
 
     return myProjects[0];
+  } catch (err) {
+    throw (err as Error).message;
+  } finally {
+    dispatch(finishWaiting());
+  }
+};
+
+export const updateProject = async (id: string, data: PutProjectRequest) => {
+  try {
+    dispatch(startWaiting());
+    await projectEndpoint.putProject(id, data);
+    const projects = await loadProjects();
+
+    return projects.find((v) => v.id === id);
   } catch (err) {
     throw (err as Error).message;
   } finally {

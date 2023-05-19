@@ -4,7 +4,9 @@ import { DbAccess } from 'src/access/DbAccess';
 import { LyricsAccess } from 'src/access/LyricsAccess';
 import { ProjectAccess } from 'src/access/ProjectAccess';
 import { TrackAccess } from 'src/access/TrackAccess';
-import { GetProjectResponse } from 'src/model/api/Project';
+import { GetProjectResponse, PutProjectRequest } from 'src/model/api/Project';
+import { ProjectEntity } from 'src/model/entity/ProjectEntity';
+import { UnauthorizedError } from 'src/model/error';
 import { cognitoSymbol } from 'src/util/LambdaSetup';
 
 /**
@@ -65,5 +67,25 @@ export class ProjectService {
         };
       })
     );
+  }
+
+  public async updateProject(
+    id: string,
+    data: PutProjectRequest
+  ): Promise<void> {
+    const oldProject = await this.projectAccess.findOneById(id);
+    if (oldProject === null || oldProject.userId !== this.cognitoUserId)
+      throw new UnauthorizedError('unauthorized');
+
+    const project = new ProjectEntity();
+    project.id = id;
+    project.name = data.name ?? oldProject.name;
+    project.description = data.description ?? oldProject.description;
+    project.theme = data.theme ?? oldProject.theme;
+    project.genre = data.genre ?? oldProject.genre;
+    project.language = data.language ?? oldProject.language;
+    project.caption = data.caption ?? oldProject.caption;
+
+    await this.projectAccess.save(project);
   }
 }
