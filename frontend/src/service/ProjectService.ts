@@ -1,19 +1,54 @@
 import { GetProjectResponse } from 'src/model/backend/api/Project';
+import { CombinedProject } from 'src/model/backend/Project';
 import { dispatch, getState } from 'src/redux/store';
 import { finishWaiting, startWaiting } from 'src/redux/uiSlice';
+import { getUserAttributes } from './AuthService';
 import { loadProjects } from './OverallService';
+import { updateLastProjectId } from './UploadService';
 
-export const getLatestProject = async (): Promise<GetProjectResponse[0] | null> => {
+export const getProject = async (projectId?: string): Promise<CombinedProject | null> => {
   try {
     dispatch(startWaiting());
 
-    const { projects } = getState().api;
+    const {
+      api: { projects },
+      me: { lastProjectId },
+    } = getState();
     let myProjects: GetProjectResponse;
 
     if (projects !== undefined) myProjects = projects;
     else myProjects = await loadProjects();
 
-    return myProjects.length > 0 ? myProjects[0] : null;
+    if (myProjects.length === 0) return null;
+
+    // save and return specific project accordingly
+    if (projectId) {
+      const requiredProject = myProjects.find((v) => v.id === projectId);
+      if (requiredProject) {
+        await updateLastProjectId(projectId);
+
+        return requiredProject;
+      }
+    }
+
+    // return project saved in redux
+    if (lastProjectId) {
+      const requiredProject = myProjects.find((v) => v.id === lastProjectId);
+      if (requiredProject) return requiredProject;
+    }
+
+    // return project saved in cognito for newly refresh page
+    const userAttributes = await getUserAttributes();
+    const latestProjectId = userAttributes.find((v) => v.name === 'custom:last_project_id')?.value;
+    if (latestProjectId) {
+      const requiredProject = myProjects.find((v) => v.id === latestProjectId);
+      if (requiredProject) return requiredProject;
+    }
+
+    // save and return first project if none of above satisfies
+    await updateLastProjectId(myProjects[0].id);
+
+    return myProjects[0];
   } catch (err) {
     throw (err as Error).message;
   } finally {

@@ -14,6 +14,7 @@ export type MeState = {
   instagram: string;
   youtube: string;
   soundcloud: string;
+  lastProjectId: string | undefined;
 };
 
 const initialState: MeState = {
@@ -30,6 +31,7 @@ const initialState: MeState = {
   instagram: '',
   youtube: '',
   soundcloud: '',
+  lastProjectId: '',
 };
 
 export const meSlice = createSlice({
@@ -50,10 +52,14 @@ export const meSlice = createSlice({
       state.instagram = action.payload.instagram;
       state.youtube = action.payload.youtube;
       state.soundcloud = action.payload.soundcloud;
+      state.lastProjectId = action.payload.lastProjectId;
+    },
+    setLastProjectId: (state: MeState, action: PayloadAction<string>) => {
+      state.lastProjectId = action.payload;
     },
   },
 });
 
-export const { setMe } = meSlice.actions;
+export const { setMe, setLastProjectId } = meSlice.actions;
 
 export default meSlice.reducer;

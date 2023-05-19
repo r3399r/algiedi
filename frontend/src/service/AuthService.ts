@@ -209,6 +209,7 @@ export const loadUserAttributes = async () => {
       instagram: res['custom:instagram'],
       youtube: res['custom:youtube'],
       soundcloud: res['custom:soundcloud'],
+      lastProjectId: res['custom:last_project_id'],
     }),
   );
 
