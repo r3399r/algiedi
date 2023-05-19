@@ -47,7 +47,7 @@ const getCognitoUser = async (email: string) => {
   });
 };
 
-export const getCurrentUser = async () => {
+const getCurrentUser = async () => {
   try {
     const userPool = await getUserPool();
     const cognitoUser = userPool.getCurrentUser();
@@ -65,6 +65,16 @@ export const getCurrentUser = async () => {
     localStorage.removeItem('token');
     throw err;
   }
+};
+
+export const updateCognitoAttributes = async (cognitoUserAttributes: CognitoUserAttribute[]) => {
+  const cognitoUser = await getCurrentUser();
+  await new Promise((resolve, reject) => {
+    cognitoUser.updateAttributes(cognitoUserAttributes, (err) => {
+      if (err) reject(err);
+      else resolve(undefined);
+    });
+  });
 };
 
 const authenticateUser = async (email: string, password: string): Promise<CognitoUserSession> => {
@@ -228,13 +238,7 @@ export const updateUserAttributes = async (data: {
       Value: 'true',
     });
 
-    const cognitoUser = await getCurrentUser();
-    await new Promise((resolve, reject) => {
-      cognitoUser.updateAttributes([role, language, bio, tag, questionnaireFilled], (err) => {
-        if (err) reject(err);
-        else resolve(undefined);
-      });
-    });
+    await updateCognitoAttributes([role, language, bio, tag, questionnaireFilled]);
   } finally {
     dispatch(finishWaiting());
   }

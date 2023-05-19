@@ -1,3 +1,5 @@
+import { Project } from 'src/model/entity/Project';
+
 type UploadCommon = {
   name: string;
   description: string;
@@ -20,3 +22,5 @@ export type UploadLyrics = UploadCommon & {
   lyrics: string;
 };
 export type PostUploadRequest = UploadLyrics | UploadTrack;
+
+export type PostUploadResponse = Project;

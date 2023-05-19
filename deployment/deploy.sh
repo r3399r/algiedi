@@ -30,6 +30,7 @@ echo ===========================================================================
 
 echo prepare frontend files...
 npm run compile
+rm -rf ../frontend/src/model/backend
 cp -R lib/src/model ../frontend/src/model/backend
 echo ====================================================================================
 

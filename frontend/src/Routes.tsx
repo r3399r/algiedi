@@ -13,7 +13,7 @@ import ContactUs from './page/contactUs';
 import Explore from './page/explore';
 import Faq from './page/faq';
 import Home from './page/home';
-import Overall from './page/overall/indext';
+import Overall from './page/overall';
 import Profile from './page/profile';
 import Project from './page/project';
 import Upload from './page/upload';

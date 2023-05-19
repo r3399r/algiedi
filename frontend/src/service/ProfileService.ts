@@ -1,7 +1,7 @@
 import { CognitoUserAttribute } from 'amazon-cognito-identity-js';
 import { dispatch } from 'src/redux/store';
 import { finishWaiting, startWaiting } from 'src/redux/uiSlice';
-import { getCurrentUser, loadUserAttributes } from './AuthService';
+import { loadUserAttributes, updateCognitoAttributes } from './AuthService';
 
 export const loadProfileData = async () => {
   try {
@@ -59,26 +59,17 @@ export const editProfile = async (
       Value: soundcloud,
     });
 
-    const cognitoUser = await getCurrentUser();
-    await new Promise((resolve, reject) => {
-      cognitoUser.updateAttributes(
-        [
-          roleAttribute,
-          languageAttribute,
-          bioAttribute,
-          ageAttribute,
-          tagAttribute,
-          facebookAttribute,
-          instagramAttribute,
-          youtubeAttribute,
-          soundcloudAttribute,
-        ],
-        (err) => {
-          if (err) reject(err);
-          else resolve(undefined);
-        },
-      );
-    });
+    await updateCognitoAttributes([
+      roleAttribute,
+      languageAttribute,
+      bioAttribute,
+      ageAttribute,
+      tagAttribute,
+      facebookAttribute,
+      instagramAttribute,
+      youtubeAttribute,
+      soundcloudAttribute,
+    ]);
   } catch (err) {
     throw (err as Error).message;
   } finally {

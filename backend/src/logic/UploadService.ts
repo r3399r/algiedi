@@ -7,12 +7,15 @@ import { TrackAccess } from 'src/access/TrackAccess';
 import { Status } from 'src/constant/Project';
 import {
   PostUploadRequest,
+  PostUploadResponse,
   UploadLyrics,
   UploadTrack,
 } from 'src/model/api/Upload';
 import { LyricsEntity } from 'src/model/entity/LyricsEntity';
+import { Project } from 'src/model/entity/Project';
 import { ProjectEntity } from 'src/model/entity/ProjectEntity';
 import { TrackEntity } from 'src/model/entity/TrackEntity';
+import { InternalServerError } from 'src/model/error';
 import { cognitoSymbol } from 'src/util/LambdaSetup';
 
 /**
@@ -95,30 +98,30 @@ export class UploadService {
     await this.trackAccess.save(newTrack);
   }
 
-  public async upload(data: PostUploadRequest) {
+  public async upload(data: PostUploadRequest): Promise<PostUploadResponse> {
     try {
       await this.dbAccess.startTransaction();
 
       // should check if inspired project completed or not
       // if yes -> create new project
       // if no -> join project
-      let projectId = 'xx';
+      let project: Project | null = null;
       // this projectId should be replaced with correct id
 
       // create new project if no inspired project
       if (data.inspiredProjectId === null) {
-        const project = new ProjectEntity();
-        project.userId = this.cognitoUserId;
-        project.status = Status.Created;
-        project.name = data.name;
-        project.description = data.description;
-        project.theme = data.theme;
-        project.genre = data.genre;
-        project.language = data.language;
-        project.caption = data.caption;
+        const tmpProject = new ProjectEntity();
+        tmpProject.userId = this.cognitoUserId;
+        tmpProject.status = Status.Created;
+        tmpProject.name = data.name;
+        tmpProject.description = data.description;
+        tmpProject.theme = data.theme;
+        tmpProject.genre = data.genre;
+        tmpProject.language = data.language;
+        tmpProject.caption = data.caption;
 
-        const newProject = await this.projectAccess.save(project);
-        projectId = newProject.id;
+        const newProject = await this.projectAccess.save(tmpProject);
+        project = newProject;
 
         // upload coverfile if exists
         if (data.coverFile) {
@@ -131,10 +134,15 @@ export class UploadService {
         }
       }
 
-      if (data.type === 'lyrics') await this.uploadLyrics(data, projectId);
-      else if (data.type === 'track') await this.uploadTrack(data, projectId);
+      if (project === null)
+        throw new InternalServerError('project should not be null');
+
+      if (data.type === 'lyrics') await this.uploadLyrics(data, project.id);
+      else if (data.type === 'track') await this.uploadTrack(data, project.id);
 
       await this.dbAccess.commitTransaction();
+
+      return project;
     } catch (e) {
       await this.dbAccess.rollbackTransaction();
       throw e;

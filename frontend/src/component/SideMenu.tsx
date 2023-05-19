@@ -40,7 +40,7 @@ const SideMenu = () => {
         className="px-4 py-2 cursor-pointer hover:bg-gray-500"
         onClick={() => navigate(Page.Project)}
       >
-        Projects
+        Project
       </div>
       <div
         className="px-4 py-2 cursor-pointer hover:bg-gray-500"
