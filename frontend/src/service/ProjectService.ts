@@ -25,7 +25,7 @@ export const getProject = async (projectId?: string): Promise<CombinedProject | 
     if (projectId) {
       const requiredProject = myProjects.find((v) => v.id === projectId);
       if (requiredProject) {
-        await updateLastProjectId(projectId);
+        if (lastProjectId !== projectId) await updateLastProjectId(projectId);
 
         return requiredProject;
       }
