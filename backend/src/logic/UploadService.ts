@@ -69,7 +69,7 @@ export class UploadService {
     lyrics.userId = this.cognitoUserId;
     lyrics.lyrics = data.lyrics;
     lyrics.projectId = projectId;
-    lyrics.inspiredProjectId = data.inspiredProjectId;
+    lyrics.inspiredId = data.inspiredId;
 
     await this.lyricsAccess.save(lyrics);
   }
@@ -78,7 +78,7 @@ export class UploadService {
     const track = new TrackEntity();
     track.userId = this.cognitoUserId;
     track.projectId = projectId;
-    track.inspiredProjectId = data.inspiredProjectId;
+    track.inspiredId = data.inspiredId;
 
     const newTrack = await this.trackAccess.save(track);
 
@@ -106,10 +106,10 @@ export class UploadService {
       // if yes -> create new project
       // if no -> join project
       let project: Project | null = null;
-      // this projectId should be replaced with correct id
+      // this project should be replaced with correct one
 
       // create new project if no inspired project
-      if (data.inspiredProjectId === null) {
+      if (data.inspiredId === null) {
         const tmpProject = new ProjectEntity();
         tmpProject.userId = this.cognitoUserId;
         tmpProject.status = Status.Created;

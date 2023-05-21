@@ -4,7 +4,7 @@ export type Track = {
   fileUri: string;
   tabFileUri: string | null;
   projectId: string;
-  inspiredProjectId: string | null;
+  inspiredId: string | null;
   createdAt: string | null;
   updatedAt: string | null;
 };

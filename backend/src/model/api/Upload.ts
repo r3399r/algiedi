@@ -8,7 +8,7 @@ type UploadCommon = {
   language: string;
   caption: string;
   coverFile: string | null;
-  inspiredProjectId: string | null;
+  inspiredId: string | null;
 };
 
 export type UploadTrack = UploadCommon & {

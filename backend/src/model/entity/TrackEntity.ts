@@ -19,8 +19,8 @@ export class TrackEntity implements Track {
   @Column({ type: 'uuid', name: 'project_id' })
   projectId!: string;
 
-  @Column({ type: 'uuid', name: 'inspired_project_id', default: null })
-  inspiredProjectId: string | null = null;
+  @Column({ type: 'uuid', name: 'inspired_id', default: null })
+  inspiredId: string | null = null;
 
   @Column({ type: 'timestamp', name: 'created_at', default: null })
   createdAt!: string;

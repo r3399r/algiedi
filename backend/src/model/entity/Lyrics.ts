@@ -3,7 +3,7 @@ export type Lyrics = {
   userId: string;
   lyrics: string;
   projectId: string;
-  inspiredProjectId: string | null;
+  inspiredId: string | null;
   createdAt: string | null;
   updatedAt: string | null;
 };
