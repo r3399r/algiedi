@@ -38,6 +38,9 @@ export const meSlice = createSlice({
   name: 'ui',
   initialState,
   reducers: {
+    reset: (state: MeState) => {
+      state = { ...initialState };
+    },
     setMe: (state: MeState, action: PayloadAction<MeState>) => {
       state.sub = action.payload.sub;
       state.userName = action.payload.userName;
@@ -60,6 +63,6 @@ export const meSlice = createSlice({
   },
 });
 
-export const { setMe, setLastProjectId } = meSlice.actions;
+export const { reset, setMe, setLastProjectId } = meSlice.actions;
 
 export default meSlice.reducer;

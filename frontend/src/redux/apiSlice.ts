@@ -16,6 +16,9 @@ export const apiSlice = createSlice({
   name: 'api',
   initialState,
   reducers: {
+    reset: (state: ApiState) => {
+      state.projects = initialState.projects;
+    },
     setProjects: (state: ApiState, action: PayloadAction<GetProjectResponse>) => {
       state.projects = action.payload;
     },
@@ -23,6 +26,6 @@ export const apiSlice = createSlice({
 });
 
 // action creators are generated for each case reducer function
-export const { setProjects } = apiSlice.actions;
+export const { reset, setProjects } = apiSlice.actions;
 
 export default apiSlice.reducer;

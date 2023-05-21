@@ -7,7 +7,9 @@ import {
 } from 'amazon-cognito-identity-js';
 import variableEndpoint from 'src/api/variableEndpoint';
 import { RegistrationForm } from 'src/model/Form';
-import { setMe } from 'src/redux/meSlice';
+import { reset as apiReset } from 'src/redux/apiSlice';
+import { reset as meReset, setMe } from 'src/redux/meSlice';
+
 import { dispatch, getState } from 'src/redux/store';
 import { finishWaiting, setIsLogin, setLoadingProfile, startWaiting } from 'src/redux/uiSlice';
 import { setVariable, VariableState } from 'src/redux/variableSlice';
@@ -286,6 +288,8 @@ export const logout = async () => {
     cognitoUser.signOut();
     localStorage.removeItem('token');
     dispatch(setIsLogin(false));
+    dispatch(apiReset());
+    dispatch(meReset());
   } finally {
     dispatch(finishWaiting());
   }
