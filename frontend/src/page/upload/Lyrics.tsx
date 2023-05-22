@@ -13,14 +13,15 @@ import { uploadLyrics } from 'src/service/UploadService';
 
 const Lyrics = () => {
   const dispatch = useDispatch();
+  const coverInputRef = useRef<HTMLInputElement>(null);
   const [checkOriginal, setCheckOriginal] = useState<boolean>(true);
   const [checkInspiration, setCheckInspiration] = useState<boolean>(false);
-  const coverInputRef = useRef<HTMLInputElement>(null);
   const [coverFile, setCoverFile] = useState<File>();
+  const [inspiredId, setInspiredId] = useState<string>('');
   const methods = useForm<UploadLyricsForm>();
 
   const onSubmit = (data: UploadLyricsForm) => {
-    uploadLyrics(data, coverFile ?? null)
+    uploadLyrics(data, checkOriginal, coverFile ?? null, inspiredId ?? null)
       .then(() => dispatch(openSuccessSnackbar('Uploaded Successfully')))
       .catch((err) => dispatch(openFailSnackbar(err)));
   };
@@ -68,6 +69,7 @@ const Lyrics = () => {
               onChange={(event: ChangeEvent<HTMLInputElement>) => {
                 setCheckOriginal(event.target.checked);
                 setCheckInspiration(!event.target.checked);
+                setInspiredId('');
               }}
             />
             <Checkbox
@@ -78,6 +80,9 @@ const Lyrics = () => {
                 setCheckInspiration(event.target.checked);
               }}
             />
+            {checkInspiration && (
+              <Input value={inspiredId} onChange={(e) => setInspiredId(e.target.value)} />
+            )}
           </div>
         </div>
         <div className="mt-10 text-right">

@@ -1,9 +1,12 @@
-import { Lyrics } from './entity/Lyrics';
 import { Project } from './entity/Project';
-import { Track } from './entity/Track';
+import { ViewLyrics } from './entity/ViewLyrics';
+import { ViewTrack } from './entity/ViewTrack';
 
 export type CombinedProject = Project & {
-  lyrics: Lyrics[];
-  track: (Track & { fileUrl: string | null; tabFileUrl: string | null })[];
-  coverFileUrl: string | null;
+  lyrics: (ViewLyrics & { coverFileUrl: string | null })[];
+  track: (ViewTrack & {
+    fileUrl: string | null;
+    tabFileUrl: string | null;
+    coverFileUrl: string | null;
+  })[];
 };

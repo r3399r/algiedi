@@ -1,4 +1,4 @@
-export type Track = {
+export type ViewTrack = {
   id: string;
   userId: string;
   name: string;
@@ -15,4 +15,5 @@ export type Track = {
   inspiredId: string | null;
   createdAt: string | null;
   updatedAt: string | null;
+  username: string;
 };

@@ -1,20 +1,21 @@
 import classNames from 'classnames';
 import { ChangeEvent, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import IcProfile from 'src/image/ic-profile.svg';
 import { CombinedProject } from 'src/model/backend/Project';
-import { RootState } from 'src/redux/store';
 import { openFailSnackbar } from 'src/redux/uiSlice';
 import { getProject, updateProject } from 'src/service/ProjectService';
+import { compare } from 'src/util/compare';
 
 const Project = () => {
   const dispatch = useDispatch();
   const state = useLocation().state as { id: string } | null;
-  const { userName } = useSelector((rootState: RootState) => rootState.me);
   const [thisProject, setThisProject] = useState<CombinedProject | null>();
-  const [mainTrack, setMainTrack] = useState<string>();
-  const [mainLyrics, setMainLyrics] = useState<string>();
+  const [mainTrack, setMainTrack] = useState<CombinedProject['track'][0]>();
+  const [mainLyrics, setMainLyrics] = useState<CombinedProject['lyrics'][0]>();
+  const [inspiredList, setInspiredList] =
+    useState<(CombinedProject['lyrics'][0] | CombinedProject['track'][0])[]>();
   const [tab, setTab] = useState<'detail' | 'lyrics'>('detail');
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [editName, setEditName] = useState<string>('');
@@ -32,11 +33,19 @@ const Project = () => {
 
   useEffect(() => {
     if (!thisProject) return;
-    const ownerTrack = thisProject.track.filter((v) => v.userId === thisProject.userId);
-    if (ownerTrack.length > 0 && ownerTrack[0].fileUrl) setMainTrack(ownerTrack[0].fileUrl);
 
-    const ownerLyrics = thisProject.lyrics.filter((v) => v.userId === thisProject.userId);
-    if (ownerLyrics.length > 0) setMainLyrics(ownerLyrics[0].lyrics);
+    const track = thisProject.track.find((v) => v.isOriginal);
+    if (track) setMainTrack(track);
+
+    const lyrics = thisProject.lyrics.find((v) => v.isOriginal);
+    if (lyrics) setMainLyrics(lyrics);
+
+    setInspiredList(
+      [
+        ...thisProject.lyrics.filter((v) => v.id !== lyrics?.id),
+        ...thisProject.track.filter((v) => v.id !== track?.id),
+      ].sort(compare('createdAt')),
+    );
   }, [thisProject]);
 
   const onLoadMetadata = (e: ChangeEvent<HTMLAudioElement>) => {
@@ -77,14 +86,15 @@ const Project = () => {
                   onChange={(e) => setEditName(e.target.value)}
                 />
               ) : (
-                <div>{thisProject.name}</div>
+                <div>{mainLyrics?.name ?? mainTrack?.name}</div>
               )}
             </div>
             <div className="w-1/2">
-              {thisProject.coverFileUrl && <img src={thisProject.coverFileUrl} />}
+              {mainLyrics?.coverFileUrl && <img src={mainLyrics?.coverFileUrl} />}
+              {mainTrack?.coverFileUrl && <img src={mainTrack?.coverFileUrl} />}
             </div>
           </div>
-          <audio src={mainTrack} controls onLoadedMetadata={onLoadMetadata} />
+          <audio src={mainTrack?.fileUrl ?? undefined} controls onLoadedMetadata={onLoadMetadata} />
           <div className="flex justify-between mt-4">
             <div className="flex gap-4 mb-6">
               <div
@@ -110,12 +120,12 @@ const Project = () => {
                 setIsEdit(!isEdit);
                 if (isEdit) onSave();
                 else {
-                  setEditName(thisProject.name);
-                  setEditDescription(thisProject.description);
-                  setEditTheme(thisProject.theme);
-                  setEditGenre(thisProject.genre);
-                  setEditLanguage(thisProject.language);
-                  setEditCaption(thisProject.caption);
+                  setEditName(mainLyrics?.name ?? mainTrack?.name ?? '');
+                  setEditDescription(mainLyrics?.description ?? mainTrack?.description ?? '');
+                  setEditTheme(mainLyrics?.theme ?? mainTrack?.theme ?? '');
+                  setEditGenre(mainLyrics?.genre ?? mainTrack?.genre ?? '');
+                  setEditLanguage(mainLyrics?.language ?? mainTrack?.language ?? '');
+                  setEditCaption(mainLyrics?.caption ?? mainTrack?.caption ?? '');
                 }
               }}
             >
@@ -123,7 +133,7 @@ const Project = () => {
             </div>
           </div>
           <div className="border-[#707070] bg-white border-[1px] border-solid rounded-[30px] p-4">
-            {tab === 'lyrics' && <div>{mainLyrics}</div>}
+            {tab === 'lyrics' && <div>{mainLyrics?.lyrics}</div>}
             {tab === 'detail' && (
               <div>
                 <div className="mb-4">
@@ -134,7 +144,7 @@ const Project = () => {
                       onChange={(e) => setEditDescription(e.target.value)}
                     />
                   ) : (
-                    <div>{thisProject.description}</div>
+                    <div>{mainLyrics?.description ?? mainTrack?.description}</div>
                   )}
                 </div>
                 <div className="flex gap-1">
@@ -146,7 +156,7 @@ const Project = () => {
                       onChange={(e) => setEditTheme(e.target.value)}
                     />
                   ) : (
-                    <div>{thisProject.theme}</div>
+                    <div>{mainLyrics?.theme ?? mainTrack?.theme}</div>
                   )}
                 </div>
                 <div className="flex gap-1">
@@ -158,7 +168,7 @@ const Project = () => {
                       onChange={(e) => setEditGenre(e.target.value)}
                     />
                   ) : (
-                    <div>{thisProject.genre}</div>
+                    <div>{mainLyrics?.genre ?? mainTrack?.genre}</div>
                   )}
                 </div>
                 <div className="flex gap-1">
@@ -170,7 +180,7 @@ const Project = () => {
                       onChange={(e) => setEditLanguage(e.target.value)}
                     />
                   ) : (
-                    <div>{thisProject.language}</div>
+                    <div>{mainLyrics?.language ?? mainTrack?.language}</div>
                   )}
                 </div>
                 <div className="flex gap-1">
@@ -182,7 +192,7 @@ const Project = () => {
                       onChange={(e) => setEditCaption(e.target.value)}
                     />
                   ) : (
-                    <div>{thisProject.caption}</div>
+                    <div>{mainLyrics?.caption ?? mainTrack?.caption}</div>
                   )}
                 </div>
               </div>
@@ -191,11 +201,25 @@ const Project = () => {
         </div>
         <div className="w-1/2">
           <div className="font-bold">Initiator</div>
-          <div className="w-fit text-center px-4 py-2 cursor-pointer hover:bg-gray-500">
+          <div className="w-fit text-center px-4 py-2">
             <img src={IcProfile} />
-            <div>{userName}</div>
+            <div>{mainLyrics?.username ?? mainTrack?.username}</div>
           </div>
           <div className="font-bold">Inspired</div>
+          {inspiredList?.map((v) => (
+            <div
+              key={v.id}
+              className="border-[#707070] bg-white border-[1px] border-solid rounded-[30px] p-4 mt-2"
+            >
+              <div className="flex gap-2 items-center">
+                <img src={IcProfile} />
+                <div>
+                  <div>{mainLyrics?.username ?? mainTrack?.username}</div>
+                  <div>{mainLyrics ? 'The Lyrics' : 'The Audio'}</div>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </>

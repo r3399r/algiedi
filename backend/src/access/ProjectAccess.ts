@@ -1,4 +1,5 @@
 import { inject, injectable } from 'inversify';
+import { In } from 'typeorm';
 import { Project } from 'src/model/entity/Project';
 import { ProjectEntity } from 'src/model/entity/ProjectEntity';
 import { Database } from 'src/util/Database';
@@ -25,11 +26,11 @@ export class ProjectAccess {
     });
   }
 
-  public async findByUserId(userId: string) {
+  public async findByIds(ids: string[]) {
     const qr = await this.database.getQueryRunner();
 
     return await qr.manager.find<Project>(ProjectEntity.name, {
-      where: { userId },
+      where: { id: In(ids) },
       order: { createdAt: 'asc' },
     });
   }

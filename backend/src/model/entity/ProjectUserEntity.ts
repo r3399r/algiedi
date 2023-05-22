@@ -1,15 +1,17 @@
 import { BeforeInsert, BeforeUpdate, Column, Entity, Generated } from 'typeorm';
-import { Status } from 'src/constant/Project';
-import { Project } from './Project';
+import { ProjectUser } from './ProjectUser';
 
-@Entity({ name: 'project' })
-export class ProjectEntity implements Project {
+@Entity({ name: 'project_user' })
+export class ProjectUserEntity implements ProjectUser {
   @Column({ primary: true })
   @Generated('uuid')
   id!: string;
 
-  @Column({ type: 'varchar' })
-  status!: Status;
+  @Column({ type: 'uuid', name: 'project_id' })
+  projectId!: string;
+
+  @Column({ type: 'uuid', name: 'user_id' })
+  userId!: string;
 
   @Column({ type: 'timestamp', name: 'created_at', default: null })
   createdAt!: string;

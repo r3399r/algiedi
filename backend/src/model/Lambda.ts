@@ -67,7 +67,10 @@ export type CognitoMessageEvent = {
     awsSdkVersion: string;
     clientId: string;
   };
-  triggerSource: 'CustomMessage_SignUp' | 'CustomMessage_ResendCode';
+  triggerSource:
+    | 'CustomMessage_SignUp'
+    | 'CustomMessage_ResendCode'
+    | 'CustomMessage_ForgotPassword';
   request: {
     userAttributes: {
       sub: string;
@@ -85,5 +88,29 @@ export type CognitoMessageEvent = {
     smsMessage: string | null;
     emailMessage: string | null;
     emailSubject: string | null;
+  };
+};
+
+export type CognitoSignupEvent = {
+  version: string;
+  region: string;
+  userPoolId: string;
+  userName: string;
+  callerContext: {
+    awsSdkVersion: string;
+    clientId: string;
+  };
+  triggerSource: 'PreSignUp_SignUp';
+  request: {
+    userAttributes: {
+      'custom:user_name': string;
+      email: string;
+    };
+    validationData: {};
+  };
+  response: {
+    autoConfirmUser: false;
+    autoVerifyEmail: false;
+    autoVerifyPhone: false;
   };
 };
