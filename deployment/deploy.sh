@@ -3,12 +3,10 @@ set -e
 
 env=dev
 project=gotron
-domain=gotronmusic.com
 
 echo ====================================================================================
 echo env: $env
 echo project: $project
-echo domain: $domain
 echo ====================================================================================
 
 # echo execute db scripts...
@@ -22,14 +20,14 @@ echo ===========================================================================
 
 echo deploy backend AWS...
 cd ../backend
-# npm i
-# npm run pre:deploy
-# aws cloudformation package --template-file aws/cloudformation/template.yaml --output-template-file packaged.yaml --s3-bucket gotron-cf-midway-ap-southeast-1
-# aws cloudformation deploy --template-file packaged.yaml --stack-name $project-$env-stack --parameter-overrides TargetEnvr=$env Project=$project Domain=$domain --no-fail-on-empty-changeset --s3-bucket gotron-cf-midway-ap-southeast-1 --capabilities CAPABILITY_NAMED_IAM
+npm i
+npm run pre:deploy
+aws cloudformation package --template-file aws/cloudformation/template.yaml --output-template-file packaged.yaml --s3-bucket gotron-cf-midway-ap-southeast-1
+aws cloudformation deploy --template-file packaged.yaml --stack-name $project-$env-stack --parameter-overrides TargetEnvr=$env Project=$project --no-fail-on-empty-changeset --s3-bucket gotron-cf-midway-ap-southeast-1 --capabilities CAPABILITY_NAMED_IAM
 npm run copy
 # echo ====================================================================================
 
-# echo deploy frontend to S3...
+echo deploy frontend to S3...
 # cd ../frontend
 # npm i
 # npm run pre:deploy

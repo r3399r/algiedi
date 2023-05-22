@@ -39,7 +39,20 @@ export const meSlice = createSlice({
   initialState,
   reducers: {
     reset: (state: MeState) => {
-      state = { ...initialState };
+      state.sub = initialState.sub;
+      state.userName = initialState.userName;
+      state.bio = initialState.bio;
+      state.emailVerified = initialState.emailVerified;
+      state.language = initialState.language;
+      state.role = initialState.role;
+      state.email = initialState.email;
+      state.age = initialState.age;
+      state.tag = initialState.tag;
+      state.facebook = initialState.facebook;
+      state.instagram = initialState.instagram;
+      state.youtube = initialState.youtube;
+      state.soundcloud = initialState.soundcloud;
+      state.lastProjectId = initialState.lastProjectId;
     },
     setMe: (state: MeState, action: PayloadAction<MeState>) => {
       state.sub = action.payload.sub;

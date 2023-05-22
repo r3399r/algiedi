@@ -13,14 +13,15 @@ import { uploadTrack } from 'src/service/UploadService';
 
 const Track = () => {
   const dispatch = useDispatch();
-  const [checkOriginal, setCheckOriginal] = useState<boolean>(true);
-  const [checkInspiration, setCheckInspiration] = useState<boolean>(false);
   const trackInputRef = useRef<HTMLInputElement>(null);
   const tabInputRef = useRef<HTMLInputElement>(null);
   const coverInputRef = useRef<HTMLInputElement>(null);
+  const [checkOriginal, setCheckOriginal] = useState<boolean>(true);
+  const [checkInspiration, setCheckInspiration] = useState<boolean>(false);
   const [trackFile, setTrackFile] = useState<File>();
   const [tabFile, setTabFile] = useState<File>();
   const [coverFile, setCoverFile] = useState<File>();
+  const [inspiredId, setInspiredId] = useState<string>('');
   const [errorTrackFile, setErrorTrackFile] = useState<boolean>(false);
   const methods = useForm<UploadTrackForm>();
 
@@ -30,7 +31,12 @@ const Track = () => {
 
       return;
     }
-    uploadTrack(data, { track: trackFile, tab: tabFile ?? null, cover: coverFile ?? null })
+    uploadTrack(
+      data,
+      checkOriginal,
+      { track: trackFile, tab: tabFile ?? null, cover: coverFile ?? null },
+      inspiredId ?? null,
+    )
       .then(() => dispatch(openSuccessSnackbar('Uploaded Successfully')))
       .catch((err) => dispatch(openFailSnackbar(err)));
   };
@@ -98,6 +104,7 @@ const Track = () => {
               onChange={(event: ChangeEvent<HTMLInputElement>) => {
                 setCheckOriginal(event.target.checked);
                 setCheckInspiration(!event.target.checked);
+                setInspiredId('');
               }}
             />
             <Checkbox
@@ -108,6 +115,9 @@ const Track = () => {
                 setCheckInspiration(event.target.checked);
               }}
             />
+            {checkInspiration && (
+              <Input value={inspiredId} onChange={(e) => setInspiredId(e.target.value)} />
+            )}
           </div>
         </div>
         <div className="mt-10 text-right">

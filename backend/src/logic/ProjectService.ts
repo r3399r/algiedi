@@ -2,11 +2,12 @@ import { S3 } from 'aws-sdk';
 import { inject, injectable } from 'inversify';
 import { DbAccess } from 'src/access/DbAccess';
 import { LyricsAccess } from 'src/access/LyricsAccess';
-import { ProjectAccess } from 'src/access/ProjectAccess';
 import { TrackAccess } from 'src/access/TrackAccess';
+import { ViewLyricsAccess } from 'src/access/ViewLyricsAccess';
+import { ViewProjectUserAccess } from 'src/access/ViewProjectUserAccess';
+import { ViewTrackAccess } from 'src/access/ViewTrackAccess';
 import { GetProjectResponse, PutProjectRequest } from 'src/model/api/Project';
-import { ProjectEntity } from 'src/model/entity/ProjectEntity';
-import { UnauthorizedError } from 'src/model/error';
+import { Project } from 'src/model/entity/Project';
 import { cognitoSymbol } from 'src/util/LambdaSetup';
 
 /**
@@ -29,8 +30,14 @@ export class ProjectService {
   @inject(TrackAccess)
   private readonly trackAccess!: TrackAccess;
 
-  @inject(ProjectAccess)
-  private readonly projectAccess!: ProjectAccess;
+  @inject(ViewProjectUserAccess)
+  private readonly viewProjectUserAccess!: ViewProjectUserAccess;
+
+  @inject(ViewTrackAccess)
+  private readonly viewTrackAccess!: ViewTrackAccess;
+
+  @inject(ViewLyricsAccess)
+  private readonly viewLyricsAccess!: ViewLyricsAccess;
 
   public async cleanup() {
     await this.dbAccess.cleanup();
@@ -48,21 +55,32 @@ export class ProjectService {
   }
 
   public async getProjects(): Promise<GetProjectResponse> {
-    const projects = await this.projectAccess.findByUserId(this.cognitoUserId);
+    const projectUserPairs = await this.viewProjectUserAccess.findByUserId(
+      this.cognitoUserId
+    );
+    const projects: Project[] = projectUserPairs.map((v) => ({
+      id: v.projectId,
+      status: v.status,
+      createdAt: v.createdAt,
+      updatedAt: v.updatedAt,
+    }));
 
     return await Promise.all(
       projects.map(async (p) => {
-        const lyrics = await this.lyricsAccess.findByProjectId(p.id);
-        const track = await this.trackAccess.findByProjectId(p.id);
+        const lyrics = await this.viewLyricsAccess.findByProjectId(p.id);
+        const track = await this.viewTrackAccess.findByProjectId(p.id);
 
         return {
           ...p,
-          coverFileUrl: this.getS3SignedUrl(p.coverFileUri),
-          lyrics,
+          lyrics: lyrics.map((l) => ({
+            ...l,
+            coverFileUrl: this.getS3SignedUrl(l.coverFileUri),
+          })),
           track: track.map((t) => ({
             ...t,
             fileUrl: this.getS3SignedUrl(t.fileUri),
             tabFileUrl: this.getS3SignedUrl(t.tabFileUri),
+            coverFileUrl: this.getS3SignedUrl(t.coverFileUri),
           })),
         };
       })
@@ -73,19 +91,34 @@ export class ProjectService {
     id: string,
     data: PutProjectRequest
   ): Promise<void> {
-    const oldProject = await this.projectAccess.findOneById(id);
-    if (oldProject === null || oldProject.userId !== this.cognitoUserId)
-      throw new UnauthorizedError('unauthorized');
-
-    const project = new ProjectEntity();
-    project.id = id;
-    project.name = data.name ?? oldProject.name;
-    project.description = data.description ?? oldProject.description;
-    project.theme = data.theme ?? oldProject.theme;
-    project.genre = data.genre ?? oldProject.genre;
-    project.language = data.language ?? oldProject.language;
-    project.caption = data.caption ?? oldProject.caption;
-
-    await this.projectAccess.save(project);
+    const lyrics = await this.lyricsAccess.findOne({
+      where: {
+        projectId: id,
+        isOriginal: 1,
+      },
+    });
+    const track = await this.trackAccess.findOne({
+      where: {
+        projectId: id,
+        isOriginal: 1,
+      },
+    });
+    if (lyrics === null && track !== null) {
+      track.name = data.name ?? track.name;
+      track.description = data.description ?? track.description;
+      track.theme = data.theme ?? track.theme;
+      track.genre = data.genre ?? track.genre;
+      track.language = data.language ?? track.language;
+      track.caption = data.caption ?? track.caption;
+      await this.trackAccess.save(track);
+    } else if (lyrics !== null && track === null) {
+      lyrics.name = data.name ?? lyrics.name;
+      lyrics.description = data.description ?? lyrics.description;
+      lyrics.theme = data.theme ?? lyrics.theme;
+      lyrics.genre = data.genre ?? lyrics.genre;
+      lyrics.language = data.language ?? lyrics.language;
+      lyrics.caption = data.caption ?? lyrics.caption;
+      await this.lyricsAccess.save(lyrics);
+    }
   }
 }

@@ -11,8 +11,6 @@ Parameters:
     Type: String
   TargetEnvr:
     Type: String
-  Domain:
-    Type: String
 Conditions: 
   IsProd: !Equals [ !Ref TargetEnvr, prod ]
 Resources:
@@ -36,6 +34,7 @@ Resources:
         - arn:aws:iam::aws:policy/AmazonS3FullAccess
         - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
         - arn:aws:iam::aws:policy/AmazonSNSFullAccess
+        - arn:aws:iam::aws:policy/AmazonVPCCrossAccountNetworkInterfaceOperations
   ##############################################
   ##### API Gateway and associated Lambdas #####
   ##############################################
@@ -327,14 +326,16 @@ Resources:
             "postUpload": {
               "type": "object",
               "properties": {
+                "type":{"type": "string"},
                 "name": {"type": "string"},
                 "description": {"type": "string"},
                 "theme":{"type": "string"},
                 "genre":{"type": "string"},
                 "language":{"type": "string"},
-                "caption":{"type": "string"}
+                "caption":{"type": "string"},
+                "isOriginal":{"type": "number"},
               },
-              "required": ["name","description","theme","genre","language","caption"]
+              "required": ["type","name","description","theme","genre","language","caption","isOriginal"]
             }
           },
           "x-amazon-apigateway-request-validators" : {
@@ -348,29 +349,6 @@ Resources:
             }
           }
         }
-  LambdaCognitoMessage:
-    Type: AWS::Serverless::Function
-    Properties:
-      Architectures: [arm64]
-      Handler: index.cognitoMessage
-      Runtime: nodejs18.x
-      FunctionName: !Sub ${Project}-${TargetEnvr}-cognitoMessage
-      Role: !GetAtt ExecutionRole.Arn
-      CodeUri: ../../dist/webpack/lambda
-      MemorySize: 128
-      Environment:
-        Variables:
-          ENVR: !Sub ${TargetEnvr}
-          DOMAIN: !Sub ${Domain}
-  InvokePermissionCognitoMessage:
-    Type: AWS::Lambda::Permission
-    DependsOn: [LambdaCognitoMessage]
-    Properties:
-      FunctionName: !Sub ${Project}-${TargetEnvr}-cognitoMessage
-      Action: 'lambda:InvokeFunction'
-      Principal: cognito-idp.amazonaws.com
-      SourceArn:
-        Fn::ImportValue: !Sub ${Project}-${TargetEnvr}-cognito-user-pool-arn
   LambdaProject:
     Type: AWS::Serverless::Function
     Properties:
