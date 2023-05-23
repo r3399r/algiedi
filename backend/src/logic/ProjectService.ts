@@ -8,6 +8,7 @@ import { ViewProjectUserAccess } from 'src/access/ViewProjectUserAccess';
 import { ViewTrackAccess } from 'src/access/ViewTrackAccess';
 import { GetProjectResponse, PutProjectRequest } from 'src/model/api/Project';
 import { Project } from 'src/model/entity/Project';
+import { BadRequestError, UnauthorizedError } from 'src/model/error';
 import { DetailedLyrics, DetailedTrack } from 'src/model/Project';
 import { compare } from 'src/util/compare';
 import { cognitoSymbol } from 'src/util/LambdaSetup';
@@ -112,6 +113,8 @@ export class ProjectService {
       },
     });
     if (lyrics === null && track !== null) {
+      if (track.userId !== this.cognitoUserId)
+        throw new UnauthorizedError('Only owner can edit');
       track.name = data.name ?? track.name;
       track.description = data.description ?? track.description;
       track.theme = data.theme ?? track.theme;
@@ -120,6 +123,8 @@ export class ProjectService {
       track.caption = data.caption ?? track.caption;
       await this.trackAccess.save(track);
     } else if (lyrics !== null && track === null) {
+      if (lyrics.userId !== this.cognitoUserId)
+        throw new UnauthorizedError('Only owner can edit');
       lyrics.name = data.name ?? lyrics.name;
       lyrics.description = data.description ?? lyrics.description;
       lyrics.theme = data.theme ?? lyrics.theme;
@@ -128,5 +133,6 @@ export class ProjectService {
       lyrics.caption = data.caption ?? lyrics.caption;
       await this.lyricsAccess.save(lyrics);
     }
+    throw new BadRequestError('unexpected error');
   }
 }

@@ -1,15 +1,17 @@
 import classNames from 'classnames';
 import { ChangeEvent, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import IcProfile from 'src/image/ic-profile.svg';
 import { DetailedProject } from 'src/model/backend/Project';
+import { RootState } from 'src/redux/store';
 import { openFailSnackbar } from 'src/redux/uiSlice';
 import { getProject, updateProject } from 'src/service/ProjectService';
 
 const Project = () => {
   const dispatch = useDispatch();
   const state = useLocation().state as { id: string } | null;
+  const { sub: userId } = useSelector((root: RootState) => root.me);
   const [thisProject, setThisProject] = useState<DetailedProject | null>();
   const [mainCreation, setMainCreation] = useState<DetailedProject['creation'][0]>();
   const [inspiredList, setInspiredList] = useState<DetailedProject['creation']>();
@@ -108,23 +110,25 @@ const Project = () => {
                 Detail
               </div>
             </div>
-            <div
-              className="cursor-pointer"
-              onClick={() => {
-                setIsEdit(!isEdit);
-                if (isEdit) onSave();
-                else {
-                  setEditName(mainCreation.name);
-                  setEditDescription(mainCreation.description);
-                  setEditTheme(mainCreation.theme);
-                  setEditGenre(mainCreation.genre);
-                  setEditLanguage(mainCreation.language);
-                  setEditCaption(mainCreation.caption);
-                }
-              }}
-            >
-              {isEdit ? 'Save' : 'Edit'}
-            </div>
+            {mainCreation.userId === userId && (
+              <div
+                className="cursor-pointer"
+                onClick={() => {
+                  setIsEdit(!isEdit);
+                  if (isEdit) onSave();
+                  else {
+                    setEditName(mainCreation.name);
+                    setEditDescription(mainCreation.description);
+                    setEditTheme(mainCreation.theme);
+                    setEditGenre(mainCreation.genre);
+                    setEditLanguage(mainCreation.language);
+                    setEditCaption(mainCreation.caption);
+                  }
+                }}
+              >
+                {isEdit ? 'Save' : 'Edit'}
+              </div>
+            )}
           </div>
           <div className="border-[#707070] bg-white border-[1px] border-solid rounded-[30px] p-4">
             {tab === 'lyrics' && <div>{mainCreation.type === 'lyrics' && mainCreation.lyrics}</div>}
