@@ -8,6 +8,8 @@ import { ViewProjectUserAccess } from 'src/access/ViewProjectUserAccess';
 import { ViewTrackAccess } from 'src/access/ViewTrackAccess';
 import { GetProjectResponse, PutProjectRequest } from 'src/model/api/Project';
 import { Project } from 'src/model/entity/Project';
+import { DetailedLyrics, DetailedTrack } from 'src/model/Project';
+import { compare } from 'src/util/compare';
 import { cognitoSymbol } from 'src/util/LambdaSetup';
 
 /**
@@ -70,18 +72,24 @@ export class ProjectService {
         const lyrics = await this.viewLyricsAccess.findByProjectId(p.id);
         const track = await this.viewTrackAccess.findByProjectId(p.id);
 
+        const detailedLyrics: DetailedLyrics[] = lyrics.map((l) => ({
+          ...l,
+          type: 'lyrics',
+          coverFileUrl: this.getS3SignedUrl(l.coverFileUri),
+        }));
+        const detailedTrack: DetailedTrack[] = track.map((t) => ({
+          ...t,
+          type: 'track',
+          fileUrl: this.getS3SignedUrl(t.fileUri),
+          tabFileUrl: this.getS3SignedUrl(t.tabFileUri),
+          coverFileUrl: this.getS3SignedUrl(t.coverFileUri),
+        }));
+
         return {
           ...p,
-          lyrics: lyrics.map((l) => ({
-            ...l,
-            coverFileUrl: this.getS3SignedUrl(l.coverFileUri),
-          })),
-          track: track.map((t) => ({
-            ...t,
-            fileUrl: this.getS3SignedUrl(t.fileUri),
-            tabFileUrl: this.getS3SignedUrl(t.tabFileUri),
-            coverFileUrl: this.getS3SignedUrl(t.coverFileUri),
-          })),
+          creation: [...detailedLyrics, ...detailedTrack].sort(
+            compare('createdAt')
+          ),
         };
       })
     );

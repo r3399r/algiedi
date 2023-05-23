@@ -1,13 +1,13 @@
 import projectEndpoint from 'src/api/projectEndpoint';
 import { GetProjectResponse, PutProjectRequest } from 'src/model/backend/api/Project';
-import { CombinedProject } from 'src/model/backend/Project';
+import { DetailedProject } from 'src/model/backend/Project';
 import { dispatch, getState } from 'src/redux/store';
 import { finishWaiting, startWaiting } from 'src/redux/uiSlice';
 import { getUserAttributes } from './AuthService';
 import { loadProjects } from './OverallService';
 import { updateLastProjectId } from './UploadService';
 
-export const getProject = async (projectId?: string): Promise<CombinedProject | null> => {
+export const getProject = async (projectId?: string): Promise<DetailedProject | null> => {
   try {
     dispatch(startWaiting());
 
