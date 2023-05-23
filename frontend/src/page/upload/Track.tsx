@@ -35,7 +35,7 @@ const Track = () => {
       data,
       checkOriginal,
       { track: trackFile, tab: tabFile ?? null, cover: coverFile ?? null },
-      inspiredId ?? null,
+      checkInspiration ? inspiredId : null,
     )
       .then(() => dispatch(openSuccessSnackbar('Uploaded Successfully')))
       .catch((err) => dispatch(openFailSnackbar(err)));

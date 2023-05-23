@@ -70,8 +70,6 @@ export const editProfile = async (
       youtubeAttribute,
       soundcloudAttribute,
     ]);
-  } catch (err) {
-    throw (err as Error).message;
   } finally {
     dispatch(finishWaiting());
   }

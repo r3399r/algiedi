@@ -144,7 +144,7 @@ export class UploadService {
       let project: Project | null = null;
 
       // find old project if inspired, or create new project if no inspired
-      if (data.inspiredId) {
+      if (data.inspiredId !== null) {
         // const lyrics = await this.lyricsAccess.findOneById(data.inspiredId);
         // const track = await this.trackAccess.findOneById(data.inspiredId);
         const lyrics = await this.lyricsAccess.findOne({

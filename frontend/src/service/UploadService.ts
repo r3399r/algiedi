@@ -38,8 +38,6 @@ export const uploadTrack = async (
 
     await updateLastProjectId(res.data.id);
     await loadProjects();
-  } catch (err) {
-    throw (err as Error).message;
   } finally {
     dispatch(finishWaiting());
   }
@@ -63,8 +61,6 @@ export const uploadLyrics = async (
 
     await updateLastProjectId(res.data.id);
     await loadProjects();
-  } catch (err) {
-    throw (err as Error).message;
   } finally {
     dispatch(finishWaiting());
   }

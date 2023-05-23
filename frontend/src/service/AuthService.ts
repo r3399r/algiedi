@@ -104,8 +104,6 @@ export const login = async (email: string, password: string) => {
     const attributes = await getUserAttributes();
 
     return attributes.find((v) => v.name === 'custom:questionnaire_filled')?.value;
-  } catch (err) {
-    throw (err as Error).message;
   } finally {
     dispatch(finishWaiting());
   }
@@ -127,8 +125,6 @@ export const register = async (data: RegistrationForm) => {
         else resolve(result.user);
       });
     });
-  } catch (err) {
-    throw (err as Error).message;
   } finally {
     dispatch(finishWaiting());
   }
@@ -145,8 +141,6 @@ export const resendConfirmationEmail = async (email: string) => {
         else resolve(undefined);
       });
     });
-  } catch (err) {
-    throw (err as Error).message;
   } finally {
     dispatch(finishWaiting());
   }
@@ -163,8 +157,6 @@ export const verifyAccount = async (email: string, code: string) => {
         else resolve(undefined);
       });
     });
-  } catch (err) {
-    throw (err as Error).message;
   } finally {
     dispatch(finishWaiting());
   }
@@ -274,8 +266,6 @@ export const confirmForgot = async (email: string, newPassword: string, code: st
         onFailure: (err) => reject(err),
       });
     });
-  } catch (err) {
-    throw (err as Error).message;
   } finally {
     dispatch(finishWaiting());
   }

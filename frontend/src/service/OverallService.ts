@@ -18,8 +18,6 @@ export const getMyProjects = async () => {
     if (projects !== undefined) return projects;
 
     return await loadProjects();
-  } catch (err) {
-    throw (err as Error).message;
   } finally {
     dispatch(finishWaiting());
   }

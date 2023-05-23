@@ -21,7 +21,7 @@ const Lyrics = () => {
   const methods = useForm<UploadLyricsForm>();
 
   const onSubmit = (data: UploadLyricsForm) => {
-    uploadLyrics(data, checkOriginal, coverFile ?? null, inspiredId ?? null)
+    uploadLyrics(data, checkOriginal, coverFile ?? null, checkInspiration ? inspiredId : null)
       .then(() => dispatch(openSuccessSnackbar('Uploaded Successfully')))
       .catch((err) => dispatch(openFailSnackbar(err)));
   };

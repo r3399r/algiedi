@@ -50,8 +50,6 @@ export const getProject = async (projectId?: string): Promise<DetailedProject | 
     await updateLastProjectId(myProjects[0].id);
 
     return myProjects[0];
-  } catch (err) {
-    throw (err as Error).message;
   } finally {
     dispatch(finishWaiting());
   }
@@ -64,8 +62,6 @@ export const updateProject = async (id: string, data: PutProjectRequest) => {
     const projects = await loadProjects();
 
     return projects.find((v) => v.id === id);
-  } catch (err) {
-    throw (err as Error).message;
   } finally {
     dispatch(finishWaiting());
   }
