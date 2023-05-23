@@ -10,7 +10,7 @@ export type ViewLyrics = {
   coverFileUri: string | null;
   lyrics: string;
   projectId: string;
-  isOriginal: 0 | 1;
+  isOriginal: boolean;
   inspiredId: string | null;
   createdAt: string | null;
   updatedAt: string | null;

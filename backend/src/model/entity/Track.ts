@@ -11,7 +11,7 @@ export type Track = {
   fileUri: string;
   tabFileUri: string | null;
   projectId: string;
-  isOriginal: 0 | 1;
+  isOriginal: boolean;
   inspiredId: string | null;
   createdAt: string | null;
   updatedAt: string | null;

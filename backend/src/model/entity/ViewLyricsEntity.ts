@@ -1,4 +1,5 @@
 import { ViewColumn, ViewEntity } from 'typeorm';
+import { booleanTransformer } from 'src/util/typeorm';
 import { ViewLyrics } from './ViewLyrics';
 
 @ViewEntity({ name: 'v_lyrics' })
@@ -36,8 +37,11 @@ export class ViewLyricsEntity implements ViewLyrics {
   @ViewColumn({ name: 'project_id' })
   projectId!: string;
 
-  @ViewColumn({ name: 'is_original' })
-  isOriginal!: 0 | 1;
+  @ViewColumn({
+    name: 'is_original',
+    transformer: booleanTransformer,
+  })
+  isOriginal!: boolean;
 
   @ViewColumn({ name: 'inspired_id' })
   inspiredId: string | null = null;

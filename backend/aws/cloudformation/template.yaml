@@ -333,7 +333,7 @@ Resources:
                 "genre":{"type": "string"},
                 "language":{"type": "string"},
                 "caption":{"type": "string"},
-                "isOriginal":{"type": "number"},
+                "isOriginal":{"type": "boolean"},
               },
               "required": ["type","name","description","theme","genre","language","caption","isOriginal"]
             }

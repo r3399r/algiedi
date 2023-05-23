@@ -31,7 +31,7 @@ export const uploadTrack = async (
       file: await file2Base64(files.track),
       tabFile: files.tab ? await file2Base64(files.tab) : null,
       coverFile: files.cover ? await file2Base64(files.cover) : null,
-      isOriginal: isOriginal ? 1 : 0,
+      isOriginal,
       inspiredId,
       ...data,
     });
@@ -56,7 +56,7 @@ export const uploadLyrics = async (
     const res = await uploadEndpoint.postUpload({
       type: 'lyrics',
       coverFile: coverFile ? await file2Base64(coverFile) : null,
-      isOriginal: isOriginal ? 1 : 0,
+      isOriginal,
       inspiredId,
       ...data,
     });

@@ -1,4 +1,5 @@
 import { BeforeInsert, BeforeUpdate, Column, Entity, Generated } from 'typeorm';
+import { booleanTransformer } from 'src/util/typeorm';
 import { Lyrics } from './Lyrics';
 
 @Entity({ name: 'lyrics' })
@@ -37,8 +38,12 @@ export class LyricsEntity implements Lyrics {
   @Column({ type: 'uuid', name: 'project_id' })
   projectId!: string;
 
-  @Column({ type: 'boolean', name: 'is_original' })
-  isOriginal!: 0 | 1;
+  @Column({
+    type: 'boolean',
+    name: 'is_original',
+    transformer: booleanTransformer,
+  })
+  isOriginal!: boolean;
 
   @Column({ type: 'uuid', name: 'inspired_id', default: null })
   inspiredId: string | null = null;

@@ -22,6 +22,7 @@ export class ViewProjectUserAccess {
 
     return await qr.manager.find<ViewProjectUser>(ViewProjectUserEntity.name, {
       where: { userId },
+      order: { createdAt: 'desc' },
     });
   }
 }

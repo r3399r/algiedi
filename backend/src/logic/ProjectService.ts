@@ -102,13 +102,13 @@ export class ProjectService {
     const lyrics = await this.lyricsAccess.findOne({
       where: {
         projectId: id,
-        isOriginal: 1,
+        isOriginal: true,
       },
     });
     const track = await this.trackAccess.findOne({
       where: {
         projectId: id,
-        isOriginal: 1,
+        isOriginal: true,
       },
     });
     if (lyrics === null && track !== null) {
