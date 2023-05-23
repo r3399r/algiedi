@@ -1,6 +1,6 @@
-import { CombinedProject } from 'src/model/Project';
+import { DetailedProject } from 'src/model/Project';
 
-export type GetProjectResponse = CombinedProject[];
+export type GetProjectResponse = DetailedProject[];
 
 export type PutProjectRequest = {
   name?: string;
