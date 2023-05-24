@@ -110,23 +110,41 @@ const Project = () => {
                 Detail
               </div>
             </div>
-            {mainCreation.userId === userId && (
+            {mainCreation.userId === userId && !isEdit && (
               <div
                 className="cursor-pointer"
                 onClick={() => {
                   setIsEdit(!isEdit);
-                  if (isEdit) onSave();
-                  else {
-                    setEditName(mainCreation.name);
-                    setEditDescription(mainCreation.description);
-                    setEditTheme(mainCreation.theme);
-                    setEditGenre(mainCreation.genre);
-                    setEditLanguage(mainCreation.language);
-                    setEditCaption(mainCreation.caption);
-                  }
+                  setEditName(mainCreation.name);
+                  setEditDescription(mainCreation.description);
+                  setEditTheme(mainCreation.theme);
+                  setEditGenre(mainCreation.genre);
+                  setEditLanguage(mainCreation.language);
+                  setEditCaption(mainCreation.caption);
                 }}
               >
-                {isEdit ? 'Save' : 'Edit'}
+                Edit
+              </div>
+            )}
+            {mainCreation.userId === userId && isEdit && (
+              <div className="flex gap-2">
+                <div
+                  className="cursor-pointer"
+                  onClick={() => {
+                    setIsEdit(!isEdit);
+                  }}
+                >
+                  Cancel
+                </div>
+                <div
+                  className="cursor-pointer"
+                  onClick={() => {
+                    setIsEdit(!isEdit);
+                    onSave();
+                  }}
+                >
+                  Save
+                </div>
               </div>
             )}
           </div>
