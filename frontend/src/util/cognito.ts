@@ -6,36 +6,11 @@ import {
   CognitoUserSession,
 } from 'amazon-cognito-identity-js';
 
-// const getUserPoolVariable = async (): Promise<VariableState> => {
-//     // const state = getState().variable;
-//     // if (state.userPoolClientId === undefined || state.userPoolId === undefined) {
-//     //     const res = await variableEndpoint.getVariables({ name: 'USER_POOL_ID,USER_POOL_CLIENT_ID' });
-//     //     const variable = {
-//     //         userPoolClientId: res.data.USER_POOL_CLIENT_ID,
-//     //         userPoolId: res.data.USER_POOL_ID,
-//     //     };
-//     //     dispatch(setVariable(variable));
-
-//     //     return variable;
-//     // }
-
-//     // return state;
-//     const res = {
-//         userPoolClientId: process.env.REACT_APP_USER_POOL_CLIENT_ID ?? '',
-//         userPoolId: process.env.REACT_APP_USER_POOL_ID ?? ''
-//     }
-//     console.log(res)
-//     return res
-// };
-
-export const getUserPool = async () => {
-  console.log(process.env.REACT_APP_USER_POOL_CLIENT_ID, process.env.REACT_APP_USER_POOL_ID);
-
-  return new CognitoUserPool({
-    UserPoolId: process.env.REACT_APP_USER_POOL_CLIENT_ID ?? '',
-    ClientId: process.env.REACT_APP_USER_POOL_ID ?? '',
+export const getUserPool = async () =>
+  new CognitoUserPool({
+    UserPoolId: process.env.REACT_APP_USER_POOL_ID ?? '',
+    ClientId: process.env.REACT_APP_USER_POOL_CLIENT_ID ?? '',
   });
-};
 
 export const getCognitoUser = async (email: string) => {
   const userPool = await getUserPool();

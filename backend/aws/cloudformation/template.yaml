@@ -285,51 +285,6 @@ Resources:
                   "contentHandling": "CONVERT_TO_TEXT"
                 }
               }
-            },
-            "/api/variable": {
-              "get": {
-                "parameters" : [ {
-                  "name" : "name",
-                  "in" : "query",
-                  "required" : true,
-                  "schema" : {
-                    "type" : "string"
-                  }
-                }],
-                "responses": {
-                  "200": {
-                    "description": "200 response",
-                    "headers": {
-                      "Access-Control-Allow-Origin": {
-                        "schema": {"type": "string"}
-                      }
-                    },
-                    "content": {
-                      "application/json": {
-                        "schema": {
-                          "$ref": "#/components/schemas/Empty"
-                        }
-                      }
-                    }
-                  }
-                },
-                "x-amazon-apigateway-request-validator" : "Validate query string parameters and headers",
-                "x-amazon-apigateway-integration": {
-                  "type": "aws_proxy",
-                  "httpMethod": "POST",
-                  "uri": !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${Project}-${TargetEnvr}-variable/invocations",
-                  "responses": {
-                    "default": {
-                      "statusCode": "200",
-                      "responseParameters": {
-                        "method.response.header.Access-Control-Allow-Origin": "'*'"
-                      }
-                    }
-                  },
-                  "passthroughBehavior": "when_no_match",
-                  "contentHandling": "CONVERT_TO_TEXT"
-                }
-              }
             }
           },
           "securityDefinitions": {
@@ -488,30 +443,6 @@ Resources:
     DependsOn: [ServerlessApi, LambdaUpload]
     Properties:
       FunctionName: !Sub ${Project}-${TargetEnvr}-upload
-      Action: 'lambda:InvokeFunction'
-      Principal: apigateway.amazonaws.com
-      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ServerlessApi}/*
-  LambdaVariable:
-    Type: AWS::Serverless::Function
-    Properties:
-      Architectures: [arm64]
-      Handler: index.variable
-      Runtime: nodejs18.x
-      FunctionName: !Sub ${Project}-${TargetEnvr}-variable
-      Role: !GetAtt ExecutionRole.Arn
-      CodeUri: ../../dist/webpack/lambda
-      MemorySize: 128
-      Environment:
-        Variables:
-          USER_POOL_ID:
-            Fn::ImportValue: !Sub ${Project}-${TargetEnvr}-cognito-user-pool-id
-          USER_POOL_CLIENT_ID:
-            Fn::ImportValue: !Sub ${Project}-${TargetEnvr}-cognito-user-pool-client-id
-  InvokePermissionVariable:
-    Type: AWS::Lambda::Permission
-    DependsOn: [ServerlessApi, LambdaVariable]
-    Properties:
-      FunctionName: !Sub ${Project}-${TargetEnvr}-variable
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com
       SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ServerlessApi}/*

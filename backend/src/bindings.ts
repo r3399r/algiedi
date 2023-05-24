@@ -14,7 +14,6 @@ import { CognitoService } from './logic/CognitoService';
 import { ProjectService } from './logic/ProjectService';
 import { SnsService } from './logic/SnsService';
 import { UploadService } from './logic/UploadService';
-import { VariableService } from './logic/VariableService';
 import { LyricsEntity } from './model/entity/LyricsEntity';
 import { ProjectEntity } from './model/entity/ProjectEntity';
 import { ProjectUserEntity } from './model/entity/ProjectUserEntity';
@@ -55,7 +54,6 @@ container.bind<CognitoService>(CognitoService).toSelf();
 container.bind<ProjectService>(ProjectService).toSelf();
 container.bind<SnsService>(SnsService).toSelf();
 container.bind<UploadService>(UploadService).toSelf();
-container.bind<VariableService>(VariableService).toSelf();
 
 // AWS
 container.bind<SNS>(SNS).toDynamicValue(() => new SNS());
