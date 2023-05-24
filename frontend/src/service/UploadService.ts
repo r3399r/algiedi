@@ -4,8 +4,8 @@ import { UploadLyricsForm, UploadTrackForm } from 'src/model/Form';
 import { setLastProjectId } from 'src/redux/meSlice';
 import { dispatch } from 'src/redux/store';
 import { finishWaiting, startWaiting } from 'src/redux/uiSlice';
+import { updateCognitoAttributes } from 'src/util/cognito';
 import { file2Base64 } from 'src/util/fileConverter';
-import { updateCognitoAttributes } from './AuthService';
 import { loadProjects } from './OverallService';
 
 export const updateLastProjectId = async (projectId: string) => {

@@ -1,7 +1,8 @@
 import { CognitoUserAttribute } from 'amazon-cognito-identity-js';
 import { dispatch } from 'src/redux/store';
 import { finishWaiting, startWaiting } from 'src/redux/uiSlice';
-import { loadUserAttributes, updateCognitoAttributes } from './AuthService';
+import { updateCognitoAttributes } from 'src/util/cognito';
+import { loadUserAttributes } from './AuthService';
 
 export const loadProfileData = async () => {
   try {

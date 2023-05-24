@@ -8,12 +8,12 @@ import { emitter } from './util/eventBus';
 
 const App = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     emitter.on('auth-expired', () => navigate(Page.Login));
   }, []);
 
-  const location = useLocation();
   const isDashboard =
     DashboardPage.find((value) => location.pathname.startsWith(value)) !== undefined;
 

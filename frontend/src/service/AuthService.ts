@@ -1,109 +1,31 @@
-import {
-  AuthenticationDetails,
-  CognitoUser,
-  CognitoUserAttribute,
-  CognitoUserPool,
-  CognitoUserSession,
-} from 'amazon-cognito-identity-js';
-import variableEndpoint from 'src/api/variableEndpoint';
+import { CognitoUserAttribute } from 'amazon-cognito-identity-js';
 import { RegistrationForm } from 'src/model/Form';
 import { reset as apiReset } from 'src/redux/apiSlice';
 import { reset as meReset, setMe } from 'src/redux/meSlice';
-
 import { dispatch, getState } from 'src/redux/store';
 import { finishWaiting, setIsLogin, setLoadingProfile, startWaiting } from 'src/redux/uiSlice';
-import { setVariable, VariableState } from 'src/redux/variableSlice';
+import {
+  authenticateUser,
+  getCognitoUser,
+  getCurrentUser,
+  getUserPool,
+  updateCognitoAttributes,
+} from 'src/util/cognito';
 import { sleep } from 'src/util/sleep';
-
-const getUserPoolVariable = async (): Promise<VariableState> => {
-  const state = getState().variable;
-  if (state.userPoolClientId === undefined || state.userPoolId === undefined) {
-    const res = await variableEndpoint.getVariables({ name: 'USER_POOL_ID,USER_POOL_CLIENT_ID' });
-    const variable = {
-      userPoolClientId: res.data.USER_POOL_CLIENT_ID,
-      userPoolId: res.data.USER_POOL_ID,
-    };
-    dispatch(setVariable(variable));
-
-    return variable;
-  }
-
-  return state;
-};
-
-const getUserPool = async () => {
-  const { userPoolClientId, userPoolId } = await getUserPoolVariable();
-
-  return new CognitoUserPool({
-    UserPoolId: userPoolId ?? '',
-    ClientId: userPoolClientId ?? '',
-  });
-};
-
-const getCognitoUser = async (email: string) => {
-  const userPool = await getUserPool();
-
-  return new CognitoUser({
-    Username: email,
-    Pool: userPool,
-  });
-};
-
-const getCurrentUser = async () => {
-  try {
-    const userPool = await getUserPool();
-    const cognitoUser = userPool.getCurrentUser();
-    if (cognitoUser === null) throw new Error('no user found');
-
-    await new Promise((resolve, reject) => {
-      cognitoUser.getSession((err: unknown, session: CognitoUserSession) => {
-        if (err) reject(err);
-        else resolve(session);
-      });
-    });
-
-    return cognitoUser;
-  } catch (err) {
-    localStorage.removeItem('token');
-    throw err;
-  }
-};
-
-export const updateCognitoAttributes = async (cognitoUserAttributes: CognitoUserAttribute[]) => {
-  const cognitoUser = await getCurrentUser();
-  await new Promise((resolve, reject) => {
-    cognitoUser.updateAttributes(cognitoUserAttributes, (err) => {
-      if (err) reject(err);
-      else resolve(undefined);
-    });
-  });
-};
-
-const authenticateUser = async (email: string, password: string): Promise<CognitoUserSession> => {
-  const cognitoUser = await getCognitoUser(email);
-  const authenticationDetails = new AuthenticationDetails({
-    Username: email,
-    Password: password,
-  });
-
-  return await new Promise((resolve, reject) => {
-    cognitoUser.authenticateUser(authenticationDetails, {
-      onSuccess: (r) => resolve(r),
-      onFailure: (e) => reject(e),
-    });
-  });
-};
 
 export const login = async (email: string, password: string) => {
   try {
     dispatch(startWaiting());
     const result = await authenticateUser(email, password);
     localStorage.setItem('token', result.getIdToken().getJwtToken());
+    localStorage.setItem('expiration', result.getIdToken().getExpiration().toString());
     dispatch(setIsLogin(true));
     await sleep(100);
     const attributes = await getUserAttributes();
 
     return attributes.find((v) => v.name === 'custom:questionnaire_filled')?.value;
+  } catch (e) {
+    throw (e as Error).message;
   } finally {
     dispatch(finishWaiting());
   }
@@ -125,6 +47,8 @@ export const register = async (data: RegistrationForm) => {
         else resolve(result.user);
       });
     });
+  } catch (e) {
+    throw (e as Error).message;
   } finally {
     dispatch(finishWaiting());
   }
@@ -141,6 +65,8 @@ export const resendConfirmationEmail = async (email: string) => {
         else resolve(undefined);
       });
     });
+  } catch (e) {
+    throw (e as Error).message;
   } finally {
     dispatch(finishWaiting());
   }
@@ -157,6 +83,8 @@ export const verifyAccount = async (email: string, code: string) => {
         else resolve(undefined);
       });
     });
+  } catch (e) {
+    throw (e as Error).message;
   } finally {
     dispatch(finishWaiting());
   }
@@ -234,6 +162,8 @@ export const updateUserAttributes = async (data: {
     });
 
     await updateCognitoAttributes([role, language, bio, tag, questionnaireFilled]);
+  } catch (e) {
+    throw (e as Error).message;
   } finally {
     dispatch(finishWaiting());
   }
@@ -250,6 +180,8 @@ export const sendForgot = async (email: string) => {
         onFailure: (err) => reject(err),
       });
     });
+  } catch (e) {
+    throw (e as Error).message;
   } finally {
     dispatch(finishWaiting());
   }
@@ -266,6 +198,8 @@ export const confirmForgot = async (email: string, newPassword: string, code: st
         onFailure: (err) => reject(err),
       });
     });
+  } catch (e) {
+    throw (e as Error).message;
   } finally {
     dispatch(finishWaiting());
   }
@@ -277,9 +211,12 @@ export const logout = async () => {
     const cognitoUser = await getCurrentUser();
     cognitoUser.signOut();
     localStorage.removeItem('token');
+    localStorage.removeItem('expiration');
     dispatch(setIsLogin(false));
     dispatch(apiReset());
     dispatch(meReset());
+  } catch (e) {
+    throw (e as Error).message;
   } finally {
     dispatch(finishWaiting());
   }

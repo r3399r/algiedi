@@ -1,6 +1,7 @@
 import axios, { AxiosError, AxiosRequestConfig, RawAxiosRequestHeaders } from 'axios';
 import { dispatch } from 'src/redux/store';
 import { setIsLogin } from 'src/redux/uiSlice';
+import { refreshUserSession } from './cognito';
 import { emitter } from './eventBus';
 
 // eslint-disable-next-line
@@ -38,22 +39,33 @@ const publicRequestConfig = <D = unknown, P = any>(
 });
 
 // eslint-disable-next-line
-const privateRequestConfig = <D = unknown, P = any>(
+const privateRequestConfig = async <D = unknown, P = any>(
   method: string,
   url: string,
   options?: Options<D, P>,
-) => ({
-  ...defaultConfig,
-  headers: {
-    ...defaultHeader,
-    ...options?.headers,
-    ...({ Authorization: localStorage.getItem('token') ?? '' } as RawAxiosRequestHeaders),
-  },
-  data: options?.data,
-  params: options?.params,
-  url,
-  method,
-});
+) => {
+  let token = localStorage.getItem('token') ?? '';
+  const expiration = Number(localStorage.getItem('expiration') ?? 0);
+  if (Date.now() > expiration * 1000) {
+    const result = await refreshUserSession();
+    localStorage.setItem('token', result.getIdToken().getJwtToken());
+    localStorage.setItem('expiration', result.getIdToken().getExpiration().toString());
+    token = result.getIdToken().getJwtToken();
+  }
+
+  return {
+    ...defaultConfig,
+    headers: {
+      ...defaultHeader,
+      ...options?.headers,
+      ...({ Authorization: token } as RawAxiosRequestHeaders),
+    },
+    data: options?.data,
+    params: options?.params,
+    url,
+    method,
+  };
+};
 
 // eslint-disable-next-line
 const publicRequest = async <T, D = unknown, P = any>(
@@ -77,7 +89,9 @@ const authRequest = async <T, D = unknown, P = any>(
   options?: Options<D, P>,
 ) => {
   try {
-    return await axios.request<T>(privateRequestConfig<unknown, P>(method, url, options));
+    const requestConfig = await privateRequestConfig<unknown, P>(method, url, options);
+
+    return await axios.request<T>(requestConfig);
   } catch (e) {
     // eslint-disable-next-line
     const error = e as AxiosError<any>;
@@ -86,6 +100,7 @@ const authRequest = async <T, D = unknown, P = any>(
       error.response.data.message === 'The incoming token has expired'
     ) {
       localStorage.removeItem('token');
+      localStorage.removeItem('expiration');
       dispatch(setIsLogin(false));
       emitter.emit('auth-expired');
     }
