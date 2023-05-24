@@ -6,7 +6,7 @@ import IcProfile from 'src/image/ic-profile.svg';
 import { DetailedProject } from 'src/model/backend/Project';
 import { RootState } from 'src/redux/store';
 import { openFailSnackbar } from 'src/redux/uiSlice';
-import { getProject, updateProject } from 'src/service/ProjectService';
+import { getProject, setApproval, updateProject } from 'src/service/ProjectService';
 
 const Project = () => {
   const dispatch = useDispatch();
@@ -59,9 +59,17 @@ const Project = () => {
       .catch((err) => dispatch(openFailSnackbar(err)));
   };
 
-  if (thisProject === undefined || mainCreation === undefined) return <></>;
+  const onApprove = (creationId: string) => () => {
+    if (!thisProject) return;
+    setApproval(thisProject.id, creationId)
+      .then((res) => {
+        if (res) setThisProject(res);
+      })
+      .catch((err) => dispatch(openFailSnackbar(err)));
+  };
 
   if (thisProject === null) return <>Please upload a content first.</>;
+  if (thisProject === undefined || mainCreation === undefined) return <></>;
 
   return (
     <>
@@ -221,12 +229,38 @@ const Project = () => {
             <img src={IcProfile} />
             <div>{mainCreation.username}</div>
           </div>
-          <div className="font-bold">Inspired</div>
+          <div className="flex justify-between">
+            <div className="font-bold">Inspired</div>
+            <div className="flex gap-2">
+              <div>
+                Audio{' '}
+                {inspiredList?.filter((v) => v.type === 'track' && v.approval === true).length}/
+                {inspiredList?.filter((v) => v.type === 'track').length}
+              </div>
+              <div>
+                Lyrics{' '}
+                {inspiredList?.filter((v) => v.type === 'lyrics' && v.approval === true).length}/
+                {inspiredList?.filter((v) => v.type === 'lyrics').length}
+              </div>
+            </div>
+          </div>
           {inspiredList?.map((v) => (
             <div
               key={v.id}
               className="border-[#707070] bg-white border-[1px] border-solid rounded-[30px] p-4 mt-2"
             >
+              <div className="text-right">
+                <button
+                  className={classNames('border-[1px] rounded-full px-2', {
+                    'border-green-500 bg-green-500 text-white': v.approval === true,
+                    'border-black': v.approval === false,
+                  })}
+                  onClick={onApprove(v.id)}
+                  disabled={mainCreation.userId !== userId}
+                >
+                  v
+                </button>
+              </div>
               <div className="flex gap-2 items-center">
                 <img src={IcProfile} />
                 <div>

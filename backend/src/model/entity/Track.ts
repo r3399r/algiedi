@@ -13,6 +13,7 @@ export type Track = {
   projectId: string;
   isOriginal: boolean;
   inspiredId: string | null;
+  approval: boolean | null;
   createdAt: string | null;
   updatedAt: string | null;
 };

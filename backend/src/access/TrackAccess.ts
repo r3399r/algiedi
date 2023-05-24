@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { FindOneOptions } from 'typeorm';
+import { FindManyOptions, FindOneOptions } from 'typeorm';
 import { Track } from 'src/model/entity/Track';
 import { TrackEntity } from 'src/model/entity/TrackEntity';
 import { Database } from 'src/util/Database';
@@ -12,10 +12,10 @@ export class TrackAccess {
   @inject(Database)
   private readonly database!: Database;
 
-  public async find() {
+  public async find(options: FindManyOptions<Track>) {
     const qr = await this.database.getQueryRunner();
 
-    return await qr.manager.find<Track>(TrackEntity.name);
+    return await qr.manager.find<Track>(TrackEntity.name, options);
   }
 
   public async findOneById(id: string) {
@@ -29,9 +29,7 @@ export class TrackAccess {
   public async findOne(options: FindOneOptions<Track>) {
     const qr = await this.database.getQueryRunner();
 
-    return await qr.manager.findOne<Track>(TrackEntity.name, {
-      ...options,
-    });
+    return await qr.manager.findOne<Track>(TrackEntity.name, options);
   }
 
   public async findByProjectId(projectId: string) {

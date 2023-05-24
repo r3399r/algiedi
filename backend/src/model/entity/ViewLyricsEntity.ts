@@ -46,6 +46,11 @@ export class ViewLyricsEntity implements ViewLyrics {
   @ViewColumn({ name: 'inspired_id' })
   inspiredId: string | null = null;
 
+  @ViewColumn({
+    transformer: booleanTransformer,
+  })
+  approval: boolean | null = null;
+
   @ViewColumn({ name: 'created_at' })
   createdAt: string | null = null;
 

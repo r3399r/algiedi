@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS track (
 	project_id VARCHAR(36) NOT NULL,
 	is_original BOOLEAN NOT NULL,
 	inspired_id VARCHAR(36) NULL,
+	approval BOOLEAN NULL,
 	created_at TIMESTAMP NULL,
 	updated_at TIMESTAMP NULL,
 	PRIMARY KEY (id ASC),

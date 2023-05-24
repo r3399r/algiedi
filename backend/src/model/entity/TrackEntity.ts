@@ -51,6 +51,13 @@ export class TrackEntity implements Track {
   @Column({ type: 'uuid', name: 'inspired_id', default: null })
   inspiredId: string | null = null;
 
+  @Column({
+    type: 'boolean',
+    transformer: booleanTransformer,
+    default: null,
+  })
+  approval: boolean | null = null;
+
   @Column({ type: 'timestamp', name: 'created_at', default: null })
   createdAt!: string;
 

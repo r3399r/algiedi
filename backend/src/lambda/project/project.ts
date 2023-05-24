@@ -24,6 +24,9 @@ export async function project(
       case '/api/project/{id}':
         res = await apiProjectId(event, service);
         break;
+      case '/api/project/{id}/approval/{cid}':
+        res = await apiProjectIdApproval(event, service);
+        break;
       default:
         throw new InternalServerError('unknown resource');
     }
@@ -59,6 +62,25 @@ async function apiProjectId(event: LambdaEvent, service: ProjectService) {
       return service.updateProject(
         event.pathParameters.id,
         JSON.parse(event.body) as PutProjectRequest
+      );
+    default:
+      throw new InternalServerError('unknown http method');
+  }
+}
+
+async function apiProjectIdApproval(
+  event: LambdaEvent,
+  service: ProjectService
+) {
+  if (event.pathParameters === null)
+    throw new BadRequestError('pathParameters should not be empty');
+  if (event.headers === null)
+    throw new BadRequestError('headers should not be empty');
+  switch (event.httpMethod) {
+    case 'PUT':
+      return service.projectAppoval(
+        event.pathParameters.id,
+        event.pathParameters.cid
       );
     default:
       throw new InternalServerError('unknown http method');

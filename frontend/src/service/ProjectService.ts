@@ -66,3 +66,15 @@ export const updateProject = async (id: string, data: PutProjectRequest) => {
     dispatch(finishWaiting());
   }
 };
+
+export const setApproval = async (projectId: string, creationId: string) => {
+  try {
+    dispatch(startWaiting());
+    await projectEndpoint.putProjectIdApprovalCid(projectId, creationId);
+    const projects = await loadProjects();
+
+    return projects.find((v) => v.id === projectId);
+  } finally {
+    dispatch(finishWaiting());
+  }
+};

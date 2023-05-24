@@ -134,4 +134,31 @@ export class ProjectService {
       await this.lyricsAccess.save(lyrics);
     } else throw new BadRequestError('unexpected error');
   }
+
+  public async projectAppoval(projectId: string, creationId: string) {
+    const lyrics = await this.lyricsAccess.find({
+      where: {
+        projectId,
+      },
+    });
+    const track = await this.trackAccess.find({
+      where: {
+        projectId,
+      },
+    });
+    const mainCreation = [...lyrics, ...track].find(
+      (v) => v.isOriginal === true
+    );
+    const targetLyrics = lyrics.find((v) => v.id === creationId);
+    const targetTrack = track.find((v) => v.id === creationId);
+    if (mainCreation?.userId !== this.cognitoUserId)
+      throw new UnauthorizedError('Only owner can set approval');
+    if (targetLyrics === undefined && targetTrack !== undefined) {
+      targetTrack.approval = !targetTrack.approval;
+      await this.trackAccess.save(targetTrack);
+    } else if (targetLyrics !== undefined && targetTrack === undefined) {
+      targetLyrics.approval = !targetLyrics.approval;
+      await this.lyricsAccess.save(targetLyrics);
+    } else throw new BadRequestError('unexpected error');
+  }
 }

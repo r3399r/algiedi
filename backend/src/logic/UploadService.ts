@@ -82,6 +82,7 @@ export class UploadService {
     lyrics.projectId = projectId;
     lyrics.isOriginal = data.isOriginal;
     lyrics.inspiredId = data.inspiredId;
+    lyrics.approval = false;
 
     const newLyrics = await this.lyricsAccess.save(lyrics);
 
@@ -108,6 +109,7 @@ export class UploadService {
     track.projectId = projectId;
     track.isOriginal = data.isOriginal;
     track.inspiredId = data.inspiredId;
+    track.approval = false;
 
     const newTrack = await this.trackAccess.save(track);
 
