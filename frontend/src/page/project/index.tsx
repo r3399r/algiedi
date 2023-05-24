@@ -231,7 +231,7 @@ const Project = () => {
                 <img src={IcProfile} />
                 <div>
                   <div>{v.username}</div>
-                  <div>{v.type === 'lyrics' ? 'The Lyrics' : 'The Audio'}</div>
+                  <div>{v.name}</div>
                 </div>
               </div>
             </div>
