@@ -132,7 +132,6 @@ export class ProjectService {
       lyrics.language = data.language ?? lyrics.language;
       lyrics.caption = data.caption ?? lyrics.caption;
       await this.lyricsAccess.save(lyrics);
-    }
-    throw new BadRequestError('unexpected error');
+    } else throw new BadRequestError('unexpected error');
   }
 }
