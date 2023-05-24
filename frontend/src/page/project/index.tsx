@@ -234,6 +234,12 @@ const Project = () => {
                   <div>{v.name}</div>
                 </div>
               </div>
+              <div>
+                {v.type === 'track' && (
+                  <audio src={v.fileUrl ?? undefined} controls onLoadedMetadata={onLoadMetadata} />
+                )}
+                {v.type === 'lyrics' && <div>{v.lyrics}</div>}
+              </div>
             </div>
           ))}
         </div>
