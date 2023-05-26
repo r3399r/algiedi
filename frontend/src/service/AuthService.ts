@@ -1,4 +1,6 @@
 import { CognitoUserAttribute } from 'amazon-cognito-identity-js';
+import userEndpoint from 'src/api/userEndpoint';
+import { PutUserRequest } from 'src/model/backend/api/User';
 import { RegistrationForm } from 'src/model/Form';
 import { reset as apiReset } from 'src/redux/apiSlice';
 import { reset as meReset, setMe } from 'src/redux/meSlice';
@@ -6,10 +8,12 @@ import { dispatch, getState } from 'src/redux/store';
 import { finishWaiting, setIsLogin, setLoadingProfile, startWaiting } from 'src/redux/uiSlice';
 import {
   authenticateUser,
-  getCognitoUser,
+  confirmPassword,
+  confirmRegistration,
+  forgotPassword,
   getCurrentUser,
-  getUserPool,
-  updateCognitoAttributes,
+  resendConfirmationCode,
+  signUp,
 } from 'src/util/cognito';
 import { sleep } from 'src/util/sleep';
 
@@ -23,7 +27,7 @@ export const login = async (email: string, password: string) => {
     await sleep(100);
     const attributes = await getUserAttributes();
 
-    return attributes.find((v) => v.name === 'custom:questionnaire_filled')?.value;
+    return attributes.find((v) => v.name === 'custom:status')?.value;
   } catch (e) {
     throw (e as Error).message;
   } finally {
@@ -34,19 +38,13 @@ export const login = async (email: string, password: string) => {
 export const register = async (data: RegistrationForm) => {
   try {
     dispatch(startWaiting());
-    const userPool = await getUserPool();
 
     const userName = new CognitoUserAttribute({
       Name: 'custom:user_name',
       Value: data.userName,
     });
 
-    await new Promise((resolve, reject) => {
-      userPool.signUp(data.email, data.password, [userName], [], (err, result) => {
-        if (err || result === undefined) reject(err);
-        else resolve(result.user);
-      });
-    });
+    await signUp(data.email, data.password, [userName]);
   } catch (e) {
     throw (e as Error).message;
   } finally {
@@ -57,14 +55,8 @@ export const register = async (data: RegistrationForm) => {
 export const resendConfirmationEmail = async (email: string) => {
   try {
     dispatch(startWaiting());
-    const cognitoUser = await getCognitoUser(email);
 
-    await new Promise((resolve, reject) => {
-      cognitoUser.resendConfirmationCode((err) => {
-        if (err) reject(err);
-        else resolve(undefined);
-      });
-    });
+    await resendConfirmationCode(email);
   } catch (e) {
     throw (e as Error).message;
   } finally {
@@ -75,14 +67,8 @@ export const resendConfirmationEmail = async (email: string) => {
 export const verifyAccount = async (email: string, code: string) => {
   try {
     dispatch(startWaiting());
-    const cognitoUser = await getCognitoUser(email);
 
-    await new Promise((resolve, reject) => {
-      cognitoUser.confirmRegistration(code, true, (err) => {
-        if (err) reject(err);
-        else resolve(undefined);
-      });
-    });
+    await confirmRegistration(email, code);
   } catch (e) {
     throw (e as Error).message;
   } finally {
@@ -138,30 +124,11 @@ export const loadUserAttributes = async () => {
   dispatch(setLoadingProfile(false));
 };
 
-export const updateUserAttributes = async (data: {
-  role: string;
-  language: string;
-  instrument: string;
-  favoriate: string;
-}) => {
+export const saveQuestionnaire = async (data: PutUserRequest) => {
   try {
     dispatch(startWaiting());
-    const role = new CognitoUserAttribute({ Name: 'custom:role', Value: data.role });
-    const language = new CognitoUserAttribute({ Name: 'custom:language', Value: data.language });
-    const bio = new CognitoUserAttribute({
-      Name: 'custom:bio',
-      Value: `I am good at playing the ${data.instrument}.`,
-    });
-    const tag = new CognitoUserAttribute({
-      Name: 'custom:tag',
-      Value: data.favoriate,
-    });
-    const questionnaireFilled = new CognitoUserAttribute({
-      Name: 'custom:questionnaire_filled',
-      Value: 'true',
-    });
 
-    await updateCognitoAttributes([role, language, bio, tag, questionnaireFilled]);
+    await userEndpoint.putUser(data);
   } catch (e) {
     throw (e as Error).message;
   } finally {
@@ -172,14 +139,8 @@ export const updateUserAttributes = async (data: {
 export const sendForgot = async (email: string) => {
   try {
     dispatch(startWaiting());
-    const cognitoUser = await getCognitoUser(email);
 
-    await new Promise((resolve, reject) => {
-      cognitoUser.forgotPassword({
-        onSuccess: (data) => resolve(data),
-        onFailure: (err) => reject(err),
-      });
-    });
+    await forgotPassword(email);
   } catch (e) {
     throw (e as Error).message;
   } finally {
@@ -190,14 +151,8 @@ export const sendForgot = async (email: string) => {
 export const confirmForgot = async (email: string, newPassword: string, code: string) => {
   try {
     dispatch(startWaiting());
-    const cognitoUser = await getCognitoUser(email);
 
-    await new Promise((resolve, reject) => {
-      cognitoUser.confirmPassword(code, newPassword, {
-        onSuccess: () => resolve(undefined),
-        onFailure: (err) => reject(err),
-      });
-    });
+    await confirmPassword(email, newPassword, code);
   } catch (e) {
     throw (e as Error).message;
   } finally {

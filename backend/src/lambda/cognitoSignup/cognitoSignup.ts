@@ -8,13 +8,13 @@ export async function cognitoSignup(
 ): Promise<CognitoSignupEvent> {
   let service: CognitoService | null = null;
   try {
-    if (event.triggerSource === 'PreSignUp_SignUp') {
-      service = bindings.get(CognitoService);
+    service = bindings.get(CognitoService);
+    if (event.triggerSource === 'PreSignUp_SignUp')
       await service.addUser(
         event.userName,
+        event.request.userAttributes.email,
         event.request.userAttributes['custom:user_name']
       );
-    }
 
     return event;
   } finally {

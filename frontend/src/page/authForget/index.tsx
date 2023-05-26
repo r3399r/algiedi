@@ -1,18 +1,23 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
 import Button from 'src/component/Button';
 import Footer from 'src/component/Footer';
 import Form from 'src/component/Form';
 import FormInput from 'src/component/FormInput';
 import { ForgetPasswordForm } from 'src/model/Form';
+import { openFailSnackbar } from 'src/redux/uiSlice';
 import { sendForgot } from 'src/service/AuthService';
 
 const AuthForget = () => {
+  const dispatch = useDispatch();
   const methods = useForm<ForgetPasswordForm>();
   const [emailSent, setEmailSent] = useState<boolean>(false);
 
   const onSubmit = (data: ForgetPasswordForm) => {
-    sendForgot(data.email).then(() => setEmailSent(true));
+    sendForgot(data.email)
+      .then(() => setEmailSent(true))
+      .catch((err) => dispatch(openFailSnackbar(err)));
   };
 
   if (!emailSent)

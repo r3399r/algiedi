@@ -18,9 +18,10 @@ export class CognitoService {
     await this.dbAccess.cleanup();
   }
 
-  public async addUser(id: string, username: string) {
+  public async addUser(id: string, email: string, username: string) {
     const user = new UserEntity();
     user.id = id;
+    user.email = email;
     user.username = username;
 
     await this.userAccess.save(user);

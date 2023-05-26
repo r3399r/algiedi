@@ -23,7 +23,7 @@ const AuthLogin = () => {
     login(data.email, data.password)
       .then((res) => {
         dispatch(openSuccessSnackbar('Login Successfully'));
-        if (res !== 'true') navigate(Page.Questionnaire);
+        if (res !== 'ready') navigate(Page.Questionnaire);
         else {
           if (redirectPath) {
             navigate(redirectPath.from);

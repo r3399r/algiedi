@@ -1,13 +1,16 @@
 import { useMemo, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Button from 'src/component/Button';
 import Footer from 'src/component/Footer';
 import MultiSelect from 'src/component/MultiSelect';
 import MultiSelectOption from 'src/component/MultiSelectOption';
 import { Page } from 'src/constant/Page';
-import { updateUserAttributes } from 'src/service/AuthService';
+import { openFailSnackbar } from 'src/redux/uiSlice';
+import { saveQuestionnaire } from 'src/service/AuthService';
 
 const AuthQuestionnaire = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [start, setStart] = useState<boolean>(false);
   const [role, setRole] = useState<string>('');
@@ -21,9 +24,9 @@ const AuthQuestionnaire = () => {
   );
 
   const onNext = () => {
-    updateUserAttributes({ role, language, instrument, favoriate }).then(() =>
-      navigate(Page.Profile),
-    );
+    saveQuestionnaire({ role, language, instrument, favoriate })
+      .then(() => navigate(Page.Profile))
+      .catch((err) => dispatch(openFailSnackbar(err)));
   };
 
   return (

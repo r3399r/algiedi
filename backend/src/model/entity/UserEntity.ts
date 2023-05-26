@@ -7,7 +7,37 @@ export class UserEntity implements User {
   id!: string;
 
   @Column({ type: 'varchar' })
+  email!: string;
+
+  @Column({ type: 'varchar' })
   username!: string;
+
+  @Column({ type: 'varchar' })
+  role: string | null = null;
+
+  @Column({ type: 'int' })
+  age: string | null = null;
+
+  @Column({ type: 'varchar' })
+  language: string | null = null;
+
+  @Column({ type: 'varchar' })
+  bio: string | null = null;
+
+  @Column({ type: 'varchar' })
+  tag: string | null = null;
+
+  @Column({ type: 'varchar' })
+  facebook: string | null = null;
+
+  @Column({ type: 'varchar' })
+  instagram: string | null = null;
+
+  @Column({ type: 'varchar' })
+  youtube: string | null = null;
+
+  @Column({ type: 'varchar' })
+  soundcloud: string | null = null;
 
   @Column({ type: 'uuid', name: 'last_project_id', default: null })
   lastProjectId: string | null = null;

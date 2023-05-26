@@ -12,11 +12,11 @@ export const getUserPool = async () =>
     ClientId: process.env.REACT_APP_USER_POOL_CLIENT_ID ?? '',
   });
 
-export const getCognitoUser = async (email: string) => {
+export const getCognitoUser = async (username: string) => {
   const userPool = await getUserPool();
 
   return new CognitoUser({
-    Username: email,
+    Username: username,
     Pool: userPool,
   });
 };
@@ -84,6 +84,60 @@ export const refreshUserSession = async (): Promise<CognitoUserSession> => {
     cognitoUser.refreshSession(refreshToken, (err, session) => {
       if (err) reject(err);
       else resolve(session);
+    });
+  });
+};
+
+export const signUp = async (
+  username: string,
+  password: string,
+  userAttributes: CognitoUserAttribute[],
+) => {
+  const userPool = await getUserPool();
+  await new Promise((resolve, reject) => {
+    userPool.signUp(username, password, userAttributes, [], (err, result) => {
+      if (err || result === undefined) reject(err);
+      else resolve(result.user);
+    });
+  });
+};
+
+export const resendConfirmationCode = async (username: string) => {
+  const cognitoUser = await getCognitoUser(username);
+  await new Promise((resolve, reject) => {
+    cognitoUser.resendConfirmationCode((err) => {
+      if (err) reject(err);
+      else resolve(undefined);
+    });
+  });
+};
+
+export const confirmRegistration = async (username: string, code: string) => {
+  const cognitoUser = await getCognitoUser(username);
+  await new Promise((resolve, reject) => {
+    cognitoUser.confirmRegistration(code, true, (err) => {
+      if (err) reject(err);
+      else resolve(undefined);
+    });
+  });
+};
+
+export const forgotPassword = async (username: string) => {
+  const cognitoUser = await getCognitoUser(username);
+  await new Promise((resolve, reject) => {
+    cognitoUser.forgotPassword({
+      onSuccess: (data) => resolve(data),
+      onFailure: (err) => reject(err),
+    });
+  });
+};
+
+export const confirmPassword = async (username: string, newPassword: string, code: string) => {
+  const cognitoUser = await getCognitoUser(username);
+  await new Promise((resolve, reject) => {
+    cognitoUser.confirmPassword(code, newPassword, {
+      onSuccess: () => resolve(undefined),
+      onFailure: (err) => reject(err),
     });
   });
 };

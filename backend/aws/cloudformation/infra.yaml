@@ -140,6 +140,9 @@ Resources:
         - Name: user_name
           AttributeDataType: String
           Mutable: true
+        - Name: status
+          AttributeDataType: String
+          Mutable: true
         - Name: role
           AttributeDataType: String
           Mutable: true

@@ -4,6 +4,7 @@ export async function cognitoMessage(
   event: CognitoMessageEvent,
   _context?: LambdaContext
 ): Promise<CognitoMessageEvent> {
+  console.log(event);
   const baseUrl =
     process.env.ENVR === 'prod'
       ? `https://www.${process.env.DOMAIN}`
