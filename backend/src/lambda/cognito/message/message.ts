@@ -1,6 +1,6 @@
 import { CognitoMessageEvent, LambdaContext } from 'src/model/Lambda';
 
-export async function cognitoMessage(
+export async function message(
   event: CognitoMessageEvent,
   _context?: LambdaContext
 ): Promise<CognitoMessageEvent> {

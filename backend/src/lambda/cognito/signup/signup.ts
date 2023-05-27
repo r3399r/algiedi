@@ -2,7 +2,7 @@ import { bindings } from 'src/bindings';
 import { CognitoService } from 'src/logic/CognitoService';
 import { CognitoSignupEvent, LambdaContext } from 'src/model/Lambda';
 
-export async function cognitoSignup(
+export async function signup(
   event: CognitoSignupEvent,
   _context?: LambdaContext
 ): Promise<CognitoSignupEvent> {

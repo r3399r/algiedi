@@ -1,6 +1,6 @@
 import { CognitoUserAttribute } from 'amazon-cognito-identity-js';
 import userEndpoint from 'src/api/userEndpoint';
-import { PutUserRequest } from 'src/model/backend/api/User';
+import { PatchUserRequest } from 'src/model/backend/api/User';
 import { RegistrationForm } from 'src/model/Form';
 import { reset as apiReset } from 'src/redux/apiSlice';
 import { reset as meReset, setMe } from 'src/redux/meSlice';
@@ -124,7 +124,7 @@ export const loadUserAttributes = async () => {
   dispatch(setLoadingProfile(false));
 };
 
-export const saveQuestionnaire = async (data: PutUserRequest) => {
+export const saveQuestionnaire = async (data: PatchUserRequest) => {
   try {
     dispatch(startWaiting());
 

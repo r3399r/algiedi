@@ -35,7 +35,7 @@ async function apiUser(event: LambdaEvent, service: UserService) {
   if (event.headers === null)
     throw new BadRequestError('headers should not be empty');
   switch (event.httpMethod) {
-    case 'PUT':
+    case 'PATCH':
       if (event.body === null)
         throw new BadRequestError('body should not be empty');
 
