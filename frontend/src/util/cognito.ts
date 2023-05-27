@@ -47,16 +47,6 @@ export const getCurrentUser = async () => {
   }
 };
 
-export const updateCognitoAttributes = async (cognitoUserAttributes: CognitoUserAttribute[]) => {
-  const cognitoUser = await getCurrentUser();
-  await new Promise((resolve, reject) => {
-    cognitoUser.updateAttributes(cognitoUserAttributes, (err) => {
-      if (err) reject(err);
-      else resolve(undefined);
-    });
-  });
-};
-
 export const authenticateUser = async (
   email: string,
   password: string,

@@ -9,7 +9,7 @@ const putProject = async (id: string, data: PutProjectRequest) =>
 const putProjectIdApprovalCid = async (id: string, cid: string) =>
   await http.authPut(`project/${id}/approval/${cid}`);
 
-const patchProjectIdView = async (id: string) => await http.authPut(`project/${id}/view`);
+const patchProjectIdView = async (id: string) => await http.authPatch(`project/${id}/view`);
 
 export default {
   getProject,

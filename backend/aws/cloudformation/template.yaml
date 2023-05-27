@@ -89,6 +89,52 @@ Resources:
                   "contentHandling": "CONVERT_TO_TEXT"
                 }
               },
+              "put": {
+                "requestBody": {
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/putMe"
+                      }
+                    }
+                  },
+                  "required": true
+                },
+                "responses": {
+                  "200": {
+                    "description": "200 response",
+                    "headers": {
+                      "Access-Control-Allow-Origin": {
+                        "schema": {"type": "string"}
+                      }
+                    },
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/Empty"
+                        }
+                      }
+                    }
+                  }
+                },
+                "security": [{"cognito": []}],
+                "x-amazon-apigateway-request-validator" : "Validate body, query string parameters, and headers",
+                "x-amazon-apigateway-integration": {
+                  "type": "aws_proxy",
+                  "httpMethod": "POST",
+                  "uri": !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${Project}-${TargetEnvr}-me/invocations",
+                  "responses": {
+                    "default": {
+                      "statusCode": "200",
+                      "responseParameters": {
+                        "method.response.header.Access-Control-Allow-Origin": "'*'"
+                      }
+                    }
+                  },
+                  "passthroughBehavior": "when_no_match",
+                  "contentHandling": "CONVERT_TO_TEXT"
+                }
+              }
             },
             "/api/project": {
               "get": {
@@ -233,16 +279,6 @@ Resources:
             },
             "/api/project/{id}/view": {
               "patch": {
-                "requestBody": {
-                  "content": {
-                    "application/json": {
-                      "schema": {
-                        "$ref": "#/components/schemas/putUser"
-                      }
-                    }
-                  },
-                  "required": true
-                },
                 "responses": {
                   "200": {
                     "description": "200 response",
@@ -486,6 +522,20 @@ Resources:
                 "favoriate":{"type": "string"}
               },
               "required": ["role","language","instrument","favoriate"]
+            },
+            "putMe": {
+              "type": "object",
+              "properties": {
+                "role": {"type": "string"},
+                "language": {"type": "string"},
+                "bio":{"type": "string"},
+                "age":{"type": "string"},
+                "tag":{"type": "string"},
+                "facebook":{"type": "string"},
+                "instagram":{"type": "string"},
+                "youtube":{"type": "string"},
+                "soundcloud":{"type": "string"}
+              }
             },
           },
           "x-amazon-apigateway-request-validators" : {

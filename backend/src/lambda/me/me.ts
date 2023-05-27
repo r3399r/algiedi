@@ -1,5 +1,6 @@
 import { bindings } from 'src/bindings';
 import { MeService } from 'src/logic/MeService';
+import { PutMeRequest } from 'src/model/api/Me';
 import { BadRequestError, InternalServerError } from 'src/model/error';
 import { LambdaContext, LambdaEvent, LambdaOutput } from 'src/model/Lambda';
 import { errorOutput, successOutput } from 'src/util/lambdaHelper';
@@ -36,6 +37,11 @@ async function apiMe(event: LambdaEvent, service: MeService) {
   switch (event.httpMethod) {
     case 'GET':
       return service.getMe();
+    case 'PUT':
+      if (event.body === null)
+        throw new BadRequestError('body should not be empty');
+
+      return service.updateMe(JSON.parse(event.body) as PutMeRequest);
     default:
       throw new InternalServerError('unknown http method');
   }

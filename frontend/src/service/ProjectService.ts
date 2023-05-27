@@ -1,9 +1,9 @@
+import meEndpoint from 'src/api/meEndpoint';
 import projectEndpoint from 'src/api/projectEndpoint';
 import { GetProjectResponse, PutProjectRequest } from 'src/model/backend/api/Project';
 import { DetailedProject } from 'src/model/backend/Project';
 import { dispatch, getState } from 'src/redux/store';
 import { finishWaiting, startWaiting } from 'src/redux/uiSlice';
-import { getUserAttributes } from './AuthService';
 import { loadProjects } from './OverallService';
 import { updateLastProjectId } from './UploadService';
 
@@ -38,9 +38,9 @@ export const getProject = async (projectId?: string): Promise<DetailedProject | 
       if (requiredProject) return requiredProject;
     }
 
-    // return project saved in cognito for newly refresh page
-    const userAttributes = await getUserAttributes();
-    const latestProjectId = userAttributes.find((v) => v.name === 'custom:last_project_id')?.value;
+    // return project saved in db for newly refresh page
+    const res = await meEndpoint.getMe();
+    const latestProjectId = res.data.lastProjectId;
     if (latestProjectId) {
       const requiredProject = myProjects.find((v) => v.id === latestProjectId);
       if (requiredProject) return requiredProject;
