@@ -1,9 +1,9 @@
-import { PutUserRequest } from 'src/model/backend/api/User';
+import { PatchUserRequest } from 'src/model/backend/api/User';
 import http from 'src/util/http';
 
-const putUser = async (data: PutUserRequest) =>
-  await http.authPut<void, PutUserRequest>('user', { data });
+const patchUser = async (data: PatchUserRequest) =>
+  await http.authPatch<void, PatchUserRequest>('user', { data });
 
 export default {
-  putUser,
+  patchUser,
 };

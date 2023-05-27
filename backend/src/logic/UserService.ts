@@ -1,6 +1,6 @@
 import { CognitoIdentityServiceProvider, Lambda } from 'aws-sdk';
 import { inject, injectable } from 'inversify';
-import { PutUserRequest } from 'src/model/api/User';
+import { PatchUserRequest } from 'src/model/api/User';
 import { cognitoSymbol } from 'src/util/LambdaSetup';
 
 /**
@@ -17,7 +17,7 @@ export class UserService {
   @inject(CognitoIdentityServiceProvider)
   private readonly cognitoProvider!: CognitoIdentityServiceProvider;
 
-  public async initUser(data: PutUserRequest) {
+  public async initUser(data: PatchUserRequest) {
     // update cognito
     await this.cognitoProvider
       .adminUpdateUserAttributes({

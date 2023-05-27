@@ -1,6 +1,6 @@
 import { bindings } from 'src/bindings';
 import { UserService } from 'src/logic/UserService';
-import { PutUserRequest } from 'src/model/api/User';
+import { PatchUserRequest } from 'src/model/api/User';
 import { BadRequestError, InternalServerError } from 'src/model/error';
 import { LambdaContext, LambdaEvent, LambdaOutput } from 'src/model/Lambda';
 import { errorOutput, successOutput } from 'src/util/lambdaHelper';
@@ -39,7 +39,7 @@ async function apiUser(event: LambdaEvent, service: UserService) {
       if (event.body === null)
         throw new BadRequestError('body should not be empty');
 
-      return service.initUser(JSON.parse(event.body) as PutUserRequest);
+      return service.initUser(JSON.parse(event.body) as PatchUserRequest);
     default:
       throw new InternalServerError('unknown http method');
   }

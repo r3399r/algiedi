@@ -128,7 +128,7 @@ export const saveQuestionnaire = async (data: PutUserRequest) => {
   try {
     dispatch(startWaiting());
 
-    await userEndpoint.putUser(data);
+    await userEndpoint.patchUser(data);
   } catch (e) {
     throw (e as Error).message;
   } finally {

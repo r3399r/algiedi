@@ -1,20 +1,14 @@
-import { CognitoUserAttribute } from 'amazon-cognito-identity-js';
+import projectEndpoint from 'src/api/projectEndpoint';
 import uploadEndpoint from 'src/api/uploadEndpoint';
 import { UploadLyricsForm, UploadTrackForm } from 'src/model/Form';
 import { setLastProjectId } from 'src/redux/meSlice';
 import { dispatch } from 'src/redux/store';
 import { finishWaiting, startWaiting } from 'src/redux/uiSlice';
-import { updateCognitoAttributes } from 'src/util/cognito';
 import { file2Base64 } from 'src/util/fileConverter';
 import { loadProjects } from './OverallService';
 
 export const updateLastProjectId = async (projectId: string) => {
-  const lastProjectAttribute = new CognitoUserAttribute({
-    Name: 'custom:last_project_id',
-    Value: projectId,
-  });
-
-  await updateCognitoAttributes([lastProjectAttribute]);
+  await projectEndpoint.patchProjectIdView(projectId);
   dispatch(setLastProjectId(projectId));
 };
 
