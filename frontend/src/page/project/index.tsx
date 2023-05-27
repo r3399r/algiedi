@@ -11,7 +11,7 @@ import { getProject, setApproval, updateProject } from 'src/service/ProjectServi
 const Project = () => {
   const dispatch = useDispatch();
   const state = useLocation().state as { id: string } | null;
-  const { sub: userId } = useSelector((root: RootState) => root.me);
+  const { id: userId } = useSelector((root: RootState) => root.me);
   const [thisProject, setThisProject] = useState<DetailedProject | null>();
   const [mainCreation, setMainCreation] = useState<DetailedProject['creation'][0]>();
   const [inspiredList, setInspiredList] = useState<DetailedProject['creation']>();

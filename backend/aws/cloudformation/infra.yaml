@@ -67,9 +67,9 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Architectures: [arm64]
-      Handler: index.cognitoMessage
+      Handler: index.message
       Runtime: nodejs18.x
-      FunctionName: !Sub ${Project}-${TargetEnvr}-cognitoMessage
+      FunctionName: !Sub ${Project}-${TargetEnvr}-message
       Role: !GetAtt ExecutionRole.Arn
       CodeUri: ../../dist/webpack/lambda
       MemorySize: 128
@@ -81,7 +81,7 @@ Resources:
     Type: AWS::Lambda::Permission
     DependsOn: [LambdaCognitoMessage]
     Properties:
-      FunctionName: !Sub ${Project}-${TargetEnvr}-cognitoMessage
+      FunctionName: !Sub ${Project}-${TargetEnvr}-message
       Action: 'lambda:InvokeFunction'
       Principal: cognito-idp.amazonaws.com
       SourceArn: !GetAtt CognitoUserPool.Arn
@@ -89,9 +89,9 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Architectures: [arm64]
-      Handler: index.cognitoSignup
+      Handler: index.signup
       Runtime: nodejs18.x
-      FunctionName: !Sub ${Project}-${TargetEnvr}-cognitoSignup
+      FunctionName: !Sub ${Project}-${TargetEnvr}-signup
       Role: !GetAtt ExecutionRole.Arn
       CodeUri: ../../dist/webpack/lambda
       MemorySize: 128
@@ -113,7 +113,7 @@ Resources:
     Type: AWS::Lambda::Permission
     DependsOn: [LambdaCognitoSignup]
     Properties:
-      FunctionName: !Sub ${Project}-${TargetEnvr}-cognitoSignup
+      FunctionName: !Sub ${Project}-${TargetEnvr}-signup
       Action: 'lambda:InvokeFunction'
       Principal: cognito-idp.amazonaws.com
       SourceArn: !GetAtt CognitoUserPool.Arn
@@ -138,6 +138,9 @@ Resources:
           TemporaryPasswordValidityDays: 7
       Schema:
         - Name: user_name
+          AttributeDataType: String
+          Mutable: true
+        - Name: status
           AttributeDataType: String
           Mutable: true
         - Name: role

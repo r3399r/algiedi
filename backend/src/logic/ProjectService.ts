@@ -2,13 +2,19 @@ import { S3 } from 'aws-sdk';
 import { inject, injectable } from 'inversify';
 import { DbAccess } from 'src/access/DbAccess';
 import { LyricsAccess } from 'src/access/LyricsAccess';
+import { ProjectAccess } from 'src/access/ProjectAccess';
 import { TrackAccess } from 'src/access/TrackAccess';
+import { UserAccess } from 'src/access/UserAccess';
 import { ViewLyricsAccess } from 'src/access/ViewLyricsAccess';
 import { ViewProjectUserAccess } from 'src/access/ViewProjectUserAccess';
 import { ViewTrackAccess } from 'src/access/ViewTrackAccess';
 import { GetProjectResponse, PutProjectRequest } from 'src/model/api/Project';
 import { Project } from 'src/model/entity/Project';
-import { BadRequestError, UnauthorizedError } from 'src/model/error';
+import {
+  BadRequestError,
+  InternalServerError,
+  UnauthorizedError,
+} from 'src/model/error';
 import { DetailedLyrics, DetailedTrack } from 'src/model/Project';
 import { compare } from 'src/util/compare';
 import { cognitoSymbol } from 'src/util/LambdaSetup';
@@ -27,11 +33,17 @@ export class ProjectService {
   @inject(DbAccess)
   private readonly dbAccess!: DbAccess;
 
+  @inject(ProjectAccess)
+  private readonly projectAccess!: ProjectAccess;
+
   @inject(LyricsAccess)
   private readonly lyricsAccess!: LyricsAccess;
 
   @inject(TrackAccess)
   private readonly trackAccess!: TrackAccess;
+
+  @inject(UserAccess)
+  private readonly userAccess!: UserAccess;
 
   @inject(ViewProjectUserAccess)
   private readonly viewProjectUserAccess!: ViewProjectUserAccess;
@@ -160,5 +172,16 @@ export class ProjectService {
       targetLyrics.approval = !targetLyrics.approval;
       await this.lyricsAccess.save(targetLyrics);
     } else throw new BadRequestError('unexpected error');
+  }
+
+  public async setLastProject(id: string) {
+    const project = await this.projectAccess.findOneById(id);
+    if (project === null) throw new BadRequestError('project not found');
+
+    const user = await this.userAccess.findOneById(this.cognitoUserId);
+    if (user === null) throw new InternalServerError('user not found');
+
+    user.lastProjectId = id;
+    await this.userAccess.save(user);
   }
 }

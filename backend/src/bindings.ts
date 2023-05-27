@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { S3, SNS } from 'aws-sdk';
+import { CognitoIdentityServiceProvider, Lambda, S3, SNS } from 'aws-sdk';
 import { Container } from 'inversify';
 import { DbAccess } from './access/DbAccess';
 import { LyricsAccess } from './access/LyricsAccess';
@@ -11,9 +11,12 @@ import { ViewLyricsAccess } from './access/ViewLyricsAccess';
 import { ViewProjectUserAccess } from './access/ViewProjectUserAccess';
 import { ViewTrackAccess } from './access/ViewTrackAccess';
 import { CognitoService } from './logic/CognitoService';
+import { MeService } from './logic/MeService';
 import { ProjectService } from './logic/ProjectService';
 import { SnsService } from './logic/SnsService';
 import { UploadService } from './logic/UploadService';
+import { UserService } from './logic/UserService';
+import { VpcService } from './logic/VpcService';
 import { LyricsEntity } from './model/entity/LyricsEntity';
 import { ProjectEntity } from './model/entity/ProjectEntity';
 import { ProjectUserEntity } from './model/entity/ProjectUserEntity';
@@ -54,9 +57,16 @@ container.bind<CognitoService>(CognitoService).toSelf();
 container.bind<ProjectService>(ProjectService).toSelf();
 container.bind<SnsService>(SnsService).toSelf();
 container.bind<UploadService>(UploadService).toSelf();
+container.bind<UserService>(UserService).toSelf();
+container.bind<VpcService>(VpcService).toSelf();
+container.bind<MeService>(MeService).toSelf();
 
 // AWS
 container.bind<SNS>(SNS).toDynamicValue(() => new SNS());
 container.bind<S3>(S3).toDynamicValue(() => new S3());
+container.bind<Lambda>(Lambda).toDynamicValue(() => new Lambda());
+container
+  .bind<CognitoIdentityServiceProvider>(CognitoIdentityServiceProvider)
+  .toDynamicValue(() => new CognitoIdentityServiceProvider());
 
 export { container as bindings };

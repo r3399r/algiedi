@@ -1,9 +1,10 @@
 import { CognitoMessageEvent, LambdaContext } from 'src/model/Lambda';
 
-export async function cognitoMessage(
+export async function message(
   event: CognitoMessageEvent,
   _context?: LambdaContext
 ): Promise<CognitoMessageEvent> {
+  console.log(event);
   const baseUrl =
     process.env.ENVR === 'prod'
       ? `https://www.${process.env.DOMAIN}`

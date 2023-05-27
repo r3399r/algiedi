@@ -19,8 +19,8 @@ const AuthVerify = () => {
         navigate(Page.Questionnaire);
       })
       .catch((err) => {
-        navigate(Page.Home);
         dispatch(openFailSnackbar(err));
+        navigate(Page.Home);
       });
   }, [query]);
 

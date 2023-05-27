@@ -11,7 +11,7 @@ import Divider from './Divider';
 
 const SideMenu = () => {
   const navigate = useNavigate();
-  const { userName } = useSelector((rootState: RootState) => rootState.me);
+  const { username } = useSelector((rootState: RootState) => rootState.me);
 
   useEffect(() => {
     loadProfileData();
@@ -27,7 +27,7 @@ const SideMenu = () => {
         onClick={() => navigate(Page.Profile)}
       >
         <img src={IcProfile} />
-        <div>{userName}</div>
+        <div>{username}</div>
       </div>
       <Divider className="bg-gray-600" />
       <div

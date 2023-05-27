@@ -35,6 +35,8 @@ Resources:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
         - arn:aws:iam::aws:policy/AmazonSNSFullAccess
         - arn:aws:iam::aws:policy/AmazonVPCCrossAccountNetworkInterfaceOperations
+        - arn:aws:iam::aws:policy/AWSLambda_FullAccess
+        - arn:aws:iam::aws:policy/AmazonCognitoPowerUser
   ##############################################
   ##### API Gateway and associated Lambdas #####
   ##############################################
@@ -50,6 +52,90 @@ Resources:
             "title": !Sub "${Project}-${TargetEnvr}-api"
           },
           "paths": {
+            "/api/me": {
+              "get": {
+                "responses": {
+                  "200": {
+                    "description": "200 response",
+                    "headers": {
+                      "Access-Control-Allow-Origin": {
+                        "schema": {"type": "string"}
+                      }
+                    },
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/Empty"
+                        }
+                      }
+                    }
+                  }
+                },
+                "security": [{"cognito": []}],
+                "x-amazon-apigateway-request-validator" : "Validate query string parameters and headers",
+                "x-amazon-apigateway-integration": {
+                  "type": "aws_proxy",
+                  "httpMethod": "POST",
+                  "uri": !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${Project}-${TargetEnvr}-me/invocations",
+                  "responses": {
+                    "default": {
+                      "statusCode": "200",
+                      "responseParameters": {
+                        "method.response.header.Access-Control-Allow-Origin": "'*'"
+                      }
+                    }
+                  },
+                  "passthroughBehavior": "when_no_match",
+                  "contentHandling": "CONVERT_TO_TEXT"
+                }
+              },
+              "put": {
+                "requestBody": {
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/putMe"
+                      }
+                    }
+                  },
+                  "required": true
+                },
+                "responses": {
+                  "200": {
+                    "description": "200 response",
+                    "headers": {
+                      "Access-Control-Allow-Origin": {
+                        "schema": {"type": "string"}
+                      }
+                    },
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/Empty"
+                        }
+                      }
+                    }
+                  }
+                },
+                "security": [{"cognito": []}],
+                "x-amazon-apigateway-request-validator" : "Validate body, query string parameters, and headers",
+                "x-amazon-apigateway-integration": {
+                  "type": "aws_proxy",
+                  "httpMethod": "POST",
+                  "uri": !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${Project}-${TargetEnvr}-me/invocations",
+                  "responses": {
+                    "default": {
+                      "statusCode": "200",
+                      "responseParameters": {
+                        "method.response.header.Access-Control-Allow-Origin": "'*'"
+                      }
+                    }
+                  },
+                  "passthroughBehavior": "when_no_match",
+                  "contentHandling": "CONVERT_TO_TEXT"
+                }
+              }
+            },
             "/api/project": {
               "get": {
                 "responses": {
@@ -191,6 +277,44 @@ Resources:
                 }
               }
             },
+            "/api/project/{id}/view": {
+              "patch": {
+                "responses": {
+                  "200": {
+                    "description": "200 response",
+                    "headers": {
+                      "Access-Control-Allow-Origin": {
+                        "schema": {"type": "string"}
+                      }
+                    },
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/Empty"
+                        }
+                      }
+                    }
+                  }
+                },
+                "security": [{"cognito": []}],
+                "x-amazon-apigateway-request-validator" : "Validate query string parameters and headers",
+                "x-amazon-apigateway-integration": {
+                  "type": "aws_proxy",
+                  "httpMethod": "POST",
+                  "uri": !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${Project}-${TargetEnvr}-project/invocations",
+                  "responses": {
+                    "default": {
+                      "statusCode": "200",
+                      "responseParameters": {
+                        "method.response.header.Access-Control-Allow-Origin": "'*'"
+                      }
+                    }
+                  },
+                  "passthroughBehavior": "when_no_match",
+                  "contentHandling": "CONVERT_TO_TEXT"
+                }
+              }
+            },
             "/api/sns": {
               "post": {
                 "requestBody": {
@@ -285,6 +409,54 @@ Resources:
                   "contentHandling": "CONVERT_TO_TEXT"
                 }
               }
+            },
+            "/api/user": {
+              "patch": {
+                "requestBody": {
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/putUser"
+                      }
+                    }
+                  },
+                  "required": true
+                },
+                "responses": {
+                  "200": {
+                    "description": "200 response",
+                    "headers": {
+                      "Access-Control-Allow-Origin": {
+                        "schema": {"type": "string"}
+                      }
+                    },
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/Empty"
+                        }
+                      }
+                    }
+                  }
+                },
+                "security": [{"cognito": []}],
+                "x-amazon-apigateway-request-validator" : "Validate body, query string parameters, and headers",
+                "x-amazon-apigateway-integration": {
+                  "type": "aws_proxy",
+                  "httpMethod": "POST",
+                  "uri": !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${Project}-${TargetEnvr}-user/invocations",
+                  "responses": {
+                    "default": {
+                      "statusCode": "200",
+                      "responseParameters": {
+                        "method.response.header.Access-Control-Allow-Origin": "'*'"
+                      }
+                    }
+                  },
+                  "passthroughBehavior": "when_no_match",
+                  "contentHandling": "CONVERT_TO_TEXT"
+                }
+              }
             }
           },
           "securityDefinitions": {
@@ -340,7 +512,31 @@ Resources:
                 "isOriginal":{"type": "boolean"},
               },
               "required": ["type","name","description","theme","genre","language","caption","isOriginal"]
-            }
+            },
+            "putUser": {
+              "type": "object",
+              "properties": {
+                "role": {"type": "string"},
+                "language": {"type": "string"},
+                "instrument":{"type": "string"},
+                "favoriate":{"type": "string"}
+              },
+              "required": ["role","language","instrument","favoriate"]
+            },
+            "putMe": {
+              "type": "object",
+              "properties": {
+                "role": {"type": "string"},
+                "language": {"type": "string"},
+                "bio":{"type": "string"},
+                "age":{"type": "string"},
+                "tag":{"type": "string"},
+                "facebook":{"type": "string"},
+                "instagram":{"type": "string"},
+                "youtube":{"type": "string"},
+                "soundcloud":{"type": "string"}
+              }
+            },
           },
           "x-amazon-apigateway-request-validators" : {
             "Validate body, query string parameters, and headers" : {
@@ -443,6 +639,92 @@ Resources:
     DependsOn: [ServerlessApi, LambdaUpload]
     Properties:
       FunctionName: !Sub ${Project}-${TargetEnvr}-upload
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ServerlessApi}/*
+  LambdaVpc:
+    Type: AWS::Serverless::Function
+    Properties:
+      Architectures: [arm64]
+      Handler: index.vpc
+      Runtime: nodejs18.x
+      FunctionName: !Sub ${Project}-${TargetEnvr}-vpc
+      Role: !GetAtt ExecutionRole.Arn
+      CodeUri: ../../dist/webpack/lambda
+      MemorySize: 128
+      VpcConfig:
+        SecurityGroupIds: [sg-00a1e2a1668125d11]
+        SubnetIds: 
+        - subnet-0ae38472a33a75137
+        - subnet-0dfc7a78154dec1f1
+        - subnet-0b77ba257fb40880b
+      Environment:
+        Variables:
+          PROJECT: !Sub ${Project}
+          ENVR: !Sub ${TargetEnvr}
+          DB_ENDPOINT:
+            Fn::ImportValue: !Sub ${Project}-${TargetEnvr}-db-endpoint
+          DB_PORT:
+            Fn::ImportValue: !Sub ${Project}-${TargetEnvr}-db-port
+          DB_USERNAME:
+            Fn::ImportValue: !Sub ${Project}-${TargetEnvr}-db-username
+          DB_PASSWORD: !Sub '{{resolve:ssm:${Project}-${TargetEnvr}-db-pwd}}'
+  LambdaUser:
+    Type: AWS::Serverless::Function
+    Properties:
+      Architectures: [arm64]
+      Handler: index.user
+      Runtime: nodejs18.x
+      FunctionName: !Sub ${Project}-${TargetEnvr}-user
+      Role: !GetAtt ExecutionRole.Arn
+      CodeUri: ../../dist/webpack/lambda
+      MemorySize: 128
+      Environment:
+        Variables:
+          PROJECT: !Sub ${Project}
+          ENVR: !Sub ${TargetEnvr}
+          USER_POOL_ID:
+            Fn::ImportValue: !Sub ${Project}-${TargetEnvr}-cognito-user-pool-id
+  InvokePermissionUser:
+    Type: AWS::Lambda::Permission
+    DependsOn: [ServerlessApi, LambdaUser]
+    Properties:
+      FunctionName: !Sub ${Project}-${TargetEnvr}-user
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ServerlessApi}/*
+  LambdaMe:
+    Type: AWS::Serverless::Function
+    Properties:
+      Architectures: [arm64]
+      Handler: index.me
+      Runtime: nodejs18.x
+      FunctionName: !Sub ${Project}-${TargetEnvr}-me
+      Role: !GetAtt ExecutionRole.Arn
+      CodeUri: ../../dist/webpack/lambda
+      MemorySize: 128
+      VpcConfig:
+        SecurityGroupIds: [sg-00a1e2a1668125d11]
+        SubnetIds: 
+        - subnet-0ae38472a33a75137
+        - subnet-0dfc7a78154dec1f1
+        - subnet-0b77ba257fb40880b
+      Environment:
+        Variables:
+          PROJECT: !Sub ${Project}
+          ENVR: !Sub ${TargetEnvr}
+          DB_ENDPOINT:
+            Fn::ImportValue: !Sub ${Project}-${TargetEnvr}-db-endpoint
+          DB_PORT:
+            Fn::ImportValue: !Sub ${Project}-${TargetEnvr}-db-port
+          DB_USERNAME:
+            Fn::ImportValue: !Sub ${Project}-${TargetEnvr}-db-username
+          DB_PASSWORD: !Sub '{{resolve:ssm:${Project}-${TargetEnvr}-db-pwd}}'
+  InvokePermissionMe:
+    Type: AWS::Lambda::Permission
+    DependsOn: [ServerlessApi, LambdaMe]
+    Properties:
+      FunctionName: !Sub ${Project}-${TargetEnvr}-me
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com
       SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ServerlessApi}/*
