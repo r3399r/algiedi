@@ -11,6 +11,7 @@ import { ViewLyricsAccess } from './access/ViewLyricsAccess';
 import { ViewProjectUserAccess } from './access/ViewProjectUserAccess';
 import { ViewTrackAccess } from './access/ViewTrackAccess';
 import { CognitoService } from './logic/CognitoService';
+import { MeService } from './logic/MeService';
 import { ProjectService } from './logic/ProjectService';
 import { SnsService } from './logic/SnsService';
 import { UploadService } from './logic/UploadService';
@@ -58,6 +59,7 @@ container.bind<SnsService>(SnsService).toSelf();
 container.bind<UploadService>(UploadService).toSelf();
 container.bind<UserService>(UserService).toSelf();
 container.bind<VpcService>(VpcService).toSelf();
+container.bind<MeService>(MeService).toSelf();
 
 // AWS
 container.bind<SNS>(SNS).toDynamicValue(() => new SNS());

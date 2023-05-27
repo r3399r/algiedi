@@ -1,13 +1,47 @@
 import { CognitoUserAttribute } from 'amazon-cognito-identity-js';
-import { dispatch } from 'src/redux/store';
-import { finishWaiting, startWaiting } from 'src/redux/uiSlice';
+import meEndpoint from 'src/api/meEndpoint';
+import { setMe } from 'src/redux/meSlice';
+import { dispatch, getState } from 'src/redux/store';
+import { finishWaiting, setLoadingProfile, startWaiting } from 'src/redux/uiSlice';
 import { updateCognitoAttributes } from 'src/util/cognito';
-import { loadUserAttributes } from './AuthService';
+
+const loadMe = async () => {
+  const isLoadingProfile = getState().ui.isLoadingProfile;
+  if (isLoadingProfile === true) return;
+
+  try {
+    dispatch(setLoadingProfile(true));
+
+    const res = await meEndpoint.getMe();
+    const user = res.data;
+
+    dispatch(
+      setMe({
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        role: user.role?.split(',') ?? [],
+        age: user.age ?? '',
+        language: user.language?.split(',') ?? [],
+        bio: user.bio ?? '',
+        tag: user.tag?.split(',') ?? [],
+        facebook: user.facebook ?? '',
+        instagram: user.instagram ?? '',
+        youtube: user.youtube ?? '',
+        soundcloud: user.soundcloud ?? '',
+        lastProjectId: user.lastProjectId ?? undefined,
+      }),
+    );
+  } finally {
+    dispatch(setLoadingProfile(false));
+  }
+};
 
 export const loadProfileData = async () => {
   try {
     dispatch(startWaiting());
-    await loadUserAttributes();
+
+    await loadMe();
   } finally {
     dispatch(finishWaiting());
   }

@@ -17,7 +17,7 @@ const Profile = () => {
   const dispatch = useDispatch();
   const {
     role,
-    userName,
+    username,
     email,
     language,
     bio,
@@ -91,7 +91,7 @@ const Profile = () => {
         <div className="flex items-center gap-6">
           <img src={IcProfile} />
           <div>
-            <div className="text-[20px] font-bold">{userName}</div>
+            <div className="text-[20px] font-bold">{username}</div>
             {isEdit ? (
               <div className="border-[1px] border-[#c2c2c2] rounded-[20px] h-[21px] px-2 text-[10px] flex gap-2">
                 {['Composer', 'Lyricist', 'Singer', 'Producer'].map((v) => (

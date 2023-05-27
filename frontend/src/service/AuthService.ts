@@ -3,9 +3,9 @@ import userEndpoint from 'src/api/userEndpoint';
 import { PatchUserRequest } from 'src/model/backend/api/User';
 import { RegistrationForm } from 'src/model/Form';
 import { reset as apiReset } from 'src/redux/apiSlice';
-import { reset as meReset, setMe } from 'src/redux/meSlice';
-import { dispatch, getState } from 'src/redux/store';
-import { finishWaiting, setIsLogin, setLoadingProfile, startWaiting } from 'src/redux/uiSlice';
+import { reset as meReset } from 'src/redux/meSlice';
+import { dispatch } from 'src/redux/store';
+import { finishWaiting, setIsLogin, startWaiting } from 'src/redux/uiSlice';
 import {
   authenticateUser,
   confirmPassword,
@@ -88,40 +88,6 @@ export const getUserAttributes = async () => {
   );
 
   return (userAttributes ?? []).map((v) => ({ name: v.Name, value: v.Value }));
-};
-
-export const loadUserAttributes = async () => {
-  const isLoadingProfile = getState().ui.isLoadingProfile;
-  if (isLoadingProfile === true) return;
-
-  dispatch(setLoadingProfile(true));
-
-  const userAttributes = await getUserAttributes();
-  const res: { [key: string]: string } = {};
-  userAttributes.forEach((v) => {
-    res[v.name] = v.value;
-  });
-
-  dispatch(
-    setMe({
-      sub: res.sub,
-      userName: res['custom:user_name'],
-      bio: res['custom:bio'],
-      emailVerified: Boolean(res.email_verified),
-      language: res['custom:language']?.split(',') ?? [],
-      role: res['custom:role']?.split(',') ?? [],
-      email: res.email,
-      age: res['custom:age'],
-      tag: res['custom:tag']?.split(',') ?? [],
-      facebook: res['custom:facebook'],
-      instagram: res['custom:instagram'],
-      youtube: res['custom:youtube'],
-      soundcloud: res['custom:soundcloud'],
-      lastProjectId: res['custom:last_project_id'],
-    }),
-  );
-
-  dispatch(setLoadingProfile(false));
 };
 
 export const saveQuestionnaire = async (data: PatchUserRequest) => {
