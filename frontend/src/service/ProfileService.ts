@@ -18,11 +18,11 @@ const loadMe = async () => {
         id: user.id,
         email: user.email,
         username: user.username,
-        role: user.role?.split(',') ?? [],
+        role: user.role === null || user.role === '' ? [] : user.role.split(','),
         age: String(user.age ?? ''),
-        language: user.language?.split(',') ?? [],
+        language: user.language === null || user.language === '' ? [] : user.language.split(','),
         bio: user.bio ?? '',
-        tag: user.tag?.split(',') ?? [],
+        tag: user.tag === null || user.tag === '' ? [] : user.tag.split(','),
         facebook: user.facebook ?? '',
         instagram: user.instagram ?? '',
         youtube: user.youtube ?? '',
@@ -58,7 +58,7 @@ export const editProfile = async (
 ) => {
   try {
     dispatch(startWaiting());
-    console.log(age);
+
     const res = await meEndpoint.putMe({
       role: role.join(),
       language: language.join(),
@@ -77,11 +77,11 @@ export const editProfile = async (
         id: user.id,
         email: user.email,
         username: user.username,
-        role: user.role?.split(',') ?? [],
+        role: user.role === null || user.role === '' ? [] : user.role.split(','),
         age: String(user.age ?? ''),
-        language: user.language?.split(',') ?? [],
+        language: user.language === null || user.language === '' ? [] : user.language.split(','),
         bio: user.bio ?? '',
-        tag: user.tag?.split(',') ?? [],
+        tag: user.tag === null || user.tag === '' ? [] : user.tag.split(','),
         facebook: user.facebook ?? '',
         instagram: user.instagram ?? '',
         youtube: user.youtube ?? '',

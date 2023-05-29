@@ -55,8 +55,8 @@ const AuthQuestionnaire = () => {
                   <div className="text-[16px] font-bold">Composer</div>
                   <div className="text-[12px] text-[#a7a7a7]">Upload audio melody tracks</div>
                 </MultiSelectOption>
-                <MultiSelectOption value="Lyrist">
-                  <div className="text-[16px] font-bold">Lyrist</div>
+                <MultiSelectOption value="Lyricist">
+                  <div className="text-[16px] font-bold">Lyricist</div>
                   <div className="text-[12px] text-[#a7a7a7]">Fill in lyrics for melodies</div>
                 </MultiSelectOption>
                 <MultiSelectOption value="Singer">
