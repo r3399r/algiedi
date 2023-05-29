@@ -143,39 +143,6 @@ Resources:
         - Name: status
           AttributeDataType: String
           Mutable: true
-        - Name: role
-          AttributeDataType: String
-          Mutable: true
-        - Name: age
-          AttributeDataType: Number
-          Mutable: true
-        - Name: questionnaire_filled
-          AttributeDataType: Boolean
-          Mutable: true
-        - Name: language
-          AttributeDataType: String
-          Mutable: true
-        - Name: bio
-          AttributeDataType: String
-          Mutable: true
-        - Name: tag
-          AttributeDataType: String
-          Mutable: true
-        - Name: facebook
-          AttributeDataType: String
-          Mutable: true
-        - Name: instagram
-          AttributeDataType: String
-          Mutable: true
-        - Name: youtube
-          AttributeDataType: String
-          Mutable: true
-        - Name: soundcloud
-          AttributeDataType: String
-          Mutable: true
-        - Name: last_project_id
-          AttributeDataType: String
-          Mutable: true
       UsernameAttributes: [email]
       UserPoolName: !Sub ${Project}-${TargetEnvr}
       LambdaConfig:
@@ -195,10 +162,6 @@ Outputs:
     Value: !GetAtt CognitoUserPool.Arn
     Export:
       Name: !Sub ${Project}-${TargetEnvr}-cognito-user-pool-arn
-  UserPoolClient:
-    Value: !Sub ${CognitoUserPoolClient}
-    Export:
-      Name: !Sub ${Project}-${TargetEnvr}-cognito-user-pool-client-id
   DbEndpoint:
     Value: !GetAtt RdsDatabase.Endpoint.Address
     Export:
