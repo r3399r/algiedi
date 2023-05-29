@@ -19,7 +19,7 @@ const loadMe = async () => {
         email: user.email,
         username: user.username,
         role: user.role?.split(',') ?? [],
-        age: user.age ?? '',
+        age: String(user.age ?? ''),
         language: user.language?.split(',') ?? [],
         bio: user.bio ?? '',
         tag: user.tag?.split(',') ?? [],
@@ -58,7 +58,7 @@ export const editProfile = async (
 ) => {
   try {
     dispatch(startWaiting());
-
+    console.log(age);
     const res = await meEndpoint.putMe({
       role: role.join(),
       language: language.join(),
@@ -78,7 +78,7 @@ export const editProfile = async (
         email: user.email,
         username: user.username,
         role: user.role?.split(',') ?? [],
-        age: user.age ?? '',
+        age: String(user.age ?? ''),
         language: user.language?.split(',') ?? [],
         bio: user.bio ?? '',
         tag: user.tag?.split(',') ?? [],

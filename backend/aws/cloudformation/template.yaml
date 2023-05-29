@@ -536,7 +536,7 @@ Resources:
                 "youtube":{"type": "string"},
                 "soundcloud":{"type": "string"}
               }
-            },
+            }
           },
           "x-amazon-apigateway-request-validators" : {
             "Validate body, query string parameters, and headers" : {

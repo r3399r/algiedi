@@ -16,7 +16,7 @@ export class UserEntity implements User {
   role: string | null = null;
 
   @Column({ type: 'int' })
-  age: string | null = null;
+  age: number | null = null;
 
   @Column({ type: 'varchar' })
   language: string | null = null;

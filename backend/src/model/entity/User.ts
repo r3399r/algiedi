@@ -3,7 +3,7 @@ export type User = {
   email: string;
   username: string;
   role: string | null;
-  age: string | null;
+  age: number | null;
   language: string | null;
   bio: string | null;
   tag: string | null;
