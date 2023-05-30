@@ -10,6 +10,7 @@ import { UserAccess } from './access/UserAccess';
 import { ViewLyricsAccess } from './access/ViewLyricsAccess';
 import { ViewProjectUserAccess } from './access/ViewProjectUserAccess';
 import { ViewTrackAccess } from './access/ViewTrackAccess';
+import { AwsService } from './logic/AwsService';
 import { CognitoService } from './logic/CognitoService';
 import { MeService } from './logic/MeService';
 import { ProjectService } from './logic/ProjectService';
@@ -53,6 +54,7 @@ container.bind<ViewProjectUserAccess>(ViewProjectUserAccess).toSelf();
 container.bind<ViewTrackAccess>(ViewTrackAccess).toSelf();
 
 // service
+container.bind<AwsService>(AwsService).toSelf();
 container.bind<CognitoService>(CognitoService).toSelf();
 container.bind<ProjectService>(ProjectService).toSelf();
 container.bind<SnsService>(SnsService).toSelf();

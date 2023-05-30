@@ -27,9 +27,9 @@ aws cloudformation deploy --template-file packaged.yaml --stack-name $project-$e
 npm run copy
 echo ====================================================================================
 
-echo deploy frontend to S3...
-cd ../frontend
-npm i
-npm run pre:deploy
-aws s3 sync ./dist s3://$project-$env --delete --cache-control no-cache
-echo ====================================================================================
+# echo deploy frontend to S3...
+# cd ../frontend
+# npm i
+# npm run pre:deploy
+# aws s3 sync ./dist s3://$project-$env --delete --cache-control no-cache
+# echo ====================================================================================

@@ -1,4 +1,3 @@
-import { S3 } from 'aws-sdk';
 import { inject, injectable } from 'inversify';
 import { DbAccess } from 'src/access/DbAccess';
 import { LyricsAccess } from 'src/access/LyricsAccess';
@@ -19,6 +18,7 @@ import { ProjectUserEntity } from 'src/model/entity/ProjectUserEntity';
 import { TrackEntity } from 'src/model/entity/TrackEntity';
 import { BadRequestError } from 'src/model/error';
 import { cognitoSymbol } from 'src/util/LambdaSetup';
+import { AwsService } from './AwsService';
 
 /**
  * Service class for Uplaod
@@ -28,8 +28,8 @@ export class UploadService {
   @inject(cognitoSymbol)
   private readonly cognitoUserId!: string;
 
-  @inject(S3)
-  private readonly s3!: S3;
+  @inject(AwsService)
+  private readonly awsService!: AwsService;
 
   @inject(DbAccess)
   private readonly dbAccess!: DbAccess;
@@ -48,25 +48,6 @@ export class UploadService {
 
   public async cleanup() {
     await this.dbAccess.cleanup();
-  }
-
-  private async s3Upload(data: string, filename: string) {
-    const buffer = Buffer.from(data, 'base64');
-    // workaround for ES module
-    const { fileTypeFromBuffer } = require('file-type'); // eslint-disable-line
-    const res = await fileTypeFromBuffer(buffer);
-    const bucket = `${process.env.PROJECT}-${process.env.ENVR}-storage`;
-    const key = `${filename}.${res?.ext}`;
-
-    await this.s3
-      .putObject({
-        Body: buffer,
-        Bucket: bucket,
-        Key: key,
-      })
-      .promise();
-
-    return key;
   }
 
   private async uploadLyrics(data: UploadLyrics, projectId: string) {
@@ -88,7 +69,7 @@ export class UploadService {
 
     // upload coverfile if exists
     if (data.coverFile) {
-      const key = await this.s3Upload(
+      const key = await this.awsService.s3Upload(
         data.coverFile,
         `lyrics/${newLyrics.id}/cover`
       );
@@ -114,12 +95,15 @@ export class UploadService {
     const newTrack = await this.trackAccess.save(track);
 
     // upload file
-    const fileKey = await this.s3Upload(data.file, `track/${newTrack.id}/file`);
+    const fileKey = await this.awsService.s3Upload(
+      data.file,
+      `track/${newTrack.id}/file`
+    );
 
     // upload tab file if exists
     let tabFileKey: string | null = null;
     if (data.tabFile)
-      tabFileKey = await this.s3Upload(
+      tabFileKey = await this.awsService.s3Upload(
         data.tabFile,
         `track/${newTrack.id}/tab`
       );
@@ -127,7 +111,7 @@ export class UploadService {
     // upload coverfile if exists
     let coverFileKey: string | null = null;
     if (data.coverFile)
-      coverFileKey = await this.s3Upload(
+      coverFileKey = await this.awsService.s3Upload(
         data.coverFile,
         `track/${newTrack.id}/cover`
       );

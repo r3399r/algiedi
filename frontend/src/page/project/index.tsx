@@ -1,17 +1,18 @@
 import classNames from 'classnames';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import IcProfile from 'src/image/ic-profile.svg';
 import { DetailedProject } from 'src/model/backend/Project';
 import { RootState } from 'src/redux/store';
 import { openFailSnackbar } from 'src/redux/uiSlice';
-import { getProject, setApproval, updateProject } from 'src/service/ProjectService';
+import { getProject, setApproval, updateCover, updateProject } from 'src/service/ProjectService';
 
 const Project = () => {
   const dispatch = useDispatch();
   const state = useLocation().state as { id: string } | null;
   const { id: userId } = useSelector((root: RootState) => root.me);
+  const coverInputRef = useRef<HTMLInputElement>(null);
   const [thisProject, setThisProject] = useState<DetailedProject | null>();
   const [mainCreation, setMainCreation] = useState<DetailedProject['creation'][0]>();
   const [inspiredList, setInspiredList] = useState<DetailedProject['creation']>();
@@ -88,8 +89,12 @@ const Project = () => {
                 <div>{mainCreation.name}</div>
               )}
             </div>
-            <div className="w-1/2">
-              {mainCreation.coverFileUrl && <img src={mainCreation.coverFileUrl} />}
+            <div className="w-1/2 cursor-pointer" onClick={() => coverInputRef.current?.click()}>
+              {mainCreation.coverFileUrl ? (
+                <img src={mainCreation.coverFileUrl} />
+              ) : (
+                <div className="bg-gray-400 h-8" />
+              )}
             </div>
           </div>
           {mainCreation.type === 'track' && (
@@ -278,6 +283,17 @@ const Project = () => {
           ))}
         </div>
       </div>
+      <input
+        type="file"
+        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+          if (e.target.files && e.target.files.length === 1)
+            updateCover(thisProject.id, e.target.files[0]);
+        }}
+        ref={coverInputRef}
+        className="hidden"
+        accept="image/jpeg"
+        multiple={false}
+      />
     </>
   );
 };

@@ -1,6 +1,9 @@
 import { bindings } from 'src/bindings';
 import { ProjectService } from 'src/logic/ProjectService';
-import { PutProjectRequest } from 'src/model/api/Project';
+import {
+  PutProjectIdCoverRequest,
+  PutProjectRequest,
+} from 'src/model/api/Project';
 import { BadRequestError, InternalServerError } from 'src/model/error';
 import { LambdaContext, LambdaEvent, LambdaOutput } from 'src/model/Lambda';
 import { errorOutput, successOutput } from 'src/util/lambdaHelper';
@@ -29,6 +32,9 @@ export async function project(
         break;
       case '/api/project/{id}/view':
         res = await apiProjectIdView(event, service);
+        break;
+      case '/api/project/{id}/cover':
+        res = await apiProjectIdCover(event, service);
         break;
       default:
         throw new InternalServerError('unknown resource');
@@ -98,6 +104,24 @@ async function apiProjectIdView(event: LambdaEvent, service: ProjectService) {
   switch (event.httpMethod) {
     case 'PATCH':
       return service.setLastProject(event.pathParameters.id);
+    default:
+      throw new InternalServerError('unknown http method');
+  }
+}
+
+async function apiProjectIdCover(event: LambdaEvent, service: ProjectService) {
+  if (event.pathParameters === null)
+    throw new BadRequestError('pathParameters should not be empty');
+  if (event.headers === null)
+    throw new BadRequestError('headers should not be empty');
+  if (event.body === null)
+    throw new BadRequestError('body should not be empty');
+  switch (event.httpMethod) {
+    case 'PUT':
+      return service.updateCover(
+        event.pathParameters.id,
+        JSON.parse(event.body) as PutProjectIdCoverRequest
+      );
     default:
       throw new InternalServerError('unknown http method');
   }

@@ -1,4 +1,3 @@
-import { S3 } from 'aws-sdk';
 import { inject, injectable } from 'inversify';
 import { DbAccess } from 'src/access/DbAccess';
 import { LyricsAccess } from 'src/access/LyricsAccess';
@@ -8,7 +7,11 @@ import { UserAccess } from 'src/access/UserAccess';
 import { ViewLyricsAccess } from 'src/access/ViewLyricsAccess';
 import { ViewProjectUserAccess } from 'src/access/ViewProjectUserAccess';
 import { ViewTrackAccess } from 'src/access/ViewTrackAccess';
-import { GetProjectResponse, PutProjectRequest } from 'src/model/api/Project';
+import {
+  GetProjectResponse,
+  PutProjectIdCoverRequest,
+  PutProjectRequest,
+} from 'src/model/api/Project';
 import { Project } from 'src/model/entity/Project';
 import {
   BadRequestError,
@@ -18,6 +21,7 @@ import {
 import { DetailedLyrics, DetailedTrack } from 'src/model/Project';
 import { compare } from 'src/util/compare';
 import { cognitoSymbol } from 'src/util/LambdaSetup';
+import { AwsService } from './AwsService';
 
 /**
  * Service class for Project
@@ -27,8 +31,8 @@ export class ProjectService {
   @inject(cognitoSymbol)
   private readonly cognitoUserId!: string;
 
-  @inject(S3)
-  private readonly s3!: S3;
+  @inject(AwsService)
+  private readonly awsService!: AwsService;
 
   @inject(DbAccess)
   private readonly dbAccess!: DbAccess;
@@ -58,17 +62,6 @@ export class ProjectService {
     await this.dbAccess.cleanup();
   }
 
-  private getS3SignedUrl(uri: string | null) {
-    const bucket = `${process.env.PROJECT}-${process.env.ENVR}-storage`;
-
-    return uri === null
-      ? null
-      : this.s3.getSignedUrl('getObject', {
-          Bucket: bucket,
-          Key: uri,
-        });
-  }
-
   public async getProjects(): Promise<GetProjectResponse> {
     const projectUserPairs = await this.viewProjectUserAccess.findByUserId(
       this.cognitoUserId
@@ -88,14 +81,14 @@ export class ProjectService {
         const detailedLyrics: DetailedLyrics[] = lyrics.map((l) => ({
           ...l,
           type: 'lyrics',
-          coverFileUrl: this.getS3SignedUrl(l.coverFileUri),
+          coverFileUrl: this.awsService.getS3SignedUrl(l.coverFileUri),
         }));
         const detailedTrack: DetailedTrack[] = track.map((t) => ({
           ...t,
           type: 'track',
-          fileUrl: this.getS3SignedUrl(t.fileUri),
-          tabFileUrl: this.getS3SignedUrl(t.tabFileUri),
-          coverFileUrl: this.getS3SignedUrl(t.coverFileUri),
+          fileUrl: this.awsService.getS3SignedUrl(t.fileUri),
+          tabFileUrl: this.awsService.getS3SignedUrl(t.tabFileUri),
+          coverFileUrl: this.awsService.getS3SignedUrl(t.coverFileUri),
         }));
 
         return {
@@ -183,5 +176,44 @@ export class ProjectService {
 
     user.lastProjectId = id;
     await this.userAccess.save(user);
+  }
+
+  public async updateCover(id: string, data: PutProjectIdCoverRequest) {
+    const lyrics = await this.lyricsAccess.findOne({
+      where: {
+        projectId: id,
+        isOriginal: true,
+      },
+    });
+    const track = await this.trackAccess.findOne({
+      where: {
+        projectId: id,
+        isOriginal: true,
+      },
+    });
+
+    if (lyrics === null && track !== null) {
+      if (track.userId !== this.cognitoUserId)
+        throw new UnauthorizedError('Only owner can edit');
+      const key = await this.awsService.s3Upload(
+        data.file,
+        `track/${track.id}/cover`
+      );
+      if (track.coverFileUri === null) {
+        track.coverFileUri = key;
+        await this.trackAccess.save(track);
+      }
+    } else if (lyrics !== null && track === null) {
+      if (lyrics.userId !== this.cognitoUserId)
+        throw new UnauthorizedError('Only owner can edit');
+      const key = await this.awsService.s3Upload(
+        data.file,
+        `lyrics/${lyrics.id}/cover`
+      );
+      if (lyrics.coverFileUri === null) {
+        lyrics.coverFileUri = key;
+        await this.lyricsAccess.save(lyrics);
+      }
+    } else throw new BadRequestError('unexpected error');
   }
 }

@@ -4,6 +4,7 @@ import { GetProjectResponse, PutProjectRequest } from 'src/model/backend/api/Pro
 import { DetailedProject } from 'src/model/backend/Project';
 import { dispatch, getState } from 'src/redux/store';
 import { finishWaiting, startWaiting } from 'src/redux/uiSlice';
+import { file2Base64 } from 'src/util/fileConverter';
 import { loadProjects } from './OverallService';
 import { updateLastProjectId } from './UploadService';
 
@@ -74,6 +75,19 @@ export const setApproval = async (projectId: string, creationId: string) => {
     const projects = await loadProjects();
 
     return projects.find((v) => v.id === projectId);
+  } finally {
+    dispatch(finishWaiting());
+  }
+};
+
+export const updateCover = async (id: string, coverFile: File) => {
+  try {
+    dispatch(startWaiting());
+    await projectEndpoint.putProjectIdCover(id, {
+      file: await file2Base64(coverFile),
+    });
+
+    await loadProjects();
   } finally {
     dispatch(finishWaiting());
   }
