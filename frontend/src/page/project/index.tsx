@@ -322,7 +322,7 @@ const Project = () => {
                       onLoadedMetadata={onLoadMetadata}
                     />
                     {v.tabFileUrl && (
-                      <div className="border-[1px] border-black w-fit">
+                      <div className="border-[1px] border-black w-fit rounded p-1 mt-2">
                         <a href={v.tabFileUrl} target="_blank" rel="noreferrer">
                           download tab
                         </a>
@@ -362,12 +362,14 @@ const Project = () => {
       <ModalLyrics
         open={targetLyrics !== undefined}
         targetLyrics={targetLyrics}
+        targetProjectId={mainCreation.projectId}
         handleClose={() => setTargetLyrics(undefined)}
         doRefresh={() => setRefresh(!refresh)}
       />
       <ModalTrack
         open={targetTrack !== undefined}
         targetTrack={targetTrack}
+        targetProjectId={mainCreation.projectId}
         handleClose={() => setTargetTrack(undefined)}
         doRefresh={() => setRefresh(!refresh)}
       />

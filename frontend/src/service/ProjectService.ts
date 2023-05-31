@@ -129,10 +129,31 @@ export const updateLyrics = async (lyricsId: string, lyrics: string) => {
   }
 };
 
-export const uploadTrack = async (files: { track: File; tab: File | null }) => {
-  console.log(`upload track`);
+export const uploadTrack = async (projectId: string, files: { track: File; tab: File | null }) => {
+  try {
+    dispatch(startWaiting());
+    await projectEndpoint.postProjectIdOriginal(projectId, {
+      type: 'track',
+      file: await file2Base64(files.track),
+      tabFile: files.tab ? await file2Base64(files.tab) : null,
+    });
+
+    await loadProjects();
+  } finally {
+    dispatch(finishWaiting());
+  }
 };
 
-export const uploadLyrics = async (lyrics: string) => {
-  console.log(`upload lyrics`);
+export const uploadLyrics = async (projectId: string, lyrics: string) => {
+  try {
+    dispatch(startWaiting());
+    await projectEndpoint.postProjectIdOriginal(projectId, {
+      type: 'lyrics',
+      lyrics,
+    });
+
+    await loadProjects();
+  } finally {
+    dispatch(finishWaiting());
+  }
 };

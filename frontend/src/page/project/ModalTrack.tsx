@@ -10,10 +10,11 @@ type Props = {
   open: boolean;
   handleClose: () => void;
   targetTrack?: string;
+  targetProjectId: string;
   doRefresh: () => void;
 };
 
-const ModalTrack = ({ open, handleClose, targetTrack, doRefresh }: Props) => {
+const ModalTrack = ({ open, handleClose, targetTrack, targetProjectId, doRefresh }: Props) => {
   const dispatch = useDispatch();
   const trackInputRef = useRef<HTMLInputElement>(null);
   const tabInputRef = useRef<HTMLInputElement>(null);
@@ -29,13 +30,13 @@ const ModalTrack = ({ open, handleClose, targetTrack, doRefresh }: Props) => {
   };
 
   const onSubmit = () => {
-    if (!trackFile) return;
-    if (targetTrack)
+    if (!trackFile || !targetTrack) return;
+    if (targetTrack !== 'new')
       updateTrack(targetTrack, { tab: tabFile ?? null, track: trackFile })
         .then(onSuccess)
         .catch((err) => dispatch(openFailSnackbar(err)));
     else
-      uploadTrack({ tab: tabFile ?? null, track: trackFile })
+      uploadTrack(targetProjectId, { tab: tabFile ?? null, track: trackFile })
         .then(onSuccess)
         .catch((err) => dispatch(openFailSnackbar(err)));
   };

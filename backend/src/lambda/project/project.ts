@@ -1,6 +1,9 @@
 import { bindings } from 'src/bindings';
 import { ProjectService } from 'src/logic/ProjectService';
-import { PutProjectRequest } from 'src/model/api/Project';
+import {
+  PostProjectIdOriginalRequest,
+  PutProjectRequest,
+} from 'src/model/api/Project';
 import { BadRequestError, InternalServerError } from 'src/model/error';
 import { LambdaContext, LambdaEvent, LambdaOutput } from 'src/model/Lambda';
 import { errorOutput, successOutput } from 'src/util/lambdaHelper';
@@ -23,6 +26,9 @@ export async function project(
         break;
       case '/api/project/{id}':
         res = await apiProjectId(event, service);
+        break;
+      case '/api/project/{id}/original':
+        res = await apiProjectIdOriginal(event, service);
         break;
       case '/api/project/{id}/approval/{cid}':
         res = await apiProjectIdApproval(event, service);
@@ -65,6 +71,27 @@ async function apiProjectId(event: LambdaEvent, service: ProjectService) {
       return service.updateProject(
         event.pathParameters.id,
         JSON.parse(event.body) as PutProjectRequest
+      );
+    default:
+      throw new InternalServerError('unknown http method');
+  }
+}
+
+async function apiProjectIdOriginal(
+  event: LambdaEvent,
+  service: ProjectService
+) {
+  if (event.pathParameters === null)
+    throw new BadRequestError('pathParameters should not be empty');
+  if (event.headers === null)
+    throw new BadRequestError('headers should not be empty');
+  if (event.body === null)
+    throw new BadRequestError('body should not be empty');
+  switch (event.httpMethod) {
+    case 'POST':
+      return service.addOriginal(
+        event.pathParameters.id,
+        JSON.parse(event.body) as PostProjectIdOriginalRequest
       );
     default:
       throw new InternalServerError('unknown http method');

@@ -10,3 +10,14 @@ export type PutProjectRequest = {
   language?: string;
   caption?: string;
 };
+
+export type PostProjectIdOriginalRequest =
+  | {
+      type: 'track';
+      file: string;
+      tabFile: string | null;
+    }
+  | {
+      type: 'lyrics';
+      lyrics: string;
+    };

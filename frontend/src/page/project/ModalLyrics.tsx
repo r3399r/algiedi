@@ -9,10 +9,11 @@ type Props = {
   open: boolean;
   handleClose: () => void;
   targetLyrics?: string;
+  targetProjectId: string;
   doRefresh: () => void;
 };
 
-const ModalLyrics = ({ open, handleClose, targetLyrics, doRefresh }: Props) => {
+const ModalLyrics = ({ open, handleClose, targetLyrics, targetProjectId, doRefresh }: Props) => {
   const dispatch = useDispatch();
   const [lyrics, setLyrics] = useState<string>();
 
@@ -23,13 +24,13 @@ const ModalLyrics = ({ open, handleClose, targetLyrics, doRefresh }: Props) => {
   };
 
   const onSubmit = () => {
-    if (!lyrics) return;
-    if (targetLyrics)
+    if (!lyrics || !targetLyrics) return;
+    if (targetLyrics !== 'new')
       updateLyrics(targetLyrics, lyrics)
         .then(onSuccess)
         .catch((err) => dispatch(openFailSnackbar(err)));
     else
-      uploadLyrics(lyrics)
+      uploadLyrics(targetProjectId, lyrics)
         .then(onSuccess)
         .catch((err) => dispatch(openFailSnackbar(err)));
   };

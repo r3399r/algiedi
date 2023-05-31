@@ -5,9 +5,15 @@ import { ProjectAccess } from 'src/access/ProjectAccess';
 import { TrackAccess } from 'src/access/TrackAccess';
 import { UserAccess } from 'src/access/UserAccess';
 import { ViewCreationAccess } from 'src/access/ViewCreationAccess';
-import { GetProjectResponse, PutProjectRequest } from 'src/model/api/Project';
+import {
+  GetProjectResponse,
+  PostProjectIdOriginalRequest,
+  PutProjectRequest,
+} from 'src/model/api/Project';
 import { Type } from 'src/model/constant/Creation';
+import { LyricsEntity } from 'src/model/entity/LyricsEntity';
 import { Project } from 'src/model/entity/ProjectEntity';
+import { TrackEntity } from 'src/model/entity/TrackEntity';
 import {
   BadRequestError,
   InternalServerError,
@@ -165,5 +171,68 @@ export class ProjectService {
 
     user.lastProjectId = id;
     await this.userAccess.save(user);
+  }
+
+  public async addOriginal(
+    projectId: string,
+    data: PostProjectIdOriginalRequest
+  ) {
+    const creation = await this.viewCreationAccess.find({
+      where: { projectId, isOriginal: true },
+    });
+    if (creation.length !== 1)
+      throw new InternalServerError('originals should be 1');
+    if (data.type === 'track' && creation[0].type === Type.Track)
+      throw new InternalServerError('original track already exists');
+    if (data.type === 'lyrics' && creation[0].type === Type.Lyrics)
+      throw new InternalServerError('original lyrics already exists');
+
+    if (data.type === 'track') {
+      const lyrics = creation[0];
+      const track = new TrackEntity();
+      track.userId = this.cognitoUserId;
+      track.name = lyrics.name;
+      track.description = lyrics.description;
+      track.theme = lyrics.theme;
+      track.genre = lyrics.genre;
+      track.language = lyrics.language;
+      track.caption = lyrics.caption;
+      track.projectId = lyrics.projectId;
+      track.isOriginal = true;
+      track.coverFileUri = lyrics.coverFileUri;
+
+      // upload file
+      const fileKey = await this.awsService.s3Upload(
+        data.file,
+        `track/${track.id}/file`
+      );
+
+      // upload tab file if exists
+      let tabFileKey: string | null = null;
+      if (data.tabFile)
+        tabFileKey = await this.awsService.s3Upload(
+          data.tabFile,
+          `track/${track.id}/tab`
+        );
+
+      track.fileUri = fileKey;
+      track.tabFileUri = tabFileKey;
+      await this.trackAccess.save(track);
+    } else if (data.type === 'lyrics') {
+      const track = creation[0];
+      const lyrics = new LyricsEntity();
+      lyrics.userId = this.cognitoUserId;
+      lyrics.name = track.name;
+      lyrics.description = track.description;
+      lyrics.theme = track.theme;
+      lyrics.genre = track.genre;
+      lyrics.language = track.language;
+      lyrics.caption = track.caption;
+      lyrics.projectId = track.projectId;
+      lyrics.isOriginal = true;
+      lyrics.coverFileUri = track.coverFileUri;
+      lyrics.lyrics = data.lyrics;
+      await this.lyricsAccess.save(lyrics);
+    }
   }
 }
