@@ -4,21 +4,15 @@ import { LyricsAccess } from 'src/access/LyricsAccess';
 import { ProjectAccess } from 'src/access/ProjectAccess';
 import { TrackAccess } from 'src/access/TrackAccess';
 import { UserAccess } from 'src/access/UserAccess';
-import { ViewLyricsAccess } from 'src/access/ViewLyricsAccess';
-import { ViewProjectUserAccess } from 'src/access/ViewProjectUserAccess';
-import { ViewTrackAccess } from 'src/access/ViewTrackAccess';
-import {
-  GetProjectResponse,
-  PutProjectIdCoverRequest,
-  PutProjectRequest,
-} from 'src/model/api/Project';
+import { ViewCreationAccess } from 'src/access/ViewCreationAccess';
+import { Type } from 'src/constant/Creation';
+import { GetProjectResponse, PutProjectRequest } from 'src/model/api/Project';
 import { Project } from 'src/model/entity/Project';
 import {
   BadRequestError,
   InternalServerError,
   UnauthorizedError,
 } from 'src/model/error';
-import { DetailedLyrics, DetailedTrack } from 'src/model/Project';
 import { compare } from 'src/util/compare';
 import { cognitoSymbol } from 'src/util/LambdaSetup';
 import { AwsService } from './AwsService';
@@ -49,53 +43,42 @@ export class ProjectService {
   @inject(UserAccess)
   private readonly userAccess!: UserAccess;
 
-  @inject(ViewProjectUserAccess)
-  private readonly viewProjectUserAccess!: ViewProjectUserAccess;
-
-  @inject(ViewTrackAccess)
-  private readonly viewTrackAccess!: ViewTrackAccess;
-
-  @inject(ViewLyricsAccess)
-  private readonly viewLyricsAccess!: ViewLyricsAccess;
+  @inject(ViewCreationAccess)
+  private readonly viewCreationAccess!: ViewCreationAccess;
 
   public async cleanup() {
     await this.dbAccess.cleanup();
   }
 
   public async getProjects(): Promise<GetProjectResponse> {
-    const projectUserPairs = await this.viewProjectUserAccess.findByUserId(
+    const myCreations = await this.viewCreationAccess.findByUserId(
       this.cognitoUserId
     );
-    const projects: Project[] = projectUserPairs.map((v) => ({
-      id: v.projectId,
-      status: v.status,
-      createdAt: v.createdAt,
-      updatedAt: v.updatedAt,
-    }));
+    const myProjectIds = new Set(myCreations.map((v) => v.projectId));
 
     return await Promise.all(
-      projects.map(async (p) => {
-        const lyrics = await this.viewLyricsAccess.findByProjectId(p.id);
-        const track = await this.viewTrackAccess.findByProjectId(p.id);
+      [...myProjectIds].map(async (pid) => {
+        const creations = await this.viewCreationAccess.findByProjectId(pid);
+        if (creations.length === 0)
+          throw new InternalServerError('creations should exist');
 
-        const detailedLyrics: DetailedLyrics[] = lyrics.map((l) => ({
-          ...l,
-          type: 'lyrics',
-          coverFileUrl: this.awsService.getS3SignedUrl(l.coverFileUri),
-        }));
-        const detailedTrack: DetailedTrack[] = track.map((t) => ({
-          ...t,
-          type: 'track',
-          fileUrl: this.awsService.getS3SignedUrl(t.fileUri),
-          tabFileUrl: this.awsService.getS3SignedUrl(t.tabFileUri),
-          coverFileUrl: this.awsService.getS3SignedUrl(t.coverFileUri),
-        }));
+        const project: Project = {
+          id: pid,
+          status: creations[0].projectStatus,
+          createdAt: creations[0].projectCreatedAt,
+          updatedAt: creations[0].projectUpdatedAt,
+        };
 
         return {
-          ...p,
-          creation: [...detailedLyrics, ...detailedTrack].sort(
-            compare('createdAt')
-          ),
+          ...project,
+          creation: creations
+            .map((c) => ({
+              ...c,
+              fileUrl: this.awsService.getS3SignedUrl(c.fileUri),
+              tabFileUrl: this.awsService.getS3SignedUrl(c.tabFileUri),
+              coverFileUrl: this.awsService.getS3SignedUrl(c.coverFileUri),
+            }))
+            .sort(compare('createdAt')),
         };
       })
     );
@@ -105,21 +88,19 @@ export class ProjectService {
     id: string,
     data: PutProjectRequest
   ): Promise<void> {
-    const lyrics = await this.lyricsAccess.findOne({
+    const creation = await this.viewCreationAccess.findOne({
       where: {
         projectId: id,
+        userId: this.cognitoUserId,
         isOriginal: true,
       },
     });
-    const track = await this.trackAccess.findOne({
-      where: {
-        projectId: id,
-        isOriginal: true,
-      },
-    });
-    if (lyrics === null && track !== null) {
-      if (track.userId !== this.cognitoUserId)
-        throw new UnauthorizedError('Only owner can edit');
+    if (creation === null) throw new BadRequestError('lyrics/track not found');
+
+    if (creation.type === Type.Track) {
+      const track = await this.trackAccess.findOneById(creation.id);
+      if (track === null) throw new InternalServerError('track not found');
+
       track.name = data.name ?? track.name;
       track.description = data.description ?? track.description;
       track.theme = data.theme ?? track.theme;
@@ -127,9 +108,10 @@ export class ProjectService {
       track.language = data.language ?? track.language;
       track.caption = data.caption ?? track.caption;
       await this.trackAccess.save(track);
-    } else if (lyrics !== null && track === null) {
-      if (lyrics.userId !== this.cognitoUserId)
-        throw new UnauthorizedError('Only owner can edit');
+    } else if (creation.type === Type.Lyrics) {
+      const lyrics = await this.lyricsAccess.findOneById(creation.id);
+      if (lyrics === null) throw new InternalServerError('lyrics not found');
+
       lyrics.name = data.name ?? lyrics.name;
       lyrics.description = data.description ?? lyrics.description;
       lyrics.theme = data.theme ?? lyrics.theme;
@@ -137,34 +119,32 @@ export class ProjectService {
       lyrics.language = data.language ?? lyrics.language;
       lyrics.caption = data.caption ?? lyrics.caption;
       await this.lyricsAccess.save(lyrics);
-    } else throw new BadRequestError('unexpected error');
+    } else throw new InternalServerError('creation type not defined');
   }
 
   public async projectAppoval(projectId: string, creationId: string) {
-    const lyrics = await this.lyricsAccess.find({
-      where: {
-        projectId,
-      },
-    });
-    const track = await this.trackAccess.find({
-      where: {
-        projectId,
-      },
-    });
-    const mainCreation = [...lyrics, ...track].find(
-      (v) => v.isOriginal === true
-    );
-    const targetLyrics = lyrics.find((v) => v.id === creationId);
-    const targetTrack = track.find((v) => v.id === creationId);
+    const creations = await this.viewCreationAccess.findByProjectId(projectId);
+
+    // check user is owner
+    const mainCreation = creations.find((v) => v.isOriginal === true);
     if (mainCreation?.userId !== this.cognitoUserId)
       throw new UnauthorizedError('Only owner can set approval');
-    if (targetLyrics === undefined && targetTrack !== undefined) {
-      targetTrack.approval = !targetTrack.approval;
-      await this.trackAccess.save(targetTrack);
-    } else if (targetLyrics !== undefined && targetTrack === undefined) {
-      targetLyrics.approval = !targetLyrics.approval;
-      await this.lyricsAccess.save(targetLyrics);
-    } else throw new BadRequestError('unexpected error');
+
+    const targetCreation = creations.find((v) => v.id === creationId);
+
+    if (targetCreation?.type === Type.Track) {
+      const track = await this.trackAccess.findOneById(targetCreation.id);
+      if (track === null) throw new InternalServerError('track not found');
+
+      track.approval = !track.approval;
+      await this.trackAccess.save(track);
+    } else if (targetCreation?.type === Type.Lyrics) {
+      const lyrics = await this.lyricsAccess.findOneById(targetCreation.id);
+      if (lyrics === null) throw new InternalServerError('lyrics not found');
+
+      lyrics.approval = !lyrics.approval;
+      await this.lyricsAccess.save(lyrics);
+    } else throw new InternalServerError('creation not found');
   }
 
   public async setLastProject(id: string) {
@@ -176,44 +156,5 @@ export class ProjectService {
 
     user.lastProjectId = id;
     await this.userAccess.save(user);
-  }
-
-  public async updateCover(id: string, data: PutProjectIdCoverRequest) {
-    const lyrics = await this.lyricsAccess.findOne({
-      where: {
-        projectId: id,
-        isOriginal: true,
-      },
-    });
-    const track = await this.trackAccess.findOne({
-      where: {
-        projectId: id,
-        isOriginal: true,
-      },
-    });
-
-    if (lyrics === null && track !== null) {
-      if (track.userId !== this.cognitoUserId)
-        throw new UnauthorizedError('Only owner can edit');
-      const key = await this.awsService.s3Upload(
-        data.file,
-        `track/${track.id}/cover`
-      );
-      if (track.coverFileUri === null) {
-        track.coverFileUri = key;
-        await this.trackAccess.save(track);
-      }
-    } else if (lyrics !== null && track === null) {
-      if (lyrics.userId !== this.cognitoUserId)
-        throw new UnauthorizedError('Only owner can edit');
-      const key = await this.awsService.s3Upload(
-        data.file,
-        `lyrics/${lyrics.id}/cover`
-      );
-      if (lyrics.coverFileUri === null) {
-        lyrics.coverFileUri = key;
-        await this.lyricsAccess.save(lyrics);
-      }
-    } else throw new BadRequestError('unexpected error');
   }
 }

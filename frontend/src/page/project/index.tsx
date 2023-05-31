@@ -89,7 +89,10 @@ const Project = () => {
                 <div>{mainCreation.name}</div>
               )}
             </div>
-            <div className="w-1/2 cursor-pointer" onClick={() => coverInputRef.current?.click()}>
+            <div
+              className={classNames('w-1/2', { 'cursor-pointer': mainCreation.userId === userId })}
+              onClick={() => coverInputRef.current?.click()}
+            >
               {mainCreation.coverFileUrl ? (
                 <img src={mainCreation.coverFileUrl} />
               ) : (
@@ -283,17 +286,19 @@ const Project = () => {
           ))}
         </div>
       </div>
-      <input
-        type="file"
-        onChange={(e: ChangeEvent<HTMLInputElement>) => {
-          if (e.target.files && e.target.files.length === 1)
-            updateCover(thisProject.id, e.target.files[0]);
-        }}
-        ref={coverInputRef}
-        className="hidden"
-        accept="image/jpeg"
-        multiple={false}
-      />
+      {mainCreation.userId === userId && (
+        <input
+          type="file"
+          onChange={(e: ChangeEvent<HTMLInputElement>) => {
+            if (e.target.files && e.target.files.length === 1)
+              updateCover(mainCreation.id, e.target.files[0]);
+          }}
+          ref={coverInputRef}
+          className="hidden"
+          accept="image/jpeg"
+          multiple={false}
+        />
+      )}
     </>
   );
 };

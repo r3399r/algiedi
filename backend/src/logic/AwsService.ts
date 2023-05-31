@@ -12,12 +12,12 @@ export class AwsService {
   public getS3SignedUrl(uri: string | null) {
     const bucket = `${process.env.PROJECT}-${process.env.ENVR}-storage`;
 
-    return uri === null
-      ? null
-      : this.s3.getSignedUrl('getObject', {
-          Bucket: bucket,
-          Key: uri,
-        });
+    if (uri === null) return null;
+
+    return this.s3.getSignedUrl('getObject', {
+      Bucket: bucket,
+      Key: uri,
+    });
   }
 
   public async s3Upload(data: string, filename: string) {

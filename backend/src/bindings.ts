@@ -7,9 +7,7 @@ import { ProjectAccess } from './access/ProjectAccess';
 import { ProjectUserAccess } from './access/ProjectUserAccess';
 import { TrackAccess } from './access/TrackAccess';
 import { UserAccess } from './access/UserAccess';
-import { ViewLyricsAccess } from './access/ViewLyricsAccess';
-import { ViewProjectUserAccess } from './access/ViewProjectUserAccess';
-import { ViewTrackAccess } from './access/ViewTrackAccess';
+import { ViewCreationAccess } from './access/ViewCreationAccess';
 import { AwsService } from './logic/AwsService';
 import { CognitoService } from './logic/CognitoService';
 import { MeService } from './logic/MeService';
@@ -23,9 +21,7 @@ import { ProjectEntity } from './model/entity/ProjectEntity';
 import { ProjectUserEntity } from './model/entity/ProjectUserEntity';
 import { TrackEntity } from './model/entity/TrackEntity';
 import { UserEntity } from './model/entity/UserEntity';
-import { ViewLyricsEntity } from './model/entity/ViewLyricsEntity';
-import { ViewProjectUserEntity } from './model/entity/ViewProjectUserEntity';
-import { ViewTrackEntity } from './model/entity/ViewTrackEntity';
+import { ViewCreationEntity } from './model/entity/ViewCreationEntity';
 import { Database, dbEntitiesBindingId } from './util/Database';
 
 const container: Container = new Container();
@@ -38,9 +34,7 @@ container.bind<Function>(dbEntitiesBindingId).toFunction(ProjectEntity);
 container.bind<Function>(dbEntitiesBindingId).toFunction(ProjectUserEntity);
 container.bind<Function>(dbEntitiesBindingId).toFunction(TrackEntity);
 container.bind<Function>(dbEntitiesBindingId).toFunction(UserEntity);
-container.bind<Function>(dbEntitiesBindingId).toFunction(ViewLyricsEntity);
-container.bind<Function>(dbEntitiesBindingId).toFunction(ViewProjectUserEntity);
-container.bind<Function>(dbEntitiesBindingId).toFunction(ViewTrackEntity);
+container.bind<Function>(dbEntitiesBindingId).toFunction(ViewCreationEntity);
 
 // db access for tables
 container.bind<DbAccess>(DbAccess).toSelf();
@@ -49,9 +43,7 @@ container.bind<ProjectAccess>(ProjectAccess).toSelf();
 container.bind<ProjectUserAccess>(ProjectUserAccess).toSelf();
 container.bind<TrackAccess>(TrackAccess).toSelf();
 container.bind<UserAccess>(UserAccess).toSelf();
-container.bind<ViewLyricsAccess>(ViewLyricsAccess).toSelf();
-container.bind<ViewProjectUserAccess>(ViewProjectUserAccess).toSelf();
-container.bind<ViewTrackAccess>(ViewTrackAccess).toSelf();
+container.bind<ViewCreationAccess>(ViewCreationAccess).toSelf();
 
 // service
 container.bind<AwsService>(AwsService).toSelf();

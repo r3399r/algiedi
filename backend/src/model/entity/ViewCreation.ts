@@ -1,5 +1,8 @@
-export type ViewLyrics = {
+import { Type } from 'src/constant/Creation';
+
+export type ViewCreation = {
   id: string;
+  type: Type;
   userId: string;
   name: string;
   description: string;
@@ -8,12 +11,13 @@ export type ViewLyrics = {
   language: string;
   caption: string;
   coverFileUri: string | null;
-  lyrics: string;
+  fileUri: string | null;
+  tabFileUri: string | null;
+  lyrics: string | null;
   projectId: string;
   isOriginal: boolean;
   inspiredId: string | null;
   approval: boolean | null;
   createdAt: string | null;
   updatedAt: string | null;
-  username: string;
 };

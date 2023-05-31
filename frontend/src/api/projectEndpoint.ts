@@ -1,8 +1,4 @@
-import {
-  GetProjectResponse,
-  PutProjectIdCoverRequest,
-  PutProjectRequest,
-} from 'src/model/backend/api/Project';
+import { GetProjectResponse, PutProjectRequest } from 'src/model/backend/api/Project';
 import http from 'src/util/http';
 
 const getProject = async () => await http.authGet<GetProjectResponse>('project');
@@ -15,13 +11,9 @@ const putProjectIdApprovalCid = async (id: string, cid: string) =>
 
 const patchProjectIdView = async (id: string) => await http.authPatch(`project/${id}/view`);
 
-const putProjectIdCover = async (id: string, data: PutProjectIdCoverRequest) =>
-  await http.authPut<void, PutProjectIdCoverRequest>(`project/${id}/cover`, { data });
-
 export default {
   getProject,
   putProject,
   putProjectIdApprovalCid,
   patchProjectIdView,
-  putProjectIdCover,
 };

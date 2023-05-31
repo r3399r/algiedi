@@ -1,5 +1,6 @@
 import meEndpoint from 'src/api/meEndpoint';
 import projectEndpoint from 'src/api/projectEndpoint';
+import uploadEndpoint from 'src/api/uploadEndpoint';
 import { GetProjectResponse, PutProjectRequest } from 'src/model/backend/api/Project';
 import { DetailedProject } from 'src/model/backend/Project';
 import { dispatch, getState } from 'src/redux/store';
@@ -80,10 +81,10 @@ export const setApproval = async (projectId: string, creationId: string) => {
   }
 };
 
-export const updateCover = async (id: string, coverFile: File) => {
+export const updateCover = async (creationId: string, coverFile: File) => {
   try {
     dispatch(startWaiting());
-    await projectEndpoint.putProjectIdCover(id, {
+    await uploadEndpoint.putUploadIdCover(creationId, {
       file: await file2Base64(coverFile),
     });
 

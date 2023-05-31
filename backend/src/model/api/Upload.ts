@@ -25,3 +25,7 @@ export type UploadLyrics = UploadCommon & {
 export type PostUploadRequest = UploadLyrics | UploadTrack;
 
 export type PostUploadResponse = Project;
+
+export type PutUploadIdCoverRequest = {
+  file: string;
+};

@@ -4,10 +4,13 @@ import { LyricsAccess } from 'src/access/LyricsAccess';
 import { ProjectAccess } from 'src/access/ProjectAccess';
 import { ProjectUserAccess } from 'src/access/ProjectUserAccess';
 import { TrackAccess } from 'src/access/TrackAccess';
+import { ViewCreationAccess } from 'src/access/ViewCreationAccess';
+import { Type } from 'src/constant/Creation';
 import { Status } from 'src/constant/Project';
 import {
   PostUploadRequest,
   PostUploadResponse,
+  PutUploadIdCoverRequest,
   UploadLyrics,
   UploadTrack,
 } from 'src/model/api/Upload';
@@ -16,7 +19,11 @@ import { Project } from 'src/model/entity/Project';
 import { ProjectEntity } from 'src/model/entity/ProjectEntity';
 import { ProjectUserEntity } from 'src/model/entity/ProjectUserEntity';
 import { TrackEntity } from 'src/model/entity/TrackEntity';
-import { BadRequestError } from 'src/model/error';
+import {
+  BadRequestError,
+  InternalServerError,
+  UnauthorizedError,
+} from 'src/model/error';
 import { cognitoSymbol } from 'src/util/LambdaSetup';
 import { AwsService } from './AwsService';
 
@@ -45,6 +52,9 @@ export class UploadService {
 
   @inject(ProjectUserAccess)
   private readonly projectUserAccess!: ProjectUserAccess;
+
+  @inject(ViewCreationAccess)
+  private readonly viewCreationAccess!: ViewCreationAccess;
 
   public async cleanup() {
     await this.dbAccess.cleanup();
@@ -131,19 +141,18 @@ export class UploadService {
 
       // find old project if inspired, or create new project if no inspired
       if (data.inspiredId !== null) {
-        // const lyrics = await this.lyricsAccess.findOneById(data.inspiredId);
-        // const track = await this.trackAccess.findOneById(data.inspiredId);
-        const lyrics = await this.lyricsAccess.findOne({
+        // TODO: should findById instead of name
+        const creation = await this.viewCreationAccess.findOne({
           where: { name: data.inspiredId },
         });
-        const track = await this.trackAccess.findOne({
-          where: { name: data.inspiredId },
-        });
-        if (track === null && lyrics !== null)
-          project = await this.projectAccess.findOneById(lyrics.projectId);
-        else if (track !== null && lyrics === null)
-          project = await this.projectAccess.findOneById(track.projectId);
-        else throw new BadRequestError('track/lyrics not found');
+        if (creation === null)
+          throw new BadRequestError('track/lyrics not found');
+        project = {
+          id: creation.projectId,
+          status: creation.projectStatus,
+          createdAt: creation.projectCreatedAt,
+          updatedAt: creation.projectUpdatedAt,
+        };
       } else {
         const tmpProject = new ProjectEntity();
         tmpProject.status = Status.Created;
@@ -170,5 +179,37 @@ export class UploadService {
       await this.dbAccess.rollbackTransaction();
       throw e;
     }
+  }
+
+  public async updateCover(creationId: string, data: PutUploadIdCoverRequest) {
+    const creations = await this.viewCreationAccess.findOneById(creationId);
+    if (creations === null || creations.userId !== this.cognitoUserId)
+      throw new UnauthorizedError('only owner can edit cover');
+
+    if (creations.type === Type.Track) {
+      const track = await this.trackAccess.findOneById(creationId);
+      if (track === null) throw new InternalServerError('track not found');
+
+      const key = await this.awsService.s3Upload(
+        data.file,
+        `track/${track.id}/cover`
+      );
+      if (track.coverFileUri === null) {
+        track.coverFileUri = key;
+        await this.trackAccess.save(track);
+      }
+    } else if (creations.type === Type.Lyrics) {
+      const lyrics = await this.lyricsAccess.findOneById(creationId);
+      if (lyrics === null) throw new InternalServerError('lyrics not found');
+
+      const key = await this.awsService.s3Upload(
+        data.file,
+        `lyrics/${lyrics.id}/cover`
+      );
+      if (lyrics.coverFileUri === null) {
+        lyrics.coverFileUri = key;
+        await this.lyricsAccess.save(lyrics);
+      }
+    } else throw new InternalServerError('creation not found');
   }
 }

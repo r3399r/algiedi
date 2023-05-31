@@ -10,7 +10,3 @@ export type PutProjectRequest = {
   language?: string;
   caption?: string;
 };
-
-export type PutProjectIdCoverRequest = {
-  file: string;
-};
