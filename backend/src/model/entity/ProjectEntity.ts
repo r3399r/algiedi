@@ -1,5 +1,5 @@
 import { BeforeInsert, BeforeUpdate, Column, Entity, Generated } from 'typeorm';
-import { Status } from 'src/constant/Project';
+import { Status } from 'src/model/constant/Project';
 import { Project } from './Project';
 
 @Entity({ name: 'project' })

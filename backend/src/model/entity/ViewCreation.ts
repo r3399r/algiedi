@@ -1,4 +1,4 @@
-import { Type } from 'src/constant/Creation';
+import { Type } from 'src/model/constant/Creation';
 
 export type ViewCreation = {
   id: string;

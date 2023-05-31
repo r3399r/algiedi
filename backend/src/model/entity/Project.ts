@@ -1,4 +1,4 @@
-import { Status } from 'src/constant/Project';
+import { Status } from 'src/model/constant/Project';
 
 export type Project = {
   id: string;

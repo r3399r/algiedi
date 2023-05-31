@@ -5,8 +5,8 @@ import { ProjectAccess } from 'src/access/ProjectAccess';
 import { TrackAccess } from 'src/access/TrackAccess';
 import { UserAccess } from 'src/access/UserAccess';
 import { ViewCreationAccess } from 'src/access/ViewCreationAccess';
-import { Type } from 'src/constant/Creation';
 import { GetProjectResponse, PutProjectRequest } from 'src/model/api/Project';
+import { Type } from 'src/model/constant/Creation';
 import { Project } from 'src/model/entity/Project';
 import {
   BadRequestError,

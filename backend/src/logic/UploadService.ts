@@ -5,8 +5,6 @@ import { ProjectAccess } from 'src/access/ProjectAccess';
 import { ProjectUserAccess } from 'src/access/ProjectUserAccess';
 import { TrackAccess } from 'src/access/TrackAccess';
 import { ViewCreationAccess } from 'src/access/ViewCreationAccess';
-import { Type } from 'src/constant/Creation';
-import { Status } from 'src/constant/Project';
 import {
   PostUploadRequest,
   PostUploadResponse,
@@ -14,6 +12,8 @@ import {
   UploadLyrics,
   UploadTrack,
 } from 'src/model/api/Upload';
+import { Type } from 'src/model/constant/Creation';
+import { Status } from 'src/model/constant/Project';
 import { LyricsEntity } from 'src/model/entity/LyricsEntity';
 import { Project } from 'src/model/entity/Project';
 import { ProjectEntity } from 'src/model/entity/ProjectEntity';

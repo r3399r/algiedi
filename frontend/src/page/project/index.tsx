@@ -165,7 +165,11 @@ const Project = () => {
             )}
           </div>
           <div className="border-[#707070] bg-white border-[1px] border-solid rounded-[30px] p-4">
-            {tab === 'lyrics' && <div>{mainCreation.type === 'lyrics' && mainCreation.lyrics}</div>}
+            {tab === 'lyrics' && (
+              <div className="whitespace-pre">
+                {mainCreation.type === 'lyrics' && mainCreation.lyrics}
+              </div>
+            )}
             {tab === 'detail' && (
               <div>
                 <div className="mb-4">
@@ -280,7 +284,7 @@ const Project = () => {
                 {v.type === 'track' && (
                   <audio src={v.fileUrl ?? undefined} controls onLoadedMetadata={onLoadMetadata} />
                 )}
-                {v.type === 'lyrics' && <div>{v.lyrics}</div>}
+                {v.type === 'lyrics' && <div className="whitespace-pre">{v.lyrics}</div>}
               </div>
             </div>
           ))}

@@ -1,6 +1,6 @@
 import { ViewColumn, ViewEntity } from 'typeorm';
-import { Type } from 'src/constant/Creation';
-import { Status } from 'src/constant/Project';
+import { Type } from 'src/model/constant/Creation';
+import { Status } from 'src/model/constant/Project';
 import { booleanTransformer } from 'src/util/typeorm';
 
 export type ViewCreation = {
