@@ -2,11 +2,14 @@ import classNames from 'classnames';
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
+import Button from 'src/component/Button';
 import IcProfile from 'src/image/ic-profile.svg';
 import { DetailedCreation, DetailedProject } from 'src/model/backend/Project';
 import { RootState } from 'src/redux/store';
 import { openFailSnackbar } from 'src/redux/uiSlice';
 import { getProject, setApproval, updateCover, updateProject } from 'src/service/ProjectService';
+import ModalLyrics from './ModalLyrics';
+import ModalTrack from './ModalTrack';
 
 const Project = () => {
   const dispatch = useDispatch();
@@ -25,6 +28,9 @@ const Project = () => {
   const [editGenre, setEditGenre] = useState<string>('');
   const [editLanguage, setEditLanguage] = useState<string>('');
   const [editCaption, setEditCaption] = useState<string>('');
+  const [refresh, setRefresh] = useState<boolean>(false);
+  const [targetLyrics, setTargetLyrics] = useState<string>();
+  const [targetTrack, setTargetTrack] = useState<string>();
 
   const mainCreation = useMemo(
     () => originalLyrics || originalTrack,
@@ -40,7 +46,7 @@ const Project = () => {
         if (res) setInspiredList(res.inspiration);
       })
       .catch((err) => dispatch(openFailSnackbar(err)));
-  }, [state?.id]);
+  }, [state?.id, refresh]);
 
   const onLoadMetadata = (e: ChangeEvent<HTMLAudioElement>) => {
     console.log(e.target.duration);
@@ -56,18 +62,14 @@ const Project = () => {
       language: editLanguage,
       caption: editCaption,
     })
-      .then((res) => {
-        if (res) setThisProject(res);
-      })
+      .then(() => setRefresh(!refresh))
       .catch((err) => dispatch(openFailSnackbar(err)));
   };
 
   const onApprove = (creationId: string) => () => {
     if (!thisProject) return;
     setApproval(thisProject.id, creationId)
-      .then((res) => {
-        if (res) setThisProject(res);
-      })
+      .then(() => setRefresh(!refresh))
       .catch((err) => dispatch(openFailSnackbar(err)));
   };
 
@@ -102,21 +104,29 @@ const Project = () => {
               )}
             </div>
           </div>
-          {mainCreation.type === 'track' && (
+          {originalTrack && (
             <div>
               <audio
-                src={mainCreation.fileUrl ?? undefined}
+                src={originalTrack.fileUrl ?? undefined}
                 controls
                 onLoadedMetadata={onLoadMetadata}
               />
-              {mainCreation.tabFileUrl && (
-                <div className="border-[1px] border-black w-fit">
-                  <a href={mainCreation.tabFileUrl} target="_blank" rel="noreferrer">
+              {originalTrack.tabFileUrl && (
+                <div className="border-[1px] border-black w-fit rounded p-1">
+                  <a href={originalTrack.tabFileUrl} target="_blank" rel="noreferrer">
                     download tab
                   </a>
                 </div>
               )}
+              {mainCreation.userId === userId && (
+                <Button className="mt-2" onClick={() => setTargetTrack(originalTrack.id)}>
+                  Update Track
+                </Button>
+              )}
             </div>
+          )}
+          {!originalTrack && mainCreation.userId === userId && (
+            <Button onClick={() => setTargetTrack('new')}>Upload Track</Button>
           )}
           <div className="flex justify-between mt-4">
             <div className="flex gap-4 mb-6">
@@ -177,8 +187,20 @@ const Project = () => {
           </div>
           <div className="border-[#707070] bg-white border-[1px] border-solid rounded-[30px] p-4">
             {tab === 'lyrics' && (
-              <div className="whitespace-pre">
-                {mainCreation.type === 'lyrics' && mainCreation.lyrics}
+              <div>
+                {originalLyrics && (
+                  <div>
+                    <div className="whitespace-pre">{originalLyrics.lyrics}</div>
+                    {mainCreation.userId === userId && (
+                      <Button onClick={() => setTargetLyrics(originalLyrics.id)}>
+                        Update Lyrics
+                      </Button>
+                    )}
+                  </div>
+                )}
+                {!originalLyrics && mainCreation.userId === userId && (
+                  <Button onClick={() => setTargetLyrics('new')}>Upload Lyrics</Button>
+                )}
               </div>
             )}
             {tab === 'detail' && (
@@ -306,9 +328,19 @@ const Project = () => {
                         </a>
                       </div>
                     )}
+                    {v.approval === false && v.userId === userId && (
+                      <Button onClick={() => setTargetTrack(v.id)}>Update Track</Button>
+                    )}
                   </div>
                 )}
-                {v.type === 'lyrics' && <div className="whitespace-pre">{v.lyrics}</div>}
+                {v.type === 'lyrics' && (
+                  <div>
+                    <div className="whitespace-pre">{v.lyrics}</div>
+                    {v.approval === false && v.userId === userId && (
+                      <Button onClick={() => setTargetLyrics(v.id)}>Update Lyrics</Button>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           ))}
@@ -319,7 +351,7 @@ const Project = () => {
           type="file"
           onChange={(e: ChangeEvent<HTMLInputElement>) => {
             if (e.target.files && e.target.files.length === 1)
-              updateCover(mainCreation.id, e.target.files[0]);
+              updateCover(mainCreation.id, e.target.files[0]).then(() => setRefresh(!refresh));
           }}
           ref={coverInputRef}
           className="hidden"
@@ -327,6 +359,18 @@ const Project = () => {
           multiple={false}
         />
       )}
+      <ModalLyrics
+        open={targetLyrics !== undefined}
+        targetLyrics={targetLyrics}
+        handleClose={() => setTargetLyrics(undefined)}
+        doRefresh={() => setRefresh(!refresh)}
+      />
+      <ModalTrack
+        open={targetTrack !== undefined}
+        targetTrack={targetTrack}
+        handleClose={() => setTargetTrack(undefined)}
+        doRefresh={() => setRefresh(!refresh)}
+      />
     </>
   );
 };

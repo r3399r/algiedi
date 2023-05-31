@@ -26,6 +26,17 @@ export type PostUploadRequest = UploadLyrics | UploadTrack;
 
 export type PostUploadResponse = Project;
 
+export type PutUploadIdRequest =
+  | {
+      type: 'track';
+      file: string;
+      tabFile: string | null;
+    }
+  | {
+      type: 'lyrics';
+      lyrics: string;
+    };
+
 export type PutUploadIdCoverRequest = {
   file: string;
 };

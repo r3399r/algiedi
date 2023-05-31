@@ -93,3 +93,46 @@ export const updateCover = async (creationId: string, coverFile: File) => {
     dispatch(finishWaiting());
   }
 };
+
+export const updateTrack = async (
+  trackId: string,
+  files: {
+    track: File;
+    tab: File | null;
+  },
+) => {
+  try {
+    dispatch(startWaiting());
+    await uploadEndpoint.putUploadId(trackId, {
+      type: 'track',
+      file: await file2Base64(files.track),
+      tabFile: files.tab ? await file2Base64(files.tab) : null,
+    });
+
+    await loadProjects();
+  } finally {
+    dispatch(finishWaiting());
+  }
+};
+
+export const updateLyrics = async (lyricsId: string, lyrics: string) => {
+  try {
+    dispatch(startWaiting());
+    await uploadEndpoint.putUploadId(lyricsId, {
+      type: 'lyrics',
+      lyrics,
+    });
+
+    await loadProjects();
+  } finally {
+    dispatch(finishWaiting());
+  }
+};
+
+export const uploadTrack = async (files: { track: File; tab: File | null }) => {
+  console.log(`upload track`);
+};
+
+export const uploadLyrics = async (lyrics: string) => {
+  console.log(`upload lyrics`);
+};

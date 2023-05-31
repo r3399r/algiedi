@@ -8,6 +8,7 @@ import {
   PostUploadRequest,
   PostUploadResponse,
   PutUploadIdCoverRequest,
+  PutUploadIdRequest,
   UploadLyrics,
   UploadTrack,
 } from 'src/model/api/Upload';
@@ -179,6 +180,41 @@ export class UploadService {
       await this.dbAccess.rollbackTransaction();
       throw e;
     }
+  }
+
+  public async replaceUpload(creationId: string, data: PutUploadIdRequest) {
+    if (data.type === 'lyrics') {
+      const lyrics = await this.lyricsAccess.findOneById(creationId);
+      if (lyrics === null) throw new BadRequestError('lyrics not found');
+      if (lyrics.userId !== this.cognitoUserId)
+        throw new UnauthorizedError('unauthorized');
+
+      lyrics.lyrics = data.lyrics;
+      await this.lyricsAccess.save(lyrics);
+    } else if (data.type === 'track') {
+      const track = await this.trackAccess.findOneById(creationId);
+      if (track === null) throw new BadRequestError('lyrics not found');
+      if (track.userId !== this.cognitoUserId)
+        throw new UnauthorizedError('unauthorized');
+
+      // upload file
+      const fileKey = await this.awsService.s3Upload(
+        data.file,
+        `track/${track.id}/file`
+      );
+
+      // upload tab file if exists
+      let tabFileKey: string | null = null;
+      if (data.tabFile)
+        tabFileKey = await this.awsService.s3Upload(
+          data.tabFile,
+          `track/${track.id}/tab`
+        );
+
+      track.fileUri = fileKey;
+      track.tabFileUri = tabFileKey;
+      await this.trackAccess.save(track);
+    } else throw new BadRequestError('type not found');
   }
 
   public async updateCover(creationId: string, data: PutUploadIdCoverRequest) {

@@ -46,3 +46,7 @@ export type UploadLyricsForm = {
   language: string;
   caption: string;
 };
+
+export type UpdateLyricsForm = {
+  lyrics: string;
+};
