@@ -1,7 +1,6 @@
 import { inject, injectable } from 'inversify';
 import { In } from 'typeorm';
-import { Project } from 'src/model/entity/Project';
-import { ProjectEntity } from 'src/model/entity/ProjectEntity';
+import { Project, ProjectEntity } from 'src/model/entity/ProjectEntity';
 import { Database } from 'src/util/Database';
 
 /**

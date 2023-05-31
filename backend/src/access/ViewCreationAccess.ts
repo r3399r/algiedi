@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { FindOneOptions } from 'typeorm';
+import { FindManyOptions, FindOneOptions } from 'typeorm';
 import {
   ViewCreation,
   ViewCreationEntity,
@@ -42,6 +42,15 @@ export class ViewCreationAccess {
     const qr = await this.database.getQueryRunner();
 
     return await qr.manager.findOne<ViewCreation>(
+      ViewCreationEntity.name,
+      options
+    );
+  }
+
+  public async find(options: FindManyOptions<ViewCreation>) {
+    const qr = await this.database.getQueryRunner();
+
+    return await qr.manager.find<ViewCreation>(
       ViewCreationEntity.name,
       options
     );

@@ -1,7 +1,6 @@
 import { inject, injectable } from 'inversify';
 import { FindManyOptions, FindOneOptions } from 'typeorm';
-import { Track } from 'src/model/entity/Track';
-import { TrackEntity } from 'src/model/entity/TrackEntity';
+import { Track, TrackEntity } from 'src/model/entity/TrackEntity';
 import { Database } from 'src/util/Database';
 
 /**

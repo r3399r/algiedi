@@ -1,4 +1,4 @@
-import { User } from 'src/model/entity/User';
+import { User } from 'src/model/entity/UserEntity';
 
 export type GetMeResponse = User;
 

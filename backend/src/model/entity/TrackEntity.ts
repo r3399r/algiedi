@@ -1,6 +1,25 @@
 import { BeforeInsert, BeforeUpdate, Column, Entity, Generated } from 'typeorm';
 import { booleanTransformer } from 'src/util/typeorm';
-import { Track } from './Track';
+
+export type Track = {
+  id: string;
+  userId: string;
+  name: string;
+  description: string;
+  theme: string;
+  genre: string;
+  language: string;
+  caption: string;
+  coverFileUri: string | null;
+  fileUri: string;
+  tabFileUri: string | null;
+  projectId: string;
+  isOriginal: boolean;
+  inspiredId: string | null;
+  approval: boolean | null;
+  createdAt: string | null;
+  updatedAt: string | null;
+};
 
 @Entity({ name: 'track' })
 export class TrackEntity implements Track {

@@ -1,4 +1,4 @@
-import { Project } from 'src/model/entity/Project';
+import { Project } from 'src/model/entity/ProjectEntity';
 
 type UploadCommon = {
   name: string;

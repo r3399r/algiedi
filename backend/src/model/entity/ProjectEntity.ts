@@ -1,6 +1,12 @@
 import { BeforeInsert, BeforeUpdate, Column, Entity, Generated } from 'typeorm';
 import { Status } from 'src/model/constant/Project';
-import { Project } from './Project';
+
+export type Project = {
+  id: string;
+  status: Status;
+  createdAt: string | null;
+  updatedAt: string | null;
+};
 
 @Entity({ name: 'project' })
 export class ProjectEntity implements Project {

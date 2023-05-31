@@ -1,5 +1,22 @@
 import { BeforeInsert, BeforeUpdate, Column, Entity } from 'typeorm';
-import { User } from './User';
+
+export type User = {
+  id: string;
+  email: string;
+  username: string;
+  role: string | null;
+  age: number | null;
+  language: string | null;
+  bio: string | null;
+  tag: string | null;
+  facebook: string | null;
+  instagram: string | null;
+  youtube: string | null;
+  soundcloud: string | null;
+  lastProjectId: string | null;
+  createdAt: string | null;
+  updatedAt: string | null;
+};
 
 @Entity({ name: 'user' })
 export class UserEntity implements User {

@@ -1,6 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { User } from 'src/model/entity/User';
-import { UserEntity } from 'src/model/entity/UserEntity';
+import { User, UserEntity } from 'src/model/entity/UserEntity';
 import { Database } from 'src/util/Database';
 
 /**

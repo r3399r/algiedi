@@ -2,7 +2,6 @@ import { inject, injectable } from 'inversify';
 import { DbAccess } from 'src/access/DbAccess';
 import { LyricsAccess } from 'src/access/LyricsAccess';
 import { ProjectAccess } from 'src/access/ProjectAccess';
-import { ProjectUserAccess } from 'src/access/ProjectUserAccess';
 import { TrackAccess } from 'src/access/TrackAccess';
 import { ViewCreationAccess } from 'src/access/ViewCreationAccess';
 import {
@@ -15,9 +14,7 @@ import {
 import { Type } from 'src/model/constant/Creation';
 import { Status } from 'src/model/constant/Project';
 import { LyricsEntity } from 'src/model/entity/LyricsEntity';
-import { Project } from 'src/model/entity/Project';
-import { ProjectEntity } from 'src/model/entity/ProjectEntity';
-import { ProjectUserEntity } from 'src/model/entity/ProjectUserEntity';
+import { Project, ProjectEntity } from 'src/model/entity/ProjectEntity';
 import { TrackEntity } from 'src/model/entity/TrackEntity';
 import {
   BadRequestError,
@@ -49,9 +46,6 @@ export class UploadService {
 
   @inject(ProjectAccess)
   private readonly projectAccess!: ProjectAccess;
-
-  @inject(ProjectUserAccess)
-  private readonly projectUserAccess!: ProjectUserAccess;
 
   @inject(ViewCreationAccess)
   private readonly viewCreationAccess!: ViewCreationAccess;
@@ -142,17 +136,29 @@ export class UploadService {
       // find old project if inspired, or create new project if no inspired
       if (data.inspiredId !== null) {
         // TODO: should findById instead of name
-        const creation = await this.viewCreationAccess.findOne({
+        const inspiredCreation = await this.viewCreationAccess.findOne({
           where: { name: data.inspiredId },
         });
-        if (creation === null)
+        if (inspiredCreation === null)
           throw new BadRequestError('track/lyrics not found');
         project = {
-          id: creation.projectId,
-          status: creation.projectStatus,
-          createdAt: creation.projectCreatedAt,
-          updatedAt: creation.projectUpdatedAt,
+          id: inspiredCreation.projectId,
+          status: inspiredCreation.projectStatus,
+          createdAt: inspiredCreation.projectCreatedAt,
+          updatedAt: inspiredCreation.projectUpdatedAt,
         };
+
+        // check if user participates or not
+        const userCreations = await this.viewCreationAccess.find({
+          where: { userId: this.cognitoUserId, projectId: project.id },
+        });
+        if (userCreations.length > 0)
+          for (const c of userCreations) {
+            if (c.type === Type.Lyrics && data.type === 'lyrics')
+              throw new BadRequestError('Already participated with lyrics');
+            if (c.type === Type.Track && data.type === 'track')
+              throw new BadRequestError('Already participated with a track');
+          }
       } else {
         const tmpProject = new ProjectEntity();
         tmpProject.status = Status.Created;
@@ -162,12 +168,6 @@ export class UploadService {
       }
 
       if (project === null) throw new BadRequestError('project not found');
-
-      // save project-user pair
-      const projectUser = new ProjectUserEntity();
-      projectUser.projectId = project.id;
-      projectUser.userId = this.cognitoUserId;
-      await this.projectUserAccess.save(projectUser);
 
       if (data.type === 'lyrics') await this.uploadLyrics(data, project.id);
       else if (data.type === 'track') await this.uploadTrack(data, project.id);

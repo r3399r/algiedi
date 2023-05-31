@@ -1,7 +1,6 @@
 import { inject, injectable } from 'inversify';
 import { FindManyOptions, FindOneOptions } from 'typeorm';
-import { Lyrics } from 'src/model/entity/Lyrics';
-import { LyricsEntity } from 'src/model/entity/LyricsEntity';
+import { Lyrics, LyricsEntity } from 'src/model/entity/LyricsEntity';
 import { Database } from 'src/util/Database';
 
 /**

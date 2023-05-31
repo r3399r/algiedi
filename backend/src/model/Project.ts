@@ -1,4 +1,4 @@
-import { Project } from './entity/Project';
+import { Project } from './entity/ProjectEntity';
 import { ViewCreation } from './entity/ViewCreationEntity';
 
 export type DetailedProject = Project & {
