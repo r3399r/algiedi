@@ -1,9 +1,9 @@
 import classNames from 'classnames';
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import IcProfile from 'src/image/ic-profile.svg';
-import { DetailedProject } from 'src/model/backend/Project';
+import { DetailedCreation, DetailedProject } from 'src/model/backend/Project';
 import { RootState } from 'src/redux/store';
 import { openFailSnackbar } from 'src/redux/uiSlice';
 import { getProject, setApproval, updateCover, updateProject } from 'src/service/ProjectService';
@@ -14,8 +14,9 @@ const Project = () => {
   const { id: userId } = useSelector((root: RootState) => root.me);
   const coverInputRef = useRef<HTMLInputElement>(null);
   const [thisProject, setThisProject] = useState<DetailedProject | null>();
-  const [mainCreation, setMainCreation] = useState<DetailedProject['creation'][0]>();
-  const [inspiredList, setInspiredList] = useState<DetailedProject['creation']>();
+  const [originalTrack, setOriginalTrack] = useState<DetailedCreation>();
+  const [originalLyrics, setOriginalLyrics] = useState<DetailedCreation>();
+  const [inspiredList, setInspiredList] = useState<DetailedCreation[]>();
   const [tab, setTab] = useState<'detail' | 'lyrics'>('detail');
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [editName, setEditName] = useState<string>('');
@@ -25,20 +26,21 @@ const Project = () => {
   const [editLanguage, setEditLanguage] = useState<string>('');
   const [editCaption, setEditCaption] = useState<string>('');
 
+  const mainCreation = useMemo(
+    () => originalLyrics || originalTrack,
+    [originalLyrics, originalTrack],
+  );
+
   useEffect(() => {
     getProject(state?.id)
-      .then((res) => setThisProject(res))
+      .then((res) => {
+        setThisProject(res);
+        if (res && res.originalTrack) setOriginalTrack(res.originalTrack);
+        if (res && res.originalLyrics) setOriginalLyrics(res.originalLyrics);
+        if (res) setInspiredList(res.inspiration);
+      })
       .catch((err) => dispatch(openFailSnackbar(err)));
   }, [state?.id]);
-
-  useEffect(() => {
-    if (!thisProject) return;
-
-    const main = thisProject.creation.find((v) => v.isOriginal);
-    setMainCreation(main);
-
-    setInspiredList(thisProject.creation.filter((v) => v.id !== main?.id));
-  }, [thisProject]);
 
   const onLoadMetadata = (e: ChangeEvent<HTMLAudioElement>) => {
     console.log(e.target.duration);
@@ -70,7 +72,7 @@ const Project = () => {
   };
 
   if (thisProject === null) return <>Please upload a content first.</>;
-  if (thisProject === undefined || mainCreation === undefined) return <></>;
+  if (thisProject === undefined || mainCreation === undefined) return <>Loading...</>;
 
   return (
     <>
@@ -291,7 +293,20 @@ const Project = () => {
               </div>
               <div>
                 {v.type === 'track' && (
-                  <audio src={v.fileUrl ?? undefined} controls onLoadedMetadata={onLoadMetadata} />
+                  <div>
+                    <audio
+                      src={v.fileUrl ?? undefined}
+                      controls
+                      onLoadedMetadata={onLoadMetadata}
+                    />
+                    {v.tabFileUrl && (
+                      <div className="border-[1px] border-black w-fit">
+                        <a href={v.tabFileUrl} target="_blank" rel="noreferrer">
+                          download tab
+                        </a>
+                      </div>
+                    )}
+                  </div>
                 )}
                 {v.type === 'lyrics' && <div className="whitespace-pre">{v.lyrics}</div>}
               </div>

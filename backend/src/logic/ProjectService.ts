@@ -13,6 +13,7 @@ import {
   InternalServerError,
   UnauthorizedError,
 } from 'src/model/error';
+import { DetailedCreation } from 'src/model/Project';
 import { compare } from 'src/util/compare';
 import { cognitoSymbol } from 'src/util/LambdaSetup';
 import { AwsService } from './AwsService';
@@ -59,8 +60,21 @@ export class ProjectService {
     return await Promise.all(
       [...myProjectIds].map(async (pid) => {
         const creations = await this.viewCreationAccess.findByProjectId(pid);
-        if (creations.length === 0)
-          throw new InternalServerError('creations should exist');
+
+        const detailedCreations: DetailedCreation[] = creations.map((c) => ({
+          ...c,
+          fileUrl: this.awsService.getS3SignedUrl(c.fileUri),
+          tabFileUrl: this.awsService.getS3SignedUrl(c.tabFileUri),
+          coverFileUrl: this.awsService.getS3SignedUrl(c.coverFileUri),
+        }));
+
+        let originalTrack: DetailedCreation | null = null;
+        let originalLyrics: DetailedCreation | null = null;
+        const inspiration: DetailedCreation[] = [];
+        for (const c of detailedCreations)
+          if (c.isOriginal && c.type === Type.Track) originalTrack = c;
+          else if (c.isOriginal && c.type === Type.Lyrics) originalLyrics = c;
+          else inspiration.push(c);
 
         const project: Project = {
           id: pid,
@@ -71,14 +85,9 @@ export class ProjectService {
 
         return {
           ...project,
-          creation: creations
-            .map((c) => ({
-              ...c,
-              fileUrl: this.awsService.getS3SignedUrl(c.fileUri),
-              tabFileUrl: this.awsService.getS3SignedUrl(c.tabFileUri),
-              coverFileUrl: this.awsService.getS3SignedUrl(c.coverFileUri),
-            }))
-            .sort(compare('createdAt')),
+          originalTrack,
+          originalLyrics,
+          inspiration: inspiration.sort(compare('createdAt')),
         };
       })
     );
