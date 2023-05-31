@@ -101,11 +101,20 @@ const Project = () => {
             </div>
           </div>
           {mainCreation.type === 'track' && (
-            <audio
-              src={mainCreation.fileUrl ?? undefined}
-              controls
-              onLoadedMetadata={onLoadMetadata}
-            />
+            <div>
+              <audio
+                src={mainCreation.fileUrl ?? undefined}
+                controls
+                onLoadedMetadata={onLoadMetadata}
+              />
+              {mainCreation.tabFileUrl && (
+                <div className="border-[1px] border-black w-fit">
+                  <a href={mainCreation.tabFileUrl} target="_blank" rel="noreferrer">
+                    download tab
+                  </a>
+                </div>
+              )}
+            </div>
           )}
           <div className="flex justify-between mt-4">
             <div className="flex gap-4 mb-6">
