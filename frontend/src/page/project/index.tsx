@@ -147,43 +147,6 @@ const Project = () => {
                 Detail
               </div>
             </div>
-            {mainCreation.userId === userId && !isEdit && (
-              <div
-                className="cursor-pointer"
-                onClick={() => {
-                  setIsEdit(!isEdit);
-                  setEditName(mainCreation.name);
-                  setEditDescription(mainCreation.description);
-                  setEditTheme(mainCreation.theme);
-                  setEditGenre(mainCreation.genre);
-                  setEditLanguage(mainCreation.language);
-                  setEditCaption(mainCreation.caption);
-                }}
-              >
-                Edit
-              </div>
-            )}
-            {mainCreation.userId === userId && isEdit && (
-              <div className="flex gap-2">
-                <div
-                  className="cursor-pointer"
-                  onClick={() => {
-                    setIsEdit(!isEdit);
-                  }}
-                >
-                  Cancel
-                </div>
-                <div
-                  className="cursor-pointer"
-                  onClick={() => {
-                    setIsEdit(!isEdit);
-                    onSave();
-                  }}
-                >
-                  Save
-                </div>
-              </div>
-            )}
           </div>
           <div className="border-[#707070] bg-white border-[1px] border-solid rounded-[30px] p-4">
             {tab === 'lyrics' && (
@@ -205,6 +168,45 @@ const Project = () => {
             )}
             {tab === 'detail' && (
               <div>
+                <div className="flex justify-end">
+                  {mainCreation.userId === userId && !isEdit && (
+                    <div
+                      className="cursor-pointer"
+                      onClick={() => {
+                        setIsEdit(!isEdit);
+                        setEditName(mainCreation.name);
+                        setEditDescription(mainCreation.description);
+                        setEditTheme(mainCreation.theme);
+                        setEditGenre(mainCreation.genre);
+                        setEditLanguage(mainCreation.language);
+                        setEditCaption(mainCreation.caption);
+                      }}
+                    >
+                      Edit
+                    </div>
+                  )}
+                  {mainCreation.userId === userId && isEdit && (
+                    <div className="flex gap-2">
+                      <div
+                        className="cursor-pointer"
+                        onClick={() => {
+                          setIsEdit(!isEdit);
+                        }}
+                      >
+                        Cancel
+                      </div>
+                      <div
+                        className="cursor-pointer"
+                        onClick={() => {
+                          setIsEdit(!isEdit);
+                          onSave();
+                        }}
+                      >
+                        Save
+                      </div>
+                    </div>
+                  )}
+                </div>
                 <div className="mb-4">
                   {isEdit ? (
                     <textarea
@@ -213,7 +215,7 @@ const Project = () => {
                       onChange={(e) => setEditDescription(e.target.value)}
                     />
                   ) : (
-                    <div>{mainCreation.description}</div>
+                    <div className="whitespace-pre">{mainCreation.description}</div>
                   )}
                 </div>
                 <div className="flex gap-1">
