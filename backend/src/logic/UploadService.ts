@@ -134,6 +134,13 @@ export class UploadService {
       // TODO: should check if inspired project completed or not
       let project: Project | null = null;
 
+      // check if name is duplicated
+      const userCreation = await this.viewCreationAccess.findOne({
+        where: { name: data.name, userId: this.cognitoUserId },
+      });
+      if (userCreation !== null)
+        throw new BadRequestError('this name is already used');
+
       // find old project if inspired, or create new project if no inspired
       if (data.inspiredId !== null) {
         // TODO: should findById instead of name
