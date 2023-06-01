@@ -103,38 +103,48 @@ export class ProjectService {
     id: string,
     data: PutProjectRequest
   ): Promise<void> {
-    const creation = await this.viewCreationAccess.findOne({
-      where: {
-        projectId: id,
-        userId: this.cognitoUserId,
-        isOriginal: true,
-      },
-    });
-    if (creation === null) throw new BadRequestError('lyrics/track not found');
+    try {
+      await this.dbAccess.startTransaction();
 
-    if (creation.type === Type.Track) {
-      const track = await this.trackAccess.findOneById(creation.id);
-      if (track === null) throw new InternalServerError('track not found');
+      const creations = await this.viewCreationAccess.find({
+        where: {
+          projectId: id,
+          userId: this.cognitoUserId,
+          isOriginal: true,
+        },
+      });
 
-      track.name = data.name ?? track.name;
-      track.description = data.description ?? track.description;
-      track.theme = data.theme ?? track.theme;
-      track.genre = data.genre ?? track.genre;
-      track.language = data.language ?? track.language;
-      track.caption = data.caption ?? track.caption;
-      await this.trackAccess.save(track);
-    } else if (creation.type === Type.Lyrics) {
-      const lyrics = await this.lyricsAccess.findOneById(creation.id);
-      if (lyrics === null) throw new InternalServerError('lyrics not found');
+      for (const c of creations)
+        if (c.type === Type.Track) {
+          const track = await this.trackAccess.findOneById(c.id);
+          if (track === null) throw new InternalServerError('track not found');
 
-      lyrics.name = data.name ?? lyrics.name;
-      lyrics.description = data.description ?? lyrics.description;
-      lyrics.theme = data.theme ?? lyrics.theme;
-      lyrics.genre = data.genre ?? lyrics.genre;
-      lyrics.language = data.language ?? lyrics.language;
-      lyrics.caption = data.caption ?? lyrics.caption;
-      await this.lyricsAccess.save(lyrics);
-    } else throw new InternalServerError('creation type not defined');
+          track.name = data.name ?? track.name;
+          track.description = data.description ?? track.description;
+          track.theme = data.theme ?? track.theme;
+          track.genre = data.genre ?? track.genre;
+          track.language = data.language ?? track.language;
+          track.caption = data.caption ?? track.caption;
+          await this.trackAccess.save(track);
+        } else if (c.type === Type.Lyrics) {
+          const lyrics = await this.lyricsAccess.findOneById(c.id);
+          if (lyrics === null)
+            throw new InternalServerError('lyrics not found');
+
+          lyrics.name = data.name ?? lyrics.name;
+          lyrics.description = data.description ?? lyrics.description;
+          lyrics.theme = data.theme ?? lyrics.theme;
+          lyrics.genre = data.genre ?? lyrics.genre;
+          lyrics.language = data.language ?? lyrics.language;
+          lyrics.caption = data.caption ?? lyrics.caption;
+          await this.lyricsAccess.save(lyrics);
+        }
+
+      await this.dbAccess.commitTransaction();
+    } catch (e) {
+      await this.dbAccess.rollbackTransaction();
+      throw e;
+    }
   }
 
   public async projectAppoval(projectId: string, creationId: string) {

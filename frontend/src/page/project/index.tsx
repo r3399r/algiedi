@@ -353,7 +353,7 @@ const Project = () => {
           type="file"
           onChange={(e: ChangeEvent<HTMLInputElement>) => {
             if (e.target.files && e.target.files.length === 1)
-              updateCover(mainCreation.id, e.target.files[0]).then(() => setRefresh(!refresh));
+              updateCover(thisProject, e.target.files[0]).then(() => setRefresh(!refresh));
           }}
           ref={coverInputRef}
           className="hidden"
