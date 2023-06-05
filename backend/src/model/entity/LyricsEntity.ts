@@ -11,7 +11,6 @@ export type Lyrics = {
   language: string;
   caption: string;
   coverFileUri: string | null;
-  lyrics: string;
   projectId: string;
   inspiredId: string | null;
   status: CollaborateStatus;
@@ -48,9 +47,6 @@ export class LyricsEntity implements Lyrics {
 
   @Column({ type: 'varchar', name: 'cover_file_uri', default: null })
   coverFileUri: string | null = null;
-
-  @Column({ type: 'varchar' })
-  lyrics!: string;
 
   @Column({ type: 'uuid', name: 'project_id' })
   projectId!: string;

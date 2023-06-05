@@ -8,7 +8,6 @@ CREATE TABLE IF NOT EXISTS lyrics (
 	language VARCHAR(255) NOT NULL,
 	caption VARCHAR(255) NOT NULL,
 	cover_file_uri VARCHAR(255) NULL,
-	lyrics VARCHAR(255) NOT NULL,
 	project_id VARCHAR(36) NOT NULL,
 	is_original BOOLEAN NOT NULL,
 	inspired_id VARCHAR(36) NULL,

@@ -1,8 +1,10 @@
 import { inject, injectable } from 'inversify';
 import { DbAccess } from 'src/access/DbAccess';
 import { LyricsAccess } from 'src/access/LyricsAccess';
+import { LyricsHistoryAccess } from 'src/access/LyricsHistoryAccess';
 import { ProjectAccess } from 'src/access/ProjectAccess';
 import { TrackAccess } from 'src/access/TrackAccess';
+import { TrackHistoryAccess } from 'src/access/TrackHistoryAccess';
 import { ViewCreationAccess } from 'src/access/ViewCreationAccess';
 import {
   PostUploadRequest,
@@ -15,8 +17,10 @@ import {
 import { CollaborateStatus, Type } from 'src/model/constant/Creation';
 import { Status } from 'src/model/constant/Project';
 import { LyricsEntity } from 'src/model/entity/LyricsEntity';
+import { LyricsHistoryEntity } from 'src/model/entity/LyricsHistoryEntity';
 import { Project, ProjectEntity } from 'src/model/entity/ProjectEntity';
 import { TrackEntity } from 'src/model/entity/TrackEntity';
+import { TrackHistoryEntity } from 'src/model/entity/TrackHistoryEntity';
 import {
   BadRequestError,
   InternalServerError,
@@ -42,8 +46,14 @@ export class UploadService {
   @inject(LyricsAccess)
   private readonly lyricsAccess!: LyricsAccess;
 
+  @inject(LyricsHistoryAccess)
+  private readonly lyricsHistoryAccess!: LyricsHistoryAccess;
+
   @inject(TrackAccess)
   private readonly trackAccess!: TrackAccess;
+
+  @inject(TrackHistoryAccess)
+  private readonly trackHistoryAccess!: TrackHistoryAccess;
 
   @inject(ProjectAccess)
   private readonly projectAccess!: ProjectAccess;
@@ -68,7 +78,6 @@ export class UploadService {
     lyrics.genre = data.genre;
     lyrics.language = data.language;
     lyrics.caption = data.caption;
-    lyrics.lyrics = data.lyrics;
     lyrics.projectId = projectId;
     lyrics.status = status;
     lyrics.inspiredId = data.inspiredId;
@@ -84,6 +93,12 @@ export class UploadService {
       newLyrics.coverFileUri = key;
       await this.lyricsAccess.save(newLyrics);
     }
+
+    // upload lyrics
+    const lyricsHistory = new LyricsHistoryEntity();
+    lyricsHistory.lyricsId = newLyrics.id;
+    lyricsHistory.content = data.lyrics;
+    await this.lyricsHistoryAccess.save(lyricsHistory);
   }
 
   private async uploadTrack(
@@ -105,20 +120,6 @@ export class UploadService {
 
     const newTrack = await this.trackAccess.save(track);
 
-    // upload file
-    const fileKey = await this.awsService.s3Upload(
-      data.file,
-      `track/${newTrack.id}/file`
-    );
-
-    // upload tab file if exists
-    let tabFileKey: string | null = null;
-    if (data.tabFile)
-      tabFileKey = await this.awsService.s3Upload(
-        data.tabFile,
-        `track/${newTrack.id}/tab`
-      );
-
     // upload coverfile if exists
     let coverFileKey: string | null = null;
     if (data.coverFile)
@@ -126,11 +127,34 @@ export class UploadService {
         data.coverFile,
         `track/${newTrack.id}/cover`
       );
-
-    newTrack.fileUri = fileKey;
-    newTrack.tabFileUri = tabFileKey;
     newTrack.coverFileUri = coverFileKey;
     await this.trackAccess.save(newTrack);
+
+    const trackHistory = new TrackHistoryEntity();
+    trackHistory.trackId = newTrack.id;
+    const newTrackHistory = await this.trackHistoryAccess.save(trackHistory);
+
+    // upload file
+    const fileKey = await this.awsService.s3Upload(
+      data.file,
+      `track/${newTrack.id}/${new Date(
+        newTrackHistory.createdAt
+      ).toISOString()}/file`
+    );
+
+    // upload tab file if exists
+    let tabFileKey: string | null = null;
+    if (data.tabFile)
+      tabFileKey = await this.awsService.s3Upload(
+        data.tabFile,
+        `track/${newTrack.id}/${new Date(
+          newTrackHistory.createdAt
+        ).toISOString()}/tab`
+      );
+
+    newTrackHistory.fileUri = fileKey;
+    newTrackHistory.tabFileUri = tabFileKey;
+    await this.trackHistoryAccess.save(newTrackHistory);
   }
 
   public async upload(data: PostUploadRequest): Promise<PostUploadResponse> {
@@ -208,38 +232,59 @@ export class UploadService {
   }
 
   public async replaceUpload(creationId: string, data: PutUploadIdRequest) {
-    if (data.type === 'lyrics') {
-      const lyrics = await this.lyricsAccess.findOneById(creationId);
-      if (lyrics === null) throw new BadRequestError('lyrics not found');
-      if (lyrics.userId !== this.cognitoUserId)
-        throw new UnauthorizedError('unauthorized');
+    try {
+      await this.dbAccess.startTransaction();
+      if (data.type === 'lyrics') {
+        const lyrics = await this.lyricsAccess.findOneById(creationId);
+        if (lyrics === null) throw new BadRequestError('lyrics not found');
+        if (lyrics.userId !== this.cognitoUserId)
+          throw new UnauthorizedError('unauthorized');
 
-      lyrics.lyrics = data.lyrics;
-      await this.lyricsAccess.save(lyrics);
-    } else if (data.type === 'track') {
-      const track = await this.trackAccess.findOneById(creationId);
-      if (track === null) throw new BadRequestError('lyrics not found');
-      if (track.userId !== this.cognitoUserId)
-        throw new UnauthorizedError('unauthorized');
+        // upload lyrics
+        const lyricsHistory = new LyricsHistoryEntity();
+        lyricsHistory.lyricsId = lyrics.id;
+        lyricsHistory.content = data.lyrics;
+        await this.lyricsHistoryAccess.save(lyricsHistory);
+      } else if (data.type === 'track') {
+        const track = await this.trackAccess.findOneById(creationId);
+        if (track === null) throw new BadRequestError('lyrics not found');
+        if (track.userId !== this.cognitoUserId)
+          throw new UnauthorizedError('unauthorized');
 
-      // upload file
-      const fileKey = await this.awsService.s3Upload(
-        data.file,
-        `track/${track.id}/file`
-      );
-
-      // upload tab file if exists
-      let tabFileKey: string | null = null;
-      if (data.tabFile)
-        tabFileKey = await this.awsService.s3Upload(
-          data.tabFile,
-          `track/${track.id}/tab`
+        const trackHistory = new TrackHistoryEntity();
+        trackHistory.trackId = track.id;
+        const newTrackHistory = await this.trackHistoryAccess.save(
+          trackHistory
         );
 
-      track.fileUri = fileKey;
-      track.tabFileUri = tabFileKey;
-      await this.trackAccess.save(track);
-    } else throw new BadRequestError('type not found');
+        // upload file
+        const fileKey = await this.awsService.s3Upload(
+          data.file,
+          `track/${track.id}/${new Date(
+            newTrackHistory.createdAt
+          ).toISOString()}/file`
+        );
+
+        // upload tab file if exists
+        let tabFileKey: string | null = null;
+        if (data.tabFile)
+          tabFileKey = await this.awsService.s3Upload(
+            data.tabFile,
+            `track/${track.id}/${new Date(
+              newTrackHistory.createdAt
+            ).toISOString()}/tab`
+          );
+
+        newTrackHistory.fileUri = fileKey;
+        newTrackHistory.tabFileUri = tabFileKey;
+        await this.trackHistoryAccess.save(newTrackHistory);
+      } else throw new BadRequestError('type not found');
+
+      await this.dbAccess.commitTransaction();
+    } catch (e) {
+      await this.dbAccess.rollbackTransaction();
+      throw e;
+    }
   }
 
   public async updateCover(creationId: string, data: PutUploadIdCoverRequest) {

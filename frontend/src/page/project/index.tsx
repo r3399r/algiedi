@@ -30,8 +30,10 @@ const Project = () => {
   const [editLanguage, setEditLanguage] = useState<string>('');
   const [editCaption, setEditCaption] = useState<string>('');
   const [refresh, setRefresh] = useState<boolean>(false);
-  const [targetLyrics, setTargetLyrics] = useState<string>();
-  const [targetTrack, setTargetTrack] = useState<string>();
+  const [isLyricsModalOpen, setIsLyricsModalOpen] = useState<boolean>(false);
+  const [isTrackModalOpen, setIsTrackModalOpen] = useState<boolean>(false);
+  const [targetLyrics, setTargetLyrics] = useState<DetailedCreation>();
+  const [targetTrack, setTargetTrack] = useState<DetailedCreation>();
 
   const mainCreation = useMemo(() => mainLyrics || mainTrack, [mainLyrics, mainTrack]);
 
@@ -117,14 +119,20 @@ const Project = () => {
                 </div>
               )}
               {mainCreation.userId === userId && (
-                <Button className="mt-2" onClick={() => setTargetTrack(mainTrack.id)}>
+                <Button
+                  className="mt-2"
+                  onClick={() => {
+                    setTargetTrack(mainTrack);
+                    setIsTrackModalOpen(true);
+                  }}
+                >
                   Update Track
                 </Button>
               )}
             </div>
           )}
           {!mainTrack && mainCreation.userId === userId && (
-            <Button onClick={() => setTargetTrack('new')}>Upload Track</Button>
+            <Button onClick={() => setIsTrackModalOpen(true)}>Upload Track</Button>
           )}
           <div className="flex justify-between mt-4">
             <div className="flex gap-4 mb-6">
@@ -153,12 +161,19 @@ const Project = () => {
                   <div>
                     <div className="whitespace-pre">{mainLyrics.lyrics}</div>
                     {mainCreation.userId === userId && (
-                      <Button onClick={() => setTargetLyrics(mainLyrics.id)}>Update Lyrics</Button>
+                      <Button
+                        onClick={() => {
+                          setTargetLyrics(mainLyrics);
+                          setIsLyricsModalOpen(true);
+                        }}
+                      >
+                        Update Lyrics
+                      </Button>
                     )}
                   </div>
                 )}
                 {!mainLyrics && mainCreation.userId === userId && (
-                  <Button onClick={() => setTargetLyrics('new')}>Upload Lyrics</Button>
+                  <Button onClick={() => setIsLyricsModalOpen(true)}>Upload Lyrics</Button>
                 )}
               </div>
             )}
@@ -336,7 +351,14 @@ const Project = () => {
                       </div>
                     )}
                     {v.status === CollaborateStatus.Inspired && v.userId === userId && (
-                      <Button onClick={() => setTargetTrack(v.id)}>Update Track</Button>
+                      <Button
+                        onClick={() => {
+                          setTargetTrack(v);
+                          setIsTrackModalOpen(true);
+                        }}
+                      >
+                        Update Track
+                      </Button>
                     )}
                   </div>
                 )}
@@ -344,7 +366,14 @@ const Project = () => {
                   <div>
                     <div className="whitespace-pre">{v.lyrics}</div>
                     {v.status === CollaborateStatus.Inspired && v.userId === userId && (
-                      <Button onClick={() => setTargetLyrics(v.id)}>Update Lyrics</Button>
+                      <Button
+                        onClick={() => {
+                          setTargetLyrics(v);
+                          setIsLyricsModalOpen(true);
+                        }}
+                      >
+                        Update Lyrics
+                      </Button>
                     )}
                   </div>
                 )}
@@ -367,17 +396,17 @@ const Project = () => {
         />
       )}
       <ModalLyrics
-        open={targetLyrics !== undefined}
+        open={isLyricsModalOpen}
         targetLyrics={targetLyrics}
         targetProjectId={mainCreation.projectId}
-        handleClose={() => setTargetLyrics(undefined)}
+        handleClose={() => setIsLyricsModalOpen(false)}
         doRefresh={() => setRefresh(!refresh)}
       />
       <ModalTrack
-        open={targetTrack !== undefined}
+        open={isTrackModalOpen}
         targetTrack={targetTrack}
         targetProjectId={mainCreation.projectId}
-        handleClose={() => setTargetTrack(undefined)}
+        handleClose={() => setIsTrackModalOpen(false)}
         doRefresh={() => setRefresh(!refresh)}
       />
     </>

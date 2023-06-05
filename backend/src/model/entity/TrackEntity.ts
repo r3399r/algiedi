@@ -11,8 +11,6 @@ export type Track = {
   language: string;
   caption: string;
   coverFileUri: string | null;
-  fileUri: string;
-  tabFileUri: string | null;
   projectId: string;
   inspiredId: string | null;
   status: CollaborateStatus;
@@ -49,12 +47,6 @@ export class TrackEntity implements Track {
 
   @Column({ type: 'varchar', name: 'cover_file_uri', default: null })
   coverFileUri: string | null = null;
-
-  @Column({ type: 'varchar', name: 'file_uri' })
-  fileUri!: string;
-
-  @Column({ type: 'varchar', name: 'tab_file_uri', default: null })
-  tabFileUri: string | null = null;
 
   @Column({ type: 'uuid', name: 'project_id' })
   projectId!: string;

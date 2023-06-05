@@ -3,8 +3,10 @@ import { CognitoIdentityServiceProvider, Lambda, S3, SNS } from 'aws-sdk';
 import { Container } from 'inversify';
 import { DbAccess } from './access/DbAccess';
 import { LyricsAccess } from './access/LyricsAccess';
+import { LyricsHistoryAccess } from './access/LyricsHistoryAccess';
 import { ProjectAccess } from './access/ProjectAccess';
 import { TrackAccess } from './access/TrackAccess';
+import { TrackHistoryAccess } from './access/TrackHistoryAccess';
 import { UserAccess } from './access/UserAccess';
 import { ViewCreationAccess } from './access/ViewCreationAccess';
 import { AwsService } from './logic/AwsService';
@@ -16,8 +18,10 @@ import { UploadService } from './logic/UploadService';
 import { UserService } from './logic/UserService';
 import { VpcService } from './logic/VpcService';
 import { LyricsEntity } from './model/entity/LyricsEntity';
+import { LyricsHistoryEntity } from './model/entity/LyricsHistoryEntity';
 import { ProjectEntity } from './model/entity/ProjectEntity';
 import { TrackEntity } from './model/entity/TrackEntity';
+import { TrackHistoryEntity } from './model/entity/TrackHistoryEntity';
 import { UserEntity } from './model/entity/UserEntity';
 import { ViewCreationEntity } from './model/entity/ViewCreationEntity';
 import { Database, dbEntitiesBindingId } from './util/Database';
@@ -28,16 +32,20 @@ container.bind<Database>(Database).toSelf().inSingletonScope();
 
 // bind repeatedly for db entities
 container.bind<Function>(dbEntitiesBindingId).toFunction(LyricsEntity);
+container.bind<Function>(dbEntitiesBindingId).toFunction(LyricsHistoryEntity);
 container.bind<Function>(dbEntitiesBindingId).toFunction(ProjectEntity);
 container.bind<Function>(dbEntitiesBindingId).toFunction(TrackEntity);
+container.bind<Function>(dbEntitiesBindingId).toFunction(TrackHistoryEntity);
 container.bind<Function>(dbEntitiesBindingId).toFunction(UserEntity);
 container.bind<Function>(dbEntitiesBindingId).toFunction(ViewCreationEntity);
 
 // db access for tables
 container.bind<DbAccess>(DbAccess).toSelf();
 container.bind<LyricsAccess>(LyricsAccess).toSelf();
+container.bind<LyricsHistoryAccess>(LyricsHistoryAccess).toSelf();
 container.bind<ProjectAccess>(ProjectAccess).toSelf();
 container.bind<TrackAccess>(TrackAccess).toSelf();
+container.bind<TrackHistoryAccess>(TrackHistoryAccess).toSelf();
 container.bind<UserAccess>(UserAccess).toSelf();
 container.bind<ViewCreationAccess>(ViewCreationAccess).toSelf();
 

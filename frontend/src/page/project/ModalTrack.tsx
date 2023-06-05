@@ -3,13 +3,14 @@ import { useDispatch } from 'react-redux';
 import Button from 'src/component/Button';
 import Input from 'src/component/Input';
 import Modal from 'src/component/Modal';
+import { DetailedCreation } from 'src/model/backend/Project';
 import { openFailSnackbar } from 'src/redux/uiSlice';
 import { updateTrack, uploadTrack } from 'src/service/ProjectService';
 
 type Props = {
   open: boolean;
   handleClose: () => void;
-  targetTrack?: string;
+  targetTrack?: DetailedCreation;
   targetProjectId: string;
   doRefresh: () => void;
 };
@@ -30,9 +31,9 @@ const ModalTrack = ({ open, handleClose, targetTrack, targetProjectId, doRefresh
   };
 
   const onSubmit = () => {
-    if (!trackFile || !targetTrack) return;
-    if (targetTrack !== 'new')
-      updateTrack(targetTrack, { tab: tabFile ?? null, track: trackFile })
+    if (!trackFile) return;
+    if (targetTrack !== undefined)
+      updateTrack(targetTrack.id, { tab: tabFile ?? null, track: trackFile })
         .then(onSuccess)
         .catch((err) => dispatch(openFailSnackbar(err)));
     else

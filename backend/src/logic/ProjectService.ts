@@ -1,8 +1,10 @@
 import { inject, injectable } from 'inversify';
 import { DbAccess } from 'src/access/DbAccess';
 import { LyricsAccess } from 'src/access/LyricsAccess';
+import { LyricsHistoryAccess } from 'src/access/LyricsHistoryAccess';
 import { ProjectAccess } from 'src/access/ProjectAccess';
 import { TrackAccess } from 'src/access/TrackAccess';
+import { TrackHistoryAccess } from 'src/access/TrackHistoryAccess';
 import { UserAccess } from 'src/access/UserAccess';
 import { ViewCreationAccess } from 'src/access/ViewCreationAccess';
 import {
@@ -12,8 +14,10 @@ import {
 } from 'src/model/api/Project';
 import { CollaborateStatus, Type } from 'src/model/constant/Creation';
 import { Lyrics, LyricsEntity } from 'src/model/entity/LyricsEntity';
+import { LyricsHistoryEntity } from 'src/model/entity/LyricsHistoryEntity';
 import { Project } from 'src/model/entity/ProjectEntity';
 import { Track, TrackEntity } from 'src/model/entity/TrackEntity';
+import { TrackHistoryEntity } from 'src/model/entity/TrackHistoryEntity';
 import {
   BadRequestError,
   InternalServerError,
@@ -44,8 +48,14 @@ export class ProjectService {
   @inject(LyricsAccess)
   private readonly lyricsAccess!: LyricsAccess;
 
+  @inject(LyricsHistoryAccess)
+  private readonly lyricsHistoryAccess!: LyricsHistoryAccess;
+
   @inject(TrackAccess)
   private readonly trackAccess!: TrackAccess;
+
+  @inject(TrackHistoryAccess)
+  private readonly trackHistoryAccess!: TrackHistoryAccess;
 
   @inject(UserAccess)
   private readonly userAccess!: UserAccess;
@@ -228,10 +238,16 @@ export class ProjectService {
       track.status = CollaborateStatus.Main;
       track.coverFileUri = lyrics.coverFileUri;
 
+      const trackHistory = new TrackHistoryEntity();
+      trackHistory.trackId = track.id;
+      const newTrackHistory = await this.trackHistoryAccess.save(trackHistory);
+
       // upload file
       const fileKey = await this.awsService.s3Upload(
         data.file,
-        `track/${track.id}/file`
+        `track/${track.id}/${new Date(
+          newTrackHistory.createdAt
+        ).toISOString()}/file`
       );
 
       // upload tab file if exists
@@ -239,12 +255,14 @@ export class ProjectService {
       if (data.tabFile)
         tabFileKey = await this.awsService.s3Upload(
           data.tabFile,
-          `track/${track.id}/tab`
+          `track/${track.id}/${new Date(
+            newTrackHistory.createdAt
+          ).toISOString()}/tab`
         );
 
-      track.fileUri = fileKey;
-      track.tabFileUri = tabFileKey;
-      await this.trackAccess.save(track);
+      newTrackHistory.fileUri = fileKey;
+      newTrackHistory.tabFileUri = tabFileKey;
+      await this.trackHistoryAccess.save(newTrackHistory);
     } else if (data.type === 'lyrics') {
       const track = creation[0];
       const lyrics = new LyricsEntity();
@@ -258,8 +276,13 @@ export class ProjectService {
       lyrics.projectId = track.projectId;
       lyrics.status = CollaborateStatus.Main;
       lyrics.coverFileUri = track.coverFileUri;
-      lyrics.lyrics = data.lyrics;
-      await this.lyricsAccess.save(lyrics);
+      const newLyrics = await this.lyricsAccess.save(lyrics);
+
+      // upload lyrics
+      const lyricsHistory = new LyricsHistoryEntity();
+      lyricsHistory.lyricsId = newLyrics.id;
+      lyricsHistory.content = data.lyrics;
+      await this.lyricsHistoryAccess.save(lyricsHistory);
     }
   }
 }
