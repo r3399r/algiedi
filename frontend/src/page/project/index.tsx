@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import Button from 'src/component/Button';
 import IcProfile from 'src/image/ic-profile.svg';
+import { CollaborateStatus } from 'src/model/backend/constant/Creation';
 import { DetailedCreation, DetailedProject } from 'src/model/backend/Project';
 import { RootState } from 'src/redux/store';
 import { openFailSnackbar } from 'src/redux/uiSlice';
@@ -17,8 +18,8 @@ const Project = () => {
   const { id: userId } = useSelector((root: RootState) => root.me);
   const coverInputRef = useRef<HTMLInputElement>(null);
   const [thisProject, setThisProject] = useState<DetailedProject | null>();
-  const [originalTrack, setOriginalTrack] = useState<DetailedCreation>();
-  const [originalLyrics, setOriginalLyrics] = useState<DetailedCreation>();
+  const [mainTrack, setMainTrack] = useState<DetailedCreation>();
+  const [mainLyrics, setMainLyrics] = useState<DetailedCreation>();
   const [inspiredList, setInspiredList] = useState<DetailedCreation[]>();
   const [tab, setTab] = useState<'detail' | 'lyrics'>('detail');
   const [isEdit, setIsEdit] = useState<boolean>(false);
@@ -32,17 +33,14 @@ const Project = () => {
   const [targetLyrics, setTargetLyrics] = useState<string>();
   const [targetTrack, setTargetTrack] = useState<string>();
 
-  const mainCreation = useMemo(
-    () => originalLyrics || originalTrack,
-    [originalLyrics, originalTrack],
-  );
+  const mainCreation = useMemo(() => mainLyrics || mainTrack, [mainLyrics, mainTrack]);
 
   useEffect(() => {
     getProject(state?.id)
       .then((res) => {
         setThisProject(res);
-        if (res && res.originalTrack) setOriginalTrack(res.originalTrack);
-        if (res && res.originalLyrics) setOriginalLyrics(res.originalLyrics);
+        if (res && res.mainTrack) setMainTrack(res.mainTrack);
+        if (res && res.mainLyrics) setMainLyrics(res.mainLyrics);
         if (res) setInspiredList(res.inspiration);
       })
       .catch((err) => dispatch(openFailSnackbar(err)));
@@ -104,28 +102,28 @@ const Project = () => {
               )}
             </div>
           </div>
-          {originalTrack && (
+          {mainTrack && (
             <div>
               <audio
-                src={originalTrack.fileUrl ?? undefined}
+                src={mainTrack.fileUrl ?? undefined}
                 controls
                 onLoadedMetadata={onLoadMetadata}
               />
-              {originalTrack.tabFileUrl && (
+              {mainTrack.tabFileUrl && (
                 <div className="border-[1px] border-black w-fit rounded p-1">
-                  <a href={originalTrack.tabFileUrl} target="_blank" rel="noreferrer">
+                  <a href={mainTrack.tabFileUrl} target="_blank" rel="noreferrer">
                     download tab
                   </a>
                 </div>
               )}
               {mainCreation.userId === userId && (
-                <Button className="mt-2" onClick={() => setTargetTrack(originalTrack.id)}>
+                <Button className="mt-2" onClick={() => setTargetTrack(mainTrack.id)}>
                   Update Track
                 </Button>
               )}
             </div>
           )}
-          {!originalTrack && mainCreation.userId === userId && (
+          {!mainTrack && mainCreation.userId === userId && (
             <Button onClick={() => setTargetTrack('new')}>Upload Track</Button>
           )}
           <div className="flex justify-between mt-4">
@@ -151,17 +149,15 @@ const Project = () => {
           <div className="border-[#707070] bg-white border-[1px] border-solid rounded-[30px] p-4">
             {tab === 'lyrics' && (
               <div>
-                {originalLyrics && (
+                {mainLyrics && (
                   <div>
-                    <div className="whitespace-pre">{originalLyrics.lyrics}</div>
+                    <div className="whitespace-pre">{mainLyrics.lyrics}</div>
                     {mainCreation.userId === userId && (
-                      <Button onClick={() => setTargetLyrics(originalLyrics.id)}>
-                        Update Lyrics
-                      </Button>
+                      <Button onClick={() => setTargetLyrics(mainLyrics.id)}>Update Lyrics</Button>
                     )}
                   </div>
                 )}
-                {!originalLyrics && mainCreation.userId === userId && (
+                {!mainLyrics && mainCreation.userId === userId && (
                   <Button onClick={() => setTargetLyrics('new')}>Upload Lyrics</Button>
                 )}
               </div>
@@ -281,13 +277,21 @@ const Project = () => {
             <div className="flex gap-2">
               <div>
                 Audio{' '}
-                {inspiredList?.filter((v) => v.type === 'track' && v.approval === true).length}/
-                {inspiredList?.filter((v) => v.type === 'track').length}
+                {
+                  inspiredList?.filter(
+                    (v) => v.type === 'track' && v.status === CollaborateStatus.Approved,
+                  ).length
+                }
+                /{inspiredList?.filter((v) => v.type === 'track').length}
               </div>
               <div>
                 Lyrics{' '}
-                {inspiredList?.filter((v) => v.type === 'lyrics' && v.approval === true).length}/
-                {inspiredList?.filter((v) => v.type === 'lyrics').length}
+                {
+                  inspiredList?.filter(
+                    (v) => v.type === 'lyrics' && v.status === CollaborateStatus.Approved,
+                  ).length
+                }
+                /{inspiredList?.filter((v) => v.type === 'lyrics').length}
               </div>
             </div>
           </div>
@@ -299,8 +303,9 @@ const Project = () => {
               <div className="text-right">
                 <button
                   className={classNames('border-[1px] rounded-full px-2', {
-                    'border-green-500 bg-green-500 text-white': v.approval === true,
-                    'border-black': v.approval === false,
+                    'border-green-500 bg-green-500 text-white':
+                      v.status === CollaborateStatus.Approved,
+                    'border-black': v.status === CollaborateStatus.Inspired,
                   })}
                   onClick={onApprove(v.id)}
                   disabled={mainCreation.userId !== userId}
@@ -330,7 +335,7 @@ const Project = () => {
                         </a>
                       </div>
                     )}
-                    {v.approval === false && v.userId === userId && (
+                    {v.status === CollaborateStatus.Inspired && v.userId === userId && (
                       <Button onClick={() => setTargetTrack(v.id)}>Update Track</Button>
                     )}
                   </div>
@@ -338,7 +343,7 @@ const Project = () => {
                 {v.type === 'lyrics' && (
                   <div>
                     <div className="whitespace-pre">{v.lyrics}</div>
-                    {v.approval === false && v.userId === userId && (
+                    {v.status === CollaborateStatus.Inspired && v.userId === userId && (
                       <Button onClick={() => setTargetLyrics(v.id)}>Update Lyrics</Button>
                     )}
                   </div>

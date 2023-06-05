@@ -8,7 +8,6 @@ type UploadCommon = {
   language: string;
   caption: string;
   coverFile: string | null;
-  isOriginal: boolean;
   inspiredId: string | null;
 };
 

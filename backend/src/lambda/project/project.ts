@@ -108,7 +108,7 @@ async function apiProjectIdApproval(
     throw new BadRequestError('headers should not be empty');
   switch (event.httpMethod) {
     case 'PUT':
-      return service.projectAppoval(
+      return service.projectApproval(
         event.pathParameters.id,
         event.pathParameters.cid
       );

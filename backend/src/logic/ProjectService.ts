@@ -10,10 +10,10 @@ import {
   PostProjectIdOriginalRequest,
   PutProjectRequest,
 } from 'src/model/api/Project';
-import { Type } from 'src/model/constant/Creation';
-import { LyricsEntity } from 'src/model/entity/LyricsEntity';
+import { CollaborateStatus, Type } from 'src/model/constant/Creation';
+import { Lyrics, LyricsEntity } from 'src/model/entity/LyricsEntity';
 import { Project } from 'src/model/entity/ProjectEntity';
-import { TrackEntity } from 'src/model/entity/TrackEntity';
+import { Track, TrackEntity } from 'src/model/entity/TrackEntity';
 import {
   BadRequestError,
   InternalServerError,
@@ -74,12 +74,17 @@ export class ProjectService {
           coverFileUrl: this.awsService.getS3SignedUrl(c.coverFileUri),
         }));
 
-        let originalTrack: DetailedCreation | null = null;
-        let originalLyrics: DetailedCreation | null = null;
+        let mainTrack: DetailedCreation | null = null;
+        let mainLyrics: DetailedCreation | null = null;
         const inspiration: DetailedCreation[] = [];
         for (const c of detailedCreations)
-          if (c.isOriginal && c.type === Type.Track) originalTrack = c;
-          else if (c.isOriginal && c.type === Type.Lyrics) originalLyrics = c;
+          if (c.status === CollaborateStatus.Main && c.type === Type.Track)
+            mainTrack = c;
+          else if (
+            c.status === CollaborateStatus.Main &&
+            c.type === Type.Lyrics
+          )
+            mainLyrics = c;
           else inspiration.push(c);
 
         const project: Project = {
@@ -91,8 +96,8 @@ export class ProjectService {
 
         return {
           ...project,
-          originalTrack,
-          originalLyrics,
+          mainTrack,
+          mainLyrics,
           inspiration: inspiration.sort(compare('createdAt')),
         };
       })
@@ -110,9 +115,11 @@ export class ProjectService {
         where: {
           projectId: id,
           userId: this.cognitoUserId,
-          isOriginal: true,
+          status: CollaborateStatus.Main,
         },
       });
+
+      if (creations.length === 0) throw new BadRequestError('no project found');
 
       for (const c of creations)
         if (c.type === Type.Track) {
@@ -147,28 +154,38 @@ export class ProjectService {
     }
   }
 
-  public async projectAppoval(projectId: string, creationId: string) {
+  private setApproval<T extends Lyrics | Track>(creation: T) {
+    if (creation.status === CollaborateStatus.Inspired)
+      creation.status = CollaborateStatus.Approved;
+    else if (creation.status === CollaborateStatus.Approved)
+      creation.status = CollaborateStatus.Inspired;
+    else throw new InternalServerError('creation status error');
+
+    return creation;
+  }
+
+  public async projectApproval(projectId: string, creationId: string) {
     const creations = await this.viewCreationAccess.findByProjectId(projectId);
 
     // check user is owner
-    const mainCreation = creations.find((v) => v.isOriginal === true);
+    const mainCreation = creations.find(
+      (v) => v.status === CollaborateStatus.Main
+    );
     if (mainCreation?.userId !== this.cognitoUserId)
       throw new UnauthorizedError('Only owner can set approval');
 
+    // update status
     const targetCreation = creations.find((v) => v.id === creationId);
-
     if (targetCreation?.type === Type.Track) {
       const track = await this.trackAccess.findOneById(targetCreation.id);
       if (track === null) throw new InternalServerError('track not found');
 
-      track.approval = !track.approval;
-      await this.trackAccess.save(track);
+      await this.trackAccess.save(this.setApproval(track));
     } else if (targetCreation?.type === Type.Lyrics) {
       const lyrics = await this.lyricsAccess.findOneById(targetCreation.id);
       if (lyrics === null) throw new InternalServerError('lyrics not found');
 
-      lyrics.approval = !lyrics.approval;
-      await this.lyricsAccess.save(lyrics);
+      await this.lyricsAccess.save(this.setApproval(lyrics));
     } else throw new InternalServerError('creation not found');
   }
 
@@ -188,10 +205,10 @@ export class ProjectService {
     data: PostProjectIdOriginalRequest
   ) {
     const creation = await this.viewCreationAccess.find({
-      where: { projectId, isOriginal: true },
+      where: { projectId, status: CollaborateStatus.Main },
     });
     if (creation.length !== 1)
-      throw new InternalServerError('originals should be 1');
+      throw new InternalServerError('there should be only 1 original');
     if (data.type === 'track' && creation[0].type === Type.Track)
       throw new InternalServerError('original track already exists');
     if (data.type === 'lyrics' && creation[0].type === Type.Lyrics)
@@ -208,7 +225,7 @@ export class ProjectService {
       track.language = lyrics.language;
       track.caption = lyrics.caption;
       track.projectId = lyrics.projectId;
-      track.isOriginal = true;
+      track.status = CollaborateStatus.Main;
       track.coverFileUri = lyrics.coverFileUri;
 
       // upload file
@@ -239,7 +256,7 @@ export class ProjectService {
       lyrics.language = track.language;
       lyrics.caption = track.caption;
       lyrics.projectId = track.projectId;
-      lyrics.isOriginal = true;
+      lyrics.status = CollaborateStatus.Main;
       lyrics.coverFileUri = track.coverFileUri;
       lyrics.lyrics = data.lyrics;
       await this.lyricsAccess.save(lyrics);

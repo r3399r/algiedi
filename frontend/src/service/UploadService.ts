@@ -14,7 +14,6 @@ export const updateLastProjectId = async (projectId: string) => {
 
 export const uploadTrack = async (
   data: UploadTrackForm,
-  isOriginal: boolean,
   files: { track: File; tab: File | null; cover: File | null },
   inspiredId: string | null,
 ) => {
@@ -25,7 +24,6 @@ export const uploadTrack = async (
       file: await file2Base64(files.track),
       tabFile: files.tab ? await file2Base64(files.tab) : null,
       coverFile: files.cover ? await file2Base64(files.cover) : null,
-      isOriginal,
       inspiredId,
       ...data,
     });
@@ -39,7 +37,6 @@ export const uploadTrack = async (
 
 export const uploadLyrics = async (
   data: UploadLyricsForm,
-  isOriginal: boolean,
   coverFile: File | null,
   inspiredId: string | null,
 ) => {
@@ -48,7 +45,6 @@ export const uploadLyrics = async (
     const res = await uploadEndpoint.postUpload({
       type: 'lyrics',
       coverFile: coverFile ? await file2Base64(coverFile) : null,
-      isOriginal,
       inspiredId,
       ...data,
     });

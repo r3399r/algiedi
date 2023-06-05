@@ -12,7 +12,7 @@ import {
   UploadLyrics,
   UploadTrack,
 } from 'src/model/api/Upload';
-import { Type } from 'src/model/constant/Creation';
+import { CollaborateStatus, Type } from 'src/model/constant/Creation';
 import { Status } from 'src/model/constant/Project';
 import { LyricsEntity } from 'src/model/entity/LyricsEntity';
 import { Project, ProjectEntity } from 'src/model/entity/ProjectEntity';
@@ -55,7 +55,11 @@ export class UploadService {
     await this.dbAccess.cleanup();
   }
 
-  private async uploadLyrics(data: UploadLyrics, projectId: string) {
+  private async uploadLyrics(
+    data: UploadLyrics,
+    projectId: string,
+    status: CollaborateStatus
+  ) {
     const lyrics = new LyricsEntity();
     lyrics.userId = this.cognitoUserId;
     lyrics.name = data.name;
@@ -66,9 +70,8 @@ export class UploadService {
     lyrics.caption = data.caption;
     lyrics.lyrics = data.lyrics;
     lyrics.projectId = projectId;
-    lyrics.isOriginal = data.isOriginal;
+    lyrics.status = status;
     lyrics.inspiredId = data.inspiredId;
-    lyrics.approval = false;
 
     const newLyrics = await this.lyricsAccess.save(lyrics);
 
@@ -83,7 +86,11 @@ export class UploadService {
     }
   }
 
-  private async uploadTrack(data: UploadTrack, projectId: string) {
+  private async uploadTrack(
+    data: UploadTrack,
+    projectId: string,
+    status: CollaborateStatus
+  ) {
     const track = new TrackEntity();
     track.userId = this.cognitoUserId;
     track.name = data.name;
@@ -93,9 +100,8 @@ export class UploadService {
     track.language = data.language;
     track.caption = data.caption;
     track.projectId = projectId;
-    track.isOriginal = data.isOriginal;
+    track.status = status;
     track.inspiredId = data.inspiredId;
-    track.approval = false;
 
     const newTrack = await this.trackAccess.save(track);
 
@@ -131,8 +137,9 @@ export class UploadService {
     try {
       await this.dbAccess.startTransaction();
 
-      // TODO: should check if inspired project completed or not
+      // TODO: should check if inspired project is published or not
       let project: Project | null = null;
+      const isPublished = false;
 
       // check if name is duplicated
       const userCreation = await this.viewCreationAccess.findOne({
@@ -149,6 +156,11 @@ export class UploadService {
         });
         if (inspiredCreation === null)
           throw new BadRequestError('track/lyrics not found');
+        if (inspiredCreation.userId === this.cognitoUserId)
+          throw new BadRequestError(
+            'You cannot upload a track/lyrics to your own inspiration'
+          );
+
         project = {
           id: inspiredCreation.projectId,
           status: inspiredCreation.projectStatus,
@@ -177,8 +189,14 @@ export class UploadService {
 
       if (project === null) throw new BadRequestError('project not found');
 
-      if (data.type === 'lyrics') await this.uploadLyrics(data, project.id);
-      else if (data.type === 'track') await this.uploadTrack(data, project.id);
+      const status =
+        data.inspiredId !== null && isPublished
+          ? CollaborateStatus.Inspired
+          : CollaborateStatus.Main;
+      if (data.type === 'lyrics')
+        await this.uploadLyrics(data, project.id, status);
+      else if (data.type === 'track')
+        await this.uploadTrack(data, project.id, status);
 
       await this.dbAccess.commitTransaction();
 

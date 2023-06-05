@@ -678,9 +678,8 @@ Resources:
                 "genre":{"type": "string"},
                 "language":{"type": "string"},
                 "caption":{"type": "string"},
-                "isOriginal":{"type": "boolean"},
               },
-              "required": ["type","name","description","theme","genre","language","caption","isOriginal"]
+              "required": ["type","name","description","theme","genre","language","caption"]
             },
             "putUploadId": {
               "type": "object",

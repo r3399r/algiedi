@@ -19,7 +19,7 @@ const Overall = () => {
       <div className="text-[20px] mt-10">Open</div>
       <div className="text-gray-400">{projects?.length} creations</div>
       {projects?.map((v) => {
-        const main = v.originalTrack || v.originalLyrics;
+        const main = v.mainTrack || v.mainLyrics;
         const coverFileUrl = main?.coverFileUrl;
 
         return (

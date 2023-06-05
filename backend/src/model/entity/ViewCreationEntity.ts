@@ -1,7 +1,6 @@
 import { ViewColumn, ViewEntity } from 'typeorm';
-import { Type } from 'src/model/constant/Creation';
-import { Status } from 'src/model/constant/Project';
-import { booleanTransformer } from 'src/util/typeorm';
+import { CollaborateStatus, Type } from 'src/model/constant/Creation';
+import { Status as ProjectStatus } from 'src/model/constant/Project';
 
 export type ViewCreation = {
   id: string;
@@ -18,13 +17,12 @@ export type ViewCreation = {
   tabFileUri: string | null;
   lyrics: string | null;
   projectId: string;
-  isOriginal: boolean;
   inspiredId: string | null;
-  approval: boolean | null;
+  status: CollaborateStatus;
   createdAt: string | null;
   updatedAt: string | null;
   username: string;
-  projectStatus: Status;
+  projectStatus: ProjectStatus;
   projectCreatedAt: string | null;
   projectUpdatedAt: string | null;
 };
@@ -73,16 +71,11 @@ export class ViewCreationEntity implements ViewCreation {
   @ViewColumn({ name: 'project_id' })
   projectId!: string;
 
-  @ViewColumn({ name: 'is_original', transformer: booleanTransformer })
-  isOriginal!: boolean;
-
   @ViewColumn({ name: 'inspired_id' })
   inspiredId: string | null = null;
 
-  @ViewColumn({
-    transformer: booleanTransformer,
-  })
-  approval: boolean | null = null;
+  @ViewColumn()
+  status!: CollaborateStatus;
 
   @ViewColumn({ name: 'created_at' })
   createdAt: string | null = null;
@@ -94,7 +87,7 @@ export class ViewCreationEntity implements ViewCreation {
   username!: string;
 
   @ViewColumn({ name: 'project_status' })
-  projectStatus!: Status;
+  projectStatus!: ProjectStatus;
 
   @ViewColumn({ name: 'project_created_at' })
   projectCreatedAt: string | null = null;

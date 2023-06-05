@@ -1,5 +1,5 @@
 import { BeforeInsert, BeforeUpdate, Column, Entity, Generated } from 'typeorm';
-import { booleanTransformer } from 'src/util/typeorm';
+import { CollaborateStatus } from 'src/model/constant/Creation';
 
 export type Lyrics = {
   id: string;
@@ -13,9 +13,8 @@ export type Lyrics = {
   coverFileUri: string | null;
   lyrics: string;
   projectId: string;
-  isOriginal: boolean;
   inspiredId: string | null;
-  approval: boolean | null;
+  status: CollaborateStatus;
   createdAt: string | null;
   updatedAt: string | null;
 };
@@ -56,22 +55,11 @@ export class LyricsEntity implements Lyrics {
   @Column({ type: 'uuid', name: 'project_id' })
   projectId!: string;
 
-  @Column({
-    type: 'boolean',
-    name: 'is_original',
-    transformer: booleanTransformer,
-  })
-  isOriginal!: boolean;
-
   @Column({ type: 'uuid', name: 'inspired_id', default: null })
   inspiredId: string | null = null;
 
-  @Column({
-    type: 'boolean',
-    transformer: booleanTransformer,
-    default: null,
-  })
-  approval: boolean | null = null;
+  @Column({ type: 'varchar' })
+  status!: CollaborateStatus;
 
   @Column({ type: 'timestamp', name: 'created_at', default: null })
   createdAt!: string;

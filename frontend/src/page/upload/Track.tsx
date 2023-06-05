@@ -33,7 +33,6 @@ const Track = () => {
     }
     uploadTrack(
       data,
-      checkOriginal,
       { track: trackFile, tab: tabFile ?? null, cover: coverFile ?? null },
       checkInspiration ? inspiredId : null,
     )

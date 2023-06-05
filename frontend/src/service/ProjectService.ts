@@ -84,12 +84,12 @@ export const setApproval = async (projectId: string, creationId: string) => {
 export const updateCover = async (project: DetailedProject, coverFile: File) => {
   try {
     dispatch(startWaiting());
-    if (project.originalLyrics)
-      await uploadEndpoint.putUploadIdCover(project.originalLyrics.id, {
+    if (project.mainLyrics)
+      await uploadEndpoint.putUploadIdCover(project.mainLyrics.id, {
         file: await file2Base64(coverFile),
       });
-    if (project.originalTrack)
-      await uploadEndpoint.putUploadIdCover(project.originalTrack.id, {
+    if (project.mainTrack)
+      await uploadEndpoint.putUploadIdCover(project.mainTrack.id, {
         file: await file2Base64(coverFile),
       });
 

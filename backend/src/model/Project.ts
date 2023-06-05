@@ -2,8 +2,8 @@ import { Project } from './entity/ProjectEntity';
 import { ViewCreation } from './entity/ViewCreationEntity';
 
 export type DetailedProject = Project & {
-  originalTrack: DetailedCreation | null;
-  originalLyrics: DetailedCreation | null;
+  mainTrack: DetailedCreation | null;
+  mainLyrics: DetailedCreation | null;
   inspiration: DetailedCreation[];
 };
 
