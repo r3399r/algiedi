@@ -13,6 +13,7 @@ import {
   PutProjectRequest,
 } from 'src/model/api/Project';
 import { CollaborateStatus, Type } from 'src/model/constant/Creation';
+import { Status } from 'src/model/constant/Project';
 import { Lyrics, LyricsEntity } from 'src/model/entity/LyricsEntity';
 import { LyricsHistoryEntity } from 'src/model/entity/LyricsHistoryEntity';
 import { Project } from 'src/model/entity/ProjectEntity';
@@ -100,6 +101,7 @@ export class ProjectService {
         const project: Project = {
           id: pid,
           status: creations[0].projectStatus,
+          startedAt: creations[0].projectStartedAt,
           createdAt: creations[0].projectCreatedAt,
           updatedAt: creations[0].projectUpdatedAt,
         };
@@ -283,6 +285,44 @@ export class ProjectService {
       lyricsHistory.lyricsId = newLyrics.id;
       lyricsHistory.content = data.lyrics;
       await this.lyricsHistoryAccess.save(lyricsHistory);
+    }
+  }
+
+  public async startProject(id: string) {
+    try {
+      await this.dbAccess.startTransaction();
+
+      const project = await this.projectAccess.findOneById(id);
+      if (project === null) throw new InternalServerError('project not found');
+
+      project.status = Status.InProgress;
+      project.startedAt = new Date().toISOString();
+      await this.projectAccess.save(project);
+
+      const creations = await this.viewCreationAccess.find({
+        where: {
+          projectId: id,
+          status: CollaborateStatus.Approved,
+        },
+      });
+      for (const c of creations)
+        if (c.type === Type.Track) {
+          const track = await this.trackAccess.findOneById(c.id);
+          if (track === null) throw new InternalServerError('track not found');
+          track.status = CollaborateStatus.Proposed;
+          await this.trackAccess.save(track);
+        } else if (c.type === Type.Lyrics) {
+          const lyrics = await this.lyricsAccess.findOneById(c.id);
+          if (lyrics === null)
+            throw new InternalServerError('lyrics not found');
+          lyrics.status = CollaborateStatus.Proposed;
+          await this.lyricsAccess.save(lyrics);
+        }
+
+      await this.dbAccess.commitTransaction();
+    } catch (e) {
+      await this.dbAccess.rollbackTransaction();
+      throw e;
     }
   }
 }

@@ -20,6 +20,7 @@ select l.id,
     l.updated_at,
     l.username,
     l.project_status,
+    l.project_started_at,
     l.project_created_at,
     l.project_updated_at
 from v_lyrics l
@@ -45,6 +46,7 @@ select t.id,
     t.updated_at,
     t.username,
     t.project_status,
+    t.project_started_at,
     t.project_created_at,
     t.project_updated_at
 from v_track t;

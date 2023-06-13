@@ -188,6 +188,7 @@ export class UploadService {
         project = {
           id: inspiredCreation.projectId,
           status: inspiredCreation.projectStatus,
+          startedAt: inspiredCreation.projectStartedAt,
           createdAt: inspiredCreation.projectCreatedAt,
           updatedAt: inspiredCreation.projectUpdatedAt,
         };

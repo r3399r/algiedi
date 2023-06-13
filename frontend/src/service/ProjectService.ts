@@ -162,3 +162,14 @@ export const uploadLyrics = async (projectId: string, lyrics: string) => {
     dispatch(finishWaiting());
   }
 };
+
+export const startProject = async (id: string) => {
+  try {
+    dispatch(startWaiting());
+    await projectEndpoint.postProjectIdStart(id);
+
+    await loadProjects();
+  } finally {
+    dispatch(finishWaiting());
+  }
+};

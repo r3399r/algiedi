@@ -10,6 +10,8 @@ const getProject = async () => await http.authGet<GetProjectResponse>('project')
 const putProject = async (id: string, data: PutProjectRequest) =>
   await http.authPut<void, PutProjectRequest>(`project/${id}`, { data });
 
+const postProjectIdStart = async (id: string) => await http.authPost<void>(`project/${id}/start`);
+
 const postProjectIdOriginal = async (id: string, data: PostProjectIdOriginalRequest) =>
   await http.authPost<void, PostProjectIdOriginalRequest>(`project/${id}/original`, { data });
 
@@ -21,6 +23,7 @@ const patchProjectIdView = async (id: string) => await http.authPatch(`project/$
 export default {
   getProject,
   putProject,
+  postProjectIdStart,
   postProjectIdOriginal,
   putProjectIdApprovalCid,
   patchProjectIdView,

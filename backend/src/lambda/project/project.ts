@@ -27,6 +27,9 @@ export async function project(
       case '/api/project/{id}':
         res = await apiProjectId(event, service);
         break;
+      case '/api/project/{id}/start':
+        res = await apiProjectIdStart(event, service);
+        break;
       case '/api/project/{id}/original':
         res = await apiProjectIdOriginal(event, service);
         break;
@@ -72,6 +75,19 @@ async function apiProjectId(event: LambdaEvent, service: ProjectService) {
         event.pathParameters.id,
         JSON.parse(event.body) as PutProjectRequest
       );
+    default:
+      throw new InternalServerError('unknown http method');
+  }
+}
+
+async function apiProjectIdStart(event: LambdaEvent, service: ProjectService) {
+  if (event.pathParameters === null)
+    throw new BadRequestError('pathParameters should not be empty');
+  if (event.headers === null)
+    throw new BadRequestError('headers should not be empty');
+  switch (event.httpMethod) {
+    case 'POST':
+      return service.startProject(event.pathParameters.id);
     default:
       throw new InternalServerError('unknown http method');
   }

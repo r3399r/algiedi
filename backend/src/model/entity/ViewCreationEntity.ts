@@ -23,6 +23,7 @@ export type ViewCreation = {
   updatedAt: string | null;
   username: string;
   projectStatus: ProjectStatus;
+  projectStartedAt: string | null;
   projectCreatedAt: string | null;
   projectUpdatedAt: string | null;
 };
@@ -88,6 +89,9 @@ export class ViewCreationEntity implements ViewCreation {
 
   @ViewColumn({ name: 'project_status' })
   projectStatus!: ProjectStatus;
+
+  @ViewColumn({ name: 'project_started_at' })
+  projectStartedAt: string | null = null;
 
   @ViewColumn({ name: 'project_created_at' })
   projectCreatedAt: string | null = null;
