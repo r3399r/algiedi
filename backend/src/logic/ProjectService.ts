@@ -72,11 +72,29 @@ export class ProjectService {
     const myCreations = await this.viewCreationAccess.findByUserId(
       this.cognitoUserId
     );
-    const myProjectIds = new Set(myCreations.map((v) => v.projectId));
+    const myProjectIds = new Set(
+      myCreations
+        .filter(
+          (v) =>
+            v.status === CollaborateStatus.Main ||
+            v.projectStatus === Status.Created ||
+            (v.projectStatus === Status.InProgress &&
+              (v.status === CollaborateStatus.Proposed ||
+                v.status === CollaborateStatus.Accepted))
+        )
+        .map((v) => v.projectId)
+    );
 
     return await Promise.all(
       [...myProjectIds].map(async (pid) => {
         const creations = await this.viewCreationAccess.findByProjectId(pid);
+        const project: Project = {
+          id: pid,
+          status: creations[0].projectStatus,
+          startedAt: creations[0].projectStartedAt,
+          createdAt: creations[0].projectCreatedAt,
+          updatedAt: creations[0].projectUpdatedAt,
+        };
 
         const detailedCreations: DetailedCreation[] = creations.map((c) => ({
           ...c,
@@ -96,15 +114,13 @@ export class ProjectService {
             c.type === Type.Lyrics
           )
             mainLyrics = c;
-          else inspiration.push(c);
-
-        const project: Project = {
-          id: pid,
-          status: creations[0].projectStatus,
-          startedAt: creations[0].projectStartedAt,
-          createdAt: creations[0].projectCreatedAt,
-          updatedAt: creations[0].projectUpdatedAt,
-        };
+          else if (project.status !== Status.InProgress) inspiration.push(c);
+          else if (
+            project.status === Status.InProgress &&
+            (c.status === CollaborateStatus.Proposed ||
+              c.status === CollaborateStatus.Accepted)
+          )
+            inspiration.push(c);
 
         return {
           ...project,
@@ -171,6 +187,10 @@ export class ProjectService {
       creation.status = CollaborateStatus.Approved;
     else if (creation.status === CollaborateStatus.Approved)
       creation.status = CollaborateStatus.Inspired;
+    else if (creation.status === CollaborateStatus.Proposed)
+      creation.status = CollaborateStatus.Accepted;
+    else if (creation.status === CollaborateStatus.Accepted)
+      creation.status = CollaborateStatus.Proposed;
     else throw new InternalServerError('creation status error');
 
     return creation;

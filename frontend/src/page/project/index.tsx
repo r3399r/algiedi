@@ -3,20 +3,17 @@ import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import Button from 'src/component/Button';
-import IcProfile from 'src/image/ic-profile.svg';
-import { CollaborateStatus } from 'src/model/backend/constant/Creation';
+import { Status } from 'src/model/backend/constant/Project';
 import { DetailedCreation, DetailedProject } from 'src/model/backend/Project';
 import { RootState } from 'src/redux/store';
 import { openFailSnackbar } from 'src/redux/uiSlice';
-import {
-  getProject,
-  setApproval,
-  startProject,
-  updateCover,
-  updateProject,
-} from 'src/service/ProjectService';
+import { getProject, startProject, updateCover, updateProject } from 'src/service/ProjectService';
+import Activities from './Activities';
+import Initiator from './Initiator';
+import Inspired from './Inspired';
 import ModalLyrics from './ModalLyrics';
 import ModalTrack from './ModalTrack';
+import Partners from './Partners';
 
 const Project = () => {
   const dispatch = useDispatch();
@@ -72,13 +69,6 @@ const Project = () => {
       .catch((err) => dispatch(openFailSnackbar(err)));
   };
 
-  const onApprove = (creationId: string) => () => {
-    if (!thisProject) return;
-    setApproval(thisProject.id, creationId)
-      .then(() => setRefresh(!refresh))
-      .catch((err) => dispatch(openFailSnackbar(err)));
-  };
-
   const onStart = () => {
     if (!thisProject) return;
     startProject(thisProject.id)
@@ -87,7 +77,8 @@ const Project = () => {
   };
 
   if (thisProject === null) return <>Please upload a content first.</>;
-  if (thisProject === undefined || mainCreation === undefined) return <>Loading...</>;
+  if (thisProject === undefined || mainCreation === undefined || inspiredList === undefined)
+    return <>Loading...</>;
 
   return (
     <>
@@ -298,108 +289,31 @@ const Project = () => {
             </div>
           </div>
           <div className="w-1/2">
-            <div className="font-bold">Initiator</div>
-            <div className="w-fit text-center px-4 py-2">
-              <img src={IcProfile} />
-              <div>{mainCreation.username}</div>
-            </div>
-            <div className="flex justify-between">
-              <div className="font-bold">Inspired</div>
-              <div className="flex gap-2">
-                <div>
-                  Audio{' '}
-                  {
-                    inspiredList?.filter(
-                      (v) => v.type === 'track' && v.status === CollaborateStatus.Approved,
-                    ).length
-                  }
-                  /{inspiredList?.filter((v) => v.type === 'track').length}
-                </div>
-                <div>
-                  Lyrics{' '}
-                  {
-                    inspiredList?.filter(
-                      (v) => v.type === 'lyrics' && v.status === CollaborateStatus.Approved,
-                    ).length
-                  }
-                  /{inspiredList?.filter((v) => v.type === 'lyrics').length}
-                </div>
-              </div>
-            </div>
-            {inspiredList?.map((v) => (
-              <div
-                key={v.id}
-                className="border-[#707070] bg-white border-[1px] border-solid rounded-[30px] p-4 mt-2"
-              >
-                <div className="text-right">
-                  <button
-                    className={classNames('border-[1px] rounded-full px-2', {
-                      'border-green-500 bg-green-500 text-white':
-                        v.status === CollaborateStatus.Approved,
-                      'border-black': v.status === CollaborateStatus.Inspired,
-                    })}
-                    onClick={onApprove(v.id)}
-                    disabled={mainCreation.userId !== userId}
-                  >
-                    v
-                  </button>
-                </div>
-                <div className="flex gap-2 items-center">
-                  <img src={IcProfile} />
-                  <div>
-                    <div>{v.username}</div>
-                    <div>{v.name}</div>
-                  </div>
-                </div>
-                <div>
-                  {v.type === 'track' && (
-                    <div>
-                      <audio
-                        src={v.fileUrl ?? undefined}
-                        controls
-                        onLoadedMetadata={onLoadMetadata}
-                      />
-                      {v.tabFileUrl && (
-                        <div className="border-[1px] border-black w-fit rounded p-1 mt-2">
-                          <a href={v.tabFileUrl} target="_blank" rel="noreferrer">
-                            download tab
-                          </a>
-                        </div>
-                      )}
-                      {v.status === CollaborateStatus.Inspired && v.userId === userId && (
-                        <Button
-                          onClick={() => {
-                            setTargetTrack(v);
-                            setIsTrackModalOpen(true);
-                          }}
-                        >
-                          Update Track
-                        </Button>
-                      )}
-                    </div>
-                  )}
-                  {v.type === 'lyrics' && (
-                    <div>
-                      <div className="whitespace-pre">{v.lyrics}</div>
-                      {v.status === CollaborateStatus.Inspired && v.userId === userId && (
-                        <Button
-                          onClick={() => {
-                            setTargetLyrics(v);
-                            setIsLyricsModalOpen(true);
-                          }}
-                        >
-                          Update Lyrics
-                        </Button>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
+            {thisProject.status === Status.Created && <Initiator creation={mainCreation} />}
+            {thisProject.status === Status.InProgress && (
+              <Partners creations={[mainCreation, ...inspiredList]} />
+            )}
+            {thisProject.status === Status.Created && (
+              <Inspired
+                mainCreation={mainCreation}
+                creations={inspiredList}
+                doRefresh={() => setRefresh(!refresh)}
+              />
+            )}
+            {thisProject.status === Status.InProgress && (
+              <Activities
+                mainCreation={mainCreation}
+                creations={inspiredList}
+                doRefresh={() => setRefresh(!refresh)}
+              />
+            )}
           </div>
         </div>
         <div className="text-right mt-4">
-          <Button onClick={onStart}>Start Project</Button>
+          {thisProject.status === Status.Created && (
+            <Button onClick={onStart}>Start Project</Button>
+          )}
+          {thisProject.status === Status.InProgress && <Button>Publish</Button>}
         </div>
       </div>
       {mainCreation.userId === userId && (

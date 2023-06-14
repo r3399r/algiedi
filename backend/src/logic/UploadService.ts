@@ -215,7 +215,7 @@ export class UploadService {
       if (project === null) throw new BadRequestError('project not found');
 
       const status =
-        data.inspiredId !== null && isPublished
+        data.inspiredId !== null && !isPublished
           ? CollaborateStatus.Inspired
           : CollaborateStatus.Main;
       if (data.type === 'lyrics')

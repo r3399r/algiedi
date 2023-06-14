@@ -16,10 +16,11 @@ const AuthVerify = () => {
     verifyAccount(decodeURIComponent(query.email), query.code)
       .then(() => {
         dispatch(openSuccessSnackbar('Verified successfully. Please login again'));
-        navigate(Page.Questionnaire);
       })
       .catch((err) => {
         dispatch(openFailSnackbar(err));
+      })
+      .finally(() => {
         navigate(Page.Home);
       });
   }, [query]);

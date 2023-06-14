@@ -30,12 +30,12 @@ const AppRoutes = () => {
       <Route path={Page.Faq} element={<Faq />} />
       <Route path={Page.ContatUs} element={<ContactUs />} />
       <Route path={Page.Explore} element={<Explore />} />
+      <Route path={Page.Verify} element={<AuthVerify />} />
       {!isLogin && (
         <>
           <Route path={Page.Login} element={<AuthLogin />} />
           <Route path={Page.Register} element={<AuthRegister />} />
           <Route path={Page.Confirmation} element={<AuthConfirmation />} />
-          <Route path={Page.Verify} element={<AuthVerify />} />
           <Route path={Page.Forget} element={<AuthForget />} />
           <Route path={Page.ForgetReset} element={<AuthForgetReset />} />
           <Route
