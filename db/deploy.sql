@@ -5,3 +5,6 @@ source db/table/track.sql
 source db/view/v_track.sql
 source db/view/v_lyrics.sql
 source db/view/v_creation.sql
+source db/view/v_track_explore.sql
+source db/view/v_lyrics_explore.sql
+source db/view/v_creation_explore.sql

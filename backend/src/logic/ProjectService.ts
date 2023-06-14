@@ -68,7 +68,7 @@ export class ProjectService {
     await this.dbAccess.cleanup();
   }
 
-  public async getProjects(): Promise<GetProjectResponse> {
+  public async getMyProjects(): Promise<GetProjectResponse> {
     const myCreations = await this.viewCreationAccess.findByUserId(
       this.cognitoUserId
     );

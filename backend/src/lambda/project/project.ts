@@ -56,7 +56,7 @@ async function apiProject(event: LambdaEvent, service: ProjectService) {
     throw new BadRequestError('headers should not be empty');
   switch (event.httpMethod) {
     case 'GET':
-      return service.getProjects();
+      return service.getMyProjects();
     default:
       throw new InternalServerError('unknown http method');
   }
