@@ -2,7 +2,6 @@ import classNames from 'classnames';
 import { ChangeEvent, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from 'src/component/Button';
-import IcProfile from 'src/image/ic-profile.svg';
 import { CollaborateStatus } from 'src/model/backend/constant/Creation';
 import { DetailedCreation } from 'src/model/backend/Project';
 import { RootState } from 'src/redux/store';

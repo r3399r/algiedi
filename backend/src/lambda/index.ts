@@ -7,3 +7,4 @@ export { project } from 'src/lambda/project/project';
 export { sns } from 'src/lambda/sns/sns';
 export { upload } from 'src/lambda/upload/upload';
 export { me } from 'src/lambda/me/me';
+export { explore } from 'src/lambda/explore/explore';

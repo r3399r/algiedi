@@ -136,6 +136,42 @@ Resources:
                 }
               }
             },
+            "/api/explore": {
+              "get": {
+                "responses": {
+                  "200": {
+                    "description": "200 response",
+                    "headers": {
+                      "Access-Control-Allow-Origin": {
+                        "schema": {"type": "string"}
+                      }
+                    },
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/Empty"
+                        }
+                      }
+                    }
+                  }
+                },
+                "x-amazon-apigateway-integration": {
+                  "type": "aws_proxy",
+                  "httpMethod": "POST",
+                  "uri": !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${Project}-${TargetEnvr}-explore/invocations",
+                  "responses": {
+                    "default": {
+                      "statusCode": "200",
+                      "responseParameters": {
+                        "method.response.header.Access-Control-Allow-Origin": "'*'"
+                      }
+                    }
+                  },
+                  "passthroughBehavior": "when_no_match",
+                  "contentHandling": "CONVERT_TO_TEXT"
+                }
+              },
+            },
             "/api/project": {
               "get": {
                 "responses": {
@@ -951,6 +987,41 @@ Resources:
     DependsOn: [ServerlessApi, LambdaMe]
     Properties:
       FunctionName: !Sub ${Project}-${TargetEnvr}-me
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ServerlessApi}/*
+  LambdaExplore:
+    Type: AWS::Serverless::Function
+    Properties:
+      Architectures: [arm64]
+      Handler: index.explore
+      Runtime: nodejs18.x
+      FunctionName: !Sub ${Project}-${TargetEnvr}-explore
+      Role: !GetAtt ExecutionRole.Arn
+      CodeUri: ../../dist/webpack/lambda
+      MemorySize: 128
+      VpcConfig:
+        SecurityGroupIds: [sg-00a1e2a1668125d11]
+        SubnetIds: 
+        - subnet-0ae38472a33a75137
+        - subnet-0dfc7a78154dec1f1
+        - subnet-0b77ba257fb40880b
+      Environment:
+        Variables:
+          PROJECT: !Sub ${Project}
+          ENVR: !Sub ${TargetEnvr}
+          DB_ENDPOINT:
+            Fn::ImportValue: !Sub ${Project}-${TargetEnvr}-db-endpoint
+          DB_PORT:
+            Fn::ImportValue: !Sub ${Project}-${TargetEnvr}-db-port
+          DB_USERNAME:
+            Fn::ImportValue: !Sub ${Project}-${TargetEnvr}-db-username
+          DB_PASSWORD: !Sub '{{resolve:ssm:${Project}-${TargetEnvr}-db-pwd}}'
+  InvokePermissionExplore:
+    Type: AWS::Lambda::Permission
+    DependsOn: [ServerlessApi, LambdaExplore]
+    Properties:
+      FunctionName: !Sub ${Project}-${TargetEnvr}-explore
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com
       SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ServerlessApi}/*

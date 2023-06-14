@@ -9,8 +9,10 @@ import { TrackAccess } from './access/TrackAccess';
 import { TrackHistoryAccess } from './access/TrackHistoryAccess';
 import { UserAccess } from './access/UserAccess';
 import { ViewCreationAccess } from './access/ViewCreationAccess';
+import { ViewCreationExploreAccess } from './access/ViewCreationExploreAccess';
 import { AwsService } from './logic/AwsService';
 import { CognitoService } from './logic/CognitoService';
+import { ExploreService } from './logic/ExploreService';
 import { MeService } from './logic/MeService';
 import { ProjectService } from './logic/ProjectService';
 import { SnsService } from './logic/SnsService';
@@ -24,6 +26,7 @@ import { TrackEntity } from './model/entity/TrackEntity';
 import { TrackHistoryEntity } from './model/entity/TrackHistoryEntity';
 import { UserEntity } from './model/entity/UserEntity';
 import { ViewCreationEntity } from './model/entity/ViewCreationEntity';
+import { ViewCreationExploreEntity } from './model/entity/ViewCreationExploreEntity';
 import { Database, dbEntitiesBindingId } from './util/Database';
 
 const container: Container = new Container();
@@ -38,6 +41,9 @@ container.bind<Function>(dbEntitiesBindingId).toFunction(TrackEntity);
 container.bind<Function>(dbEntitiesBindingId).toFunction(TrackHistoryEntity);
 container.bind<Function>(dbEntitiesBindingId).toFunction(UserEntity);
 container.bind<Function>(dbEntitiesBindingId).toFunction(ViewCreationEntity);
+container
+  .bind<Function>(dbEntitiesBindingId)
+  .toFunction(ViewCreationExploreEntity);
 
 // db access for tables
 container.bind<DbAccess>(DbAccess).toSelf();
@@ -48,10 +54,12 @@ container.bind<TrackAccess>(TrackAccess).toSelf();
 container.bind<TrackHistoryAccess>(TrackHistoryAccess).toSelf();
 container.bind<UserAccess>(UserAccess).toSelf();
 container.bind<ViewCreationAccess>(ViewCreationAccess).toSelf();
+container.bind<ViewCreationExploreAccess>(ViewCreationExploreAccess).toSelf();
 
 // service
 container.bind<AwsService>(AwsService).toSelf();
 container.bind<CognitoService>(CognitoService).toSelf();
+container.bind<ExploreService>(ExploreService).toSelf();
 container.bind<ProjectService>(ProjectService).toSelf();
 container.bind<SnsService>(SnsService).toSelf();
 container.bind<UploadService>(UploadService).toSelf();
