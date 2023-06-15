@@ -7,6 +7,7 @@ CREATE OR REPLACE VIEW v_lyrics_explore AS with public_lyrics as (
             left join lyrics l on l.id = lh.lyrics_id
             left join project p on p.id = l.project_id
         where lh.created_at < p.started_at
+            OR p.started_at is NULL
     )
 select l.*,
     latest_lyrics.content,

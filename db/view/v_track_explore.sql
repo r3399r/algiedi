@@ -8,6 +8,7 @@ CREATE OR REPLACE VIEW v_track_explore AS with public_track as (
             left join track t on t.id = th.track_id
             left join project p on p.id = t.project_id
         where th.created_at < p.started_at
+            OR p.started_at is NULL
     )
 select t.*,
     latest_track.file_uri,
