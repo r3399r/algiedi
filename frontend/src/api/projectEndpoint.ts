@@ -1,6 +1,7 @@
 import {
   GetProjectResponse,
   PostProjectIdOriginalRequest,
+  PostProjectIdPublishRequest,
   PutProjectRequest,
 } from 'src/model/backend/api/Project';
 import http from 'src/util/http';
@@ -20,6 +21,9 @@ const putProjectIdApprovalCid = async (id: string, cid: string) =>
 
 const patchProjectIdView = async (id: string) => await http.authPatch(`project/${id}/view`);
 
+const postProjectIdPublish = async (id: string, data: PostProjectIdPublishRequest) =>
+  await http.authPost(`project/${id}/publish`, { data });
+
 export default {
   getProject,
   putProject,
@@ -27,4 +31,5 @@ export default {
   postProjectIdOriginal,
   putProjectIdApprovalCid,
   patchProjectIdView,
+  postProjectIdPublish,
 };

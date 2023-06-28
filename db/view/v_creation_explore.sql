@@ -49,4 +49,30 @@ select t.id,
     t.project_started_at,
     t.project_created_at,
     t.project_updated_at
-from v_track_explore t;
+from v_track_explore t
+union all
+select s.id,
+    'song' as type,
+    s.user_id,
+    s.name,
+    s.description,
+    s.theme,
+    s.genre,
+    s.language,
+    s.caption,
+    s.cover_file_uri,
+    s.file_uri,
+    null as tab_file_uri,
+    null as lyrics,
+    s.project_id,
+    s.is_original,
+    s.inspired_id,
+    null as status,
+    s.created_at,
+    s.updated_at,
+    s.username,
+    s.project_status,
+    s.project_started_at,
+    s.project_created_at,
+    s.project_updated_at
+from v_song s;

@@ -1,8 +1,10 @@
 import { inject, injectable } from 'inversify';
+import { IsNull } from 'typeorm';
 import { DbAccess } from 'src/access/DbAccess';
 import { LyricsAccess } from 'src/access/LyricsAccess';
 import { LyricsHistoryAccess } from 'src/access/LyricsHistoryAccess';
 import { ProjectAccess } from 'src/access/ProjectAccess';
+import { SongAccess } from 'src/access/SongAccess';
 import { TrackAccess } from 'src/access/TrackAccess';
 import { TrackHistoryAccess } from 'src/access/TrackHistoryAccess';
 import { UserAccess } from 'src/access/UserAccess';
@@ -10,6 +12,7 @@ import { ViewCreationAccess } from 'src/access/ViewCreationAccess';
 import {
   GetProjectResponse,
   PostProjectIdOriginalRequest,
+  PostProjectIdPublishRequest,
   PutProjectRequest,
 } from 'src/model/api/Project';
 import { CollaborateStatus, Type } from 'src/model/constant/Creation';
@@ -17,6 +20,7 @@ import { Status } from 'src/model/constant/Project';
 import { Lyrics, LyricsEntity } from 'src/model/entity/LyricsEntity';
 import { LyricsHistoryEntity } from 'src/model/entity/LyricsHistoryEntity';
 import { Project } from 'src/model/entity/ProjectEntity';
+import { SongEntity } from 'src/model/entity/SongEntity';
 import { Track, TrackEntity } from 'src/model/entity/TrackEntity';
 import { TrackHistoryEntity } from 'src/model/entity/TrackHistoryEntity';
 import {
@@ -63,6 +67,9 @@ export class ProjectService {
 
   @inject(ViewCreationAccess)
   private readonly viewCreationAccess!: ViewCreationAccess;
+
+  @inject(SongAccess)
+  private readonly songAccess!: SongAccess;
 
   public async cleanup() {
     await this.dbAccess.cleanup();
@@ -139,7 +146,7 @@ export class ProjectService {
         where: {
           projectId: id,
           userId: this.cognitoUserId,
-          status: CollaborateStatus.Main,
+          inspiredId: IsNull(),
         },
       });
 
@@ -216,9 +223,6 @@ export class ProjectService {
   }
 
   public async setLastProject(id: string) {
-    const project = await this.projectAccess.findOneById(id);
-    if (project === null) throw new BadRequestError('project not found');
-
     const user = await this.userAccess.findOneByIdOrFail(this.cognitoUserId);
 
     user.lastProjectId = id;
@@ -305,24 +309,16 @@ export class ProjectService {
     try {
       await this.dbAccess.startTransaction();
 
-      const project = await this.projectAccess.findOneById(id);
-      if (project === null) throw new InternalServerError('project not found');
-
+      const project = await this.projectAccess.findOneByIdOrFail(id);
       project.status = Status.InProgress;
       project.startedAt = new Date().toISOString();
       await this.projectAccess.save(project);
 
       const creations = await this.viewCreationAccess.find({
-        where: [
-          {
-            projectId: id,
-            status: CollaborateStatus.Approved,
-          },
-          {
-            projectId: id,
-            status: CollaborateStatus.Main,
-          },
-        ],
+        where: {
+          projectId: id,
+          status: CollaborateStatus.Approved,
+        },
       });
       for (const c of creations)
         if (c.type === Type.Track) {
@@ -339,6 +335,50 @@ export class ProjectService {
         }
 
       await this.dbAccess.commitTransaction();
+    } catch (e) {
+      await this.dbAccess.rollbackTransaction();
+      throw e;
+    }
+  }
+
+  public async publishProject(id: string, data: PostProjectIdPublishRequest) {
+    try {
+      await this.dbAccess.startTransaction();
+
+      const project = await this.projectAccess.findOneByIdOrFail(id);
+      project.status = Status.Published;
+      await this.projectAccess.save(project);
+
+      // check user is owner
+      const creations = await this.viewCreationAccess.findByProjectId(id);
+      const rootCreation = creations.find((v) => v.inspiredId === null);
+      if (rootCreation?.userId !== this.cognitoUserId)
+        throw new UnauthorizedError('Only owner can publish');
+
+      const song = new SongEntity();
+      song.userId = this.cognitoUserId;
+      song.name = rootCreation.name;
+      song.description = rootCreation.description;
+      song.theme = rootCreation.theme;
+      song.genre = rootCreation.genre;
+      song.language = rootCreation.language;
+      song.caption = rootCreation.caption;
+      song.coverFileUri = rootCreation.coverFileUri; // TODO: might copy one
+      song.projectId = id;
+
+      const newSong = await this.songAccess.save(song);
+
+      // upload file
+      const fileKey = await this.awsService.s3Upload(
+        data.file,
+        `song/${newSong.id}/file`
+      );
+      newSong.fileUri = fileKey;
+      await this.songAccess.save(newSong);
+
+      await this.dbAccess.commitTransaction();
+
+      return newSong;
     } catch (e) {
       await this.dbAccess.rollbackTransaction();
       throw e;

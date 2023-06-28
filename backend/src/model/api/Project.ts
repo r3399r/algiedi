@@ -21,3 +21,7 @@ export type PostProjectIdOriginalRequest =
       type: 'lyrics';
       lyrics: string;
     };
+
+export type PostProjectIdPublishRequest = {
+  file: string;
+};

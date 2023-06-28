@@ -1,13 +1,15 @@
 import classNames from 'classnames';
 import { ChangeEvent, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import Button from 'src/component/Button';
+import { Page } from 'src/constant/Page';
 import { DetailedProject } from 'src/model/backend/Project';
 import { RootState } from 'src/redux/store';
 import { openFailSnackbar } from 'src/redux/uiSlice';
-import { updateCover, updateProject } from 'src/service/ProjectService';
-import { compare } from 'src/util/compare';
+import { publishProject, updateCover, updateProject } from 'src/service/ProjectService';
 import Activities from './Activities';
+import ModalPublish from './ModalPublish';
 import Partners from './Partners';
 
 type Props = {
@@ -17,6 +19,7 @@ type Props = {
 
 const Collaborate = ({ project, doRefresh }: Props) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { id: userId } = useSelector((root: RootState) => root.me);
   const coverInputRef = useRef<HTMLInputElement>(null);
   const [isEdit, setIsEdit] = useState<boolean>(false);
@@ -26,6 +29,7 @@ const Collaborate = ({ project, doRefresh }: Props) => {
   const [editGenre, setEditGenre] = useState<string>('');
   const [editLanguage, setEditLanguage] = useState<string>('');
   const [editCaption, setEditCaption] = useState<string>('');
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const mainCreation = useMemo(() => project.mainLyrics || project.mainTrack, [project]);
   const activtiesList = useMemo(() => {
@@ -33,7 +37,7 @@ const Collaborate = ({ project, doRefresh }: Props) => {
     if (project.mainTrack) res.push(project.mainTrack);
     if (project.mainLyrics) res.push(project.mainLyrics);
 
-    return res.sort(compare('createdAt', 'desc'));
+    return res;
   }, [project]);
 
   const onSave = () => {
@@ -46,6 +50,13 @@ const Collaborate = ({ project, doRefresh }: Props) => {
       caption: editCaption,
     })
       .then(doRefresh)
+      .catch((err) => dispatch(openFailSnackbar(err)));
+  };
+
+  const onPublish = (file: File) => {
+    if (!mainCreation) return;
+    publishProject(project.id, file)
+      .then(() => navigate(Page.Explore))
       .catch((err) => dispatch(openFailSnackbar(err)));
   };
 
@@ -194,9 +205,11 @@ const Collaborate = ({ project, doRefresh }: Props) => {
             />
           </div>
         </div>
-        <div className="text-right mt-4">
-          <Button>Publish</Button>
-        </div>
+        {mainCreation.userId === userId && (
+          <div className="text-right mt-4">
+            <Button onClick={() => setIsModalOpen(true)}>Publish</Button>
+          </div>
+        )}
       </div>
       {mainCreation.userId === userId && (
         <input
@@ -211,6 +224,20 @@ const Collaborate = ({ project, doRefresh }: Props) => {
           multiple={false}
         />
       )}
+      <ModalPublish
+        open={isModalOpen}
+        handleClose={() => setIsModalOpen(false)}
+        onPublish={onPublish}
+        data={{
+          coverFileUrl: mainCreation.coverFileUrl,
+          name: mainCreation.name,
+          description: mainCreation.description,
+          theme: mainCreation.theme,
+          genre: mainCreation.genre,
+          language: mainCreation.language,
+          caption: mainCreation.caption,
+        }}
+      />
     </>
   );
 };

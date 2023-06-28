@@ -1,5 +1,4 @@
 import classNames from 'classnames';
-import { format } from 'date-fns';
 import { ChangeEvent, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from 'src/component/Button';
@@ -22,6 +21,8 @@ const Activities = ({ mainCreation, creations, doRefresh }: Props) => {
   const { id: userId } = useSelector((root: RootState) => root.me);
   const [isLyricsModalOpen, setIsLyricsModalOpen] = useState<boolean>(false);
   const [isTrackModalOpen, setIsTrackModalOpen] = useState<boolean>(false);
+  const [targetLyrics, setTargetLyrics] = useState<DetailedCreation>();
+  const [targetTrack, setTargetTrack] = useState<DetailedCreation>();
 
   const onLoadMetadata = (e: ChangeEvent<HTMLAudioElement>) => {
     console.log(e.target.duration);
@@ -36,14 +37,6 @@ const Activities = ({ mainCreation, creations, doRefresh }: Props) => {
   return (
     <>
       <div className="font-bold">Activities</div>
-      <div className="flex gap-4 my-2">
-        <Button appearance="secondary" onClick={() => setIsTrackModalOpen(true)}>
-          Add Track
-        </Button>
-        <Button appearance="secondary" onClick={() => setIsLyricsModalOpen(true)}>
-          Add Lyrics
-        </Button>
-      </div>
       <div className="h-[400px] overflow-y-auto pr-4">
         {creations.map((v) => (
           <div
@@ -64,7 +57,6 @@ const Activities = ({ mainCreation, creations, doRefresh }: Props) => {
               </button>
             </div>
             <div>
-              <div>Uploaded: {format(new Date(v.createdAt ?? ''), 'yyyy-MM-dd HH:mm:ss')}</div>
               <div>Author: {v.username}</div>
               <div>Title: {v.name}</div>
             </div>
@@ -79,20 +71,46 @@ const Activities = ({ mainCreation, creations, doRefresh }: Props) => {
                       </a>
                     </div>
                   )}
+                  {v.status === CollaborateStatus.Proposed && v.userId === userId && (
+                    <Button
+                      onClick={() => {
+                        setTargetTrack(v);
+                        setIsTrackModalOpen(true);
+                      }}
+                    >
+                      Update Track
+                    </Button>
+                  )}
                 </div>
               )}
-              {v.type === 'lyrics' && <div className="whitespace-pre">Lyrics: {v.lyrics}</div>}
+              {v.type === 'lyrics' && (
+                <div>
+                  <div className="whitespace-pre">Lyrics: {v.lyrics}</div>
+                  {v.status === CollaborateStatus.Proposed && v.userId === userId && (
+                    <Button
+                      onClick={() => {
+                        setTargetLyrics(v);
+                        setIsLyricsModalOpen(true);
+                      }}
+                    >
+                      Update Lyrics
+                    </Button>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         ))}
         <ModalLyrics
           open={isLyricsModalOpen}
+          targetLyrics={targetLyrics}
           targetProjectId={mainCreation.projectId}
           handleClose={() => setIsLyricsModalOpen(false)}
           doRefresh={doRefresh}
         />
         <ModalTrack
           open={isTrackModalOpen}
+          targetTrack={targetTrack}
           targetProjectId={mainCreation.projectId}
           handleClose={() => setIsTrackModalOpen(false)}
           doRefresh={doRefresh}

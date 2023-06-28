@@ -173,3 +173,14 @@ export const startProject = async (id: string) => {
     dispatch(finishWaiting());
   }
 };
+
+export const publishProject = async (id: string, file: File) => {
+  try {
+    dispatch(startWaiting());
+    await projectEndpoint.postProjectIdPublish(id, { file: await file2Base64(file) });
+
+    // await loadProjects();
+  } finally {
+    dispatch(finishWaiting());
+  }
+};

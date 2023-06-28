@@ -11,12 +11,14 @@ export const getExplore = async () => {
 
     const tracks: DetailedCreation[] = [];
     const lyrics: DetailedCreation[] = [];
+    const songs: DetailedCreation[] = [];
     res.data.forEach((v) => {
       if (v.type === 'track') tracks.push(v);
       else if (v.type === 'lyrics') lyrics.push(v);
+      else if (v.type === 'song') songs.push(v);
     });
 
-    return { tracks, lyrics };
+    return { tracks, lyrics, songs };
   } finally {
     dispatch(finishWaiting());
   }
