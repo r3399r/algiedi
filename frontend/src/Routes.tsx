@@ -11,6 +11,7 @@ import AuthRegister from './page/authRegister';
 import AuthVerify from './page/authVerify';
 import ContactUs from './page/contactUs';
 import Explore from './page/explore';
+import ExploreDetail from './page/exploreDetail';
 import Faq from './page/faq';
 import Home from './page/home';
 import Overall from './page/overall';
@@ -30,6 +31,7 @@ const AppRoutes = () => {
       <Route path={Page.Faq} element={<Faq />} />
       <Route path={Page.ContatUs} element={<ContactUs />} />
       <Route path={Page.Explore} element={<Explore />} />
+      <Route path={`${Page.Explore}/:id`} element={<ExploreDetail />} />
       <Route path={Page.Verify} element={<AuthVerify />} />
       {!isLogin && (
         <>

@@ -1,3 +1,4 @@
+import exploreEndpoint from 'src/api/exploreEndpoint';
 import projectEndpoint from 'src/api/projectEndpoint';
 import uploadEndpoint from 'src/api/uploadEndpoint';
 import { UploadLyricsForm, UploadTrackForm } from 'src/model/Form';
@@ -51,6 +52,25 @@ export const uploadLyrics = async (
 
     await updateLastProjectId(res.data.id);
     await loadProjects();
+  } finally {
+    dispatch(finishWaiting());
+  }
+};
+
+export const getExplore = async () => {
+  try {
+    dispatch(startWaiting());
+
+    const res = await exploreEndpoint.getExplore();
+
+    // const tracks: DetailedCreation[] = [];
+    // const lyrics: DetailedCreation[] = [];
+    // res.data.forEach((v) => {
+    //   if (v.type === 'track') tracks.push(v);
+    //   else if (v.type === 'lyrics') lyrics.push(v);
+    // });
+
+    return res.data;
   } finally {
     dispatch(finishWaiting());
   }

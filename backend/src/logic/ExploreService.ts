@@ -1,7 +1,11 @@
 import { inject, injectable } from 'inversify';
 import { DbAccess } from 'src/access/DbAccess';
+import { UserAccess } from 'src/access/UserAccess';
 import { ViewCreationExploreAccess } from 'src/access/ViewCreationExploreAccess';
-import { GetExploreResponse } from 'src/model/api/Explore';
+import {
+  GetExploreIdResponse,
+  GetExploreResponse,
+} from 'src/model/api/Explore';
 import { AwsService } from './AwsService';
 
 /**
@@ -18,6 +22,9 @@ export class ExploreService {
   @inject(ViewCreationExploreAccess)
   private readonly viewCreationExploreAccess!: ViewCreationExploreAccess;
 
+  @inject(UserAccess)
+  private readonly userAccess!: UserAccess;
+
   public async cleanup() {
     await this.dbAccess.cleanup();
   }
@@ -31,5 +38,18 @@ export class ExploreService {
       tabFileUrl: this.awsService.getS3SignedUrl(c.tabFileUri),
       coverFileUrl: this.awsService.getS3SignedUrl(c.coverFileUri),
     }));
+  }
+
+  public async getExploreById(id: string): Promise<GetExploreIdResponse> {
+    const creation = await this.viewCreationExploreAccess.findOneByIdOrFail(id);
+    const user = await this.userAccess.findOneByIdOrFail(creation.userId);
+
+    return {
+      ...creation,
+      fileUrl: this.awsService.getS3SignedUrl(creation.fileUri),
+      tabFileUrl: this.awsService.getS3SignedUrl(creation.tabFileUri),
+      coverFileUrl: this.awsService.getS3SignedUrl(creation.coverFileUri),
+      user,
+    };
   }
 }

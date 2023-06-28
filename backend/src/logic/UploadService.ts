@@ -174,10 +174,9 @@ export class UploadService {
 
       // find old project if inspired, or create new project if no inspired
       if (data.inspiredId !== null) {
-        // TODO: should findById instead of name
-        const inspiredCreation = await this.viewCreationAccess.findOne({
-          where: { name: data.inspiredId },
-        });
+        const inspiredCreation = await this.viewCreationAccess.findOneById(
+          data.inspiredId
+        );
         if (inspiredCreation === null)
           throw new BadRequestError('track/lyrics not found');
         if (inspiredCreation.userId === this.cognitoUserId)

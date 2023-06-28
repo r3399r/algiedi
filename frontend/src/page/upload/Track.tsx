@@ -1,3 +1,4 @@
+import { Autocomplete, TextField } from '@mui/material';
 import { ChangeEvent, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
@@ -7,21 +8,27 @@ import Form from 'src/component/Form';
 import FormInput from 'src/component/FormInput';
 import FormTextarea from 'src/component/FormTextarea';
 import Input from 'src/component/Input';
+import { DetailedCreation } from 'src/model/backend/Project';
 import { UploadTrackForm } from 'src/model/Form';
 import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
 import { uploadTrack } from 'src/service/UploadService';
 
-const Track = () => {
+type Props = {
+  defaultInspiredId?: string;
+  inspiration: DetailedCreation[];
+};
+
+const Track = ({ defaultInspiredId, inspiration }: Props) => {
   const dispatch = useDispatch();
   const trackInputRef = useRef<HTMLInputElement>(null);
   const tabInputRef = useRef<HTMLInputElement>(null);
   const coverInputRef = useRef<HTMLInputElement>(null);
-  const [checkOriginal, setCheckOriginal] = useState<boolean>(true);
-  const [checkInspiration, setCheckInspiration] = useState<boolean>(false);
+  const [checkOriginal, setCheckOriginal] = useState<boolean>(!defaultInspiredId);
+  const [checkInspiration, setCheckInspiration] = useState<boolean>(!!defaultInspiredId);
   const [trackFile, setTrackFile] = useState<File>();
   const [tabFile, setTabFile] = useState<File>();
   const [coverFile, setCoverFile] = useState<File>();
-  const [inspiredId, setInspiredId] = useState<string>('');
+  const [inspiredId, setInspiredId] = useState<string>(defaultInspiredId ?? '');
   const [errorTrackFile, setErrorTrackFile] = useState<boolean>(false);
   const methods = useForm<UploadTrackForm>();
 
@@ -115,7 +122,27 @@ const Track = () => {
               }}
             />
             {checkInspiration && (
-              <Input value={inspiredId} onChange={(e) => setInspiredId(e.target.value)} />
+              <Autocomplete
+                value={inspiration.find((v) => v.id === inspiredId)}
+                onChange={(event, newValue) => {
+                  setInspiredId(newValue?.id ?? '');
+                }}
+                options={inspiration}
+                getOptionLabel={(option) => option.name}
+                renderOption={(props, option) => (
+                  <li {...props}>
+                    {option.name} ({option.username})
+                  </li>
+                )}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    inputProps={{
+                      ...params.inputProps,
+                    }}
+                  />
+                )}
+              />
             )}
           </div>
         </div>

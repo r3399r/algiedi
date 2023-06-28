@@ -10,10 +10,10 @@ export class UserAccess {
   @inject(Database)
   private readonly database!: Database;
 
-  public async findOneById(id: string) {
+  public async findOneByIdOrFail(id: string) {
     const qr = await this.database.getQueryRunner();
 
-    return await qr.manager.findOne<User>(UserEntity.name, {
+    return await qr.manager.findOneOrFail<User>(UserEntity.name, {
       where: { id },
     });
   }

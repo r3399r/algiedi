@@ -76,7 +76,6 @@ export class ProjectService {
       myCreations
         .filter(
           (v) =>
-            v.status === CollaborateStatus.Main ||
             v.projectStatus === Status.Created ||
             (v.projectStatus === Status.InProgress &&
               (v.status === CollaborateStatus.Proposed ||
@@ -107,12 +106,9 @@ export class ProjectService {
         let mainLyrics: DetailedCreation | null = null;
         const inspiration: DetailedCreation[] = [];
         for (const c of detailedCreations)
-          if (c.status === CollaborateStatus.Main && c.type === Type.Track)
+          if (c.userId === this.cognitoUserId && c.type === Type.Track)
             mainTrack = c;
-          else if (
-            c.status === CollaborateStatus.Main &&
-            c.type === Type.Lyrics
-          )
+          else if (c.userId === this.cognitoUserId && c.type === Type.Lyrics)
             mainLyrics = c;
           else if (project.status !== Status.InProgress) inspiration.push(c);
           else if (
@@ -200,10 +196,8 @@ export class ProjectService {
     const creations = await this.viewCreationAccess.findByProjectId(projectId);
 
     // check user is owner
-    const mainCreation = creations.find(
-      (v) => v.status === CollaborateStatus.Main
-    );
-    if (mainCreation?.userId !== this.cognitoUserId)
+    const rootCreation = creations.find((v) => v.inspiredId === null);
+    if (rootCreation?.userId !== this.cognitoUserId)
       throw new UnauthorizedError('Only owner can set approval');
 
     // update status
@@ -225,8 +219,7 @@ export class ProjectService {
     const project = await this.projectAccess.findOneById(id);
     if (project === null) throw new BadRequestError('project not found');
 
-    const user = await this.userAccess.findOneById(this.cognitoUserId);
-    if (user === null) throw new InternalServerError('user not found');
+    const user = await this.userAccess.findOneByIdOrFail(this.cognitoUserId);
 
     user.lastProjectId = id;
     await this.userAccess.save(user);
@@ -320,10 +313,16 @@ export class ProjectService {
       await this.projectAccess.save(project);
 
       const creations = await this.viewCreationAccess.find({
-        where: {
-          projectId: id,
-          status: CollaborateStatus.Approved,
-        },
+        where: [
+          {
+            projectId: id,
+            status: CollaborateStatus.Approved,
+          },
+          {
+            projectId: id,
+            status: CollaborateStatus.Main,
+          },
+        ],
       });
       for (const c of creations)
         if (c.type === Type.Track) {

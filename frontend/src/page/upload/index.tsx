@@ -1,11 +1,22 @@
 import classNames from 'classnames';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import Footer from 'src/component/Footer';
+import { DetailedCreation } from 'src/model/backend/Project';
+import { getExplore } from 'src/service/UploadService';
 import Lyrics from './Lyrics';
 import Track from './Track';
 
 const Upload = () => {
   const [tab, setTab] = useState<'track' | 'lyrics'>('track');
+  const state = useLocation().state as { inspiredId: string } | null;
+  const [inspiration, setInspiration] = useState<DetailedCreation[]>();
+
+  useEffect(() => {
+    getExplore().then((res) => setInspiration(res));
+  }, []);
+
+  if (!inspiration) return <></>;
 
   return (
     <>
@@ -30,8 +41,12 @@ const Upload = () => {
           </div>
         </div>
         <div>
-          {tab === 'track' && <Track />}
-          {tab === 'lyrics' && <Lyrics />}
+          {tab === 'track' && (
+            <Track defaultInspiredId={state?.inspiredId} inspiration={inspiration} />
+          )}
+          {tab === 'lyrics' && (
+            <Lyrics defaultInspiredId={state?.inspiredId} inspiration={inspiration} />
+          )}
         </div>
       </div>
       <div className="max-w-[630px] mx-auto py-16">

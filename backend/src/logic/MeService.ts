@@ -2,7 +2,6 @@ import { inject, injectable } from 'inversify';
 import { DbAccess } from 'src/access/DbAccess';
 import { UserAccess } from 'src/access/UserAccess';
 import { GetMeResponse, PutMeRequest, PutMeResponse } from 'src/model/api/Me';
-import { InternalServerError } from 'src/model/error';
 import { cognitoSymbol } from 'src/util/LambdaSetup';
 
 /**
@@ -24,15 +23,13 @@ export class MeService {
   }
 
   public async getMe(): Promise<GetMeResponse> {
-    const user = await this.userAccess.findOneById(this.cognitoUserId);
-    if (user === null) throw new InternalServerError('user not found');
+    const user = await this.userAccess.findOneByIdOrFail(this.cognitoUserId);
 
     return user;
   }
 
   public async updateMe(data: PutMeRequest): Promise<PutMeResponse> {
-    const user = await this.userAccess.findOneById(this.cognitoUserId);
-    if (user === null) throw new InternalServerError('user not found');
+    const user = await this.userAccess.findOneByIdOrFail(this.cognitoUserId);
 
     user.role = data.role ?? user.role;
     user.language = data.language ?? user.language;

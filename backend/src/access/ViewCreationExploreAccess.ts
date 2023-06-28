@@ -22,4 +22,13 @@ export class ViewCreationExploreAccess {
       options
     );
   }
+
+  public async findOneByIdOrFail(id: string) {
+    const qr = await this.database.getQueryRunner();
+
+    return await qr.manager.findOneOrFail<ViewCreationExplore>(
+      ViewCreationExploreEntity.name,
+      { where: { id } }
+    );
+  }
 }

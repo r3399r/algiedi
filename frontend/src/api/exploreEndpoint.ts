@@ -1,6 +1,8 @@
-import { GetExploreResponse } from 'src/model/backend/api/Explore';
+import { GetExploreIdResponse, GetExploreResponse } from 'src/model/backend/api/Explore';
 import http from 'src/util/http';
 
 const getExplore = async () => await http.get<GetExploreResponse>('explore');
 
-export default { getExplore };
+const getExploreId = async (id: string) => await http.get<GetExploreIdResponse>(`explore/${id}`);
+
+export default { getExplore, getExploreId };

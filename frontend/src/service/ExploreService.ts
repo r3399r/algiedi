@@ -3,7 +3,7 @@ import { DetailedCreation } from 'src/model/backend/Project';
 import { dispatch } from 'src/redux/store';
 import { finishWaiting, startWaiting } from 'src/redux/uiSlice';
 
-export const loadExplore = async () => {
+export const getExplore = async () => {
   try {
     dispatch(startWaiting());
 
@@ -17,6 +17,18 @@ export const loadExplore = async () => {
     });
 
     return { tracks, lyrics };
+  } finally {
+    dispatch(finishWaiting());
+  }
+};
+
+export const getExploreById = async (id: string) => {
+  try {
+    dispatch(startWaiting());
+
+    const res = await exploreEndpoint.getExploreId(id);
+
+    return res.data;
   } finally {
     dispatch(finishWaiting());
   }

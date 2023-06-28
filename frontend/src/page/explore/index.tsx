@@ -1,15 +1,17 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import IcProfile from 'src/image/ic-profile.svg';
 import PicSample1 from 'src/image/sample1.png';
 import { DetailedCreation } from 'src/model/backend/Project';
-import { loadExplore } from 'src/service/ExploreService';
+import { getExplore } from 'src/service/ExploreService';
 
 const Explore = () => {
+  const navigate = useNavigate();
   const [tracks, setTracks] = useState<DetailedCreation[]>();
   const [lyrics, setLyrics] = useState<DetailedCreation[]>();
 
   useEffect(() => {
-    loadExplore().then((res) => {
+    getExplore().then((res) => {
       setTracks(res.tracks);
       setLyrics(res.lyrics);
     });
@@ -81,7 +83,11 @@ const Explore = () => {
             <div>Last month</div>
           </div>
           {tracks?.map((v) => (
-            <div key={v.id} className="flex p-4 bg-white rounded-lg mt-4">
+            <div
+              key={v.id}
+              className="flex p-4 bg-white rounded-lg mt-4 cursor-pointer"
+              onClick={() => navigate(v.id)}
+            >
               <img src={v.coverFileUrl ?? IcProfile} className="w-[150px]" />
               <div className="m-4 flex flex-col justify-center">
                 <div className="text-bold">{v.name}</div>
@@ -98,7 +104,11 @@ const Explore = () => {
             <div>Last month</div>
           </div>
           {lyrics?.map((v) => (
-            <div key={v.id} className="flex p-4 bg-white rounded-lg mt-4">
+            <div
+              key={v.id}
+              className="flex p-4 bg-white rounded-lg mt-4 cursor-pointer"
+              onClick={() => navigate(v.id)}
+            >
               <img src={v.coverFileUrl ?? IcProfile} className="w-[150px]" />
               <div className="m-4 flex flex-col justify-center">
                 <div className="text-bold">{v.name}</div>
