@@ -1,6 +1,4 @@
-import { Project } from 'src/model/entity/ProjectEntity';
-
-type UploadCommon = {
+export type UploadCommon = {
   name: string;
   description: string;
   theme: string;
@@ -23,8 +21,6 @@ export type UploadLyrics = UploadCommon & {
 };
 export type PostUploadRequest = UploadLyrics | UploadTrack;
 
-export type PostUploadResponse = Project;
-
 export type PutUploadIdRequest =
   | {
       type: 'track';
@@ -34,8 +30,10 @@ export type PutUploadIdRequest =
   | {
       type: 'lyrics';
       lyrics: string;
+    }
+  | {
+      type: 'song';
+      file: string | null;
+      tabFile: string | null;
+      lyrics?: string;
     };
-
-export type PutUploadIdCoverRequest = {
-  file: string;
-};

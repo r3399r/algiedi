@@ -30,7 +30,6 @@ const Explore = () => {
             >
               <img src={v.coverFileUrl ?? IcProfile} className="w-[150px]" />
               <div onClick={() => navigate(v.id)}>{v.name}</div>
-              <div>by {v.username}</div>
             </div>
           ))}
         </div>

@@ -1,4 +1,4 @@
-CREATE OR REPLACE VIEW v_song AS
+CREATE OR REPLACE VIEW v_song_explore AS
 select p.id,
     i.name,
     i.description,
@@ -30,4 +30,5 @@ from project p
                 GROUP by project_id
             ) tmp on ph.project_id = tmp.project_id
             and ph.created_at = tmp.latest_created_at
-    ) latest_project on p.id = latest_project.project_id;
+    ) latest_project on p.id = latest_project.project_id
+where p.status = 'published';

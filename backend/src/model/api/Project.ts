@@ -22,6 +22,6 @@ export type PostProjectIdOriginalRequest =
       lyrics: string;
     };
 
-export type PostProjectIdPublishRequest = {
+export type PutProjectIdCoverRequest = {
   file: string;
 };

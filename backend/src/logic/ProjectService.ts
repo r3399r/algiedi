@@ -1,10 +1,11 @@
 import { inject, injectable } from 'inversify';
-import { IsNull } from 'typeorm';
 import { DbAccess } from 'src/access/DbAccess';
+import { InfoAccess } from 'src/access/InfoAccess';
 import { LyricsAccess } from 'src/access/LyricsAccess';
 import { LyricsHistoryAccess } from 'src/access/LyricsHistoryAccess';
 import { ProjectAccess } from 'src/access/ProjectAccess';
-import { SongAccess } from 'src/access/SongAccess';
+import { ProjectHistoryAccess } from 'src/access/ProjectHistoryAccess';
+import { ProjectUserAccess } from 'src/access/ProjectUserAccess';
 import { TrackAccess } from 'src/access/TrackAccess';
 import { TrackHistoryAccess } from 'src/access/TrackHistoryAccess';
 import { UserAccess } from 'src/access/UserAccess';
@@ -12,24 +13,17 @@ import { ViewCreationAccess } from 'src/access/ViewCreationAccess';
 import {
   GetProjectResponse,
   PostProjectIdOriginalRequest,
-  PostProjectIdPublishRequest,
+  PutProjectIdCoverRequest,
   PutProjectRequest,
 } from 'src/model/api/Project';
-import { CollaborateStatus, Type } from 'src/model/constant/Creation';
-import { Status } from 'src/model/constant/Project';
-import { Lyrics, LyricsEntity } from 'src/model/entity/LyricsEntity';
+import { Role, Status } from 'src/model/constant/Project';
+import { InfoEntity } from 'src/model/entity/InfoEntity';
+import { LyricsEntity } from 'src/model/entity/LyricsEntity';
 import { LyricsHistoryEntity } from 'src/model/entity/LyricsHistoryEntity';
-import { Project } from 'src/model/entity/ProjectEntity';
-import { SongEntity } from 'src/model/entity/SongEntity';
-import { Track, TrackEntity } from 'src/model/entity/TrackEntity';
+import { TrackEntity } from 'src/model/entity/TrackEntity';
 import { TrackHistoryEntity } from 'src/model/entity/TrackHistoryEntity';
-import {
-  BadRequestError,
-  InternalServerError,
-  UnauthorizedError,
-} from 'src/model/error';
+import { BadRequestError, InternalServerError } from 'src/model/error';
 import { DetailedCreation } from 'src/model/Project';
-import { compare } from 'src/util/compare';
 import { cognitoSymbol } from 'src/util/LambdaSetup';
 import { AwsService } from './AwsService';
 
@@ -50,6 +44,12 @@ export class ProjectService {
   @inject(ProjectAccess)
   private readonly projectAccess!: ProjectAccess;
 
+  @inject(ProjectHistoryAccess)
+  private readonly projectHistoryAccess!: ProjectHistoryAccess;
+
+  @inject(ProjectUserAccess)
+  private readonly projectUserAccess!: ProjectUserAccess;
+
   @inject(LyricsAccess)
   private readonly lyricsAccess!: LyricsAccess;
 
@@ -65,42 +65,43 @@ export class ProjectService {
   @inject(UserAccess)
   private readonly userAccess!: UserAccess;
 
+  @inject(InfoAccess)
+  private readonly infoAccess!: InfoAccess;
+
   @inject(ViewCreationAccess)
   private readonly viewCreationAccess!: ViewCreationAccess;
-
-  @inject(SongAccess)
-  private readonly songAccess!: SongAccess;
 
   public async cleanup() {
     await this.dbAccess.cleanup();
   }
 
   public async getMyProjects(): Promise<GetProjectResponse> {
-    const myCreations = await this.viewCreationAccess.findByUserId(
+    const myProjectUser = await this.projectUserAccess.findByUserId(
       this.cognitoUserId
     );
     const myProjectIds = new Set(
-      myCreations
-        .filter(
-          (v) =>
-            v.projectStatus === Status.Created ||
-            (v.projectStatus === Status.InProgress &&
-              (v.status === CollaborateStatus.Proposed ||
-                v.status === CollaborateStatus.Accepted))
-        )
+      myProjectUser
+        .filter((v) => v.role !== Role.Rejected)
         .map((v) => v.projectId)
     );
+    const myProjects = (
+      await Promise.all(
+        [...myProjectIds].map(
+          async (v) => await this.projectAccess.findOneByIdOrFail(v)
+        )
+      )
+    ).filter((v) => v.status !== Status.Published);
 
     return await Promise.all(
-      [...myProjectIds].map(async (pid) => {
-        const creations = await this.viewCreationAccess.findByProjectId(pid);
-        const project: Project = {
-          id: pid,
-          status: creations[0].projectStatus,
-          startedAt: creations[0].projectStartedAt,
-          createdAt: creations[0].projectCreatedAt,
-          updatedAt: creations[0].projectUpdatedAt,
-        };
+      myProjects.map(async (project) => {
+        if (project.infoId === null)
+          throw new InternalServerError('info not found');
+        const projectUser = await this.projectUserAccess.findByProjectId(
+          project.id
+        );
+        const creations = await this.viewCreationAccess.findByProjectId(
+          project.id
+        );
 
         const detailedCreations: DetailedCreation[] = creations.map((c) => ({
           ...c,
@@ -109,27 +110,38 @@ export class ProjectService {
           coverFileUrl: this.awsService.getS3SignedUrl(c.coverFileUri),
         }));
 
-        let mainTrack: DetailedCreation | null = null;
-        let mainLyrics: DetailedCreation | null = null;
-        const inspiration: DetailedCreation[] = [];
-        for (const c of detailedCreations)
-          if (c.userId === this.cognitoUserId && c.type === Type.Track)
-            mainTrack = c;
-          else if (c.userId === this.cognitoUserId && c.type === Type.Lyrics)
-            mainLyrics = c;
-          else if (project.status !== Status.InProgress) inspiration.push(c);
-          else if (
-            project.status === Status.InProgress &&
-            (c.status === CollaborateStatus.Proposed ||
-              c.status === CollaborateStatus.Accepted)
-          )
-            inspiration.push(c);
+        const info = await this.infoAccess.findOneOrFailById(project.infoId);
 
         return {
           ...project,
-          mainTrack,
-          mainLyrics,
-          inspiration: inspiration.sort(compare('createdAt')),
+          name: info.name,
+          description: info.description,
+          theme: info.theme,
+          genre: info.genre,
+          language: info.language,
+          caption: info.caption,
+          coverFileUri: info.coverFileUri,
+          coverFileUrl: this.awsService.getS3SignedUrl(info.coverFileUri),
+          song: detailedCreations.find((o) => o.type === 'song') ?? null,
+          collaborators: await Promise.all(
+            projectUser
+              .filter((v) => v.role !== Role.Rejected)
+              .map(async (v) => {
+                const user = await this.userAccess.findOneByIdOrFail(v.userId);
+
+                return {
+                  id: v.id,
+                  user,
+                  role: v.role,
+                  isAccepted: v.isAccepted,
+                  isReady: v.isReady,
+                  track:
+                    detailedCreations.find((o) => o.id === v.trackId) ?? null,
+                  lyrics:
+                    detailedCreations.find((o) => o.id === v.lyricsId) ?? null,
+                };
+              })
+          ),
         };
       })
     );
@@ -142,41 +154,34 @@ export class ProjectService {
     try {
       await this.dbAccess.startTransaction();
 
-      const creations = await this.viewCreationAccess.find({
+      // valiate owner
+      await this.projectUserAccess.findOneOrFail({
         where: {
-          projectId: id,
           userId: this.cognitoUserId,
-          inspiredId: IsNull(),
+          projectId: id,
+          role: Role.Owner,
         },
       });
 
-      if (creations.length === 0) throw new BadRequestError('no project found');
+      // check if name is duplicated
+      const userCreation = await this.viewCreationAccess.findOne({
+        where: { name: data.name, userId: this.cognitoUserId },
+      });
+      if (userCreation !== null && userCreation.projectId !== id)
+        throw new BadRequestError('this name is already used');
 
-      for (const c of creations)
-        if (c.type === Type.Track) {
-          const track = await this.trackAccess.findOneById(c.id);
-          if (track === null) throw new InternalServerError('track not found');
+      const project = await this.projectAccess.findOneByIdOrFail(id);
+      if (project.infoId === null)
+        throw new InternalServerError('info not found');
 
-          track.name = data.name ?? track.name;
-          track.description = data.description ?? track.description;
-          track.theme = data.theme ?? track.theme;
-          track.genre = data.genre ?? track.genre;
-          track.language = data.language ?? track.language;
-          track.caption = data.caption ?? track.caption;
-          await this.trackAccess.save(track);
-        } else if (c.type === Type.Lyrics) {
-          const lyrics = await this.lyricsAccess.findOneById(c.id);
-          if (lyrics === null)
-            throw new InternalServerError('lyrics not found');
-
-          lyrics.name = data.name ?? lyrics.name;
-          lyrics.description = data.description ?? lyrics.description;
-          lyrics.theme = data.theme ?? lyrics.theme;
-          lyrics.genre = data.genre ?? lyrics.genre;
-          lyrics.language = data.language ?? lyrics.language;
-          lyrics.caption = data.caption ?? lyrics.caption;
-          await this.lyricsAccess.save(lyrics);
-        }
+      const info = await this.infoAccess.findOneOrFailById(project.infoId);
+      info.name = data.name ?? info.name;
+      info.description = data.description ?? info.description;
+      info.theme = data.theme ?? info.theme;
+      info.genre = data.genre ?? info.genre;
+      info.language = data.language ?? info.language;
+      info.caption = data.caption ?? info.caption;
+      await this.infoAccess.save(info);
 
       await this.dbAccess.commitTransaction();
     } catch (e) {
@@ -185,41 +190,35 @@ export class ProjectService {
     }
   }
 
-  private setApproval<T extends Lyrics | Track>(creation: T) {
-    if (creation.status === CollaborateStatus.Inspired)
-      creation.status = CollaborateStatus.Approved;
-    else if (creation.status === CollaborateStatus.Approved)
-      creation.status = CollaborateStatus.Inspired;
-    else if (creation.status === CollaborateStatus.Proposed)
-      creation.status = CollaborateStatus.Accepted;
-    else if (creation.status === CollaborateStatus.Accepted)
-      creation.status = CollaborateStatus.Proposed;
-    else throw new InternalServerError('creation status error');
+  public async projectApproval(projectId: string, userId: string) {
+    // valiate owner
+    await this.projectUserAccess.findOneOrFail({
+      where: {
+        userId: this.cognitoUserId,
+        projectId,
+        role: Role.Owner,
+      },
+    });
 
-    return creation;
+    const projectUser = await this.projectUserAccess.findOneOrFail({
+      where: {
+        userId,
+        projectId,
+      },
+    });
+    projectUser.isAccepted = !projectUser.isAccepted;
+    await this.projectUserAccess.save(projectUser);
   }
 
-  public async projectApproval(projectId: string, creationId: string) {
-    const creations = await this.viewCreationAccess.findByProjectId(projectId);
-
-    // check user is owner
-    const rootCreation = creations.find((v) => v.inspiredId === null);
-    if (rootCreation?.userId !== this.cognitoUserId)
-      throw new UnauthorizedError('Only owner can set approval');
-
-    // update status
-    const targetCreation = creations.find((v) => v.id === creationId);
-    if (targetCreation?.type === Type.Track) {
-      const track = await this.trackAccess.findOneById(targetCreation.id);
-      if (track === null) throw new InternalServerError('track not found');
-
-      await this.trackAccess.save(this.setApproval(track));
-    } else if (targetCreation?.type === Type.Lyrics) {
-      const lyrics = await this.lyricsAccess.findOneById(targetCreation.id);
-      if (lyrics === null) throw new InternalServerError('lyrics not found');
-
-      await this.lyricsAccess.save(this.setApproval(lyrics));
-    } else throw new InternalServerError('creation not found');
+  public async projectReady(projectId: string) {
+    const projectUser = await this.projectUserAccess.findOneOrFail({
+      where: {
+        userId: this.cognitoUserId,
+        projectId,
+      },
+    });
+    projectUser.isReady = !projectUser.isReady;
+    await this.projectUserAccess.save(projectUser);
   }
 
   public async setLastProject(id: string) {
@@ -233,32 +232,30 @@ export class ProjectService {
     projectId: string,
     data: PostProjectIdOriginalRequest
   ) {
-    const creation = await this.viewCreationAccess.find({
-      where: { projectId, status: CollaborateStatus.Main },
+    const projectUser = await this.projectUserAccess.findOneOrFail({
+      where: { userId: this.cognitoUserId, projectId, role: Role.Owner },
     });
-    if (creation.length !== 1)
-      throw new InternalServerError('there should be only 1 original');
-    if (data.type === 'track' && creation[0].type === Type.Track)
-      throw new InternalServerError('original track already exists');
-    if (data.type === 'lyrics' && creation[0].type === Type.Lyrics)
-      throw new InternalServerError('original lyrics already exists');
+    if (projectUser.lyricsId !== null && projectUser.trackId !== null)
+      throw new InternalServerError('original already exists');
+    if (data.type === 'track' && projectUser.lyricsId === null)
+      throw new BadRequestError('there is no lyrics');
+    if (data.type === 'lyrics' && projectUser.trackId === null)
+      throw new BadRequestError('there is no track');
 
-    if (data.type === 'track') {
-      const lyrics = creation[0];
+    const project = await this.projectAccess.findOneByIdOrFail(projectId);
+
+    if (data.type === 'track' && projectUser.lyricsId) {
+      const lyrics = await this.lyricsAccess.findOneOrFailById(
+        projectUser.lyricsId
+      );
       const track = new TrackEntity();
       track.userId = this.cognitoUserId;
-      track.name = lyrics.name;
-      track.description = lyrics.description;
-      track.theme = lyrics.theme;
-      track.genre = lyrics.genre;
-      track.language = lyrics.language;
-      track.caption = lyrics.caption;
+      track.infoId = project.infoId;
       track.projectId = lyrics.projectId;
-      track.status = CollaborateStatus.Main;
-      track.coverFileUri = lyrics.coverFileUri;
 
+      const newTrack = await this.trackAccess.save(track);
       const trackHistory = new TrackHistoryEntity();
-      trackHistory.trackId = track.id;
+      trackHistory.trackId = newTrack.id;
       const newTrackHistory = await this.trackHistoryAccess.save(trackHistory);
 
       // upload file
@@ -282,26 +279,26 @@ export class ProjectService {
       newTrackHistory.fileUri = fileKey;
       newTrackHistory.tabFileUri = tabFileKey;
       await this.trackHistoryAccess.save(newTrackHistory);
-    } else if (data.type === 'lyrics') {
-      const track = creation[0];
+
+      projectUser.trackId = newTrack.id;
+      await this.projectUserAccess.save(projectUser);
+    } else if (data.type === 'lyrics' && projectUser.trackId) {
+      const track = await this.trackAccess.findOneOrFailById(
+        projectUser.trackId
+      );
       const lyrics = new LyricsEntity();
       lyrics.userId = this.cognitoUserId;
-      lyrics.name = track.name;
-      lyrics.description = track.description;
-      lyrics.theme = track.theme;
-      lyrics.genre = track.genre;
-      lyrics.language = track.language;
-      lyrics.caption = track.caption;
+      lyrics.infoId = project.infoId;
       lyrics.projectId = track.projectId;
-      lyrics.status = CollaborateStatus.Main;
-      lyrics.coverFileUri = track.coverFileUri;
-      const newLyrics = await this.lyricsAccess.save(lyrics);
 
-      // upload lyrics
+      const newLyrics = await this.lyricsAccess.save(lyrics);
       const lyricsHistory = new LyricsHistoryEntity();
       lyricsHistory.lyricsId = newLyrics.id;
-      lyricsHistory.content = data.lyrics;
+      lyricsHistory.lyricsText = data.lyrics;
       await this.lyricsHistoryAccess.save(lyricsHistory);
+
+      projectUser.lyricsId = newLyrics.id;
+      await this.projectUserAccess.save(projectUser);
     }
   }
 
@@ -309,30 +306,47 @@ export class ProjectService {
     try {
       await this.dbAccess.startTransaction();
 
+      const myProjectUser = await this.projectUserAccess.findOneOrFail({
+        where: { userId: this.cognitoUserId, projectId: id, role: Role.Owner },
+      });
+      if (myProjectUser.lyricsId === null && myProjectUser.trackId === null)
+        throw new InternalServerError('no lyrics or track');
+
+      const creation = await this.viewCreationAccess.findOneById(
+        (myProjectUser.lyricsId || myProjectUser.trackId) ?? 'xx'
+      );
+      if (creation === null)
+        throw new InternalServerError('creation not found');
+
       const project = await this.projectAccess.findOneByIdOrFail(id);
+      if (project.infoId === null)
+        throw new InternalServerError('info not found');
+      const info = await this.infoAccess.findOneOrFailById(project.infoId);
+      const newInfo = new InfoEntity();
+      newInfo.name = info.name;
+      newInfo.description = info.description;
+      newInfo.theme = info.theme;
+      newInfo.genre = info.genre;
+      newInfo.language = info.language;
+      newInfo.caption = info.caption;
+      newInfo.coverFileUri = info.coverFileUri;
+      const newInfoRes = await this.infoAccess.save(newInfo);
+
       project.status = Status.InProgress;
+      project.infoId = newInfoRes.id;
       project.startedAt = new Date().toISOString();
       await this.projectAccess.save(project);
 
-      const creations = await this.viewCreationAccess.find({
-        where: {
-          projectId: id,
-          status: CollaborateStatus.Approved,
-        },
-      });
-      for (const c of creations)
-        if (c.type === Type.Track) {
-          const track = await this.trackAccess.findOneById(c.id);
-          if (track === null) throw new InternalServerError('track not found');
-          track.status = CollaborateStatus.Proposed;
-          await this.trackAccess.save(track);
-        } else if (c.type === Type.Lyrics) {
-          const lyrics = await this.lyricsAccess.findOneById(c.id);
-          if (lyrics === null)
-            throw new InternalServerError('lyrics not found');
-          lyrics.status = CollaborateStatus.Proposed;
-          await this.lyricsAccess.save(lyrics);
-        }
+      const projectUsers = await this.projectUserAccess.findByProjectId(id);
+      for (const pu of projectUsers) {
+        if (pu.role === Role.Owner) continue;
+        if (pu.isAccepted === true) {
+          pu.role = Role.Collaborator;
+          pu.isReady = false;
+        } else pu.role = Role.Rejected;
+
+        await this.projectUserAccess.save(pu);
+      }
 
       await this.dbAccess.commitTransaction();
     } catch (e) {
@@ -341,47 +355,41 @@ export class ProjectService {
     }
   }
 
-  public async publishProject(id: string, data: PostProjectIdPublishRequest) {
+  public async publishProject(id: string) {
     try {
       await this.dbAccess.startTransaction();
+
+      // validate owner
+      await this.projectUserAccess.findOneOrFail({
+        where: { userId: this.cognitoUserId, projectId: id, role: Role.Owner },
+      });
+
+      const projectHistory = await this.projectHistoryAccess.find({
+        where: { projectId: id },
+      });
+      if (projectHistory.length === 0) throw new BadRequestError('no content');
 
       const project = await this.projectAccess.findOneByIdOrFail(id);
       project.status = Status.Published;
       await this.projectAccess.save(project);
 
-      // check user is owner
-      const creations = await this.viewCreationAccess.findByProjectId(id);
-      const rootCreation = creations.find((v) => v.inspiredId === null);
-      if (rootCreation?.userId !== this.cognitoUserId)
-        throw new UnauthorizedError('Only owner can publish');
-
-      const song = new SongEntity();
-      song.userId = this.cognitoUserId;
-      song.name = rootCreation.name;
-      song.description = rootCreation.description;
-      song.theme = rootCreation.theme;
-      song.genre = rootCreation.genre;
-      song.language = rootCreation.language;
-      song.caption = rootCreation.caption;
-      song.coverFileUri = rootCreation.coverFileUri; // TODO: might copy one
-      song.projectId = id;
-
-      const newSong = await this.songAccess.save(song);
-
-      // upload file
-      const fileKey = await this.awsService.s3Upload(
-        data.file,
-        `song/${newSong.id}/file`
-      );
-      newSong.fileUri = fileKey;
-      await this.songAccess.save(newSong);
-
       await this.dbAccess.commitTransaction();
-
-      return newSong;
     } catch (e) {
       await this.dbAccess.rollbackTransaction();
       throw e;
     }
+  }
+
+  public async updateProjectCover(id: string, data: PutProjectIdCoverRequest) {
+    const project = await this.projectAccess.findOneByIdOrFail(id);
+    if (project.infoId === null) throw new InternalServerError('no info found');
+
+    const key = await this.awsService.s3Upload(
+      data.file,
+      `info/${project.infoId}`
+    );
+    const info = await this.infoAccess.findOneOrFailById(project.infoId);
+    info.coverFileUri = key;
+    await this.infoAccess.save(info);
   }
 }

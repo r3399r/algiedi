@@ -5,20 +5,21 @@ import Input from 'src/component/Input';
 import Modal from 'src/component/Modal';
 import { DetailedCreation } from 'src/model/backend/Project';
 import { openFailSnackbar } from 'src/redux/uiSlice';
-import { updateTrack, uploadTrack } from 'src/service/ProjectService';
+import { updateCreation } from 'src/service/ProjectService';
 
 type Props = {
   open: boolean;
   handleClose: () => void;
-  targetTrack: DetailedCreation | null;
+  targetCreation: DetailedCreation | null;
   targetProjectId: string;
   doRefresh: () => void;
 };
 
-const ModalTrack = ({ open, handleClose, targetTrack, targetProjectId, doRefresh }: Props) => {
+const ModalMaster = ({ open, handleClose, targetCreation, doRefresh }: Props) => {
   const dispatch = useDispatch();
   const trackInputRef = useRef<HTMLInputElement>(null);
   const tabInputRef = useRef<HTMLInputElement>(null);
+  const [lyrics, setLyrics] = useState<string>(targetCreation?.lyricsText ?? '');
   const [trackFile, setTrackFile] = useState<File>();
   const [tabFile, setTabFile] = useState<File>();
   const [errorTrackFile, setErrorTrackFile] = useState<boolean>(false);
@@ -26,20 +27,17 @@ const ModalTrack = ({ open, handleClose, targetTrack, targetProjectId, doRefresh
   const onSuccess = () => {
     doRefresh();
     handleClose();
-    setTrackFile(undefined);
-    setTabFile(undefined);
   };
 
   const onSubmit = () => {
-    if (!trackFile) return;
-    if (targetTrack !== null)
-      updateTrack(targetTrack.id, { tab: tabFile ?? null, track: trackFile })
-        .then(onSuccess)
-        .catch((err) => dispatch(openFailSnackbar(err)));
-    else
-      uploadTrack(targetProjectId, { tab: tabFile ?? null, track: trackFile })
-        .then(onSuccess)
-        .catch((err) => dispatch(openFailSnackbar(err)));
+    if (targetCreation === null) return;
+    updateCreation(
+      targetCreation.id,
+      { tab: tabFile ?? null, track: trackFile ?? null },
+      lyrics ?? '',
+    )
+      .then(onSuccess)
+      .catch((err) => dispatch(openFailSnackbar(err)));
   };
 
   return (
@@ -86,10 +84,17 @@ const ModalTrack = ({ open, handleClose, targetTrack, targetProjectId, doRefresh
           accept="application/pdf"
           multiple={false}
         />
+        <div>lyrics</div>
+        <textarea
+          className="w-full border-[1px] border-black px-2 rounded"
+          value={lyrics}
+          defaultValue={targetCreation?.lyricsText ?? ''}
+          onChange={(e) => setLyrics(e.target.value)}
+        />
         <Button onClick={onSubmit}>Submit</Button>
       </div>
     </Modal>
   );
 };
 
-export default ModalTrack;
+export default ModalMaster;

@@ -3,11 +3,16 @@ import projectEndpoint from 'src/api/projectEndpoint';
 import uploadEndpoint from 'src/api/uploadEndpoint';
 import { GetProjectResponse, PutProjectRequest } from 'src/model/backend/api/Project';
 import { DetailedProject } from 'src/model/backend/Project';
+import { setLastProjectId } from 'src/redux/meSlice';
 import { dispatch, getState } from 'src/redux/store';
 import { finishWaiting, startWaiting } from 'src/redux/uiSlice';
 import { file2Base64 } from 'src/util/fileConverter';
 import { loadProjects } from './OverallService';
-import { updateLastProjectId } from './UploadService';
+
+const updateLastProjectId = async (projectId: string) => {
+  await projectEndpoint.patchProjectIdView(projectId);
+  dispatch(setLastProjectId(projectId));
+};
 
 export const getProject = async (projectId?: string): Promise<DetailedProject | null> => {
   try {
@@ -69,13 +74,21 @@ export const updateProject = async (id: string, data: PutProjectRequest) => {
   }
 };
 
-export const setApproval = async (projectId: string, creationId: string) => {
+export const setApproval = async (projectId: string, userId: string) => {
   try {
     dispatch(startWaiting());
-    await projectEndpoint.putProjectIdApprovalCid(projectId, creationId);
-    const projects = await loadProjects();
+    await projectEndpoint.putProjectIdApprovalUid(projectId, userId);
+    await loadProjects();
+  } finally {
+    dispatch(finishWaiting());
+  }
+};
 
-    return projects.find((v) => v.id === projectId);
+export const setReady = async (projectId: string) => {
+  try {
+    dispatch(startWaiting());
+    await projectEndpoint.putProjectIdReady(projectId);
+    await loadProjects();
   } finally {
     dispatch(finishWaiting());
   }
@@ -84,14 +97,27 @@ export const setApproval = async (projectId: string, creationId: string) => {
 export const updateCover = async (project: DetailedProject, coverFile: File) => {
   try {
     dispatch(startWaiting());
-    if (project.mainLyrics)
-      await uploadEndpoint.putUploadIdCover(project.mainLyrics.id, {
-        file: await file2Base64(coverFile),
-      });
-    if (project.mainTrack)
-      await uploadEndpoint.putUploadIdCover(project.mainTrack.id, {
-        file: await file2Base64(coverFile),
-      });
+    await projectEndpoint.putProjectIdCover(project.id, { file: await file2Base64(coverFile) });
+
+    await loadProjects();
+  } finally {
+    dispatch(finishWaiting());
+  }
+};
+
+export const updateCreation = async (
+  projectId: string,
+  files: { track: File | null; tab: File | null },
+  lyrics?: string,
+) => {
+  try {
+    dispatch(startWaiting());
+    await uploadEndpoint.putUploadId(projectId, {
+      type: 'song',
+      lyrics,
+      file: files.track ? await file2Base64(files.track) : null,
+      tabFile: files.tab ? await file2Base64(files.tab) : null,
+    });
 
     await loadProjects();
   } finally {
@@ -174,10 +200,10 @@ export const startProject = async (id: string) => {
   }
 };
 
-export const publishProject = async (id: string, file: File) => {
+export const publishProject = async (id: string) => {
   try {
     dispatch(startWaiting());
-    await projectEndpoint.postProjectIdPublish(id, { file: await file2Base64(file) });
+    await projectEndpoint.postProjectIdPublish(id);
 
     // await loadProjects();
   } finally {

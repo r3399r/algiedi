@@ -1,80 +1,59 @@
-import classNames from 'classnames';
 import { ChangeEvent, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Button from 'src/component/Button';
-import { CollaborateStatus } from 'src/model/backend/constant/Creation';
-import { DetailedCreation } from 'src/model/backend/Project';
+import { DetailedCreation, DetailedProject } from 'src/model/backend/Project';
 import { RootState } from 'src/redux/store';
-import { openFailSnackbar } from 'src/redux/uiSlice';
-import { setApproval } from 'src/service/ProjectService';
 import ModalLyrics from './ModalLyrics';
 import ModalTrack from './ModalTrack';
 
 type Props = {
-  mainCreation: DetailedCreation;
-  creations: DetailedCreation[];
+  project: DetailedProject;
   doRefresh: () => void;
 };
 
-const Activities = ({ mainCreation, creations, doRefresh }: Props) => {
-  const dispatch = useDispatch();
+const Activities = ({ project, doRefresh }: Props) => {
   const { id: userId } = useSelector((root: RootState) => root.me);
   const [isLyricsModalOpen, setIsLyricsModalOpen] = useState<boolean>(false);
   const [isTrackModalOpen, setIsTrackModalOpen] = useState<boolean>(false);
-  const [targetLyrics, setTargetLyrics] = useState<DetailedCreation>();
-  const [targetTrack, setTargetTrack] = useState<DetailedCreation>();
+  const [targetLyrics, setTargetLyrics] = useState<DetailedCreation | null>(null);
+  const [targetTrack, setTargetTrack] = useState<DetailedCreation | null>(null);
 
   const onLoadMetadata = (e: ChangeEvent<HTMLAudioElement>) => {
     console.log(e.target.duration);
   };
 
-  const onApprove = (creationId: string) => () => {
-    setApproval(mainCreation.projectId, creationId)
-      .then(doRefresh)
-      .catch((err) => dispatch(openFailSnackbar(err)));
-  };
-
   return (
     <>
       <div className="font-bold">Activities</div>
-      <div className="h-[400px] overflow-y-auto pr-4">
-        {creations.map((v) => (
+      <div className="pr-4">
+        {project.collaborators.map((v) => (
           <div
             key={v.id}
             className="border-[#707070] bg-white border-[1px] border-solid rounded-[30px] p-4 mt-2"
           >
-            <div className="text-right">
-              <button
-                className={classNames('border-[1px] rounded-full px-2', {
-                  'border-green-500 bg-green-500 text-white':
-                    v.status === CollaborateStatus.Accepted,
-                  'border-black': v.status === CollaborateStatus.Proposed,
-                })}
-                onClick={onApprove(v.id)}
-                disabled={mainCreation.userId !== userId}
-              >
-                v
-              </button>
+            <div>
+              <div>Author: {v.user.username}</div>
+              <div>Title: {v.track?.name || v.lyrics?.name}</div>
             </div>
             <div>
-              <div>Author: {v.username}</div>
-              <div>Title: {v.name}</div>
-            </div>
-            <div>
-              {v.type === 'track' && (
+              {v.track !== null && (
                 <div>
-                  <audio src={v.fileUrl ?? undefined} controls onLoadedMetadata={onLoadMetadata} />
-                  {v.tabFileUrl && (
+                  <audio
+                    src={v.track.fileUrl ?? undefined}
+                    controls
+                    onLoadedMetadata={onLoadMetadata}
+                  />
+                  {v.track.tabFileUrl && (
                     <div className="border-[1px] border-black w-fit rounded p-1 mt-2">
-                      <a href={v.tabFileUrl} target="_blank" rel="noreferrer">
+                      <a href={v.track.tabFileUrl} target="_blank" rel="noreferrer">
                         download tab
                       </a>
                     </div>
                   )}
-                  {v.status === CollaborateStatus.Proposed && v.userId === userId && (
+                  {v.isReady !== true && v.user.id === userId && (
                     <Button
                       onClick={() => {
-                        setTargetTrack(v);
+                        setTargetTrack(v.track);
                         setIsTrackModalOpen(true);
                       }}
                     >
@@ -83,13 +62,13 @@ const Activities = ({ mainCreation, creations, doRefresh }: Props) => {
                   )}
                 </div>
               )}
-              {v.type === 'lyrics' && (
+              {v.lyrics !== null && (
                 <div>
-                  <div className="whitespace-pre">Lyrics: {v.lyrics}</div>
-                  {v.status === CollaborateStatus.Proposed && v.userId === userId && (
+                  <div className="whitespace-pre">Lyrics: {v.lyrics.lyricsText}</div>
+                  {v.isReady !== true && v.user.id === userId && (
                     <Button
                       onClick={() => {
-                        setTargetLyrics(v);
+                        setTargetLyrics(v.lyrics);
                         setIsLyricsModalOpen(true);
                       }}
                     >
@@ -104,14 +83,14 @@ const Activities = ({ mainCreation, creations, doRefresh }: Props) => {
         <ModalLyrics
           open={isLyricsModalOpen}
           targetLyrics={targetLyrics}
-          targetProjectId={mainCreation.projectId}
+          targetProjectId={project.id}
           handleClose={() => setIsLyricsModalOpen(false)}
           doRefresh={doRefresh}
         />
         <ModalTrack
           open={isTrackModalOpen}
           targetTrack={targetTrack}
-          targetProjectId={mainCreation.projectId}
+          targetProjectId={project.id}
           handleClose={() => setIsTrackModalOpen(false)}
           doRefresh={doRefresh}
         />

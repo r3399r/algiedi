@@ -2,24 +2,27 @@ import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import Button from 'src/component/Button';
 import IcProfile from 'src/image/ic-profile.svg';
-import { DetailedCreation } from 'src/model/backend/Project';
+import { Role } from 'src/model/backend/constant/Project';
+import { DetailedProject } from 'src/model/backend/Project';
 import { RootState } from 'src/redux/store';
 import ModalLyrics from './ModalLyrics';
 import ModalTrack from './ModalTrack';
 
 type Props = {
-  track?: DetailedCreation;
-  lyrics?: DetailedCreation;
+  project: DetailedProject;
   doRefresh: () => void;
 };
 
-const Initiator = ({ track, lyrics, doRefresh }: Props) => {
+const Initiator = ({ project, doRefresh }: Props) => {
   const { id: userId } = useSelector((root: RootState) => root.me);
   const [isLyricsModalOpen, setIsLyricsModalOpen] = useState<boolean>(false);
   const [isTrackModalOpen, setIsTrackModalOpen] = useState<boolean>(false);
-  const creation = useMemo(() => track || lyrics, [track, lyrics]);
+  const ownerCreation = useMemo(
+    () => project.collaborators.find((v) => v.role === Role.Owner),
+    [project],
+  );
 
-  if (!creation) return <></>;
+  if (!ownerCreation) return <></>;
 
   return (
     <>
@@ -27,49 +30,49 @@ const Initiator = ({ track, lyrics, doRefresh }: Props) => {
       <div className="border-[#707070] bg-white border-[1px] border-solid rounded-[30px] p-4">
         <div className="flex gap-1">
           <img src={IcProfile} />
-          <div>{creation.username}</div>
+          <div>{ownerCreation.user.username}</div>
         </div>
-        {track && (
+        {ownerCreation.track && (
           <div>
-            <audio src={track.fileUrl ?? undefined} controls />
-            {track.tabFileUrl && (
+            <audio src={ownerCreation.track.fileUrl ?? undefined} controls />
+            {ownerCreation.track.tabFileUrl && (
               <div className="border-[1px] border-black w-fit rounded p-1 mt-2">
-                <a href={track.tabFileUrl} target="_blank" rel="noreferrer">
+                <a href={ownerCreation.track.tabFileUrl} target="_blank" rel="noreferrer">
                   download tab
                 </a>
               </div>
             )}
-            {track.userId === userId && (
+            {ownerCreation.user.id === userId && (
               <Button onClick={() => setIsTrackModalOpen(true)}>Update Track</Button>
             )}
           </div>
         )}
-        {!track && creation.userId === userId && (
+        {!ownerCreation.track && ownerCreation.user.id === userId && (
           <Button onClick={() => setIsTrackModalOpen(true)}>Upload Track</Button>
         )}
-        {lyrics && (
+        {ownerCreation.lyrics && (
           <div>
-            <div className="whitespace-pre">{lyrics.lyrics}</div>
-            {lyrics.userId === userId && (
+            <div className="whitespace-pre">{ownerCreation.lyrics.lyricsText}</div>
+            {ownerCreation.user.id === userId && (
               <Button onClick={() => setIsLyricsModalOpen(true)}>Update Lyrics</Button>
             )}
           </div>
         )}
-        {!lyrics && creation.userId === userId && (
+        {!ownerCreation.lyrics && ownerCreation.user.id === userId && (
           <Button onClick={() => setIsLyricsModalOpen(true)}>Upload Lyrics</Button>
         )}
       </div>
       <ModalLyrics
         open={isLyricsModalOpen}
-        targetLyrics={lyrics}
-        targetProjectId={creation.projectId}
+        targetLyrics={ownerCreation.lyrics}
+        targetProjectId={project.id}
         handleClose={() => setIsLyricsModalOpen(false)}
         doRefresh={doRefresh}
       />
       <ModalTrack
         open={isTrackModalOpen}
-        targetTrack={track}
-        targetProjectId={creation.projectId}
+        targetTrack={ownerCreation.track}
+        targetProjectId={project.id}
         handleClose={() => setIsTrackModalOpen(false)}
         doRefresh={doRefresh}
       />

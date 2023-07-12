@@ -1,7 +1,7 @@
 CREATE OR REPLACE VIEW v_lyrics_explore AS with public_lyrics as (
         select lh.id,
             lh.lyrics_id,
-            lh.content,
+            lh.lyrics_text,
             lh.created_at
         from lyrics_history lh
             left join lyrics l on l.id = lh.lyrics_id
@@ -10,7 +10,14 @@ CREATE OR REPLACE VIEW v_lyrics_explore AS with public_lyrics as (
             OR p.started_at is NULL
     )
 select l.*,
-    latest_lyrics.content,
+    i.name,
+    i.description,
+    i.theme,
+    i.genre,
+    i.language,
+    i.caption,
+    i.cover_file_uri,
+    latest_lyrics.lyrics_text,
     u.username,
     p.status as project_status,
     p.started_at as project_started_at,
@@ -19,9 +26,10 @@ select l.*,
 from lyrics l
     left join user u on l.user_id = u.id
     left join project p on l.project_id = p.id
+    left join info i on l.info_id = i.id
     left join (
         SELECT pl.lyrics_id,
-            pl.content,
+            pl.lyrics_text,
             pl.created_at
         FROM public_lyrics pl
             join (

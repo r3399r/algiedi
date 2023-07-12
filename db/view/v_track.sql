@@ -1,5 +1,12 @@
 CREATE OR REPLACE VIEW v_track AS
 select t.*,
+    i.name,
+    i.description,
+    i.theme,
+    i.genre,
+    i.language,
+    i.caption,
+    i.cover_file_uri,
     latest_track.file_uri,
     latest_track.tab_file_uri,
     u.username,
@@ -10,6 +17,7 @@ select t.*,
 from track t
     left join user u on t.user_id = u.id
     left join project p on t.project_id = p.id
+    left join info i on t.info_id = i.id
     left join (
         SELECT th.track_id,
             th.file_uri,

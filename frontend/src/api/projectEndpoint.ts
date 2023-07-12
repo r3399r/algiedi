@@ -1,7 +1,7 @@
 import {
   GetProjectResponse,
   PostProjectIdOriginalRequest,
-  PostProjectIdPublishRequest,
+  PutProjectIdCoverRequest,
   PutProjectRequest,
 } from 'src/model/backend/api/Project';
 import http from 'src/util/http';
@@ -16,20 +16,26 @@ const postProjectIdStart = async (id: string) => await http.authPost<void>(`proj
 const postProjectIdOriginal = async (id: string, data: PostProjectIdOriginalRequest) =>
   await http.authPost<void, PostProjectIdOriginalRequest>(`project/${id}/original`, { data });
 
-const putProjectIdApprovalCid = async (id: string, cid: string) =>
-  await http.authPut(`project/${id}/approval/${cid}`);
+const putProjectIdApprovalUid = async (id: string, uid: string) =>
+  await http.authPut(`project/${id}/approval/${uid}`);
+
+const putProjectIdReady = async (id: string) => await http.authPut(`project/${id}/ready`);
 
 const patchProjectIdView = async (id: string) => await http.authPatch(`project/${id}/view`);
 
-const postProjectIdPublish = async (id: string, data: PostProjectIdPublishRequest) =>
-  await http.authPost(`project/${id}/publish`, { data });
+const postProjectIdPublish = async (id: string) => await http.authPost(`project/${id}/publish`);
+
+const putProjectIdCover = async (id: string, data: PutProjectIdCoverRequest) =>
+  await http.authPut(`project/${id}/cover`, { data });
 
 export default {
   getProject,
   putProject,
   postProjectIdStart,
   postProjectIdOriginal,
-  putProjectIdApprovalCid,
+  putProjectIdApprovalUid,
+  putProjectIdReady,
   patchProjectIdView,
   postProjectIdPublish,
+  putProjectIdCover,
 };

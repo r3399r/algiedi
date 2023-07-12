@@ -50,6 +50,32 @@ const ExploreDetail = () => {
           {"I'm inspired!"}
         </Button>
       </div>
+      <div className="flex px-10">
+        <div className="w-1/2">
+          <div className="font-bold">Inspired By</div>
+          {creation.inspired && (
+            <div
+              className="cursor-pointer"
+              onClick={() => navigate(`${Page.Explore}/${creation.inspired?.id}`)}
+            >
+              {creation.inspired.name}
+            </div>
+          )}
+          {!creation.inspired && <div>This is an original</div>}
+        </div>
+        <div className="w-1/2">
+          <div className="font-bold">Inspired</div>
+          {creation.inspiration.map((v) => (
+            <div
+              key={v.id}
+              className="cursor-pointer"
+              onClick={() => navigate(`${Page.Explore}/${v.id}`)}
+            >
+              {v.name}
+            </div>
+          ))}
+        </div>
+      </div>
     </>
   );
 };

@@ -94,10 +94,10 @@ const Lyrics = ({ defaultInspiredId, inspiration }: Props) => {
                   setInspiredId(newValue?.id ?? '');
                 }}
                 options={inspiration}
-                getOptionLabel={(option) => option.name}
+                getOptionLabel={(option) => `${option.name} (${option.username}, ${option.type}`}
                 renderOption={(props, option) => (
                   <li {...props}>
-                    {option.name} ({option.username})
+                    {option.name} ({option.username}, {option.type})
                   </li>
                 )}
                 renderInput={(params) => (

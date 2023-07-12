@@ -4,11 +4,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Button from 'src/component/Button';
 import { Page } from 'src/constant/Page';
+import { Role } from 'src/model/backend/constant/Project';
 import { DetailedProject } from 'src/model/backend/Project';
 import { RootState } from 'src/redux/store';
 import { openFailSnackbar } from 'src/redux/uiSlice';
 import { publishProject, updateCover, updateProject } from 'src/service/ProjectService';
 import Activities from './Activities';
+import CollaborateMaster from './CollaborateMaster';
 import ModalPublish from './ModalPublish';
 import Partners from './Partners';
 
@@ -31,14 +33,17 @@ const Collaborate = ({ project, doRefresh }: Props) => {
   const [editCaption, setEditCaption] = useState<string>('');
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
-  const mainCreation = useMemo(() => project.mainLyrics || project.mainTrack, [project]);
-  const activtiesList = useMemo(() => {
-    const res = [...project.inspiration];
-    if (project.mainTrack) res.push(project.mainTrack);
-    if (project.mainLyrics) res.push(project.mainLyrics);
-
-    return res;
-  }, [project]);
+  const owner = useMemo(
+    () => project.collaborators.find((v) => v.role === Role.Owner)?.user,
+    [project],
+  );
+  const canPublish = useMemo(
+    () =>
+      project.collaborators.length === project.collaborators.filter((v) => v.isReady).length &&
+      project.song?.fileUrl !== null &&
+      project.song?.lyricsText !== null,
+    [project],
+  );
 
   const onSave = () => {
     updateProject(project.id, {
@@ -53,14 +58,14 @@ const Collaborate = ({ project, doRefresh }: Props) => {
       .catch((err) => dispatch(openFailSnackbar(err)));
   };
 
-  const onPublish = (file: File) => {
-    if (!mainCreation) return;
-    publishProject(project.id, file)
+  const onPublish = () => {
+    // if (!mainCreation) return;
+    publishProject(project.id)
       .then(() => navigate(Page.Explore))
       .catch((err) => dispatch(openFailSnackbar(err)));
   };
 
-  if (!mainCreation) return <>Loading...</>;
+  if (!owner) return <>Loading...</>;
 
   return (
     <>
@@ -77,17 +82,17 @@ const Collaborate = ({ project, doRefresh }: Props) => {
                     onChange={(e) => setEditName(e.target.value)}
                   />
                 ) : (
-                  <div>{mainCreation.name}</div>
+                  <div>{project.name}</div>
                 )}
               </div>
               <div
                 className={classNames('w-1/2', {
-                  'cursor-pointer': mainCreation.userId === userId,
+                  'cursor-pointer': owner.id === userId,
                 })}
                 onClick={() => coverInputRef.current?.click()}
               >
-                {mainCreation.coverFileUrl ? (
-                  <img src={mainCreation.coverFileUrl} />
+                {project.coverFileUrl ? (
+                  <img src={project.coverFileUrl} />
                 ) : (
                   <div className="bg-gray-400 h-8" />
                 )}
@@ -96,23 +101,23 @@ const Collaborate = ({ project, doRefresh }: Props) => {
             <div className="border-[#707070] bg-white border-[1px] border-solid rounded-[30px] p-4">
               <div>
                 <div className="flex justify-end">
-                  {mainCreation.userId === userId && !isEdit && (
+                  {owner.id === userId && !isEdit && (
                     <div
                       className="cursor-pointer"
                       onClick={() => {
                         setIsEdit(!isEdit);
-                        setEditName(mainCreation.name);
-                        setEditDescription(mainCreation.description);
-                        setEditTheme(mainCreation.theme);
-                        setEditGenre(mainCreation.genre);
-                        setEditLanguage(mainCreation.language);
-                        setEditCaption(mainCreation.caption);
+                        setEditName(project.name ?? '');
+                        setEditDescription(project.description ?? '');
+                        setEditTheme(project.theme ?? '');
+                        setEditGenre(project.genre ?? '');
+                        setEditLanguage(project.language ?? '');
+                        setEditCaption(project.caption ?? '');
                       }}
                     >
                       Edit
                     </div>
                   )}
-                  {mainCreation.userId === userId && isEdit && (
+                  {owner.id === userId && isEdit && (
                     <div className="flex gap-2">
                       <div
                         className="cursor-pointer"
@@ -142,7 +147,7 @@ const Collaborate = ({ project, doRefresh }: Props) => {
                       onChange={(e) => setEditDescription(e.target.value)}
                     />
                   ) : (
-                    <div className="whitespace-pre">{mainCreation.description}</div>
+                    <div className="whitespace-pre">{project.description}</div>
                   )}
                 </div>
                 <div className="flex gap-1">
@@ -154,7 +159,7 @@ const Collaborate = ({ project, doRefresh }: Props) => {
                       onChange={(e) => setEditTheme(e.target.value)}
                     />
                   ) : (
-                    <div>{mainCreation.theme}</div>
+                    <div>{project.theme}</div>
                   )}
                 </div>
                 <div className="flex gap-1">
@@ -166,7 +171,7 @@ const Collaborate = ({ project, doRefresh }: Props) => {
                       onChange={(e) => setEditGenre(e.target.value)}
                     />
                   ) : (
-                    <div>{mainCreation.genre}</div>
+                    <div>{project.genre}</div>
                   )}
                 </div>
                 <div className="flex gap-1">
@@ -178,7 +183,7 @@ const Collaborate = ({ project, doRefresh }: Props) => {
                       onChange={(e) => setEditLanguage(e.target.value)}
                     />
                   ) : (
-                    <div>{mainCreation.language}</div>
+                    <div>{project.language}</div>
                   )}
                 </div>
                 <div className="flex gap-1">
@@ -190,28 +195,27 @@ const Collaborate = ({ project, doRefresh }: Props) => {
                       onChange={(e) => setEditCaption(e.target.value)}
                     />
                   ) : (
-                    <div>{mainCreation.caption}</div>
+                    <div>{project.caption}</div>
                   )}
                 </div>
               </div>
             </div>
+            <CollaborateMaster project={project} doRefresh={doRefresh} />
           </div>
           <div className="w-1/2">
-            <Partners creations={activtiesList} />
-            <Activities
-              mainCreation={mainCreation}
-              creations={activtiesList}
-              doRefresh={doRefresh}
-            />
+            <Partners project={project} doRefresh={doRefresh} />
+            <Activities project={project} doRefresh={doRefresh} />
           </div>
         </div>
-        {mainCreation.userId === userId && (
+        {owner.id === userId && (
           <div className="text-right mt-4">
-            <Button onClick={() => setIsModalOpen(true)}>Publish</Button>
+            <Button onClick={() => setIsModalOpen(true)} disabled={!canPublish}>
+              Publish
+            </Button>
           </div>
         )}
       </div>
-      {mainCreation.userId === userId && (
+      {owner.id === userId && (
         <input
           type="file"
           onChange={(e: ChangeEvent<HTMLInputElement>) => {
@@ -228,15 +232,7 @@ const Collaborate = ({ project, doRefresh }: Props) => {
         open={isModalOpen}
         handleClose={() => setIsModalOpen(false)}
         onPublish={onPublish}
-        data={{
-          coverFileUrl: mainCreation.coverFileUrl,
-          name: mainCreation.name,
-          description: mainCreation.description,
-          theme: mainCreation.theme,
-          genre: mainCreation.genre,
-          language: mainCreation.language,
-          caption: mainCreation.caption,
-        }}
+        project={project}
       />
     </>
   );

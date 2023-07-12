@@ -2,7 +2,7 @@ import { bindings } from 'src/bindings';
 import { ProjectService } from 'src/logic/ProjectService';
 import {
   PostProjectIdOriginalRequest,
-  PostProjectIdPublishRequest,
+  PutProjectIdCoverRequest,
   PutProjectRequest,
 } from 'src/model/api/Project';
 import { BadRequestError, InternalServerError } from 'src/model/error';
@@ -34,14 +34,20 @@ export async function project(
       case '/api/project/{id}/original':
         res = await apiProjectIdOriginal(event, service);
         break;
-      case '/api/project/{id}/approval/{cid}':
+      case '/api/project/{id}/approval/{uid}':
         res = await apiProjectIdApproval(event, service);
+        break;
+      case '/api/project/{id}/ready':
+        res = await apiProjectIdReady(event, service);
         break;
       case '/api/project/{id}/view':
         res = await apiProjectIdView(event, service);
         break;
       case '/api/project/{id}/publish':
         res = await apiProjectIdPublish(event, service);
+        break;
+      case '/api/project/{id}/cover':
+        res = await apiProjectIdCover(event, service);
         break;
       default:
         throw new InternalServerError('unknown resource');
@@ -130,8 +136,21 @@ async function apiProjectIdApproval(
     case 'PUT':
       return service.projectApproval(
         event.pathParameters.id,
-        event.pathParameters.cid
+        event.pathParameters.uid
       );
+    default:
+      throw new InternalServerError('unknown http method');
+  }
+}
+
+async function apiProjectIdReady(event: LambdaEvent, service: ProjectService) {
+  if (event.pathParameters === null)
+    throw new BadRequestError('pathParameters should not be empty');
+  if (event.headers === null)
+    throw new BadRequestError('headers should not be empty');
+  switch (event.httpMethod) {
+    case 'PUT':
+      return service.projectReady(event.pathParameters.id);
     default:
       throw new InternalServerError('unknown http method');
   }
@@ -158,13 +177,26 @@ async function apiProjectIdPublish(
     throw new BadRequestError('pathParameters should not be empty');
   if (event.headers === null)
     throw new BadRequestError('headers should not be empty');
+  switch (event.httpMethod) {
+    case 'POST':
+      return service.publishProject(event.pathParameters.id);
+    default:
+      throw new InternalServerError('unknown http method');
+  }
+}
+
+async function apiProjectIdCover(event: LambdaEvent, service: ProjectService) {
+  if (event.pathParameters === null)
+    throw new BadRequestError('pathParameters should not be empty');
+  if (event.headers === null)
+    throw new BadRequestError('headers should not be empty');
   if (event.body === null)
     throw new BadRequestError('body should not be empty');
   switch (event.httpMethod) {
-    case 'POST':
-      return service.publishProject(
+    case 'PUT':
+      return service.updateProjectCover(
         event.pathParameters.id,
-        JSON.parse(event.body) as PostProjectIdPublishRequest
+        JSON.parse(event.body) as PutProjectIdCoverRequest
       );
     default:
       throw new InternalServerError('unknown http method');

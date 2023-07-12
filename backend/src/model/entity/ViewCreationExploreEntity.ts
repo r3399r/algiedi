@@ -1,5 +1,5 @@
 import { ViewColumn, ViewEntity } from 'typeorm';
-import { CollaborateStatus, Type } from 'src/model/constant/Creation';
+import { Type } from 'src/model/constant/Creation';
 import { Status as ProjectStatus } from 'src/model/constant/Project';
 
 export type ViewCreationExplore = {
@@ -15,10 +15,9 @@ export type ViewCreationExplore = {
   coverFileUri: string | null;
   fileUri: string | null;
   tabFileUri: string | null;
-  lyrics: string | null;
+  lyricsText: string | null;
   projectId: string;
   inspiredId: string | null;
-  status: CollaborateStatus;
   createdAt: string | null;
   updatedAt: string | null;
   username: string;
@@ -66,17 +65,14 @@ export class ViewCreationExploreEntity implements ViewCreationExplore {
   @ViewColumn({ name: 'tab_file_uri' })
   tabFileUri: string | null = null;
 
-  @ViewColumn()
-  lyrics: string | null = null;
+  @ViewColumn({ name: 'lyrics_text' })
+  lyricsText: string | null = null;
 
   @ViewColumn({ name: 'project_id' })
   projectId!: string;
 
   @ViewColumn({ name: 'inspired_id' })
   inspiredId: string | null = null;
-
-  @ViewColumn()
-  status!: CollaborateStatus;
 
   @ViewColumn({ name: 'created_at' })
   createdAt: string | null = null;

@@ -19,8 +19,8 @@ const Overall = () => {
       <div className="text-[20px] mt-10">Open</div>
       <div className="text-gray-400">{projects?.length} creations</div>
       {projects?.map((v) => {
-        const main = v.mainTrack || v.mainLyrics;
-        const coverFileUrl = main?.coverFileUrl;
+        // const main = v.mainTrack || v.mainLyrics;
+        const coverFileUrl = v.coverFileUrl;
 
         return (
           <div
@@ -29,7 +29,7 @@ const Overall = () => {
             style={{ backgroundImage: coverFileUrl ? `url(${coverFileUrl})` : '' }}
             onClick={() => navigate(Page.Project, { state: { id: v.id } })}
           >
-            <div className="p-2 bg-gray-50 w-fit rounded-lg bg-opacity-70">{main?.name}</div>
+            <div className="p-2 bg-gray-50 w-fit rounded-lg bg-opacity-70">{v?.name}</div>
           </div>
         );
       })}

@@ -3,7 +3,7 @@ import { BeforeInsert, BeforeUpdate, Column, Entity, Generated } from 'typeorm';
 export type LyricsHistory = {
   id: string;
   lyricsId: string;
-  content: string;
+  lyricsText: string;
   createdAt: string | null;
   updatedAt: string | null;
 };
@@ -17,8 +17,8 @@ export class LyricsHistoryEntity implements LyricsHistory {
   @Column({ type: 'uuid', name: 'lyrics_id' })
   lyricsId!: string;
 
-  @Column({ type: 'varchar' })
-  content!: string;
+  @Column({ type: 'varchar', name: 'lyrics_text' })
+  lyricsText!: string;
 
   @Column({ type: 'timestamp', name: 'created_at', default: null })
   createdAt!: string;

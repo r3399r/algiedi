@@ -25,6 +25,14 @@ export class LyricsAccess {
     });
   }
 
+  public async findOneOrFailById(id: string) {
+    const qr = await this.database.getQueryRunner();
+
+    return await qr.manager.findOneOrFail<Lyrics>(LyricsEntity.name, {
+      where: { id },
+    });
+  }
+
   public async findOne(options: FindOneOptions<Lyrics>) {
     const qr = await this.database.getQueryRunner();
 

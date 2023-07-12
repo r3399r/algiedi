@@ -4,6 +4,7 @@ import { Status } from 'src/model/constant/Project';
 export type Project = {
   id: string;
   status: Status;
+  infoId: string | null;
   startedAt: string | null;
   createdAt: string | null;
   updatedAt: string | null;
@@ -17,6 +18,9 @@ export class ProjectEntity implements Project {
 
   @Column({ type: 'varchar' })
   status!: Status;
+
+  @Column({ type: 'uuid', name: 'info_id', default: null })
+  infoId: string | null = null;
 
   @Column({ type: 'timestamp', name: 'started_at', default: null })
   startedAt!: string;

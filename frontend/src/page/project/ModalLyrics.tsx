@@ -9,7 +9,7 @@ import { updateLyrics, uploadLyrics } from 'src/service/ProjectService';
 type Props = {
   open: boolean;
   handleClose: () => void;
-  targetLyrics?: DetailedCreation;
+  targetLyrics: DetailedCreation | null;
   targetProjectId: string;
   doRefresh: () => void;
 };
@@ -26,7 +26,7 @@ const ModalLyrics = ({ open, handleClose, targetLyrics, targetProjectId, doRefre
 
   const onSubmit = () => {
     if (!lyrics) return;
-    if (targetLyrics !== undefined)
+    if (targetLyrics !== null)
       updateLyrics(targetLyrics.id, lyrics)
         .then(onSuccess)
         .catch((err) => dispatch(openFailSnackbar(err)));
@@ -43,7 +43,7 @@ const ModalLyrics = ({ open, handleClose, targetLyrics, targetProjectId, doRefre
         <textarea
           className="w-full border-[1px] border-black px-2 rounded"
           value={lyrics}
-          defaultValue={targetLyrics?.lyrics ?? ''}
+          defaultValue={targetLyrics?.lyricsText ?? ''}
           onChange={(e) => setLyrics(e.target.value)}
         />
         <Button onClick={onSubmit}>Submit</Button>

@@ -25,6 +25,14 @@ export class TrackAccess {
     });
   }
 
+  public async findOneOrFailById(id: string) {
+    const qr = await this.database.getQueryRunner();
+
+    return await qr.manager.findOneOrFail<Track>(TrackEntity.name, {
+      where: { id },
+    });
+  }
+
   public async findOne(options: FindOneOptions<Track>) {
     const qr = await this.database.getQueryRunner();
 

@@ -1,10 +1,10 @@
 import classNames from 'classnames';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from 'src/component/Button';
 import IcProfile from 'src/image/ic-profile.svg';
-import { CollaborateStatus } from 'src/model/backend/constant/Creation';
-import { DetailedCreation } from 'src/model/backend/Project';
+import { Role } from 'src/model/backend/constant/Project';
+import { DetailedCreation, DetailedProject } from 'src/model/backend/Project';
 import { RootState } from 'src/redux/store';
 import { openFailSnackbar } from 'src/redux/uiSlice';
 import { setApproval } from 'src/service/ProjectService';
@@ -12,25 +12,33 @@ import ModalLyrics from './ModalLyrics';
 import ModalTrack from './ModalTrack';
 
 type Props = {
-  mainCreation: DetailedCreation;
-  creations: DetailedCreation[];
+  project: DetailedProject;
   doRefresh: () => void;
 };
 
-const Inspired = ({ mainCreation, creations, doRefresh }: Props) => {
+const Inspired = ({ project, doRefresh }: Props) => {
   const dispatch = useDispatch();
   const { id: userId } = useSelector((root: RootState) => root.me);
   const [isLyricsModalOpen, setIsLyricsModalOpen] = useState<boolean>(false);
   const [isTrackModalOpen, setIsTrackModalOpen] = useState<boolean>(false);
-  const [targetLyrics, setTargetLyrics] = useState<DetailedCreation>();
-  const [targetTrack, setTargetTrack] = useState<DetailedCreation>();
+  const [targetLyrics, setTargetLyrics] = useState<DetailedCreation | null>(null);
+  const [targetTrack, setTargetTrack] = useState<DetailedCreation | null>(null);
+
+  const inspiration = useMemo(
+    () => project.collaborators.filter((v) => v.role !== Role.Owner),
+    [project],
+  );
+  const ownerCreation = useMemo(
+    () => project.collaborators.find((v) => v.role === Role.Owner),
+    [project],
+  );
 
   const onLoadMetadata = (e: ChangeEvent<HTMLAudioElement>) => {
     console.log(e.target.duration);
   };
 
   const onApprove = (creationId: string) => () => {
-    setApproval(mainCreation.projectId, creationId)
+    setApproval(project.id, creationId)
       .then(doRefresh)
       .catch((err) => dispatch(openFailSnackbar(err)));
   };
@@ -41,25 +49,16 @@ const Inspired = ({ mainCreation, creations, doRefresh }: Props) => {
         <div className="font-bold">Inspired</div>
         <div className="flex gap-2">
           <div>
-            Audio{' '}
-            {
-              creations.filter((v) => v.type === 'track' && v.status === CollaborateStatus.Approved)
-                .length
-            }
-            /{creations.filter((v) => v.type === 'track').length}
+            Audio {inspiration.filter((v) => v.track !== null && v.isAccepted === true).length}/
+            {inspiration.filter((v) => v.track !== null).length}
           </div>
           <div>
-            Lyrics{' '}
-            {
-              creations.filter(
-                (v) => v.type === 'lyrics' && v.status === CollaborateStatus.Approved,
-              ).length
-            }
-            /{creations.filter((v) => v.type === 'lyrics').length}
+            Lyrics {inspiration.filter((v) => v.lyrics !== null && v.isAccepted === true).length}/
+            {inspiration.filter((v) => v.lyrics !== null).length}
           </div>
         </div>
       </div>
-      {creations.map((v) => (
+      {inspiration.map((v) => (
         <div
           key={v.id}
           className="border-[#707070] bg-white border-[1px] border-solid rounded-[30px] p-4 mt-2"
@@ -67,11 +66,11 @@ const Inspired = ({ mainCreation, creations, doRefresh }: Props) => {
           <div className="text-right">
             <button
               className={classNames('border-[1px] rounded-full px-2', {
-                'border-green-500 bg-green-500 text-white': v.status === CollaborateStatus.Approved,
-                'border-black': v.status === CollaborateStatus.Inspired,
+                'border-green-500 bg-green-500 text-white': v.isAccepted === true,
+                'border-black': v.isAccepted !== true,
               })}
-              onClick={onApprove(v.id)}
-              disabled={mainCreation.userId !== userId}
+              onClick={onApprove(v.user.id)}
+              disabled={ownerCreation?.user.id !== userId}
             >
               v
             </button>
@@ -79,25 +78,29 @@ const Inspired = ({ mainCreation, creations, doRefresh }: Props) => {
           <div className="flex gap-2 items-center">
             <img src={IcProfile} />
             <div>
-              <div>{v.username}</div>
-              <div>{v.name}</div>
+              <div>{v.user.username}</div>
+              <div>{v.track?.name || v.lyrics?.name}</div>
             </div>
           </div>
           <div>
-            {v.type === 'track' && (
+            {v.track !== null && (
               <div>
-                <audio src={v.fileUrl ?? undefined} controls onLoadedMetadata={onLoadMetadata} />
-                {v.tabFileUrl && (
+                <audio
+                  src={v.track.fileUrl ?? undefined}
+                  controls
+                  onLoadedMetadata={onLoadMetadata}
+                />
+                {v.track.tabFileUrl && (
                   <div className="border-[1px] border-black w-fit rounded p-1 mt-2">
-                    <a href={v.tabFileUrl} target="_blank" rel="noreferrer">
+                    <a href={v.track.tabFileUrl} target="_blank" rel="noreferrer">
                       download tab
                     </a>
                   </div>
                 )}
-                {v.status === CollaborateStatus.Inspired && v.userId === userId && (
+                {v.isAccepted !== true && v.user.id === userId && (
                   <Button
                     onClick={() => {
-                      setTargetTrack(v);
+                      setTargetTrack(v.track);
                       setIsTrackModalOpen(true);
                     }}
                   >
@@ -106,13 +109,13 @@ const Inspired = ({ mainCreation, creations, doRefresh }: Props) => {
                 )}
               </div>
             )}
-            {v.type === 'lyrics' && (
+            {v.lyrics !== null && (
               <div>
-                <div className="whitespace-pre">{v.lyrics}</div>
-                {v.status === CollaborateStatus.Inspired && v.userId === userId && (
+                <div className="whitespace-pre">{v.lyrics.lyricsText}</div>
+                {v.isAccepted !== true && v.user.id === userId && (
                   <Button
                     onClick={() => {
-                      setTargetLyrics(v);
+                      setTargetLyrics(v.lyrics);
                       setIsLyricsModalOpen(true);
                     }}
                   >
@@ -127,14 +130,14 @@ const Inspired = ({ mainCreation, creations, doRefresh }: Props) => {
       <ModalLyrics
         open={isLyricsModalOpen}
         targetLyrics={targetLyrics}
-        targetProjectId={mainCreation.projectId}
+        targetProjectId={project.id}
         handleClose={() => setIsLyricsModalOpen(false)}
         doRefresh={doRefresh}
       />
       <ModalTrack
         open={isTrackModalOpen}
         targetTrack={targetTrack}
-        targetProjectId={mainCreation.projectId}
+        targetProjectId={project.id}
         handleClose={() => setIsTrackModalOpen(false)}
         doRefresh={doRefresh}
       />

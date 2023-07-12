@@ -1,10 +1,6 @@
 import { bindings } from 'src/bindings';
 import { UploadService } from 'src/logic/UploadService';
-import {
-  PostUploadRequest,
-  PutUploadIdCoverRequest,
-  PutUploadIdRequest,
-} from 'src/model/api/Upload';
+import { PostUploadRequest, PutUploadIdRequest } from 'src/model/api/Upload';
 import { BadRequestError, InternalServerError } from 'src/model/error';
 import { LambdaContext, LambdaEvent, LambdaOutput } from 'src/model/Lambda';
 import { errorOutput, successOutput } from 'src/util/lambdaHelper';
@@ -27,9 +23,6 @@ export async function upload(
         break;
       case '/api/upload/{id}':
         res = await apiUploadId(event, service);
-        break;
-      case '/api/upload/{id}/cover':
-        res = await apiUploadIdCover(event, service);
         break;
       default:
         throw new InternalServerError('unknown resource');
@@ -66,27 +59,9 @@ async function apiUploadId(event: LambdaEvent, service: UploadService) {
     throw new BadRequestError('body should not be empty');
   switch (event.httpMethod) {
     case 'PUT':
-      return service.replaceUpload(
+      return service.updateUpload(
         event.pathParameters.id,
         JSON.parse(event.body) as PutUploadIdRequest
-      );
-    default:
-      throw new InternalServerError('unknown http method');
-  }
-}
-
-async function apiUploadIdCover(event: LambdaEvent, service: UploadService) {
-  if (event.pathParameters === null)
-    throw new BadRequestError('pathParameters should not be empty');
-  if (event.headers === null)
-    throw new BadRequestError('headers should not be empty');
-  if (event.body === null)
-    throw new BadRequestError('body should not be empty');
-  switch (event.httpMethod) {
-    case 'PUT':
-      return service.updateCover(
-        event.pathParameters.id,
-        JSON.parse(event.body) as PutUploadIdCoverRequest
       );
     default:
       throw new InternalServerError('unknown http method');

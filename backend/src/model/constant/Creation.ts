@@ -3,11 +3,3 @@ export enum Type {
   Track = 'track',
   Song = 'song',
 }
-
-export enum CollaborateStatus {
-  Main = 'main',
-  Inspired = 'inspired',
-  Approved = 'approved',
-  Proposed = 'proposed',
-  Accepted = 'accepted',
-}

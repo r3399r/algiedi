@@ -2,9 +2,12 @@ import 'reflect-metadata';
 import { CognitoIdentityServiceProvider, Lambda, S3, SNS } from 'aws-sdk';
 import { Container } from 'inversify';
 import { DbAccess } from './access/DbAccess';
+import { InfoAccess } from './access/InfoAccess';
 import { LyricsAccess } from './access/LyricsAccess';
 import { LyricsHistoryAccess } from './access/LyricsHistoryAccess';
 import { ProjectAccess } from './access/ProjectAccess';
+import { ProjectHistoryAccess } from './access/ProjectHistoryAccess';
+import { ProjectUserAccess } from './access/ProjectUserAccess';
 import { SongAccess } from './access/SongAccess';
 import { TrackAccess } from './access/TrackAccess';
 import { TrackHistoryAccess } from './access/TrackHistoryAccess';
@@ -20,9 +23,12 @@ import { SnsService } from './logic/SnsService';
 import { UploadService } from './logic/UploadService';
 import { UserService } from './logic/UserService';
 import { VpcService } from './logic/VpcService';
+import { InfoEntity } from './model/entity/InfoEntity';
 import { LyricsEntity } from './model/entity/LyricsEntity';
 import { LyricsHistoryEntity } from './model/entity/LyricsHistoryEntity';
 import { ProjectEntity } from './model/entity/ProjectEntity';
+import { ProjectHistoryEntity } from './model/entity/ProjectHistoryEntity';
+import { ProjectUserEntity } from './model/entity/ProjectUserEntity';
 import { SongEntity } from './model/entity/SongEntity';
 import { TrackEntity } from './model/entity/TrackEntity';
 import { TrackHistoryEntity } from './model/entity/TrackHistoryEntity';
@@ -36,9 +42,12 @@ const container: Container = new Container();
 container.bind<Database>(Database).toSelf().inSingletonScope();
 
 // bind repeatedly for db entities
+container.bind<Function>(dbEntitiesBindingId).toFunction(InfoEntity);
 container.bind<Function>(dbEntitiesBindingId).toFunction(LyricsEntity);
 container.bind<Function>(dbEntitiesBindingId).toFunction(LyricsHistoryEntity);
 container.bind<Function>(dbEntitiesBindingId).toFunction(ProjectEntity);
+container.bind<Function>(dbEntitiesBindingId).toFunction(ProjectUserEntity);
+container.bind<Function>(dbEntitiesBindingId).toFunction(ProjectHistoryEntity);
 container.bind<Function>(dbEntitiesBindingId).toFunction(SongEntity);
 container.bind<Function>(dbEntitiesBindingId).toFunction(TrackEntity);
 container.bind<Function>(dbEntitiesBindingId).toFunction(TrackHistoryEntity);
@@ -50,9 +59,12 @@ container
 
 // db access for tables
 container.bind<DbAccess>(DbAccess).toSelf();
+container.bind<InfoAccess>(InfoAccess).toSelf();
 container.bind<LyricsAccess>(LyricsAccess).toSelf();
 container.bind<LyricsHistoryAccess>(LyricsHistoryAccess).toSelf();
 container.bind<ProjectAccess>(ProjectAccess).toSelf();
+container.bind<ProjectUserAccess>(ProjectUserAccess).toSelf();
+container.bind<ProjectHistoryAccess>(ProjectHistoryAccess).toSelf();
 container.bind<SongAccess>(SongAccess).toSelf();
 container.bind<TrackAccess>(TrackAccess).toSelf();
 container.bind<TrackHistoryAccess>(TrackHistoryAccess).toSelf();

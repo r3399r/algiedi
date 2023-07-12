@@ -15,7 +15,7 @@ echo ===========================================================================
 # port=$(aws cloudformation list-exports --query "Exports[?Name=='$project-$env-db-port'].Value" --no-paginate --output text)
 # user=$(aws cloudformation list-exports --query "Exports[?Name=='$project-$env-db-username'].Value" --no-paginate --output text)
 # pwd=$(aws ssm get-parameter --name $project-$env-db-pwd | jq .Parameter.Value | sed -e 's/^"//' -e 's/"$//')
-# mysql --host=$host --user=$user --password=$pwd --database=$project < deploy.sql
+# mysqlsh --host=$host --user=$user --password=$pwd --database=$project < deploy.sql
 # echo ====================================================================================
 
 echo deploy backend AWS...

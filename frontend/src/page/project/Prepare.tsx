@@ -1,8 +1,9 @@
 import classNames from 'classnames';
-import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { ChangeEvent, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from 'src/component/Button';
-import { DetailedCreation, DetailedProject } from 'src/model/backend/Project';
+import { Role } from 'src/model/backend/constant/Project';
+import { DetailedProject } from 'src/model/backend/Project';
 import { RootState } from 'src/redux/store';
 import { openFailSnackbar } from 'src/redux/uiSlice';
 import { startProject, updateCover, updateProject } from 'src/service/ProjectService';
@@ -19,9 +20,6 @@ const Prepare = ({ project, doRefresh }: Props) => {
   const dispatch = useDispatch();
   const { id: userId } = useSelector((root: RootState) => root.me);
   const coverInputRef = useRef<HTMLInputElement>(null);
-  const [mainTrack, setMainTrack] = useState<DetailedCreation>();
-  const [mainLyrics, setMainLyrics] = useState<DetailedCreation>();
-  const [inspiredList, setInspiredList] = useState<DetailedCreation[]>();
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [editName, setEditName] = useState<string>('');
   const [editDescription, setEditDescription] = useState<string>('');
@@ -31,13 +29,10 @@ const Prepare = ({ project, doRefresh }: Props) => {
   const [editCaption, setEditCaption] = useState<string>('');
   const [isStartModalOpen, setIsStartModalOpen] = useState<boolean>(false);
 
-  const mainCreation = useMemo(() => mainLyrics || mainTrack, [mainLyrics, mainTrack]);
-
-  useEffect(() => {
-    if (project.mainTrack) setMainTrack(project.mainTrack);
-    if (project.mainLyrics) setMainLyrics(project.mainLyrics);
-    setInspiredList(project.inspiration);
-  }, [project]);
+  const ownerCreation = useMemo(
+    () => project.collaborators.find((v) => v.role === Role.Owner),
+    [project],
+  );
 
   const onSave = () => {
     updateProject(project.id, {
@@ -61,7 +56,7 @@ const Prepare = ({ project, doRefresh }: Props) => {
       .catch((err) => dispatch(openFailSnackbar(err)));
   };
 
-  if (mainCreation === undefined || inspiredList === undefined) return <></>;
+  if (ownerCreation === undefined) return <></>;
 
   return (
     <>
@@ -78,17 +73,17 @@ const Prepare = ({ project, doRefresh }: Props) => {
                     onChange={(e) => setEditName(e.target.value)}
                   />
                 ) : (
-                  <div>{mainCreation.name}</div>
+                  <div>{project.name}</div>
                 )}
               </div>
               <div
                 className={classNames('w-1/2', {
-                  'cursor-pointer': mainCreation.userId === userId,
+                  'cursor-pointer': ownerCreation.user.id === userId,
                 })}
                 onClick={() => coverInputRef.current?.click()}
               >
-                {mainCreation.coverFileUrl ? (
-                  <img src={mainCreation.coverFileUrl} />
+                {project.coverFileUrl ? (
+                  <img src={project.coverFileUrl} />
                 ) : (
                   <div className="bg-gray-400 h-8" />
                 )}
@@ -97,23 +92,23 @@ const Prepare = ({ project, doRefresh }: Props) => {
             <div className="border-[#707070] bg-white border-[1px] border-solid rounded-[30px] p-4">
               <div>
                 <div className="flex justify-end">
-                  {mainCreation.userId === userId && !isEdit && (
+                  {ownerCreation.user.id === userId && !isEdit && (
                     <div
                       className="cursor-pointer"
                       onClick={() => {
                         setIsEdit(!isEdit);
-                        setEditName(mainCreation.name);
-                        setEditDescription(mainCreation.description);
-                        setEditTheme(mainCreation.theme);
-                        setEditGenre(mainCreation.genre);
-                        setEditLanguage(mainCreation.language);
-                        setEditCaption(mainCreation.caption);
+                        setEditName(project.name ?? '');
+                        setEditDescription(project.description ?? '');
+                        setEditTheme(project.theme ?? '');
+                        setEditGenre(project.genre ?? '');
+                        setEditLanguage(project.language ?? '');
+                        setEditCaption(project.caption ?? '');
                       }}
                     >
                       Edit
                     </div>
                   )}
-                  {mainCreation.userId === userId && isEdit && (
+                  {ownerCreation.user.id === userId && isEdit && (
                     <div className="flex gap-2">
                       <div
                         className="cursor-pointer"
@@ -143,7 +138,7 @@ const Prepare = ({ project, doRefresh }: Props) => {
                       onChange={(e) => setEditDescription(e.target.value)}
                     />
                   ) : (
-                    <div className="whitespace-pre">{mainCreation.description}</div>
+                    <div className="whitespace-pre">{project.description}</div>
                   )}
                 </div>
                 <div className="flex gap-1">
@@ -155,7 +150,7 @@ const Prepare = ({ project, doRefresh }: Props) => {
                       onChange={(e) => setEditTheme(e.target.value)}
                     />
                   ) : (
-                    <div>{mainCreation.theme}</div>
+                    <div>{project.theme}</div>
                   )}
                 </div>
                 <div className="flex gap-1">
@@ -167,7 +162,7 @@ const Prepare = ({ project, doRefresh }: Props) => {
                       onChange={(e) => setEditGenre(e.target.value)}
                     />
                   ) : (
-                    <div>{mainCreation.genre}</div>
+                    <div>{project.genre}</div>
                   )}
                 </div>
                 <div className="flex gap-1">
@@ -179,7 +174,7 @@ const Prepare = ({ project, doRefresh }: Props) => {
                       onChange={(e) => setEditLanguage(e.target.value)}
                     />
                   ) : (
-                    <div>{mainCreation.language}</div>
+                    <div>{project.language}</div>
                   )}
                 </div>
                 <div className="flex gap-1">
@@ -191,22 +186,24 @@ const Prepare = ({ project, doRefresh }: Props) => {
                       onChange={(e) => setEditCaption(e.target.value)}
                     />
                   ) : (
-                    <div>{mainCreation.caption}</div>
+                    <div>{project.caption}</div>
                   )}
                 </div>
               </div>
             </div>
+            <Initiator project={project} doRefresh={doRefresh} />
           </div>
           <div className="w-1/2">
-            <Initiator track={mainTrack} lyrics={mainLyrics} doRefresh={doRefresh} />
-            <Inspired mainCreation={mainCreation} creations={inspiredList} doRefresh={doRefresh} />
+            <Inspired project={project} doRefresh={doRefresh} />
           </div>
         </div>
-        <div className="text-right mt-4">
-          <Button onClick={() => setIsStartModalOpen(true)}>Start Project</Button>
-        </div>
+        {ownerCreation.user.id === userId && (
+          <div className="text-right mt-4">
+            <Button onClick={() => setIsStartModalOpen(true)}>Start Project</Button>
+          </div>
+        )}
       </div>
-      {mainCreation.userId === userId && (
+      {ownerCreation.user.id === userId && (
         <input
           type="file"
           onChange={(e: ChangeEvent<HTMLInputElement>) => {

@@ -43,6 +43,14 @@ export class ExploreService {
   public async getExploreById(id: string): Promise<GetExploreIdResponse> {
     const creation = await this.viewCreationExploreAccess.findOneByIdOrFail(id);
     const user = await this.userAccess.findOneByIdOrFail(creation.userId);
+    const inspired = creation.inspiredId
+      ? await this.viewCreationExploreAccess.findOneByIdOrFail(
+          creation.inspiredId
+        )
+      : null;
+    const inspiration = await this.viewCreationExploreAccess.find({
+      where: { inspiredId: id },
+    });
 
     return {
       ...creation,
@@ -50,6 +58,20 @@ export class ExploreService {
       tabFileUrl: this.awsService.getS3SignedUrl(creation.tabFileUri),
       coverFileUrl: this.awsService.getS3SignedUrl(creation.coverFileUri),
       user,
+      inspired: inspired
+        ? {
+            ...inspired,
+            fileUrl: this.awsService.getS3SignedUrl(inspired.fileUri),
+            tabFileUrl: this.awsService.getS3SignedUrl(inspired.tabFileUri),
+            coverFileUrl: this.awsService.getS3SignedUrl(inspired.coverFileUri),
+          }
+        : null,
+      inspiration: inspiration.map((v) => ({
+        ...v,
+        fileUrl: this.awsService.getS3SignedUrl(v.fileUri),
+        tabFileUrl: this.awsService.getS3SignedUrl(v.tabFileUri),
+        coverFileUrl: this.awsService.getS3SignedUrl(v.coverFileUri),
+      })),
     };
   }
 }

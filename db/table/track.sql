@@ -1,20 +1,13 @@
 CREATE TABLE IF NOT EXISTS track (
 	id VARCHAR(36) NOT NULL,
 	user_id VARCHAR(36) NOT NULL,
-	name VARCHAR(255) NOT NULL,
-	description VARCHAR(255) NOT NULL,
-	theme VARCHAR(255) NOT NULL,
-	genre VARCHAR(255) NOT NULL,
-	language VARCHAR(255) NOT NULL,
-	caption VARCHAR(255) NOT NULL,
-	cover_file_uri VARCHAR(255) NULL,
-	project_id VARCHAR(36) NOT NULL,
-	is_original BOOLEAN NOT NULL,
+	info_id VARCHAR(36) NULL,
+	project_id VARCHAR(36) NULL,
 	inspired_id VARCHAR(36) NULL,
-	status VARCHAR(255) NOT NULL,
 	created_at TIMESTAMP NULL,
 	updated_at TIMESTAMP NULL,
 	PRIMARY KEY (id ASC),
 	FOREIGN KEY (project_id) REFERENCES project(id),
-	FOREIGN KEY (user_id) REFERENCES user(id)
+	FOREIGN KEY (user_id) REFERENCES user(id),
+	FOREIGN KEY (info_id) REFERENCES info(id)
 );
