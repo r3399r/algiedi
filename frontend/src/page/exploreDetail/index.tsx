@@ -32,6 +32,22 @@ const ExploreDetail = () => {
           <div>Publish Date: {format(new Date(creation.createdAt ?? ''), 'yyyy.MM.dd')}</div>
         </div>
       </div>
+      <div className="p-10">
+        {creation.fileUrl && <audio src={creation.fileUrl ?? undefined} controls />}
+        {creation.tabFileUrl && (
+          <div className="border-[1px] border-black w-fit rounded p-1 mt-2">
+            <a href={creation.tabFileUrl} target="_blank" rel="noreferrer">
+              download tab
+            </a>
+          </div>
+        )}
+        {creation.lyricsText && (
+          <>
+            <div className="font-bold">Lyrics</div>
+            <div className="whitespace-pre">{creation.lyricsText}</div>
+          </>
+        )}
+      </div>
       <div className="flex p-10">
         <div className="w-1/2 flex gap-5">
           <img src={IcProfile} />

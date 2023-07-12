@@ -38,7 +38,7 @@ from track t
             join (
                 select track_id,
                     MAX(created_at) as latest_created_at
-                from track_history
+                from public_track
                 GROUP by track_id
             ) tmp on pt.track_id = tmp.track_id
             and pt.created_at = tmp.latest_created_at
