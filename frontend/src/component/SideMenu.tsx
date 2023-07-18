@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Page } from 'src/constant/Page';
 import IcProfile from 'src/image/ic-profile.svg';
 import Logo from 'src/image/logo.svg';
@@ -11,19 +11,20 @@ import Divider from './Divider';
 
 const SideMenu = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { username } = useSelector((rootState: RootState) => rootState.me);
 
   useEffect(() => {
-    loadProfileData();
-  }, []);
+    if (location.pathname !== Page.Profile) loadProfileData();
+  }, [location.pathname]);
 
   return (
-    <div className="h-screen w-[256px] box-border bg-[#2d2d2d] text-white overflow-y-auto">
+    <div className="h-screen w-[256px] box-border bg-dark text-white overflow-y-auto">
       <div className="px-4 py-2">
         <img src={Logo} className="cursor-pointer" onClick={() => navigate(Page.Home)} />
       </div>
       <div
-        className="flex gap-4 items-center px-4 py-2 cursor-pointer hover:bg-gray-500"
+        className="flex gap-4 items-center px-4 py-2 cursor-pointer hover:bg-grey"
         onClick={() => navigate(Page.Profile)}
       >
         <img src={IcProfile} />
@@ -31,33 +32,30 @@ const SideMenu = () => {
       </div>
       <Divider className="bg-gray-600" />
       <div
-        className="px-4 py-2 cursor-pointer hover:bg-gray-500"
+        className="px-4 py-2 cursor-pointer hover:bg-grey"
         onClick={() => navigate(Page.Overall)}
       >
         Overall
       </div>
       <div
-        className="px-4 py-2 cursor-pointer hover:bg-gray-500"
+        className="px-4 py-2 cursor-pointer hover:bg-grey"
         onClick={() => navigate(Page.Project)}
       >
         Project
       </div>
-      <div
-        className="px-4 py-2 cursor-pointer hover:bg-gray-500"
-        onClick={() => navigate(Page.Upload)}
-      >
+      <div className="px-4 py-2 cursor-pointer hover:bg-grey" onClick={() => navigate(Page.Upload)}>
         Upload
       </div>
-      <div className="px-4 py-2 cursor-pointer hover:bg-gray-500">Practice Room</div>
-      <div className="px-4 py-2 cursor-pointer hover:bg-gray-500">Notifications</div>
-      <div className="px-4 py-2 cursor-pointer hover:bg-gray-500">Explore</div>
+      <div className="px-4 py-2 cursor-pointer hover:bg-grey">Practice Room</div>
+      <div className="px-4 py-2 cursor-pointer hover:bg-grey">Notifications</div>
+      <div className="px-4 py-2 cursor-pointer hover:bg-grey">Explore</div>
       <Divider className="bg-gray-600" />
-      <div className="px-4 py-2 cursor-pointer hover:bg-gray-500">GROUPS</div>
-      <div className="px-4 py-2 cursor-pointer hover:bg-gray-500">Lyrics</div>
-      <div className="px-4 py-2 cursor-pointer hover:bg-gray-500">Music</div>
-      <div className="px-4 py-2 cursor-pointer hover:bg-gray-500">Add Group</div>
+      <div className="px-4 py-2 cursor-pointer hover:bg-grey">GROUPS</div>
+      <div className="px-4 py-2 cursor-pointer hover:bg-grey">Lyrics</div>
+      <div className="px-4 py-2 cursor-pointer hover:bg-grey">Music</div>
+      <div className="px-4 py-2 cursor-pointer hover:bg-grey">Add Group</div>
       <Divider className="bg-gray-600" />
-      <div className="px-4 py-2 cursor-pointer hover:bg-gray-500" onClick={logout}>
+      <div className="px-4 py-2 cursor-pointer hover:bg-grey" onClick={logout}>
         Sign out
       </div>
     </div>

@@ -2,11 +2,9 @@ import { Controller, useFormContext } from 'react-hook-form';
 import Input, { Props as InputProps } from './Input';
 
 /**
- * This component should be put inside Form component:
- * <Form methods={methods} onSubmit={onSubmit}>
- *   <FormInput name="a" />
- * </Form>
- * */
+ * usage note:
+ * Please see Form.tsx
+ */
 
 type Props = InputProps & {
   name: string;
@@ -33,7 +31,7 @@ const FormInput = ({
       control={control}
       name={name}
       defaultValue={defaultValue ?? ''}
-      rules={{ required: required === true ? 'Required' : undefined, minLength, maxLength }}
+      rules={{ required, minLength, maxLength }}
       render={({ field }) => (
         <Input {...field} {...props} error={errors[name]?.message?.toString() || !!errors[name]} />
       )}

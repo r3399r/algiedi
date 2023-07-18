@@ -61,16 +61,18 @@ const ContactUs = () => {
           <Form methods={methods} onSubmit={onSubmit} className="w-full sm:w-1/2 px-5">
             <div className="flex gap-1">
               <div className="w-1/2">
-                <FormInput name="firstName" placeholder="First name" required />
+                <FormInput name="firstName" label="First name" required />
               </div>
               <div className="w-1/2">
-                <FormInput name="surname" placeholder="Surname" required />
+                <FormInput name="surname" label="Surname" required />
               </div>
             </div>
-            <FormInput className="my-5 w-full" name="email" placeholder="Email" required />
+            <div className="my-5">
+              <FormInput name="email" label="Email" required />
+            </div>
             <FormTextarea name="message" placeholder="Message..." required />
             <div className="text-center mt-5">
-              <Button appearance="border" type="submit">
+              <Button color="transparent" type="submit">
                 Send
               </Button>
             </div>

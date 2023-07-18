@@ -38,12 +38,7 @@ const Lyrics = ({ defaultInspiredId, inspiration }: Props) => {
       <Form methods={methods} onSubmit={onSubmit}>
         <div className="flex gap-6">
           <div className="w-3/5">
-            <FormInput
-              name="name"
-              divClassName="mb-4"
-              placeholder="Name of your creation"
-              required
-            />
+            <FormInput name="name" placeholder="Name of your creation" required />
             <FormTextarea
               name="description"
               className="h-[100px]"
@@ -63,7 +58,6 @@ const Lyrics = ({ defaultInspiredId, inspiration }: Props) => {
           <div className="flex items-center gap-2 mb-4 w-3/5">
             <Input
               placeholder="Select a cover photo (jpg.)"
-              divClassName="w-3/5"
               value={coverFile?.name ?? ''}
               onClick={() => coverInputRef.current?.click()}
             />

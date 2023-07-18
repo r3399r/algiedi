@@ -29,16 +29,10 @@ const AuthForget = () => {
           className="max-w-[1000px] mx-auto rounded-[30px] bg-[#f5f5f5] p-12"
         >
           <div className="text-[#8ea1d0] font-bold text-[40px] text-center">Reset password</div>
-          <div className="text-[#2d2d2d] text-center">
+          <div className="text-[#2d2d2d] text-center mb-5">
             Enter your email address, we will send you an email to reset the password.
           </div>
-          <FormInput
-            name="email"
-            className="mt-5"
-            placeholder="Email"
-            appearance="underline"
-            required
-          />
+          <FormInput name="email" label="Email" required autoFocus />
           <div className="text-center mt-10">
             <Button type="submit">Send</Button>
           </div>

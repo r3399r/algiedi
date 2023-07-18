@@ -1,20 +1,26 @@
 import classNames from 'classnames';
 import { ButtonHTMLAttributes } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
-  appearance?: 'primary' | 'secondary' | 'border';
+  color?: 'blue' | 'purple' | 'transparent';
+  size?: 's' | 'm' | 'l';
 };
 
-const Button = ({ appearance = 'primary', className, ...props }: Props) => (
+const Button = ({ color = 'blue', size = 'l', className, ...props }: Props) => (
   <button
-    className={classNames('rounded-[37px] px-10 py-4 text-[14px] outline-none', className, {
-      'bg-[#00c3ff] text-white hover:bg-[#0090ff] disabled:bg-blue-100 disabled:text-opacity-40':
-        appearance === 'primary',
-      'bg-[#4346E1] text-white disabled:bg-purple-100 disabled:text-opacity-30':
-        appearance === 'secondary',
-      'border-[1px] border-solid border-black text-black bg-transparent hover:bg-[#00c3ff] hover:border-[#00c3ff] hover:text-white disabled:bg-white disabled:border-black disabled:text-black disabled:opacity-30':
-        appearance === 'border',
-    })}
+    className={twMerge(
+      classNames('rounded-[36px] outline-none leading-[1.5]', {
+        'bg-blue/70 hover:bg-blue/80 active:bg-blue text-white': color === 'blue',
+        'bg-purple/70 hover:bg-purple/80 active:bg-purple text-white': color === 'purple',
+        'border border-solid border-dark bg-transparent hover:bg-grey active:bg-black/30':
+          color === 'transparent',
+        'text-[20px] px-5 py-[10px]': size === 'l',
+        'text-[16px] px-4 py-2': size === 'm',
+        'text-[14px] px-3 py-1': size === 's',
+      }),
+      className,
+    )}
     type="button"
     {...props}
   />

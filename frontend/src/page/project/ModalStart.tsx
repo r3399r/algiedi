@@ -12,7 +12,7 @@ const ModalStart = ({ open, handleClose, onStart }: Props) => (
     <div>
       <div>Are you sure you want to start this project?</div>
       <Button onClick={onStart}>Submit</Button>
-      <Button appearance="secondary" onClick={handleClose}>
+      <Button color="purple" onClick={handleClose}>
         Cancel
       </Button>
     </div>

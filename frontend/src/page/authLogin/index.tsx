@@ -57,14 +57,12 @@ const AuthLogin = () => {
                 <div>Sign in with Google</div>
               </div>
             </div>
-            <FormInput name="email" className="mt-5" placeholder="Email" appearance="underline" />
-            <FormInput
-              name="password"
-              className="mt-5"
-              placeholder="Password"
-              type="password"
-              appearance="underline"
-            />
+            <div className="mt-5">
+              <FormInput name="email" label="Email" required autoFocus />
+            </div>
+            <div className="mt-5">
+              <FormInput name="password" label="Password" type="password" required />
+            </div>
             <div className="flex justify-end mt-5 text-[#7ba0ff]">
               <div className="cursor-pointer" onClick={() => navigate(Page.Forget)}>
                 Forget Password?

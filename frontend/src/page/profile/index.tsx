@@ -1,6 +1,8 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import Button from 'src/component/Button';
 import Checkbox from 'src/component/Checkbox';
+import Input from 'src/component/Input';
 import IcFacebook from 'src/image/ic-facebook.svg';
 import IcInstagram from 'src/image/ic-instagram.svg';
 import IcProfile from 'src/image/ic-profile.svg';
@@ -15,62 +17,50 @@ import { editProfile, loadProfileData } from 'src/service/ProfileService';
 
 const Profile = () => {
   const dispatch = useDispatch();
-  const {
-    role,
-    username,
-    email,
-    language,
-    bio,
-    age,
-    tag,
-    facebook,
-    instagram,
-    youtube,
-    soundcloud,
-  } = useSelector((rootState: RootState) => rootState.me);
+  const { username, email } = useSelector((rootState: RootState) => rootState.me);
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [refresh, setRefresh] = useState<boolean>(false);
-  const [editRole, setEditRole] = useState<string[]>([]);
-  const [editAge, setEditAge] = useState<string>('');
-  const [editLang, setEditLang] = useState<string[]>([]);
-  const [editBio, setEditBio] = useState<string>('');
-  const [editTag, setEditTag] = useState<string[]>([]);
-  const [editFacebook, setEditFacebook] = useState<string>('');
-  const [editInstagram, setEditInstagram] = useState<string>('');
-  const [editYoutube, setEditYoutube] = useState<string>('');
-  const [editSoundcloud, setEditSoundcloud] = useState<string>('');
+  const [role, setRole] = useState<string[]>([]);
+  const [age, setAge] = useState<string>('');
+  const [language, setLanguage] = useState<string[]>([]);
+  const [bio, setBio] = useState<string>('');
+  const [tag, setTag] = useState<string[]>([]);
+  const [facebook, setFacebook] = useState<string>('');
+  const [instagram, setInstagram] = useState<string>('');
+  const [youtube, setYoutube] = useState<string>('');
+  const [soundcloud, setSoundcloud] = useState<string>('');
 
   useEffect(() => {
-    loadProfileData();
+    loadProfileData().then((res) => {
+      setRole(res.role);
+      setAge(res.age);
+      setLanguage(res.language);
+      setBio(res.bio);
+      setTag(res.tag);
+      setFacebook(res.facebook);
+      setInstagram(res.instagram);
+      setYoutube(res.youtube);
+      setSoundcloud(res.soundcloud);
+    });
   }, [refresh]);
 
   const onRoleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.checked) setEditRole([...editRole, event.target.name]);
-    else setEditRole(editRole.filter((v) => v !== event.target.name));
+    if (event.target.checked) setRole([...role, event.target.name]);
+    else setRole(role.filter((v) => v !== event.target.name));
   };
 
   const onLangChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.checked) setEditLang([...editLang, event.target.name]);
-    else setEditLang(editLang.filter((v) => v !== event.target.name));
+    if (event.target.checked) setLanguage([...language, event.target.name]);
+    else setLanguage(language.filter((v) => v !== event.target.name));
   };
 
   const onTagChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.checked) setEditTag([...editTag, event.target.name]);
-    else setEditTag(editTag.filter((v) => v !== event.target.name));
+    if (event.target.checked) setTag([...tag, event.target.name]);
+    else setTag(tag.filter((v) => v !== event.target.name));
   };
 
   const onSave = () => {
-    editProfile(
-      editRole,
-      editAge,
-      editLang,
-      editBio,
-      editTag,
-      editFacebook,
-      editInstagram,
-      editYoutube,
-      editSoundcloud,
-    )
+    editProfile(role, age, language, bio, tag, facebook, instagram, youtube, soundcloud)
       .then(() => {
         dispatch(openSuccessSnackbar('Save Successfully'));
         setRefresh(!refresh);
@@ -80,24 +70,24 @@ const Profile = () => {
 
   return (
     <>
-      <div className="text-[20px]">My profile</div>
+      <div className="text-[20px] font-bold">My profile</div>
       <div className="text-[14px] text-[#a7a7a7]">{role.join('/')}</div>
       <div className="mt-5 flex gap-4">
         <div className="text-[#4346e1] border-b-[1px] border-b-[#4346e1]">Basic information</div>
         <div>Exhibits</div>
         <div>Settings</div>
       </div>
-      <div className="flex my-5 gap-1 justify-between">
+      <div className="flex my-5 gap-1 justify-between items-center">
         <div className="flex items-center gap-6">
           <img src={IcProfile} />
           <div>
             <div className="text-[20px] font-bold">{username}</div>
             {isEdit ? (
-              <div className="border-[1px] border-[#c2c2c2] rounded-[20px] h-[21px] px-2 text-[10px] flex gap-2">
+              <div className="flex gap-2">
                 {['Composer', 'Lyricist', 'Singer', 'Producer'].map((v) => (
                   <Checkbox
                     key={v}
-                    checked={editRole.includes(v)}
+                    checked={role.includes(v)}
                     name={v}
                     label={v}
                     onChange={onRoleChange}
@@ -109,52 +99,44 @@ const Profile = () => {
             )}
           </div>
         </div>
-        <div
-          className="cursor-pointer"
+        <Button
+          color="purple"
+          size="s"
           onClick={() => {
             setIsEdit(!isEdit);
             if (isEdit) onSave();
-            else {
-              setEditRole(role);
-              setEditAge(age ?? '');
-              setEditLang(language);
-              setEditBio(bio ?? '');
-              setEditTag(tag);
-              setEditFacebook(facebook ?? '');
-              setEditInstagram(instagram ?? '');
-              setEditYoutube(youtube ?? '');
-              setEditSoundcloud(soundcloud ?? '');
-            }
           }}
         >
           {isEdit ? 'Save' : 'Edit'}
+        </Button>
+      </div>
+      <div className="flex h-[40px] items-center">
+        <div className="w-[150px] text-dark">Email</div>
+        <div className="flex-1">{email}</div>
+      </div>
+      <div className="flex h-[40px] items-center">
+        <div className="w-[150px] text-dark">Age</div>
+        <div className="flex-1">
+          {isEdit ? (
+            <Input
+              value={age}
+              disabled={!isEdit}
+              onChange={(e) => setAge(e.target.value)}
+              type="number"
+            />
+          ) : (
+            <div>{age}</div>
+          )}
         </div>
       </div>
-      <div className="flex">
-        <div className="w-[150px] text-[#2d2d2d]">Email</div>
-        <div>{email}</div>
-      </div>
-      <div className="flex">
-        <div className="w-[150px] text-[#2d2d2d]">Age</div>
+      <div className="flex h-[40px] items-center">
+        <div className="w-[150px] text-dark">Language</div>
         {isEdit ? (
-          <input
-            className="border-[1px] border-[#c2c2c2] bg-[#eaeaea] rounded-[20px] h-[21px] w-[300px] px-2 text-[10px]"
-            value={editAge}
-            onChange={(e) => setEditAge(e.target.value)}
-            type="number"
-          />
-        ) : (
-          <div>{age}</div>
-        )}
-      </div>
-      <div className="flex">
-        <div className="w-[150px] text-[#2d2d2d]">Language</div>
-        {isEdit ? (
-          <div className="border-[1px] border-[#c2c2c2] rounded-[20px] h-[21px] px-2 text-[10px] flex gap-2">
+          <div className="flex gap-2">
             {['Cantonese', 'Mandarin', 'English', 'Japanese'].map((v) => (
               <Checkbox
                 key={v}
-                checked={editLang.includes(v)}
+                checked={language.includes(v)}
                 name={v}
                 label={v}
                 onChange={onLangChange}
@@ -165,26 +147,24 @@ const Profile = () => {
           <div>{language.join()}</div>
         )}
       </div>
-      <div className="flex">
-        <div className="w-[150px] text-[#2d2d2d]">Bio</div>
-        {isEdit ? (
-          <textarea
-            className="border-[1px] border-[#c2c2c2] bg-[#eaeaea] rounded-[20px] h-[100px] w-[300px] px-2 text-[10px]"
-            value={editBio}
-            onChange={(e) => setEditBio(e.target.value)}
-          />
-        ) : (
-          <div className="whitespace-pre-line">{bio}</div>
-        )}
+      <div className="flex h-[40px] items-center">
+        <div className="w-[150px] text-dark">Bio</div>
+        <div className="flex-1">
+          {isEdit ? (
+            <Input value={bio} disabled={!isEdit} onChange={(e) => setBio(e.target.value)} />
+          ) : (
+            <div>{bio}</div>
+          )}
+        </div>
       </div>
-      <div className="flex">
-        <div className="w-[150px] text-[#2d2d2d]">Music tags</div>
+      <div className="flex h-[40px] items-center">
+        <div className="w-[150px] text-dark">Music tags</div>
         {isEdit ? (
-          <div className="border-[1px] border-[#c2c2c2] rounded-[20px] h-[21px] px-2 text-[10px] flex gap-2">
+          <div className="flex gap-2">
             {['Pop', 'Rock', 'Electronics'].map((v) => (
               <Checkbox
                 key={v}
-                checked={editTag.includes(v)}
+                checked={tag.includes(v)}
                 name={v}
                 label={v}
                 onChange={onTagChange}
@@ -196,44 +176,48 @@ const Profile = () => {
         )}
       </div>
       <div className="flex">
-        <div className="w-[150px] text-[#2d2d2d]">Links</div>
+        <div className="w-[150px] text-dark leading-[40px]">Links</div>
         {isEdit ? (
-          <div>
+          <div className="flex-1">
             <div className="flex gap-3 items-center">
               <img src={IcFacebook} className="w-4" />
-              <input
-                className="border-[1px] border-[#c2c2c2] bg-[#eaeaea] rounded-[20px] h-[21px] w-[300px] px-2 text-[10px]"
-                placeholder="Enter a link"
-                value={editFacebook}
-                onChange={(e) => setEditFacebook(e.target.value)}
-              />
+              <div className="flex-1">
+                <Input
+                  placeholder="Enter a link"
+                  value={facebook}
+                  onChange={(e) => setFacebook(e.target.value)}
+                />
+              </div>
             </div>
             <div className="flex gap-3 items-center my-1">
               <img src={IcInstagram} className="w-4" />
-              <input
-                className="border-[1px] border-[#c2c2c2] bg-[#eaeaea] rounded-[20px] h-[21px] w-[300px] px-2 text-[10px]"
-                placeholder="Enter a link"
-                value={editInstagram}
-                onChange={(e) => setEditInstagram(e.target.value)}
-              />
+              <div className="flex-1">
+                <Input
+                  placeholder="Enter a link"
+                  value={instagram}
+                  onChange={(e) => setInstagram(e.target.value)}
+                />
+              </div>
             </div>
             <div className="flex gap-3 items-center my-1">
               <img src={IcYoutube} className="w-4" />
-              <input
-                className="border-[1px] border-[#c2c2c2] bg-[#eaeaea] rounded-[20px] h-[21px] w-[300px] px-2 text-[10px]"
-                placeholder="Enter a link"
-                value={editYoutube}
-                onChange={(e) => setEditYoutube(e.target.value)}
-              />
+              <div className="flex-1">
+                <Input
+                  placeholder="Enter a link"
+                  value={youtube}
+                  onChange={(e) => setYoutube(e.target.value)}
+                />
+              </div>
             </div>
             <div className="flex gap-3 items-center">
               <img src={IcSoundcloud} className="w-4" />
-              <input
-                className="border-[1px] border-[#c2c2c2] bg-[#eaeaea] rounded-[20px] h-[21px] w-[300px] px-2 text-[10px]"
-                placeholder="Enter a link"
-                value={editSoundcloud}
-                onChange={(e) => setEditSoundcloud(e.target.value)}
-              />
+              <div className="flex-1">
+                <Input
+                  placeholder="Enter a link"
+                  value={soundcloud}
+                  onChange={(e) => setSoundcloud(e.target.value)}
+                />
+              </div>
             </div>
           </div>
         ) : (

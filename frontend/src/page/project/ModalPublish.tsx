@@ -41,7 +41,7 @@ const ModalPublish = ({ open, handleClose, onPublish, project }: Props) => (
         // onLoadedMetadata={onLoadMetadata}
       />
       <Button onClick={onPublish}>Publish</Button>
-      <Button appearance="secondary" onClick={handleClose}>
+      <Button color="purple" onClick={handleClose}>
         Cancel
       </Button>
     </div>

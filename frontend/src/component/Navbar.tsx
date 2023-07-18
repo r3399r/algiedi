@@ -41,9 +41,7 @@ const Navbar = () => {
           >
             Contact Us
           </div>
-          <Button appearance="border" onClick={() => navigate(isLogin ? Page.Profile : Page.Login)}>
-            CREATE NOW
-          </Button>
+          <Button onClick={() => navigate(isLogin ? Page.Profile : Page.Login)}>Create Now</Button>
         </div>
         <div className="sm:hidden" onClick={() => setOpen(true)}>
           Menu

@@ -52,12 +52,7 @@ const Track = ({ defaultInspiredId, inspiration }: Props) => {
       <Form methods={methods} onSubmit={onSubmit}>
         <div className="flex gap-6">
           <div className="w-3/5">
-            <FormInput
-              name="name"
-              divClassName="mb-4"
-              placeholder="Name of your creation"
-              required
-            />
+            <FormInput name="name" placeholder="Name of your creation" required />
             <FormTextarea
               name="description"
               className="h-[240px]"
@@ -77,7 +72,6 @@ const Track = ({ defaultInspiredId, inspiration }: Props) => {
             <div className="flex items-center gap-2 mb-4">
               <Input
                 placeholder="*Select a file (mp3. or wav.)"
-                divClassName="w-3/5"
                 value={trackFile?.name ?? ''}
                 onClick={() => trackInputRef.current?.click()}
                 error={errorTrackFile}
@@ -87,7 +81,6 @@ const Track = ({ defaultInspiredId, inspiration }: Props) => {
             <div className="flex items-center gap-2 mb-4">
               <Input
                 placeholder="Select a 30 sec. tab file (pdf.)"
-                divClassName="w-3/5"
                 value={tabFile?.name ?? ''}
                 onClick={() => tabInputRef.current?.click()}
               />
@@ -96,7 +89,6 @@ const Track = ({ defaultInspiredId, inspiration }: Props) => {
             <div className="flex items-center gap-2">
               <Input
                 placeholder="Select a cover photo (jpg.)"
-                divClassName="w-3/5"
                 value={coverFile?.name ?? ''}
                 onClick={() => coverInputRef.current?.click()}
               />

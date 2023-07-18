@@ -1,35 +1,35 @@
 import meEndpoint from 'src/api/meEndpoint';
 import { setMe } from 'src/redux/meSlice';
-import { dispatch, getState } from 'src/redux/store';
+import { dispatch } from 'src/redux/store';
 import { finishWaiting, setLoadingProfile, startWaiting } from 'src/redux/uiSlice';
 
 const loadMe = async () => {
-  const isLoadingProfile = getState().ui.isLoadingProfile;
-  if (isLoadingProfile === true) return;
-
   try {
     dispatch(setLoadingProfile(true));
 
     const res = await meEndpoint.getMe();
     const user = res.data;
 
-    dispatch(
-      setMe({
-        id: user.id,
-        email: user.email,
-        username: user.username,
-        role: user.role === null || user.role === '' ? [] : user.role.split(','),
-        age: String(user.age ?? ''),
-        language: user.language === null || user.language === '' ? [] : user.language.split(','),
-        bio: user.bio ?? '',
-        tag: user.tag === null || user.tag === '' ? [] : user.tag.split(','),
-        facebook: user.facebook ?? '',
-        instagram: user.instagram ?? '',
-        youtube: user.youtube ?? '',
-        soundcloud: user.soundcloud ?? '',
-        lastProjectId: user.lastProjectId ?? undefined,
-      }),
-    );
+    const me = {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      role: user.role === null || user.role === '' ? [] : user.role.split(','),
+      age: String(user.age ?? ''),
+      language: user.language === null || user.language === '' ? [] : user.language.split(','),
+      bio: user.bio ?? '',
+      tag: user.tag === null || user.tag === '' ? [] : user.tag.split(','),
+      facebook: user.facebook ?? '',
+      instagram: user.instagram ?? '',
+      youtube: user.youtube ?? '',
+      soundcloud: user.soundcloud ?? '',
+      lastProjectId: user.lastProjectId ?? undefined,
+    };
+    dispatch(setMe(me));
+
+    return me;
+  } catch {
+    throw new Error('loadMe error');
   } finally {
     dispatch(setLoadingProfile(false));
   }
@@ -39,7 +39,7 @@ export const loadProfileData = async () => {
   try {
     dispatch(startWaiting());
 
-    await loadMe();
+    return await loadMe();
   } finally {
     dispatch(finishWaiting());
   }

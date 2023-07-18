@@ -1,79 +1,71 @@
 import classNames from 'classnames';
 import { ChangeEvent, forwardRef, InputHTMLAttributes, useState } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 export type Props = InputHTMLAttributes<HTMLInputElement> & {
   label?: string;
-  helper?: string;
+  hint?: string;
   error?: boolean | string;
+  asterisked?: boolean;
   regex?: RegExp;
-  startsWith?: string;
-  appearance?: 'outline' | 'underline';
-  divClassName?: string;
 };
 
 const Input = forwardRef<HTMLInputElement, Props>(
   (
     {
       label,
-      helper,
+      hint,
       error,
+      asterisked = false,
+      className,
       disabled,
+      autoComplete = 'off',
       onChange,
       regex,
-      defaultValue,
-      className,
-      divClassName,
-      startsWith,
-      appearance = 'outline',
       ...props
     },
     ref,
   ) => {
-    const [value, setValue] = useState<string>((defaultValue as string) ?? '');
+    const [value, setValue] = useState<string>();
     const onInput = (v: ChangeEvent<HTMLInputElement>) => {
-      const input = startsWith ? v.target.value.substring(startsWith.length) : v.target.value;
-      if (regex !== undefined && regex.test(input) === false) return;
-      setValue(input);
-      onChange && onChange({ ...v, target: { ...v.target, value: input } });
+      if (regex !== undefined && regex.test(v.target.value) === false) return;
+      setValue(v.target.value);
+      onChange && onChange(v);
     };
 
     return (
-      <div className={divClassName}>
+      <div>
         {label && (
-          <div
-            className={classNames('text-[14px] leading-normal text-navy-700 mb-[5px]', {
-              'opacity-30': disabled,
-            })}
-          >
+          <div className={'text-[14px] text-dark'}>
             {label}
+            {asterisked && <span className="text-red">*</span>}
           </div>
         )}
         <input
-          className={classNames('bg-transparent outline-none p-2 h-[40px] w-full', className, {
-            'rounded border-solid border-[1px] border-black placeholder:text-black':
-              appearance === 'outline',
-            'border-solid border-b-[1px] border-[#7ba0ff] placeholder:text-[#7ba0ff]':
-              appearance === 'underline',
-            'border-red-500': !!error,
-          })}
-          ref={ref}
+          className={twMerge(
+            `font-[inherit] box-border h-[40px] w-full 
+            text-[1em] text-dark bg-transparent border-0 border-solid border-b border-b-dark
+            py-[8px] px-0 focus:outline-none focus:border-b-blue
+            placeholder:text-grey-500`,
+            classNames({
+              'border-b-red': !!error,
+            }),
+            className,
+          )}
           disabled={disabled}
-          autoComplete="off"
-          value={`${startsWith ?? ''}${value}`}
+          autoComplete={autoComplete}
+          ref={ref}
+          value={value}
           onChange={onInput}
           {...props}
         />
-        {(typeof error === 'string' || helper) && (
-          <div className="mt-[5px]">
-            {typeof error === 'string' && (
-              <div className="text-red-500 text-[12px] leading-normal">{error}</div>
-            )}
-            {helper && <div className="text-black text-[12px] leading-normal">{helper}</div>}
-          </div>
-        )}
+        {typeof error === 'string' && <div className="text-[12px] text-red mt-[5px]">{error}</div>}
+        {hint && <div className="text-[12px] text-dark mt-[5px] whitespace-pre-wrap">{hint}</div>}
       </div>
     );
   },
 );
+
+Input.displayName = 'Input';
 
 export default Input;

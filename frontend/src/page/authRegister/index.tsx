@@ -60,38 +60,24 @@ const AuthRegister = () => {
                 <div>Sign in with Google</div>
               </div>
             </div>
-            <FormInput
-              name="email"
-              className="mt-5"
-              placeholder="Email"
-              appearance="underline"
-              required
-            />
-            <FormInput
-              name="password"
-              className="mt-5"
-              placeholder="Password"
-              type="password"
-              appearance="underline"
-              required
-              helper="At least 1 upper case charater, 1 lower case character, 1 number, and 8 characters"
-            />
-            <FormInput
-              name="confirmPassword"
-              className="mt-5"
-              placeholder="Confirm Password"
-              type="password"
-              appearance="underline"
-              required
-            />
-            <FormInput
-              name="userName"
-              className="mt-5"
-              placeholder="User Name"
-              type="text"
-              appearance="underline"
-              required
-            />
+            <div className="mt-5">
+              <FormInput name="email" label="Email" required />
+            </div>
+            <div className="mt-5">
+              <FormInput
+                name="password"
+                label="Password"
+                type="password"
+                required
+                hint="At least 1 upper case charater, 1 lower case character, 1 number, and 8 characters"
+              />
+            </div>
+            <div className="mt-5">
+              <FormInput name="confirmPassword" label="Confirm Password" type="password" required />
+            </div>
+            <div className="mt-5">
+              <FormInput name="userName" label="User Name" type="text" required />
+            </div>
             <div className="text-center mt-10">
               <Button type="submit">Sign up</Button>
             </div>

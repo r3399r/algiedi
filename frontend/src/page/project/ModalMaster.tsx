@@ -47,7 +47,6 @@ const ModalMaster = ({ open, handleClose, targetCreation, doRefresh }: Props) =>
         <div className="flex items-center gap-2 mb-4">
           <Input
             placeholder="*Select a file (mp3. or wav.)"
-            divClassName="w-3/5"
             value={trackFile?.name ?? ''}
             onClick={() => trackInputRef.current?.click()}
             error={errorTrackFile}
@@ -57,7 +56,6 @@ const ModalMaster = ({ open, handleClose, targetCreation, doRefresh }: Props) =>
         <div className="flex items-center gap-2 mb-4">
           <Input
             placeholder="Select a 30 sec. tab file (pdf.)"
-            divClassName="w-3/5"
             value={tabFile?.name ?? ''}
             onClick={() => tabInputRef.current?.click()}
           />

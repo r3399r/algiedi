@@ -29,8 +29,8 @@ const Snackbar = () => {
       autoHideDuration={5000}
     >
       <div
-        className={classnames('bg-blue-500 text-white w-screen p-4 text-center', {
-          'bg-red-500': snackbarType === 'fail',
+        className={classnames('bg-blue text-white w-screen p-4 text-center', {
+          'bg-red': snackbarType === 'fail',
         })}
       >
         {snackbarMessage}

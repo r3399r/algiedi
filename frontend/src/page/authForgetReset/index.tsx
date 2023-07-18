@@ -48,23 +48,15 @@ const AuthForgetReset = () => {
       >
         <div className="text-[#8ea1d0] font-bold text-[40px] text-center">Reset password</div>
         <div className="text-[#2d2d2d] text-center">Please enter your new password.</div>
-        <Input value={query.email} className="mt-5" appearance="underline" />
-        <FormInput
-          name="password"
-          className="mt-5"
-          placeholder="Password"
-          type="password"
-          appearance="underline"
-          required
-        />
-        <FormInput
-          name="confirmPassword"
-          className="mt-5"
-          placeholder="Confirm Password"
-          type="password"
-          appearance="underline"
-          required
-        />
+        <div className="mt-5">
+          <Input value={query.email} label="Email" />
+        </div>
+        <div className="mt-5">
+          <FormInput name="password" label="Password" type="password" required />
+        </div>
+        <div className="mt-5">
+          <FormInput name="confirmPassword" label="Confirm Password" type="password" required />
+        </div>
         <div className="text-center mt-10">
           <Button type="submit">Reset</Button>
         </div>
