@@ -51,14 +51,9 @@ const Track = ({ defaultInspiredId, inspiration }: Props) => {
     <>
       <Form methods={methods} onSubmit={onSubmit}>
         <div className="flex gap-6">
-          <div className="w-3/5">
-            <FormInput name="name" placeholder="Name of your creation" required />
-            <FormTextarea
-              name="description"
-              className="h-[240px]"
-              label="Song Description"
-              required
-            />
+          <div className="w-3/5 flex flex-col gap-4">
+            <FormInput name="name" label="Name" placeholder="Name of your creation" required />
+            <FormTextarea name="description" className="h-[240px]" label="Description" required />
           </div>
           <div className="w-2/5 flex flex-col gap-4">
             <FormInput name="theme" label="Theme" required />
@@ -70,29 +65,41 @@ const Track = ({ defaultInspiredId, inspiration }: Props) => {
         <div className="flex gap-6 mt-10">
           <div className="w-3/5">
             <div className="flex items-center gap-2 mb-4">
-              <Input
-                placeholder="*Select a file (mp3. or wav.)"
-                value={trackFile?.name ?? ''}
-                onClick={() => trackInputRef.current?.click()}
-                error={errorTrackFile}
-              />
-              <Button onClick={() => trackInputRef.current?.click()}>Browse...</Button>
+              <div className="flex-1">
+                <Input
+                  placeholder="*Select a file (mp3. or wav.)"
+                  value={trackFile?.name ?? ''}
+                  onClick={() => trackInputRef.current?.click()}
+                  error={errorTrackFile}
+                />
+              </div>
+              <Button size="m" color="purple" onClick={() => trackInputRef.current?.click()}>
+                Browse...
+              </Button>
             </div>
             <div className="flex items-center gap-2 mb-4">
-              <Input
-                placeholder="Select a 30 sec. tab file (pdf.)"
-                value={tabFile?.name ?? ''}
-                onClick={() => tabInputRef.current?.click()}
-              />
-              <Button onClick={() => tabInputRef.current?.click()}>Browse...</Button>
+              <div className="flex-1">
+                <Input
+                  placeholder="Select a 30 sec. tab file (pdf.)"
+                  value={tabFile?.name ?? ''}
+                  onClick={() => tabInputRef.current?.click()}
+                />
+              </div>
+              <Button size="m" color="purple" onClick={() => tabInputRef.current?.click()}>
+                Browse...
+              </Button>
             </div>
             <div className="flex items-center gap-2">
-              <Input
-                placeholder="Select a cover photo (jpg.)"
-                value={coverFile?.name ?? ''}
-                onClick={() => coverInputRef.current?.click()}
-              />
-              <Button onClick={() => coverInputRef.current?.click()}>Browse...</Button>
+              <div className="flex-1">
+                <Input
+                  placeholder="Select a cover photo (jpg.)"
+                  value={coverFile?.name ?? ''}
+                  onClick={() => coverInputRef.current?.click()}
+                />
+              </div>
+              <Button size="m" color="purple" onClick={() => coverInputRef.current?.click()}>
+                Browse...
+              </Button>
             </div>
           </div>
           <div className="w-2/5">

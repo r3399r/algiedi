@@ -37,14 +37,9 @@ const Lyrics = ({ defaultInspiredId, inspiration }: Props) => {
     <>
       <Form methods={methods} onSubmit={onSubmit}>
         <div className="flex gap-6">
-          <div className="w-3/5">
-            <FormInput name="name" placeholder="Name of your creation" required />
-            <FormTextarea
-              name="description"
-              className="h-[100px]"
-              label="Song Description"
-              required
-            />
+          <div className="w-3/5 flex flex-col gap-4">
+            <FormInput name="name" label="Name" placeholder="Name of your creation" required />
+            <FormTextarea name="description" className="h-[100px]" label="Description" required />
             <FormTextarea name="lyrics" className="h-[140px]" label="Lyrics" required />
           </div>
           <div className="w-2/5">
@@ -56,12 +51,16 @@ const Lyrics = ({ defaultInspiredId, inspiration }: Props) => {
         </div>
         <div className="flex gap-6 mt-10">
           <div className="flex items-center gap-2 mb-4 w-3/5">
-            <Input
-              placeholder="Select a cover photo (jpg.)"
-              value={coverFile?.name ?? ''}
-              onClick={() => coverInputRef.current?.click()}
-            />
-            <Button onClick={() => coverInputRef.current?.click()}>Browse...</Button>
+            <div className="flex-1">
+              <Input
+                placeholder="Select a cover photo (jpg.)"
+                value={coverFile?.name ?? ''}
+                onClick={() => coverInputRef.current?.click()}
+              />
+            </div>
+            <Button size="m" color="purple" onClick={() => coverInputRef.current?.click()}>
+              Browse...
+            </Button>
           </div>
           <div className="w-2/5">
             <Checkbox

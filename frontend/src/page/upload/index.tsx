@@ -25,7 +25,7 @@ const Upload = () => {
         <div className="flex gap-4 mb-6">
           <div
             className={classNames('cursor-pointer', {
-              'text-[#4346e1] border-b-[1px] border-b-[#4346e1]': tab === 'track',
+              'text-purple border-b-[1px] border-b-purple': tab === 'track',
             })}
             onClick={() => setTab('track')}
           >
@@ -33,7 +33,7 @@ const Upload = () => {
           </div>
           <div
             className={classNames('cursor-pointer', {
-              'text-[#4346e1] border-b-[1px] border-b-[#4346e1]': tab === 'lyrics',
+              'text-purple border-b-[1px] border-b-purple': tab === 'lyrics',
             })}
             onClick={() => setTab('lyrics')}
           >

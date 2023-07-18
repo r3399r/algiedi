@@ -16,9 +16,9 @@ const Overall = () => {
   return (
     <>
       <div className="text-[20px]">Overview</div>
-      <div className="text-gray-400">{projects?.length} pieces</div>
+      <div className="text-grey">{projects?.length} pieces</div>
       <div className="text-[20px] mt-10">Open</div>
-      <div className="text-gray-400">
+      <div className="text-grey">
         {projects?.filter((v) => v.status === Status.Created).length} creations
       </div>
       {projects
@@ -26,15 +26,15 @@ const Overall = () => {
         .map((v) => (
           <div
             key={v.id}
-            className="relative mt-1 rounded p-4 bg-gray-400 cursor-pointer bg-center"
+            className="relative mt-1 rounded-md p-4 bg-blue/70 cursor-pointer bg-center"
             style={{ backgroundImage: v.coverFileUrl ? `url(${v.coverFileUrl})` : '' }}
             onClick={() => navigate(Page.Project, { state: { id: v.id } })}
           >
-            <div className="p-2 bg-gray-50 w-fit rounded-lg bg-opacity-70">{v?.name}</div>
+            <div className="p-2 bg-grey/70 w-fit rounded-lg">{v?.name}</div>
           </div>
         ))}
       <div className="text-[20px] mt-10">Porjects in Progress</div>
-      <div className="text-gray-400">
+      <div className="text-grey">
         {projects?.filter((v) => v.status === Status.InProgress).length} projects
       </div>
       {projects
@@ -42,11 +42,11 @@ const Overall = () => {
         .map((v) => (
           <div
             key={v.id}
-            className="relative mt-1 rounded p-4 bg-gray-400 cursor-pointer bg-center"
+            className="relative mt-1 rounded-md p-4 bg-blue/70 cursor-pointer bg-center"
             style={{ backgroundImage: v.coverFileUrl ? `url(${v.coverFileUrl})` : '' }}
             onClick={() => navigate(Page.Project, { state: { id: v.id } })}
           >
-            <div className="p-2 bg-gray-50 w-fit rounded-lg bg-opacity-70">{v?.name}</div>
+            <div className="p-2 bg-grey/70 w-fit rounded-lg">{v?.name}</div>
           </div>
         ))}
     </>
