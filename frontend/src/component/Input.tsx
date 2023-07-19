@@ -43,9 +43,9 @@ const Input = forwardRef<HTMLInputElement, Props>(
         )}
         <input
           className={twMerge(
-            `font-[inherit] box-border h-[40px] w-full 
+            `font-[inherit] box-border w-full 
             text-[1em] text-dark bg-transparent border-0 border-solid border-b border-b-dark
-            py-[8px] px-0 focus:outline-none focus:border-b-blue
+            px-0 focus:outline-none focus:border-b-blue
             placeholder:text-grey-500`,
             classNames({
               'border-b-red': !!error,

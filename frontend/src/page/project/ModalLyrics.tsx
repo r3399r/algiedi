@@ -39,14 +39,16 @@ const ModalLyrics = ({ open, handleClose, targetLyrics, targetProjectId, doRefre
   return (
     <Modal open={open} handleClose={handleClose}>
       <div>
-        <div>lyrics</div>
+        <div className="font-bold text-2xl">Lyrics</div>
         <textarea
-          className="w-full border-[1px] border-black px-2 rounded"
+          className="w-full border border-black px-2 rounded h-[200px] my-2"
           value={lyrics}
           defaultValue={targetLyrics?.lyricsText ?? ''}
           onChange={(e) => setLyrics(e.target.value)}
         />
-        <Button onClick={onSubmit}>Submit</Button>
+        <div className="text-right">
+          <Button onClick={onSubmit}>Submit</Button>
+        </div>
       </div>
     </Modal>
   );

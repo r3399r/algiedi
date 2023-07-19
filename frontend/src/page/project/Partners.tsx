@@ -1,3 +1,6 @@
+import CancelIcon from '@mui/icons-material/Cancel';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
 import { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from 'src/component/Button';
@@ -26,18 +29,28 @@ const Partners = ({ project, doRefresh }: Props) => {
 
   return (
     <>
-      <div className="font-bold">Partners</div>
+      <div className="flex items-center justify-between">
+        <div className="font-bold text-xl">Partners</div>
+        <Button size="m" color="transparent" onClick={onReady}>
+          {user?.isReady ? 'Need more work' : 'Approve'}
+        </Button>
+      </div>
       <div className="flex items-end">
         {project.collaborators.map((v) => (
           <div key={v.id} className="w-fit px-4 py-2 flex flex-col items-center text-center">
-            {v.role === Role.Owner && <div>Owner</div>}
+            {v.role === Role.Owner && <StarBorderIcon />}
             <img src={IcProfile} />
             <div>{v.user.username}</div>
-            <div>{v.isReady ? 'READY' : 'NOT READY'}</div>
+            <div>
+              {v.isReady ? (
+                <CheckCircleIcon color="primary" classes={{ colorPrimary: '!text-green' }} />
+              ) : (
+                <CancelIcon color="primary" classes={{ colorPrimary: '!text-red' }} />
+              )}
+            </div>
           </div>
         ))}
       </div>
-      <Button onClick={onReady}>{user?.isReady ? 'Not Ready' : 'Ready'}</Button>
     </>
   );
 };

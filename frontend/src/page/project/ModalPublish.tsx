@@ -1,4 +1,8 @@
+import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import Button from 'src/component/Button';
+import Cover from 'src/component/Cover';
 import Modal from 'src/component/Modal';
 import { DetailedProject } from 'src/model/backend/Project';
 
@@ -13,37 +17,58 @@ const ModalPublish = ({ open, handleClose, onPublish, project }: Props) => (
   <Modal open={open} handleClose={handleClose}>
     <div>
       <div className="font-bold text-xl">
-        Please browse the file to upload, and check the content. Note that this action is
-        irreversible.
+        Please check the content. Note that this action is irreversible.
       </div>
-      <div>Cover File:</div>
-      <div>
-        {project.coverFileUrl ? (
-          <img src={project.coverFileUrl} />
-        ) : (
-          <div className="bg-gray-400 h-8" />
+      <Cover url={project.coverFileUrl} />
+      <div className="flex gap-2">
+        <div className="w-[100px] font-bold">Name</div>
+        <div>{project.name}</div>
+      </div>
+      <div className="flex gap-2">
+        <div className="w-[100px] font-bold">Description</div>
+        <div className="whitespace-pre">{project.description}</div>
+      </div>
+      <div className="flex gap-2">
+        <div className="w-[100px] font-bold">Theme</div>
+        <div>{project.theme}</div>
+      </div>
+      <div className="flex gap-2">
+        <div className="w-[100px] font-bold">Genre</div>
+        <div>{project.genre}</div>
+      </div>
+      <div className="flex gap-2">
+        <div className="w-[100px] font-bold">Language</div>
+        <div>{project.language}</div>
+      </div>
+      <div className="flex gap-2">
+        <div className="w-[100px] font-bold">Caption</div>
+        <div>{project.caption}</div>
+      </div>
+      <div className="flex items-center gap-2 my-2">
+        <audio src={project.song?.fileUrl ?? undefined} controls />
+        {project.song?.tabFileUrl && (
+          <DownloadForOfflineIcon
+            className="cursor-pointer"
+            onClick={() => window.open(project.song?.tabFileUrl ?? '', '_blank')}
+          />
         )}
       </div>
-      <div>Name: {project.name}</div>
-      <div className="whitespace-pre">
-        Description:
-        <br />
-        {project.description}
+      {project.song?.lyricsText && (
+        <div className="mb-4">
+          <Accordion disableGutters defaultExpanded sx={{ border: 0 }}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>Lyrics</AccordionSummary>
+            <AccordionDetails>
+              <div className="whitespace-pre">{project.song.lyricsText}</div>
+            </AccordionDetails>
+          </Accordion>
+        </div>
+      )}
+      <div className="flex gap-2 justify-center">
+        <Button onClick={onPublish}>Publish</Button>
+        <Button color="purple" onClick={handleClose}>
+          Cancel
+        </Button>
       </div>
-      <div>Theme: {project.theme}</div>
-      <div>Genre: {project.genre}</div>
-      <div>Language: {project.language}</div>
-      <div>Caption: {project.caption}</div>
-      <div className="whitespace-pre">Lyrics: {project.song?.lyricsText}</div>
-      <audio
-        src={project.song?.fileUrl ?? undefined}
-        controls
-        // onLoadedMetadata={onLoadMetadata}
-      />
-      <Button onClick={onPublish}>Publish</Button>
-      <Button color="purple" onClick={handleClose}>
-        Cancel
-      </Button>
     </div>
   </Modal>
 );

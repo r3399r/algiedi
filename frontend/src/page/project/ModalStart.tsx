@@ -10,11 +10,15 @@ type Props = {
 const ModalStart = ({ open, handleClose, onStart }: Props) => (
   <Modal open={open} handleClose={handleClose}>
     <div>
-      <div>Are you sure you want to start this project?</div>
-      <Button onClick={onStart}>Submit</Button>
-      <Button color="purple" onClick={handleClose}>
-        Cancel
-      </Button>
+      <div className="font-bold mb-4 text-xl">
+        Are you sure that you want to start this project?
+      </div>
+      <div className="flex justify-center gap-4">
+        <Button onClick={onStart}>Submit</Button>
+        <Button color="purple" onClick={handleClose}>
+          Cancel
+        </Button>
+      </div>
     </div>
   </Modal>
 );

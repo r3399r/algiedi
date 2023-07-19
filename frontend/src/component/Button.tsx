@@ -11,8 +11,10 @@ const Button = ({ color = 'blue', size = 'l', className, ...props }: Props) => (
   <button
     className={twMerge(
       classNames('rounded-[36px] outline-none leading-[1.5]', {
-        'bg-blue/70 hover:bg-blue/80 active:bg-blue text-white': color === 'blue',
-        'bg-purple/70 hover:bg-purple/80 active:bg-purple text-white': color === 'purple',
+        'bg-blue/70 hover:bg-blue/80 active:bg-blue disabled:bg-blue/30 text-white':
+          color === 'blue',
+        'bg-purple/70 hover:bg-purple/80 active:bg-purple disabled:bg-purple/30 text-white':
+          color === 'purple',
         'border border-solid border-dark bg-transparent hover:bg-grey active:bg-black/30':
           color === 'transparent',
         'text-[20px] px-5 py-[10px]': size === 'l',
