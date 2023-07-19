@@ -5,7 +5,7 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ShareIcon from '@mui/icons-material/Share';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { format, formatDistanceToNow } from 'date-fns';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -16,7 +16,7 @@ import { Page } from 'src/constant/Page';
 import IcProfile from 'src/image/ic-profile.svg';
 import { GetExploreIdResponse } from 'src/model/backend/api/Explore';
 import { RootState } from 'src/redux/store';
-import { openFailSnackbar } from 'src/redux/uiSlice';
+import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
 import { commentById, getExploreById, likeById, unlikeById } from 'src/service/ExploreService';
 
 const ExploreDetail = () => {
@@ -92,7 +92,10 @@ const ExploreDetail = () => {
         ) : (
           <FavoriteBorderIcon color="primary" classes={{ colorPrimary: '!text-grey' }} />
         )}
-        <CopyToClipboard text={location.href}>
+        <CopyToClipboard
+          text={location.href}
+          onCopy={() => dispatch(openSuccessSnackbar('Shared link is Copied.'))}
+        >
           <ShareIcon className="cursor-pointer" />
         </CopyToClipboard>
       </div>
@@ -145,16 +148,19 @@ const ExploreDetail = () => {
       <div className="flex px-10 my-4">
         <div className="w-1/2">
           <div className="font-bold text-xl mb-4">Inspired By</div>
-          {creation.inspired && (
-            <div
-              className="cursor-pointer w-fit text-center"
-              onClick={() => navigate(`${Page.Explore}/${creation.inspired?.id}`)}
-            >
-              <Cover url={creation.inspired.coverFileUrl} />
-              <div className="mt-2 font-bold">{creation.inspired.name}</div>
-            </div>
-          )}
-          {!creation.inspired && <div>This is an original</div>}
+          <div className="flex gap-4 flex-wrap">
+            {creation.inspired.map((v) => (
+              <div
+                key={v.id}
+                className="cursor-pointer w-fit text-center"
+                onClick={() => navigate(`${Page.Explore}/${v.id}`)}
+              >
+                <Cover url={v.coverFileUrl} />
+                <div className="mt-2 font-bold">{v.name}</div>
+              </div>
+            ))}
+          </div>
+          {creation.inspired.length === 0 && <div>This is an original</div>}
         </div>
         <div className="w-1/2">
           <div className="font-bold text-xl mb-4">Inspired</div>

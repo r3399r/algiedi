@@ -5,7 +5,7 @@ export type GetExploreResponse = DetailedCreation[];
 
 export type GetExploreIdResponse = DetailedCreation & {
   user: User;
-  inspired: DetailedCreation | null;
+  inspired: DetailedCreation[];
   inspiration: DetailedCreation[];
   like: boolean;
   likeCount: number;

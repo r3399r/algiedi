@@ -1,13 +1,17 @@
 import { inject, injectable } from 'inversify';
+import { In, Not } from 'typeorm';
 import { CommentAccess } from 'src/access/CommentAccess';
 import { DbAccess } from 'src/access/DbAccess';
 import { LikeAccess } from 'src/access/LikeAccess';
+import { ProjectUserAccess } from 'src/access/ProjectUserAccess';
 import { UserAccess } from 'src/access/UserAccess';
 import { ViewCreationExploreAccess } from 'src/access/ViewCreationExploreAccess';
 import {
   GetExploreIdResponse,
   GetExploreResponse,
 } from 'src/model/api/Explore';
+import { Type } from 'src/model/constant/Creation';
+import { Role, Status } from 'src/model/constant/Project';
 import { compare } from 'src/util/compare';
 import { cognitoSymbol } from 'src/util/LambdaSetup';
 import { AwsService } from './AwsService';
@@ -32,6 +36,9 @@ export class ExploreService {
   @inject(UserAccess)
   private readonly userAccess!: UserAccess;
 
+  @inject(ProjectUserAccess)
+  private readonly projectUserAccess!: ProjectUserAccess;
+
   @inject(LikeAccess)
   private readonly likeAccess!: LikeAccess;
 
@@ -55,15 +62,40 @@ export class ExploreService {
 
   public async getExploreById(id: string): Promise<GetExploreIdResponse> {
     const creation = await this.viewCreationExploreAccess.findOneByIdOrFail(id);
+
     const user = await this.userAccess.findOneByIdOrFail(creation.userId);
-    const inspired = creation.inspiredId
-      ? await this.viewCreationExploreAccess.findOneByIdOrFail(
-          creation.inspiredId
-        )
-      : null;
+
+    let inspiredIds: string[] = [];
+    if (creation.inspiredId && creation.type !== Type.Song)
+      inspiredIds.push(creation.inspiredId);
+    else if (
+      creation.type === Type.Song &&
+      creation.projectStatus === Status.Published
+    ) {
+      const pu = await this.projectUserAccess.find({
+        where: { projectId: creation.id, role: Not(Role.Rejected) },
+      });
+      inspiredIds = [
+        ...pu.filter((v) => v.lyricsId !== null).map((v) => v.lyricsId ?? 'xx'),
+        ...pu.filter((v) => v.trackId !== null).map((v) => v.trackId ?? 'xx'),
+      ].filter((v) => v !== 'xx');
+    }
+    const inspired = await this.viewCreationExploreAccess.find({
+      where: { id: In(inspiredIds) },
+    });
+
     const inspiration = await this.viewCreationExploreAccess.find({
       where: { inspiredId: id },
     });
+    if (
+      creation.projectStatus === Status.Published &&
+      creation.type !== Type.Song
+    )
+      inspiration.push(
+        await this.viewCreationExploreAccess.findOneByIdOrFail(
+          creation.projectId
+        )
+      );
 
     const likes = await this.likeAccess.find({ where: { creationId: id } });
     const comments = await this.commentAccess.find({
@@ -82,14 +114,12 @@ export class ExploreService {
       tabFileUrl: this.awsService.getS3SignedUrl(creation.tabFileUri),
       coverFileUrl: this.awsService.getS3SignedUrl(creation.coverFileUri),
       user,
-      inspired: inspired
-        ? {
-            ...inspired,
-            fileUrl: this.awsService.getS3SignedUrl(inspired.fileUri),
-            tabFileUrl: this.awsService.getS3SignedUrl(inspired.tabFileUri),
-            coverFileUrl: this.awsService.getS3SignedUrl(inspired.coverFileUri),
-          }
-        : null,
+      inspired: inspired.map((v) => ({
+        ...v,
+        fileUrl: this.awsService.getS3SignedUrl(v.fileUri),
+        tabFileUrl: this.awsService.getS3SignedUrl(v.tabFileUri),
+        coverFileUrl: this.awsService.getS3SignedUrl(v.coverFileUri),
+      })),
       inspiration: inspiration.map((v) => ({
         ...v,
         fileUrl: this.awsService.getS3SignedUrl(v.fileUri),
