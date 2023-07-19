@@ -23,6 +23,9 @@ export async function explore(
       case '/api/explore/{id}':
         res = await apiExploreId(event, service);
         break;
+      case '/api/explore/{id}/auth':
+        res = await apiExploreId(event, service);
+        break;
       default:
         throw new InternalServerError('unknown resource');
     }

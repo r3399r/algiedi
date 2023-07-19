@@ -7,4 +7,11 @@ export type GetExploreIdResponse = DetailedCreation & {
   user: User;
   inspired: DetailedCreation | null;
   inspiration: DetailedCreation[];
+  like: boolean;
+  likeCount: number;
+  comments: {
+    user: User | null;
+    comment: string;
+    timestamp: string | null;
+  }[];
 };

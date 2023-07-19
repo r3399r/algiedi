@@ -5,4 +5,7 @@ const getExplore = async () => await http.get<GetExploreResponse>('explore');
 
 const getExploreId = async (id: string) => await http.get<GetExploreIdResponse>(`explore/${id}`);
 
-export default { getExplore, getExploreId };
+const getExploreIdAuth = async (id: string) =>
+  await http.authGet<GetExploreIdResponse>(`explore/${id}/auth`);
+
+export default { getExplore, getExploreId, getExploreIdAuth };

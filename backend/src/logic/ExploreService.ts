@@ -1,11 +1,15 @@
 import { inject, injectable } from 'inversify';
+import { CommentAccess } from 'src/access/CommentAccess';
 import { DbAccess } from 'src/access/DbAccess';
+import { LikeAccess } from 'src/access/LikeAccess';
 import { UserAccess } from 'src/access/UserAccess';
 import { ViewCreationExploreAccess } from 'src/access/ViewCreationExploreAccess';
 import {
   GetExploreIdResponse,
   GetExploreResponse,
 } from 'src/model/api/Explore';
+import { compare } from 'src/util/compare';
+import { cognitoSymbol } from 'src/util/LambdaSetup';
 import { AwsService } from './AwsService';
 
 /**
@@ -13,6 +17,9 @@ import { AwsService } from './AwsService';
  */
 @injectable()
 export class ExploreService {
+  @inject(cognitoSymbol)
+  private readonly cognitoUserId!: string;
+
   @inject(DbAccess)
   private readonly dbAccess!: DbAccess;
 
@@ -24,6 +31,12 @@ export class ExploreService {
 
   @inject(UserAccess)
   private readonly userAccess!: UserAccess;
+
+  @inject(LikeAccess)
+  private readonly likeAccess!: LikeAccess;
+
+  @inject(CommentAccess)
+  private readonly commentAccess!: CommentAccess;
 
   public async cleanup() {
     await this.dbAccess.cleanup();
@@ -52,6 +65,17 @@ export class ExploreService {
       where: { inspiredId: id },
     });
 
+    const likes = await this.likeAccess.find({ where: { creationId: id } });
+    const comments = await this.commentAccess.find({
+      where: { creationId: id },
+    });
+    const commentersId = new Set(comments.map((v) => v.userId));
+    const commenters = await Promise.all(
+      [...commentersId].map(
+        async (v) => await this.userAccess.findOneByIdOrFail(v)
+      )
+    );
+
     return {
       ...creation,
       fileUrl: this.awsService.getS3SignedUrl(creation.fileUri),
@@ -72,6 +96,15 @@ export class ExploreService {
         tabFileUrl: this.awsService.getS3SignedUrl(v.tabFileUri),
         coverFileUrl: this.awsService.getS3SignedUrl(v.coverFileUri),
       })),
+      like: likes.find((o) => o.userId === this.cognitoUserId) !== undefined,
+      likeCount: likes.length,
+      comments: comments
+        .map((v) => ({
+          user: commenters.find((o) => o.id === v.userId) ?? null,
+          comment: v.comment,
+          timestamp: v.createdAt,
+        }))
+        .sort(compare('timestamp', 'desc')),
     };
   }
 }
