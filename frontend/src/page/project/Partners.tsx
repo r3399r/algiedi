@@ -1,5 +1,5 @@
-import CancelIcon from '@mui/icons-material/Cancel';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -32,7 +32,7 @@ const Partners = ({ project, doRefresh }: Props) => {
       <div className="flex items-center justify-between">
         <div className="font-bold text-xl">Partners</div>
         <Button size="m" color="transparent" onClick={onReady}>
-          {user?.isReady ? 'Need more work' : 'Approve'}
+          {user?.isReady ? 'Need more work' : 'Ready'}
         </Button>
       </div>
       <div className="flex items-end">
@@ -45,7 +45,7 @@ const Partners = ({ project, doRefresh }: Props) => {
               {v.isReady ? (
                 <CheckCircleIcon color="primary" classes={{ colorPrimary: '!text-green' }} />
               ) : (
-                <CancelIcon color="primary" classes={{ colorPrimary: '!text-red' }} />
+                <CheckCircleOutlineIcon />
               )}
             </div>
           </div>

@@ -1,5 +1,5 @@
-import CancelIcon from '@mui/icons-material/Cancel';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import IcProfile from 'src/image/ic-profile.svg';
@@ -59,7 +59,7 @@ const Inspired = ({ project, doRefresh }: Props) => {
               {v.isAccepted ? (
                 <CheckCircleIcon color="primary" classes={{ colorPrimary: '!text-green' }} />
               ) : (
-                <CancelIcon color="primary" classes={{ colorPrimary: '!text-red' }} />
+                <CheckCircleOutlineIcon />
               )}
             </button>
           </div>
