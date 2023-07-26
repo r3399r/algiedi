@@ -9,7 +9,7 @@ phases:
       - npm install
   build:
     commands:
-      - mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PWD --database=$PROJECT < db/deploy.sql
+      - mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PWD --database=$PROJECT < db/script/deploy.sql
       - npm run pre:deploy:backend
       - aws cloudformation package --template-file backend/aws/cloudformation/template.yaml --output-template-file packaged.yaml --s3-bucket gotron-cf-midway-ap-southeast-1
       - aws cloudformation deploy --template-file packaged.yaml --stack-name $PROJECT-$ENV-stack --parameter-overrides TargetEnvr=$ENV Project=$PROJECT --no-fail-on-empty-changeset --s3-bucket gotron-cf-midway-ap-southeast-1 --capabilities CAPABILITY_NAMED_IAM
