@@ -1,4 +1,5 @@
 import { inject, injectable } from 'inversify';
+import { In } from 'typeorm';
 import { ChatAccess } from 'src/access/ChatAccess';
 import { DbAccess } from 'src/access/DbAccess';
 import { InfoAccess } from 'src/access/InfoAccess';
@@ -401,7 +402,16 @@ export class ProjectService {
 
   public async getProjectChat(id: string): Promise<GetProjectIdChatResponse> {
     const chats = await this.chatAccess.find({ where: { projectId: id } });
+    const users = await this.userAccess.find({
+      where: { id: In(chats.map((c) => c.userId)) },
+    });
 
-    return chats.sort(compare('createdAt', 'desc'));
+    return chats
+      .map((v) => ({
+        username: users.find((u) => u.id === v.userId)?.username ?? '',
+        content: v.content,
+        createdAt: v.createdAt ?? '',
+      }))
+      .sort(compare('createdAt', 'desc'));
   }
 }

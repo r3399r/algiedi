@@ -1,14 +1,17 @@
 import { format } from 'date-fns';
 import { useEffect, useMemo, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import useWebSocket from 'react-use-websocket';
 import Button from 'src/component/Button';
-import Input from 'src/component/Input';
+import Form from 'src/component/Form';
+import FormInput from 'src/component/FormInput';
 import { Page } from 'src/constant/Page';
+import { GetProjectIdChatResponse } from 'src/model/backend/api/Project';
 import { Role } from 'src/model/backend/constant/Project';
-import { Chat } from 'src/model/backend/entity/ChatEntity';
 import { DetailedProject } from 'src/model/backend/Project';
+import { MessageForm } from 'src/model/Form';
 import { RootState } from 'src/redux/store';
 import { openFailSnackbar } from 'src/redux/uiSlice';
 import { getChatsById, publishProject } from 'src/service/ProjectService';
@@ -26,10 +29,10 @@ type Props = {
 const Collaborate = ({ project, doRefresh }: Props) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const methods = useForm<MessageForm>();
   const { id: userId } = useSelector((root: RootState) => root.me);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [myComment, setMyComment] = useState<string>('');
-  const [chats, setChats] = useState<Chat[]>([]);
+  const [chats, setChats] = useState<GetProjectIdChatResponse>([]);
 
   const owner = useMemo(
     () => project.collaborators.find((v) => v.role === Role.Owner)?.user,
@@ -50,10 +53,12 @@ const Collaborate = ({ project, doRefresh }: Props) => {
   const { readyState, sendJsonMessage } = useWebSocket('wss://dev.gotronmusic.com/ws', {
     queryParams: { userId },
     shouldReconnect: () => true,
-    onMessage: ({ data }) => console.log(data),
-    onOpen: () => console.log('open'),
-    onClose: () => console.log('close'),
-    onError: () => console.log('error'),
+    onMessage: ({ data }) => {
+      if (data.length > 0) setChats([JSON.parse(data) as GetProjectIdChatResponse[0], ...chats]);
+    },
+    // onOpen: () => console.log('open'),
+    // onClose: () => console.log('close'),
+    // onError: () => console.log('error'),
   });
 
   const onPublish = () => {
@@ -62,15 +67,15 @@ const Collaborate = ({ project, doRefresh }: Props) => {
       .catch((err) => dispatch(openFailSnackbar(err)));
   };
 
-  const onComment = () => {
+  const onSend = (data: MessageForm) => {
     if (readyState !== 1) return;
     sendJsonMessage({
       action: 'chat',
-      content: myComment,
+      content: data.content,
       userId,
       projectId: project.id,
     });
-    setMyComment('');
+    methods.reset();
   };
 
   if (!owner) return <>Loading...</>;
@@ -83,24 +88,31 @@ const Collaborate = ({ project, doRefresh }: Props) => {
           <div className="w-1/2">
             <Info project={project} doRefresh={doRefresh} isOwner={owner.id === userId} />
             <CollaborateMaster project={project} doRefresh={doRefresh} />
-            <div className="border-[#707070] bg-white border border-solid rounded-2xl p-4 mt-10 mb-4">
+            <Form
+              methods={methods}
+              onSubmit={onSend}
+              className="border-[#707070] bg-white border border-solid rounded-2xl p-4 mt-10 mb-4"
+            >
               <div className="mb-4 h-[150px] overflow-y-auto flex gap-3 flex-col-reverse">
-                {chats.map((v) => (
-                  <div key={v.id}>
+                {chats.map((v, i) => (
+                  <div key={i}>
                     <div className="text-grey text-xs">
                       {format(new Date(v.createdAt ?? ''), 'yyyy-MM-dd HH:mm:ss')}
                     </div>
-                    <div className="flex-1 whitespace-pre">{v.content}</div>
+                    <div className="flex-1 flex gap-3">
+                      <div className="text-blue">{v.username}</div>
+                      <div className="whitespace-pre">{v.content}</div>
+                    </div>
                   </div>
                 ))}
               </div>
-              <Input value={myComment} onChange={(e) => setMyComment(e.target.value)} />
+              <FormInput name="content" />
               <div className="text-right mt-4">
-                <Button size="s" color="transparent" onClick={onComment}>
+                <Button size="s" color="transparent" type="submit">
                   Send
                 </Button>
               </div>
-            </div>{' '}
+            </Form>
           </div>
           <div className="w-1/2">
             <Partners project={project} doRefresh={doRefresh} />

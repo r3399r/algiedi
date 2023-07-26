@@ -43,23 +43,31 @@ const ModalMaster = ({ open, handleClose, targetCreation, doRefresh }: Props) =>
   return (
     <Modal open={open} handleClose={handleClose}>
       <div>
-        <div>track</div>
-        <div className="flex items-center gap-2 mb-4">
-          <Input
-            placeholder="*Select a file (mp3. or wav.)"
-            value={trackFile?.name ?? ''}
-            onClick={() => trackInputRef.current?.click()}
-            error={errorTrackFile}
-          />
-          <Button onClick={() => trackInputRef.current?.click()}>Browse...</Button>
+        <div className="font-bold text-2xl">Track</div>
+        <div className="flex items-center gap-2 my-4">
+          <div className="flex-1">
+            <Input
+              placeholder="*Select a file (mp3. or wav.)"
+              value={trackFile?.name ?? ''}
+              onClick={() => trackInputRef.current?.click()}
+              error={errorTrackFile}
+            />
+          </div>
+          <Button size="m" color="purple" onClick={() => trackInputRef.current?.click()}>
+            Browse...
+          </Button>
         </div>
-        <div className="flex items-center gap-2 mb-4">
-          <Input
-            placeholder="Select a 30 sec. tab file (pdf.)"
-            value={tabFile?.name ?? ''}
-            onClick={() => tabInputRef.current?.click()}
-          />
-          <Button onClick={() => tabInputRef.current?.click()}>Browse...</Button>
+        <div className="flex items-center gap-2 my-4">
+          <div className="flex-1">
+            <Input
+              placeholder="Select a 30 sec. tab file (pdf.)"
+              value={tabFile?.name ?? ''}
+              onClick={() => tabInputRef.current?.click()}
+            />
+          </div>
+          <Button size="m" color="purple" onClick={() => trackInputRef.current?.click()}>
+            Browse...
+          </Button>
         </div>
         <input
           type="file"
@@ -82,14 +90,16 @@ const ModalMaster = ({ open, handleClose, targetCreation, doRefresh }: Props) =>
           accept="application/pdf"
           multiple={false}
         />
-        <div>lyrics</div>
+        <div className="font-bold text-2xl">Lyrics</div>
         <textarea
-          className="w-full border-[1px] border-black px-2 rounded"
+          className="w-full border border-black px-2 rounded h-[200px] my-2"
           value={lyrics}
           defaultValue={targetCreation?.lyricsText ?? ''}
           onChange={(e) => setLyrics(e.target.value)}
         />
-        <Button onClick={onSubmit}>Submit</Button>
+        <div className="text-right">
+          <Button onClick={onSubmit}>Submit</Button>
+        </div>
       </div>
     </Modal>
   );

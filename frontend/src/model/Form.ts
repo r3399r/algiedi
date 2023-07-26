@@ -50,3 +50,7 @@ export type UploadLyricsForm = {
 export type UpdateLyricsForm = {
   lyrics: string;
 };
+
+export type MessageForm = {
+  content: string;
+};

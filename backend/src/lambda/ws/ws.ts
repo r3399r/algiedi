@@ -26,19 +26,12 @@ export async function ws(event: any, _context?: LambdaContext): Promise<any> {
         await service.receiveChat(JSON.parse(event.body));
         break;
     }
-    const response = {
-      statusCode: 200,
-      body: JSON.stringify('done!'),
-    };
 
-    return response;
+    return { statusCode: 200 };
   } catch (e) {
     console.log(e);
 
-    return {
-      statusCode: 500,
-      body: JSON.stringify('fail'),
-    };
+    return { statusCode: 500 };
   } finally {
     await service?.cleanup();
   }

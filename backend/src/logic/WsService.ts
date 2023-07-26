@@ -53,7 +53,7 @@ export class WsService {
     chat.userId = userId;
     chat.projectId = projectId;
     chat.content = content;
-    await this.chatAccess.save(chat);
+    const newChat = await this.chatAccess.save(chat);
 
     const client = new ApiGatewayManagementApi({
       endpoint: '0nnwr8j4y2.execute-api.ap-southeast-1.amazonaws.com/ws',
@@ -65,16 +65,17 @@ export class WsService {
     });
     await Promise.all(
       users.map(async (u) => {
-        console.log(u);
         if (!u.connectionId) return;
-        console.log(1);
         await client
           .postToConnection({
             ConnectionId: u.connectionId,
-            Data: content,
+            Data: JSON.stringify({
+              username: u.username,
+              content,
+              createdAt: newChat.createdAt,
+            }),
           })
           .promise();
-        console.log(2);
       })
     );
   }
