@@ -1,4 +1,5 @@
 import {
+  GetProjectIdChatResponse,
   GetProjectResponse,
   PostProjectIdOriginalRequest,
   PutProjectIdCoverRequest,
@@ -28,6 +29,9 @@ const postProjectIdPublish = async (id: string) => await http.authPost(`project/
 const putProjectIdCover = async (id: string, data: PutProjectIdCoverRequest) =>
   await http.authPut(`project/${id}/cover`, { data });
 
+const getProjectIdChat = async (id: string) =>
+  await http.authGet<GetProjectIdChatResponse>(`project/${id}/chat`);
+
 export default {
   getProject,
   putProject,
@@ -38,4 +42,5 @@ export default {
   patchProjectIdView,
   postProjectIdPublish,
   putProjectIdCover,
+  getProjectIdChat,
 };

@@ -49,6 +49,9 @@ export async function project(
       case '/api/project/{id}/cover':
         res = await apiProjectIdCover(event, service);
         break;
+      case '/api/project/{id}/chat':
+        res = await apiProjectIdChat(event, service);
+        break;
       default:
         throw new InternalServerError('unknown resource');
     }
@@ -198,6 +201,19 @@ async function apiProjectIdCover(event: LambdaEvent, service: ProjectService) {
         event.pathParameters.id,
         JSON.parse(event.body) as PutProjectIdCoverRequest
       );
+    default:
+      throw new InternalServerError('unknown http method');
+  }
+}
+
+async function apiProjectIdChat(event: LambdaEvent, service: ProjectService) {
+  if (event.pathParameters === null)
+    throw new BadRequestError('pathParameters should not be empty');
+  if (event.headers === null)
+    throw new BadRequestError('headers should not be empty');
+  switch (event.httpMethod) {
+    case 'GET':
+      return service.getProjectChat(event.pathParameters.id);
     default:
       throw new InternalServerError('unknown http method');
   }

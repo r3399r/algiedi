@@ -1,0 +1,10 @@
+TRUNCATE TABLE gotron.comment;
+TRUNCATE TABLE gotron.lyrics_history;
+TRUNCATE TABLE gotron.project_history;
+TRUNCATE TABLE gotron.track_history;
+TRUNCATE TABLE gotron.`like`;
+TRUNCATE TABLE gotron.project_user;
+delete from gotron.lyrics;
+delete from gotron.track;
+delete from gotron.project;
+delete from gotron.info;

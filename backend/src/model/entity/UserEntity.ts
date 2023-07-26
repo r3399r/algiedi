@@ -14,6 +14,7 @@ export type User = {
   youtube: string | null;
   soundcloud: string | null;
   lastProjectId: string | null;
+  connectionId: string | null;
   createdAt: string | null;
   updatedAt: string | null;
 };
@@ -58,6 +59,9 @@ export class UserEntity implements User {
 
   @Column({ type: 'uuid', name: 'last_project_id', default: null })
   lastProjectId: string | null = null;
+
+  @Column({ type: 'varchar', name: 'connection_id', default: null })
+  connectionId: string | null = null;
 
   @Column({ type: 'timestamp', name: 'created_at', default: null })
   createdAt!: string;

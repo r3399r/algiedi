@@ -8,4 +8,13 @@ module.exports = function (app) {
       changeOrigin: true,
     }),
   );
+  // .use(
+  //   createProxyMiddleware('/ws', {
+  //     target: 'wss://dev.gotronmusic.com/',
+  //     secure: false,
+  //     ws: true,
+  //     changeOrigin: true,
+  //     xfwd: true,
+  //   }),
+  // );
 };

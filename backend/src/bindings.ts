@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import { CognitoIdentityServiceProvider, Lambda, S3, SNS } from 'aws-sdk';
 import { Container } from 'inversify';
+import { ChatAccess } from './access/ChatAccess';
 import { CommentAccess } from './access/CommentAccess';
 import { DbAccess } from './access/DbAccess';
 import { InfoAccess } from './access/InfoAccess';
@@ -26,6 +27,8 @@ import { SnsService } from './logic/SnsService';
 import { UploadService } from './logic/UploadService';
 import { UserService } from './logic/UserService';
 import { VpcService } from './logic/VpcService';
+import { WsService } from './logic/WsService';
+import { ChatEntity } from './model/entity/ChatEntity';
 import { CommentEntity } from './model/entity/CommentEntity';
 import { InfoEntity } from './model/entity/InfoEntity';
 import { LikeEntity } from './model/entity/LikeEntity';
@@ -47,6 +50,7 @@ const container: Container = new Container();
 container.bind<Database>(Database).toSelf().inSingletonScope();
 
 // bind repeatedly for db entities
+container.bind<Function>(dbEntitiesBindingId).toFunction(ChatEntity);
 container.bind<Function>(dbEntitiesBindingId).toFunction(InfoEntity);
 container.bind<Function>(dbEntitiesBindingId).toFunction(LyricsEntity);
 container.bind<Function>(dbEntitiesBindingId).toFunction(LyricsHistoryEntity);
@@ -66,6 +70,7 @@ container
 
 // db access for tables
 container.bind<DbAccess>(DbAccess).toSelf();
+container.bind<ChatAccess>(ChatAccess).toSelf();
 container.bind<InfoAccess>(InfoAccess).toSelf();
 container.bind<LyricsAccess>(LyricsAccess).toSelf();
 container.bind<LyricsHistoryAccess>(LyricsHistoryAccess).toSelf();
@@ -92,11 +97,15 @@ container.bind<UserService>(UserService).toSelf();
 container.bind<VpcService>(VpcService).toSelf();
 container.bind<MeService>(MeService).toSelf();
 container.bind<CreationService>(CreationService).toSelf();
+container.bind<WsService>(WsService).toSelf();
 
 // AWS
 container.bind<SNS>(SNS).toDynamicValue(() => new SNS());
 container.bind<S3>(S3).toDynamicValue(() => new S3());
 container.bind<Lambda>(Lambda).toDynamicValue(() => new Lambda());
+// container.bind<ApiGatewayManagementApi>(ApiGatewayManagementApi).toDynamicValue(() => new ApiGatewayManagementApi({
+//   endpoint: '0nnwr8j4y2.execute-api.ap-southeast-1.amazonaws.com/ws'
+// }));
 container
   .bind<CognitoIdentityServiceProvider>(CognitoIdentityServiceProvider)
   .toDynamicValue(() => new CognitoIdentityServiceProvider());

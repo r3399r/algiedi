@@ -1,4 +1,5 @@
 import { inject, injectable } from 'inversify';
+import { ChatAccess } from 'src/access/ChatAccess';
 import { DbAccess } from 'src/access/DbAccess';
 import { InfoAccess } from 'src/access/InfoAccess';
 import { LyricsAccess } from 'src/access/LyricsAccess';
@@ -11,6 +12,7 @@ import { TrackHistoryAccess } from 'src/access/TrackHistoryAccess';
 import { UserAccess } from 'src/access/UserAccess';
 import { ViewCreationAccess } from 'src/access/ViewCreationAccess';
 import {
+  GetProjectIdChatResponse,
   GetProjectResponse,
   PostProjectIdOriginalRequest,
   PutProjectIdCoverRequest,
@@ -24,6 +26,7 @@ import { TrackEntity } from 'src/model/entity/TrackEntity';
 import { TrackHistoryEntity } from 'src/model/entity/TrackHistoryEntity';
 import { BadRequestError, InternalServerError } from 'src/model/error';
 import { DetailedCreation } from 'src/model/Project';
+import { compare } from 'src/util/compare';
 import { cognitoSymbol } from 'src/util/LambdaSetup';
 import { AwsService } from './AwsService';
 
@@ -70,6 +73,9 @@ export class ProjectService {
 
   @inject(ViewCreationAccess)
   private readonly viewCreationAccess!: ViewCreationAccess;
+
+  @inject(ChatAccess)
+  private readonly chatAccess!: ChatAccess;
 
   public async cleanup() {
     await this.dbAccess.cleanup();
@@ -391,5 +397,11 @@ export class ProjectService {
     const info = await this.infoAccess.findOneOrFailById(project.infoId);
     info.coverFileUri = key;
     await this.infoAccess.save(info);
+  }
+
+  public async getProjectChat(id: string): Promise<GetProjectIdChatResponse> {
+    const chats = await this.chatAccess.find({ where: { projectId: id } });
+
+    return chats.sort(compare('createdAt', 'desc'));
   }
 }

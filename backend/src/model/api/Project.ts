@@ -1,3 +1,4 @@
+import { Chat } from 'src/model/entity/ChatEntity';
 import { DetailedProject } from 'src/model/Project';
 
 export type GetProjectResponse = DetailedProject[];
@@ -25,3 +26,5 @@ export type PostProjectIdOriginalRequest =
 export type PutProjectIdCoverRequest = {
   file: string;
 };
+
+export type GetProjectIdChatResponse = Chat[];

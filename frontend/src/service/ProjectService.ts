@@ -7,7 +7,51 @@ import { setLastProjectId } from 'src/redux/meSlice';
 import { dispatch, getState } from 'src/redux/store';
 import { finishWaiting, startWaiting } from 'src/redux/uiSlice';
 import { file2Base64 } from 'src/util/fileConverter';
+import { WebSocketHandler, wsStart, wsStop } from 'src/util/wsTick';
 import { loadProjects } from './OverallService';
+
+let handler: WebSocketHandler;
+
+export const tickerWsStop = () => {
+  wsStop(handler);
+  // dispatch(resetTicker());
+};
+
+const tickerWsStart = async () => {
+  try {
+    handler = await wsStart(
+      // `ticker/${pairId}`,
+      (raw: string) => {
+        console.log(raw);
+        // const data = normalizeData(raw);
+        // dispatch(setTickerData({ [data.pairId]: data }));
+      },
+      () => {
+        tickerWsStop();
+      },
+      () => {
+        tickerWsStop();
+        console.log('qq');
+        setTimeout(() => {
+          tickerWsStart();
+        }, 2000);
+      },
+    );
+
+    return handler;
+  } catch (e) {
+    // handle error
+    console.info(`ws error`, e);
+  }
+};
+
+export const tickerStart = async () => await tickerWsStart();
+
+export const getChatsById = async (projectId: string) => {
+  const res = await projectEndpoint.getProjectIdChat(projectId);
+
+  return res.data;
+};
 
 const updateLastProjectId = async (projectId: string) => {
   await projectEndpoint.patchProjectIdView(projectId);

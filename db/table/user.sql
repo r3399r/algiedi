@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS user (
 	youtube VARCHAR(255) NULL,
 	soundcloud VARCHAR(255) NULL,
 	last_project_id VARCHAR(36) NULL,
+	connection_id VARCHAR(255) NULL,
 	created_at TIMESTAMP NULL,
 	updated_at TIMESTAMP NULL,
 	PRIMARY KEY (id ASC),
