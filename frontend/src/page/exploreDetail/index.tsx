@@ -123,13 +123,31 @@ const ExploreDetail = () => {
         )}
       </div>
       <div className="flex p-10">
-        <div className="w-1/2 flex gap-5">
-          <img src={IcProfile} />
-          <div>
-            <div>{creation.username}</div>
-            <div>{creation.user.role}</div>
+        {creation.type === 'song' && (
+          <div className="w-1/2 flex flex-col gap-3">
+            {creation.inspired.map((v) => (
+              <div key={v.id} className="flex gap-5 items-center">
+                <img src={IcProfile} />
+                <div>{v.username}</div>
+                <div>
+                  <Button size="s">Follow</Button>
+                </div>
+              </div>
+            ))}
           </div>
-        </div>
+        )}
+        {creation.type !== 'song' && (
+          <div className="w-1/2 flex gap-5 items-center">
+            <img src={IcProfile} />
+            <div>
+              <div>{creation.username}</div>
+              <div className="text-sm text-grey">{creation.user.role}</div>
+            </div>
+            <div>
+              <Button size="s">Follow</Button>
+            </div>
+          </div>
+        )}
         <div className="w-1/2 border border-solid border-dark rounded-3xl p-4">
           <div className="font-bold">Description</div>
           <div className="whitespace-pre">{creation.description}</div>
