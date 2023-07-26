@@ -63,6 +63,7 @@ export class WsService {
     const users = await this.userAccess.find({
       where: { id: In(pu.map((p) => p.userId)) },
     });
+    const sender = users.find((v) => v.id === userId);
     await Promise.all(
       users.map(async (u) => {
         if (!u.connectionId) return;
@@ -70,7 +71,7 @@ export class WsService {
           .postToConnection({
             ConnectionId: u.connectionId,
             Data: JSON.stringify({
-              username: u.username,
+              username: sender?.username ?? '',
               content,
               createdAt: newChat.createdAt,
             }),
