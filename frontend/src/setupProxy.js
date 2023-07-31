@@ -8,13 +8,11 @@ module.exports = function (app) {
       changeOrigin: true,
     }),
   );
-  // .use(
-  //   createProxyMiddleware('/ws', {
-  //     target: 'wss://dev.gotronmusic.com/',
-  //     secure: false,
-  //     ws: true,
-  //     changeOrigin: true,
-  //     xfwd: true,
-  //   }),
-  // );
+  app.use(
+    createProxyMiddleware('/socket', {
+      target: 'wss://0nnwr8j4y2.execute-api.ap-southeast-1.amazonaws.com/',
+      ws: true,
+      changeOrigin: true,
+    }),
+  );
 };

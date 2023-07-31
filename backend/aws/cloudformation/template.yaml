@@ -1478,7 +1478,7 @@ Resources:
     Type: AWS::ApiGatewayV2::Stage
     Properties:
       ApiId: !Ref WebsocketApi
-      StageName: ws
+      StageName: socket
       DeploymentId: !Ref WebsocketDeployment
   LambdaWs:
     Type: AWS::Serverless::Function
@@ -1528,6 +1528,7 @@ Resources:
             - Sec-WebSocket-Version
             - Sec-WebSocket-Protocol
             - Sec-WebSocket-Accept
+            - Sec-WebSocket-Extensions
   CloudFrontDistribution:
     Type: AWS::CloudFront::Distribution
     DependsOn: [ServerlessApi, S3Bucket]
@@ -1577,7 +1578,7 @@ Resources:
           DefaultTTL: 0
           MinTTL: 0
           MaxTTL: 0
-        - PathPattern: ws
+        - PathPattern: socket
           AllowedMethods: [ "GET", "HEAD" ]
           Compress: true
           TargetOriginId: !Sub ${Project}-${TargetEnvr}-WebsocketApi-ID

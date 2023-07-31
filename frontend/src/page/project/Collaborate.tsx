@@ -9,6 +9,7 @@ import Form from 'src/component/Form';
 import FormInput from 'src/component/FormInput';
 import { Page } from 'src/constant/Page';
 import { GetProjectIdChatResponse } from 'src/model/backend/api/Project';
+import { Chat, WebsocketResponse } from 'src/model/backend/api/Ws';
 import { Role } from 'src/model/backend/constant/Project';
 import { DetailedProject } from 'src/model/backend/Project';
 import { MessageForm } from 'src/model/Form';
@@ -50,11 +51,12 @@ const Collaborate = ({ project, doRefresh }: Props) => {
     getChatsById(project.id).then((res) => setChats(res));
   }, []);
 
-  const { readyState, sendJsonMessage } = useWebSocket('wss://dev.gotronmusic.com/ws', {
+  const { readyState, sendJsonMessage } = useWebSocket('wss://dev.gotronmusic.com/socket', {
     queryParams: { userId },
     shouldReconnect: () => true,
     onMessage: ({ data }) => {
-      if (data.length > 0) setChats([JSON.parse(data) as GetProjectIdChatResponse[0], ...chats]);
+      const res: WebsocketResponse<Chat> = JSON.parse(data);
+      if (res.a === 'chat') setChats([res.d, ...chats]);
     },
     // onOpen: () => console.log('open'),
     // onClose: () => console.log('close'),
@@ -100,7 +102,7 @@ const Collaborate = ({ project, doRefresh }: Props) => {
                       {format(new Date(v.createdAt ?? ''), 'yyyy-MM-dd HH:mm:ss')}
                     </div>
                     <div className="flex-1 flex gap-3">
-                      <div className="text-blue">{v.username}</div>
+                      <div className="text-blue">{v.user?.username}</div>
                       <div className="whitespace-pre">{v.content}</div>
                     </div>
                   </div>

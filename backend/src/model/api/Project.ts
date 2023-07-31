@@ -1,4 +1,5 @@
 import { DetailedProject } from 'src/model/Project';
+import { Chat } from './Ws';
 
 export type GetProjectResponse = DetailedProject[];
 
@@ -26,8 +27,4 @@ export type PutProjectIdCoverRequest = {
   file: string;
 };
 
-export type GetProjectIdChatResponse = {
-  username: string;
-  content: string;
-  createdAt: string;
-}[];
+export type GetProjectIdChatResponse = Chat[];

@@ -408,7 +408,7 @@ export class ProjectService {
 
     return chats
       .map((v) => ({
-        username: users.find((u) => u.id === v.userId)?.username ?? '',
+        user: users.find((u) => u.id === v.userId),
         content: v.content,
         createdAt: v.createdAt ?? '',
       }))

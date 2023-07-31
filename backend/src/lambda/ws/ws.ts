@@ -1,5 +1,6 @@
 import { bindings } from 'src/bindings';
 import { WsService } from 'src/logic/WsService';
+import { WebsocketResponse } from 'src/model/api/Ws';
 import { LambdaContext } from 'src/model/Lambda';
 
 export async function ws(event: any, _context?: LambdaContext): Promise<any> {
@@ -10,28 +11,37 @@ export async function ws(event: any, _context?: LambdaContext): Promise<any> {
     const routeKey = event.requestContext.routeKey as string;
     const connectionId = event.requestContext.connectionId as string;
     const userId = event.queryStringParameters?.userId as string;
-    console.log(routeKey, connectionId);
+
+    let res: WebsocketResponse;
 
     switch (routeKey) {
       case '$connect':
-        await service.receiveConnect(userId, connectionId);
+        res = await service.receiveConnect(userId, connectionId);
         break;
       case '$disconnect':
-        await service.receiveDisconnect(connectionId);
+        res = await service.receiveDisconnect(connectionId);
         break;
       case '$default':
-        await service.receiveDefault();
+        res = await service.receiveDefault();
         break;
       case 'chat':
-        await service.receiveChat(JSON.parse(event.body));
+        res = await service.receiveChat(JSON.parse(event.body));
         break;
+      default:
+        throw new Error(`Unknown routeKey: ${routeKey}`);
     }
 
-    return { statusCode: 200 };
+    return {
+      statusCode: 200,
+      body: JSON.stringify(res),
+    };
   } catch (e) {
     console.log(e);
 
-    return { statusCode: 500 };
+    return {
+      statusCode: 500,
+      body: JSON.stringify(e),
+    };
   } finally {
     await service?.cleanup();
   }

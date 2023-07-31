@@ -5,6 +5,7 @@ import { ChatAccess } from 'src/access/ChatAccess';
 import { DbAccess } from 'src/access/DbAccess';
 import { ProjectUserAccess } from 'src/access/ProjectUserAccess';
 import { UserAccess } from 'src/access/UserAccess';
+import { Chat, WebsocketResponse } from 'src/model/api/Ws';
 import { ChatEntity } from 'src/model/entity/ChatEntity';
 
 /**
@@ -35,6 +36,8 @@ export class WsService {
     const user = await this.userAccess.findOneByIdOrFail(userId);
     user.connectionId = connectionId;
     await this.userAccess.save(user);
+
+    return { a: 'channel', d: {} };
   }
 
   public async receiveDisconnect(connectionId: string) {
@@ -43,6 +46,8 @@ export class WsService {
     );
     user.connectionId = null;
     await this.userAccess.save(user);
+
+    return { a: 'channel', d: {} };
   }
 
   public async receiveChat(body: any) {
@@ -56,7 +61,7 @@ export class WsService {
     const newChat = await this.chatAccess.save(chat);
 
     const client = new ApiGatewayManagementApi({
-      endpoint: '0nnwr8j4y2.execute-api.ap-southeast-1.amazonaws.com/ws',
+      endpoint: '0nnwr8j4y2.execute-api.ap-southeast-1.amazonaws.com/socket',
     });
 
     const pu = await this.projectUserAccess.findByProjectId(projectId);
@@ -64,24 +69,32 @@ export class WsService {
       where: { id: In(pu.map((p) => p.userId)) },
     });
     const sender = users.find((v) => v.id === userId);
+    const message: WebsocketResponse<Chat> = {
+      a: 'chat',
+      d: {
+        user: sender,
+        content,
+        createdAt: newChat.createdAt,
+      },
+    };
+
     await Promise.all(
       users.map(async (u) => {
         if (!u.connectionId) return;
         await client
           .postToConnection({
             ConnectionId: u.connectionId,
-            Data: JSON.stringify({
-              username: sender?.username ?? '',
-              content,
-              createdAt: newChat.createdAt,
-            }),
+            Data: JSON.stringify(message),
           })
           .promise();
       })
     );
+
+    return { a: 'channel', d: {} };
   }
 
   public async receiveDefault() {
     // TODO
+    return { a: 'channel', d: {} };
   }
 }
