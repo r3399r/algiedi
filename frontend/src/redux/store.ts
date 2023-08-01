@@ -3,12 +3,14 @@ import apiReducer, { ApiState } from './apiSlice';
 import meReducer, { MeState } from './meSlice';
 import uiReducer, { UiState } from './uiSlice';
 import variableReducer, { VariableState } from './variableSlice';
+import wsReducer, { WsState } from './wsSlice';
 
 export type RootState = {
   me: MeState;
   api: ApiState;
   ui: UiState;
   variable: VariableState;
+  ws: WsState;
 };
 
 let store: Store<RootState>;
@@ -20,6 +22,7 @@ export const configStore = () => {
       me: meReducer,
       ui: uiReducer,
       variable: variableReducer,
+      ws: wsReducer,
     },
   });
 

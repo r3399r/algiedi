@@ -3,13 +3,12 @@ import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import useWebSocket from 'react-use-websocket';
 import Button from 'src/component/Button';
 import Form from 'src/component/Form';
 import FormInput from 'src/component/FormInput';
 import { Page } from 'src/constant/Page';
+import useWs from 'src/hook/useWs';
 import { GetProjectIdChatResponse } from 'src/model/backend/api/Project';
-import { Chat, WebsocketResponse } from 'src/model/backend/api/Ws';
 import { Role } from 'src/model/backend/constant/Project';
 import { DetailedProject } from 'src/model/backend/Project';
 import { MessageForm } from 'src/model/Form';
@@ -32,8 +31,10 @@ const Collaborate = ({ project, doRefresh }: Props) => {
   const navigate = useNavigate();
   const methods = useForm<MessageForm>();
   const { id: userId } = useSelector((root: RootState) => root.me);
+  const { lastChat } = useSelector((root: RootState) => root.ws);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [chats, setChats] = useState<GetProjectIdChatResponse>([]);
+  const { readyState, sendJsonMessage } = useWs();
 
   const owner = useMemo(
     () => project.collaborators.find((v) => v.role === Role.Owner)?.user,
@@ -51,20 +52,9 @@ const Collaborate = ({ project, doRefresh }: Props) => {
     getChatsById(project.id).then((res) => setChats(res));
   }, []);
 
-  const { readyState, sendJsonMessage } = useWebSocket(
-    `${window.location.origin.replace(/^http/, 'ws')}/socket`,
-    {
-      queryParams: { userId },
-      shouldReconnect: () => true,
-      onMessage: ({ data }) => {
-        const res: WebsocketResponse<Chat> = JSON.parse(data);
-        if (res.a === 'chat') setChats([res.d, ...chats]);
-      },
-      // onOpen: () => console.log('open'),
-      // onClose: () => console.log('close'),
-      // onError: () => console.log('error'),
-    },
-  );
+  useEffect(() => {
+    if (lastChat) setChats([lastChat, ...chats]);
+  }, [lastChat]);
 
   const onPublish = () => {
     publishProject(project.id)
