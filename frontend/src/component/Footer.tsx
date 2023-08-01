@@ -6,15 +6,15 @@ import Divider from './Divider';
 const Footer = () => (
   <>
     <Divider />
-    <div className="text-center my-5">© Copyrights GoTron 2019</div>
+    <div className="my-5 text-center">© Copyrights GoTron 2019</div>
     <div className="flex items-center justify-center gap-6">
-      <div className="border-2 border-black rounded-full w-[34px] h-[34px] flex items-center justify-center cursor-pointer">
+      <div className="flex h-[34px] w-[34px] cursor-pointer items-center justify-center rounded-full border-2 border-black">
         <img src={IcTwitter} />
       </div>
-      <div className="border-2 border-black rounded-full w-[34px] h-[34px] flex items-center justify-center cursor-pointer">
+      <div className="flex h-[34px] w-[34px] cursor-pointer items-center justify-center rounded-full border-2 border-black">
         <img src={IcFacebook} />
       </div>
-      <div className="border-2 border-black rounded-full w-[34px] h-[34px] flex items-center justify-center cursor-pointer">
+      <div className="flex h-[34px] w-[34px] cursor-pointer items-center justify-center rounded-full border-2 border-black">
         <img src={IcLinkedIn} />
       </div>
     </div>

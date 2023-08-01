@@ -56,7 +56,7 @@ const Select = ({
       <div className="min-w-[160px] border-b-[1px] border-b-black">
         {label && (
           <div
-            className={classNames('text-[14px] leading-normal text-navy-700 mb-[5px]', {
+            className={classNames('text-navy-700 mb-[5px] text-[14px] leading-normal', {
               'opacity-30': disabled,
             })}
           >
@@ -65,7 +65,7 @@ const Select = ({
         )}
         <div
           className={classNames(
-            'rounded bg-grey-200 outline-none p-2 h-[40px] flex justify-between',
+            'bg-grey-200 flex h-[40px] justify-between rounded p-2 outline-none',
             {
               'cursor-pointer': !disabled,
               'cursor-not-allowed': !!disabled,

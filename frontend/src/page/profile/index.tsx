@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Button from 'src/component/Button';
 import Checkbox from 'src/component/Checkbox';
 import Input from 'src/component/Input';
+import NotificationWidget from 'src/component/NotificationWidget';
 import IcFacebook from 'src/image/ic-facebook.svg';
 import IcInstagram from 'src/image/ic-instagram.svg';
 import IcProfile from 'src/image/ic-profile.svg';
@@ -69,15 +70,16 @@ const Profile = () => {
   };
 
   return (
-    <>
+    <div className="relative">
+      <NotificationWidget className="absolute right-0 top-0" />
       <div className="text-[20px] font-bold">My profile</div>
       <div className="text-[14px] text-[#a7a7a7]">{role.join('/')}</div>
       <div className="mt-5 flex gap-4">
-        <div className="text-[#4346e1] border-b-[1px] border-b-[#4346e1]">Basic information</div>
+        <div className="border-b-[1px] border-b-[#4346e1] text-[#4346e1]">Basic information</div>
         <div>Exhibits</div>
         <div>Settings</div>
       </div>
-      <div className="flex my-5 gap-1 justify-between items-center">
+      <div className="my-5 flex items-center justify-between gap-1">
         <div className="flex items-center gap-6">
           <img src={IcProfile} />
           <div>
@@ -176,10 +178,10 @@ const Profile = () => {
         )}
       </div>
       <div className="flex">
-        <div className="w-[150px] text-dark leading-[40px]">Links</div>
+        <div className="w-[150px] leading-[40px] text-dark">Links</div>
         {isEdit ? (
           <div className="flex-1">
-            <div className="flex gap-3 items-center">
+            <div className="flex items-center gap-3">
               <img src={IcFacebook} className="w-4" />
               <div className="flex-1">
                 <Input
@@ -189,7 +191,7 @@ const Profile = () => {
                 />
               </div>
             </div>
-            <div className="flex gap-3 items-center my-1">
+            <div className="my-1 flex items-center gap-3">
               <img src={IcInstagram} className="w-4" />
               <div className="flex-1">
                 <Input
@@ -199,7 +201,7 @@ const Profile = () => {
                 />
               </div>
             </div>
-            <div className="flex gap-3 items-center my-1">
+            <div className="my-1 flex items-center gap-3">
               <img src={IcYoutube} className="w-4" />
               <div className="flex-1">
                 <Input
@@ -209,7 +211,7 @@ const Profile = () => {
                 />
               </div>
             </div>
-            <div className="flex gap-3 items-center">
+            <div className="flex items-center gap-3">
               <img src={IcSoundcloud} className="w-4" />
               <div className="flex-1">
                 <Input
@@ -221,7 +223,7 @@ const Profile = () => {
             </div>
           </div>
         ) : (
-          <div className="flex gap-2 items-center">
+          <div className="flex items-center gap-2">
             {facebook && facebook.length > 0 && (
               <a href={facebook} target="_blank" rel="noreferrer">
                 <img src={IcFacebook} className="w-4" />
@@ -248,19 +250,19 @@ const Profile = () => {
       <div className="my-6 text-[18px] font-bold">Recently Published</div>
       <div className="flex gap-6">
         <div className="text-center">
-          <img src={Sample1} className="w-[150px] h-[150px]" />
+          <img src={Sample1} className="h-[150px] w-[150px]" />
           <div>愛贏</div>
         </div>
         <div className="text-center">
-          <img src={Sample2} className="w-[150px] h-[150px]" />
+          <img src={Sample2} className="h-[150px] w-[150px]" />
           <div>有隻落水</div>
         </div>
         <div className="text-center">
-          <img src={Sample3} className="w-[150px] h-[150px]" />
+          <img src={Sample3} className="h-[150px] w-[150px]" />
           <div>於是以後</div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

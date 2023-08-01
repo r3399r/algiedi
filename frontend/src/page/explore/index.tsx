@@ -19,14 +19,14 @@ const Explore = () => {
   }, []);
 
   return (
-    <div className="bg-[#fafafa] mx-4">
-      <div className="font-bold text-xl mb-4">FEATURED SONGS</div>
+    <div className="mx-4 bg-[#fafafa]">
+      <div className="mb-4 text-xl font-bold">FEATURED SONGS</div>
       <div className="w-full overflow-x-auto">
-        <div className="flex mb-6 gap-4">
+        <div className="mb-6 flex gap-4">
           {songs?.map((v) => (
             <div
               key={v.id}
-              className="text-center w-[150px] flex-shrink-0 flex flex-col items-center gap-2 cursor-pointer"
+              className="flex w-[150px] shrink-0 cursor-pointer flex-col items-center gap-2 text-center"
               onClick={() => navigate(v.id)}
             >
               <Cover url={v.coverFileUrl} size={150} />
@@ -35,9 +35,9 @@ const Explore = () => {
           ))}
         </div>
       </div>
-      <div className="flex gap-4 mt-4">
+      <div className="mt-4 flex gap-4">
         <div className="w-1/2">
-          <div className="font-bold text-xl mb-4">Music</div>
+          <div className="mb-4 text-xl font-bold">Music</div>
           {/* <div className="flex gap-4">
             <div>This week</div>
             <div>This month</div>
@@ -47,20 +47,20 @@ const Explore = () => {
             {tracks?.map((v) => (
               <div
                 key={v.id}
-                className="flex p-4 bg-white rounded-lg cursor-pointer"
+                className="flex cursor-pointer rounded-lg bg-white p-4"
                 onClick={() => navigate(v.id)}
               >
                 <Cover url={v.coverFileUrl} size={120} />
                 <div className="m-4 flex flex-col justify-center">
-                  <div className="text-bold">{v.name}</div>
-                  <div className="text-gray-500">by {v.username}</div>
+                  <div className="font-bold">{v.name}</div>
+                  <div className="text-grey">by {v.username}</div>
                 </div>
               </div>
             ))}
           </div>
         </div>
         <div className="w-1/2">
-          <div className="font-bold text-xl mb-4">Lyrics</div>
+          <div className="mb-4 text-xl font-bold">Lyrics</div>
           {/* <div className="flex gap-4">
             <div>This week</div>
             <div>This month</div>
@@ -70,13 +70,13 @@ const Explore = () => {
             {lyrics?.map((v) => (
               <div
                 key={v.id}
-                className="flex p-4 bg-white rounded-lg cursor-pointer"
+                className="flex cursor-pointer rounded-lg bg-white p-4"
                 onClick={() => navigate(v.id)}
               >
                 <Cover url={v.coverFileUrl} size={120} />
                 <div className="m-4 flex flex-col justify-center">
-                  <div className="text-bold">{v.name}</div>
-                  <div className="text-gray-500">by {v.username}</div>
+                  <div className="font-bold">{v.name}</div>
+                  <div className="text-grey">by {v.username}</div>
                 </div>
               </div>
             ))}

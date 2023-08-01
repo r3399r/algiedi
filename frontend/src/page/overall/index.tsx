@@ -17,7 +17,7 @@ const Overall = () => {
     <>
       <div className="text-[20px]">Overview</div>
       <div className="text-grey">{projects?.length} pieces</div>
-      <div className="text-[20px] mt-10">Open</div>
+      <div className="mt-10 text-[20px]">Open</div>
       <div className="text-grey">
         {projects?.filter((v) => v.status === Status.Created).length} creations
       </div>
@@ -26,14 +26,14 @@ const Overall = () => {
         .map((v) => (
           <div
             key={v.id}
-            className="relative mt-1 rounded-md p-4 bg-blue/70 cursor-pointer bg-center"
+            className="relative mt-1 cursor-pointer rounded-md bg-blue/70 bg-center p-4"
             style={{ backgroundImage: v.coverFileUrl ? `url(${v.coverFileUrl})` : '' }}
             onClick={() => navigate(Page.Project, { state: { id: v.id } })}
           >
-            <div className="p-2 bg-grey/70 w-fit rounded-lg">{v?.name}</div>
+            <div className="w-fit rounded-lg bg-grey/70 p-2">{v?.name}</div>
           </div>
         ))}
-      <div className="text-[20px] mt-10">Porjects in Progress</div>
+      <div className="mt-10 text-[20px]">Porjects in Progress</div>
       <div className="text-grey">
         {projects?.filter((v) => v.status === Status.InProgress).length} projects
       </div>
@@ -42,11 +42,11 @@ const Overall = () => {
         .map((v) => (
           <div
             key={v.id}
-            className="relative mt-1 rounded-md p-4 bg-blue/70 cursor-pointer bg-center"
+            className="relative mt-1 cursor-pointer rounded-md bg-blue/70 bg-center p-4"
             style={{ backgroundImage: v.coverFileUrl ? `url(${v.coverFileUrl})` : '' }}
             onClick={() => navigate(Page.Project, { state: { id: v.id } })}
           >
-            <div className="p-2 bg-grey/70 w-fit rounded-lg">{v?.name}</div>
+            <div className="w-fit rounded-lg bg-grey/70 p-2">{v?.name}</div>
           </div>
         ))}
     </>

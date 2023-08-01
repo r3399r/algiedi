@@ -37,7 +37,7 @@ const Inspired = ({ project, doRefresh }: Props) => {
   return (
     <>
       <div className="flex justify-between">
-        <div className="font-bold text-xl">Inspired</div>
+        <div className="text-xl font-bold">Inspired</div>
         <div className="flex gap-2 text-sm text-grey">
           <div>
             Audio {inspiration.filter((v) => v.track !== null && v.isAccepted === true).length}/
@@ -52,7 +52,7 @@ const Inspired = ({ project, doRefresh }: Props) => {
       {inspiration.map((v) => (
         <div
           key={v.id}
-          className="border-[#707070] bg-white border-[1px] border-solid rounded-3xl p-4 mt-2"
+          className="mt-2 rounded-3xl border-[1px] border-solid border-[#707070] bg-white p-4"
         >
           <div className="text-right">
             <button onClick={onApprove(v.user.id)} disabled={ownerCreation?.user.id !== userId}>
@@ -63,7 +63,7 @@ const Inspired = ({ project, doRefresh }: Props) => {
               )}
             </button>
           </div>
-          <div className="flex gap-2 items-center mb-4">
+          <div className="mb-4 flex items-center gap-2">
             <img src={IcProfile} />
             <div>{v.user.username}</div>
           </div>

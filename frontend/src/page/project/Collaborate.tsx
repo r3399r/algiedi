@@ -77,8 +77,8 @@ const Collaborate = ({ project, doRefresh }: Props) => {
 
   return (
     <>
-      <div className="text-[20px] mb-10">Project</div>
-      <div className="bg-[#f2f2f2] rounded-xl p-5">
+      <div className="mb-10 text-[20px]">Project</div>
+      <div className="rounded-xl bg-[#f2f2f2] p-5">
         <div className="flex gap-4">
           <div className="w-1/2">
             <Info project={project} doRefresh={doRefresh} isOwner={owner.id === userId} />
@@ -86,15 +86,15 @@ const Collaborate = ({ project, doRefresh }: Props) => {
             <Form
               methods={methods}
               onSubmit={onSend}
-              className="border-[#707070] bg-white border border-solid rounded-2xl p-4 mt-10 mb-4"
+              className="mb-4 mt-10 rounded-2xl border border-solid border-[#707070] bg-white p-4"
             >
-              <div className="mb-4 h-[150px] overflow-y-auto flex gap-3 flex-col-reverse">
+              <div className="mb-4 flex h-[150px] flex-col-reverse gap-3 overflow-y-auto">
                 {chats.map((v, i) => (
                   <div key={i}>
-                    <div className="text-grey text-xs">
+                    <div className="text-xs text-grey">
                       {format(new Date(v.createdAt ?? ''), 'yyyy-MM-dd HH:mm:ss')}
                     </div>
-                    <div className="flex-1 flex gap-3">
+                    <div className="flex flex-1 gap-3">
                       <div className="text-blue">{v.user?.username}</div>
                       <div className="whitespace-pre">{v.content}</div>
                     </div>
@@ -102,7 +102,7 @@ const Collaborate = ({ project, doRefresh }: Props) => {
                 ))}
               </div>
               <FormInput name="content" />
-              <div className="text-right mt-4">
+              <div className="mt-4 text-right">
                 <Button size="s" color="transparent" type="submit">
                   Send
                 </Button>
@@ -115,7 +115,7 @@ const Collaborate = ({ project, doRefresh }: Props) => {
           </div>
         </div>
         {owner.id === userId && (
-          <div className="text-right mt-4">
+          <div className="mt-4 text-right">
             <Button onClick={() => setIsModalOpen(true)} disabled={!canPublish}>
               Publish
             </Button>

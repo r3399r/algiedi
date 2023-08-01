@@ -14,29 +14,29 @@ const Navbar = () => {
 
   return (
     <>
-      <div className="flex flex-wrap justify-between items-center mx-4">
-        <img src={Logo} className="pt-2 cursor-pointer" onClick={() => navigate(Page.Home)} />
-        <div className="hidden sm:flex items-center gap-10">
+      <div className="mx-4 flex flex-wrap items-center justify-between">
+        <img src={Logo} className="cursor-pointer pt-2" onClick={() => navigate(Page.Home)} />
+        <div className="hidden items-center gap-10 sm:flex">
           <div
-            className="hover:underline decoration-blue-300 cursor-pointer"
+            className="cursor-pointer decoration-blue hover:underline"
             onClick={() => navigate(Page.Explore)}
           >
             Explore
           </div>
           <div
-            className="hover:underline decoration-blue-300 cursor-pointer"
+            className="cursor-pointer decoration-blue hover:underline"
             onClick={() => navigate(Page.AboutUs)}
           >
             About
           </div>
           <div
-            className="hover:underline decoration-blue-300 cursor-pointer"
+            className="cursor-pointer decoration-blue hover:underline"
             onClick={() => navigate(Page.Faq)}
           >
             FAQ
           </div>
           <div
-            className="hover:underline decoration-blue-300 cursor-pointer"
+            className="cursor-pointer decoration-blue hover:underline"
             onClick={() => navigate(Page.ContatUs)}
           >
             Contact Us

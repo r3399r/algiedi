@@ -43,10 +43,10 @@ const Input = forwardRef<HTMLInputElement, Props>(
         )}
         <input
           className={twMerge(
-            `font-[inherit] box-border w-full 
-            text-[1em] text-dark bg-transparent border-0 border-solid border-b border-b-dark
-            px-0 focus:outline-none focus:border-b-blue
-            placeholder:text-grey-500`,
+            `placeholder:text-grey-500 box-border w-full 
+            border-0 border-b border-solid border-b-dark bg-transparent px-0 font-[inherit]
+            text-[1em] text-dark focus:border-b-blue
+            focus:outline-none`,
             classNames({
               'border-b-red': !!error,
             }),
@@ -59,8 +59,8 @@ const Input = forwardRef<HTMLInputElement, Props>(
           onChange={onInput}
           {...props}
         />
-        {typeof error === 'string' && <div className="text-[12px] text-red mt-[5px]">{error}</div>}
-        {hint && <div className="text-[12px] text-dark mt-[5px] whitespace-pre-wrap">{hint}</div>}
+        {typeof error === 'string' && <div className="mt-[5px] text-[12px] text-red">{error}</div>}
+        {hint && <div className="mt-[5px] whitespace-pre-wrap text-[12px] text-dark">{hint}</div>}
       </div>
     );
   },

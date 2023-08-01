@@ -13,10 +13,10 @@ const Activities = ({ project, doRefresh }: Props) => {
 
   return (
     <>
-      <div className="font-bold text-xl">Activities</div>
-      <div className="flex flex-col gap-4 mt-2">
+      <div className="text-xl font-bold">Activities</div>
+      <div className="mt-2 flex flex-col gap-4">
         {project.collaborators.map((v) => (
-          <div key={v.id} className="border-[#707070] bg-white border border-solid rounded-3xl p-4">
+          <div key={v.id} className="rounded-3xl border border-solid border-[#707070] bg-white p-4">
             <div className="font-bold">{v.user.username}</div>
             <Creation
               track={v.track}

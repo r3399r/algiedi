@@ -30,14 +30,14 @@ const Partners = ({ project, doRefresh }: Props) => {
   return (
     <>
       <div className="flex items-center justify-between">
-        <div className="font-bold text-xl">Partners</div>
+        <div className="text-xl font-bold">Partners</div>
         <Button size="m" color="transparent" onClick={onReady}>
           {user?.isReady ? 'Need more work' : 'Ready'}
         </Button>
       </div>
       <div className="flex items-end">
         {project.collaborators.map((v) => (
-          <div key={v.id} className="w-fit px-4 py-2 flex flex-col items-center text-center">
+          <div key={v.id} className="flex w-fit flex-col items-center px-4 py-2 text-center">
             {v.role === Role.Owner && <StarBorderIcon />}
             <img src={IcProfile} />
             <div>{v.user.username}</div>

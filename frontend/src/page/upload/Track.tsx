@@ -51,20 +51,20 @@ const Track = ({ defaultInspiredId, inspiration }: Props) => {
     <>
       <Form methods={methods} onSubmit={onSubmit}>
         <div className="flex gap-6">
-          <div className="w-3/5 flex flex-col gap-4">
+          <div className="flex w-3/5 flex-col gap-4">
             <FormInput name="name" label="Name" placeholder="Name of your creation" required />
             <FormTextarea name="description" className="h-[240px]" label="Description" required />
           </div>
-          <div className="w-2/5 flex flex-col gap-4">
+          <div className="flex w-2/5 flex-col gap-4">
             <FormInput name="theme" label="Theme" required />
             <FormInput name="genre" label="Genre" required />
             <FormInput name="language" label="Language" required />
             <FormInput name="caption" label="Caption" required />
           </div>
         </div>
-        <div className="flex gap-6 mt-10">
+        <div className="mt-10 flex gap-6">
           <div className="w-3/5">
-            <div className="flex items-center gap-2 mb-4">
+            <div className="mb-4 flex items-center gap-2">
               <div className="flex-1">
                 <Input
                   placeholder="*Select a file (mp3. or wav.)"
@@ -77,7 +77,7 @@ const Track = ({ defaultInspiredId, inspiration }: Props) => {
                 Browse...
               </Button>
             </div>
-            <div className="flex items-center gap-2 mb-4">
+            <div className="mb-4 flex items-center gap-2">
               <div className="flex-1">
                 <Input
                   placeholder="Select a 30 sec. tab file (pdf.)"

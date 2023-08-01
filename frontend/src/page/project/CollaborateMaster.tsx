@@ -31,11 +31,11 @@ const CollaborateMaster = ({ project, doRefresh }: Props) => {
 
   return (
     <>
-      <div className="font-bold text-xl">Master Creation</div>
-      <div className="border-[#707070] bg-white border-[1px] border-solid rounded-3xl p-4">
+      <div className="text-xl font-bold">Master Creation</div>
+      <div className="rounded-3xl border-[1px] border-solid border-[#707070] bg-white p-4">
         {hasUploaded && (
           <>
-            <div className="flex items-center mb-4 gap-2">
+            <div className="mb-4 flex items-center gap-2">
               {masterCreation?.fileUrl && <audio src={masterCreation.fileUrl} controls />}
               {masterCreation?.tabFileUrl && (
                 <DownloadForOfflineIcon

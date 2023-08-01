@@ -19,7 +19,7 @@ const MultiSelectOption = ({ value, children }: Props) => (
       <ListItem
         onClick={() => handleChange(value)}
         focus={current.split(',').includes(value)}
-        className="flex gap-2 items-center"
+        className="flex items-center gap-2"
       >
         <Checkbox checked={current.split(',').includes(value)} readOnly />
         <div>{children}</div>

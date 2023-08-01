@@ -43,8 +43,8 @@ const ModalMaster = ({ open, handleClose, targetCreation, doRefresh }: Props) =>
   return (
     <Modal open={open} handleClose={handleClose}>
       <div>
-        <div className="font-bold text-2xl">Track</div>
-        <div className="flex items-center gap-2 my-4">
+        <div className="text-2xl font-bold">Track</div>
+        <div className="my-4 flex items-center gap-2">
           <div className="flex-1">
             <Input
               placeholder="*Select a file (mp3. or wav.)"
@@ -57,7 +57,7 @@ const ModalMaster = ({ open, handleClose, targetCreation, doRefresh }: Props) =>
             Browse...
           </Button>
         </div>
-        <div className="flex items-center gap-2 my-4">
+        <div className="my-4 flex items-center gap-2">
           <div className="flex-1">
             <Input
               placeholder="Select a 30 sec. tab file (pdf.)"
@@ -90,9 +90,9 @@ const ModalMaster = ({ open, handleClose, targetCreation, doRefresh }: Props) =>
           accept="application/pdf"
           multiple={false}
         />
-        <div className="font-bold text-2xl">Lyrics</div>
+        <div className="text-2xl font-bold">Lyrics</div>
         <textarea
-          className="w-full border border-black px-2 rounded h-[200px] my-2"
+          className="my-2 h-[200px] w-full rounded border border-black px-2"
           value={lyrics}
           defaultValue={targetCreation?.lyricsText ?? ''}
           onChange={(e) => setLyrics(e.target.value)}

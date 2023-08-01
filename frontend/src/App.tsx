@@ -21,8 +21,8 @@ const App = () => {
     return (
       <div className="flex">
         <SideMenu />
-        <div className="flex-1 h-screen overflow-y-auto bg-[#eaeaea]">
-          <div className="max-w-[1200px] w-[85%] pt-[30px] pb-[90px] mx-auto">
+        <div className="h-screen flex-1 overflow-y-auto bg-[#eaeaea]">
+          <div className="mx-auto w-[85%] max-w-[1200px] pb-[90px] pt-[30px]">
             <AppRoutes />
           </div>
         </div>

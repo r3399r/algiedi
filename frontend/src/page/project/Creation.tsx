@@ -25,7 +25,7 @@ const Creation = ({ track, lyrics, isOwner, doRefresh, project, isParticipant = 
       {track && (
         <>
           {isParticipant && <div className="mb-2">{track.name}</div>}
-          <div className="flex items-center mb-4 gap-2">
+          <div className="mb-4 flex items-center gap-2">
             <audio src={track.fileUrl ?? undefined} controls />
             {track.tabFileUrl && (
               <DownloadForOfflineIcon
@@ -49,7 +49,7 @@ const Creation = ({ track, lyrics, isOwner, doRefresh, project, isParticipant = 
         </div>
       )}
       {isOwner && (
-        <div className="flex gap-2 justify-center">
+        <div className="flex justify-center gap-2">
           {track && (
             <Button size="m" color="purple" onClick={() => setIsTrackModalOpen(true)}>
               Update Track

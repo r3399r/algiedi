@@ -39,23 +39,23 @@ const Info = ({ project, doRefresh, isOwner }: Props) => {
 
   return (
     <>
-      <div className="flex mb-4 gap-4 items-center">
+      <div className="mb-4 flex items-center gap-4">
         <Cover
           url={project.coverFileUrl}
           clickable={isOwner}
           onClick={() => coverInputRef.current?.click()}
         />
-        <div className="text-center flex-1">
+        <div className="flex-1 text-center">
           {isEdit ? (
             <Input value={name} onChange={(e) => setName(e.target.value)} />
           ) : (
-            <div className="font-bold text-xl">{name}</div>
+            <div className="text-xl font-bold">{name}</div>
           )}
         </div>
       </div>
-      <div className="border-[#707070] bg-white border border-solid rounded-2xl p-4 mb-4">
+      <div className="mb-4 rounded-2xl border border-solid border-[#707070] bg-white p-4">
         {isOwner && (
-          <div className="flex justify-end mb-2">
+          <div className="mb-2 flex justify-end">
             {!isEdit && (
               <Button size="s" color="purple" onClick={() => setIsEdit(!isEdit)}>
                 Edit
@@ -83,7 +83,7 @@ const Info = ({ project, doRefresh, isOwner }: Props) => {
         <div className="mb-2">
           {isEdit ? (
             <textarea
-              className="w-full border-[1px] border-black px-2 rounded"
+              className="w-full rounded border-[1px] border-black px-2"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />

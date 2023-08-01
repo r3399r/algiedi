@@ -10,7 +10,7 @@ type Props = {
 const ModalStart = ({ open, handleClose, onStart }: Props) => (
   <Modal open={open} handleClose={handleClose}>
     <div>
-      <div className="font-bold mb-4 text-xl">
+      <div className="mb-4 text-xl font-bold">
         Are you sure that you want to start this project?
       </div>
       <div className="flex justify-center gap-4">

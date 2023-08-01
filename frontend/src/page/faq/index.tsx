@@ -5,9 +5,9 @@ import Question from './Question';
 
 const Faq = () => (
   <div>
-    <div className="mx-10 mt-6 font-bold text-[50px]">Frequently Asked Questions</div>
-    <div className="mx-10 sm:flex mt-10 gap-8">
-      <div className="border-t-2 border-t-black sm:w-1/3 text-[#707070] pt-2 text-[40px] font-bold">
+    <div className="mx-10 mt-6 text-[50px] font-bold">Frequently Asked Questions</div>
+    <div className="mx-10 mt-10 gap-8 sm:flex">
+      <div className="border-t-2 border-t-black pt-2 text-[40px] font-bold text-[#707070] sm:w-1/3">
         General
       </div>
       <div className="sm:w-2/3">
@@ -33,8 +33,8 @@ const Faq = () => (
         />
       </div>
     </div>
-    <div className="mx-10 sm:flex mt-10 gap-8">
-      <div className="border-t-2 border-t-black sm:w-1/3 text-[#707070] pt-2 text-[40px] font-bold">
+    <div className="mx-10 mt-10 gap-8 sm:flex">
+      <div className="border-t-2 border-t-black pt-2 text-[40px] font-bold text-[#707070] sm:w-1/3">
         Account
       </div>
       <div className="sm:w-2/3">
@@ -71,7 +71,7 @@ const Faq = () => (
         <Button className="mt-2">Join Us</Button>
       </div>
     </div>
-    <div className="max-w-[630px] mx-auto py-16">
+    <div className="mx-auto max-w-[630px] py-16">
       <Footer />
     </div>
   </div>

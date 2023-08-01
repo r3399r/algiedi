@@ -31,17 +31,17 @@ const AuthQuestionnaire = () => {
 
   return (
     <div className="mt-16">
-      <div className="max-w-[1000px] mx-auto rounded-[30px] bg-[#f5f5f5] p-12">
-        <div className="text-[#8ea1d0] font-bold text-[40px] text-center">
+      <div className="mx-auto max-w-[1000px] rounded-[30px] bg-[#f5f5f5] p-12">
+        <div className="text-center text-[40px] font-bold text-[#8ea1d0]">
           {"LET'S GET STARTED"}
         </div>
         {!start && (
           <div>
-            <div className="text-[#2d2d2d] text-center">
+            <div className="text-center text-[#2d2d2d]">
               We want you to have a perfect GoTron music collaborate experience. Answer a few
               questions to enrich your profile and let musicians get to know you better.
             </div>
-            <div className="text-center mt-10">
+            <div className="mt-10 text-center">
               <Button onClick={() => setStart(true)}>{"Let's Do it"}</Button>
             </div>
           </div>
@@ -98,7 +98,7 @@ const AuthQuestionnaire = () => {
           </>
         )}
       </div>
-      <div className="max-w-[630px] mx-auto py-16">
+      <div className="mx-auto max-w-[630px] py-16">
         <Footer />
       </div>
     </div>

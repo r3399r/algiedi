@@ -25,20 +25,20 @@ const AuthConfirmation = () => {
 
   return (
     <div className="mt-16">
-      <div className="max-w-[1000px] mx-auto rounded-[30px] bg-[#f5f5f5] p-12">
-        <div className="text-[#8ea1d0] font-bold text-[40px] text-center">Email Confirmation</div>
-        <div className="text-[#2d2d2d] text-center">
+      <div className="mx-auto max-w-[1000px] rounded-[30px] bg-[#f5f5f5] p-12">
+        <div className="text-center text-[40px] font-bold text-[#8ea1d0]">Email Confirmation</div>
+        <div className="text-center text-[#2d2d2d]">
           Please confirm the email sent to your email{' '}
           <span className="text-[#00c3ff]">{state?.email}</span> for security consideration
         </div>
-        <div className="text-[#2d2d2d] flex justify-center items-center gap-2">
+        <div className="flex items-center justify-center gap-2 text-[#2d2d2d]">
           <div>Do not receive the Email?</div>
-          <div className="text-[#00c3ff] cursor-pointer" onClick={onResend}>
+          <div className="cursor-pointer text-[#00c3ff]" onClick={onResend}>
             Resend
           </div>
         </div>
       </div>
-      <div className="max-w-[630px] mx-auto py-16">
+      <div className="mx-auto max-w-[630px] py-16">
         <Footer />
       </div>
     </div>

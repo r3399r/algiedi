@@ -35,27 +35,27 @@ const AuthRegister = () => {
 
   return (
     <div className="mt-16">
-      <div className="max-w-[1000px] mx-auto flex">
-        <div className="rounded-l-[30px] bg-[#2d2d2d] w-[400px] p-12">
-          <div className="text-white font-bold text-[40px] text-center">Login</div>
-          <div className="text-center mt-10">
+      <div className="mx-auto flex max-w-[1000px]">
+        <div className="w-[400px] rounded-l-[30px] bg-[#2d2d2d] p-12">
+          <div className="text-center text-[40px] font-bold text-white">Login</div>
+          <div className="mt-10 text-center">
             <Button onClick={() => navigate(Page.Login)}>Login</Button>
           </div>
         </div>
         <Form
           methods={methods}
           onSubmit={onSubmit}
-          className="rounded-r-[30px] bg-[#eaeaea] w-[600px] p-12"
+          className="w-[600px] rounded-r-[30px] bg-[#eaeaea] p-12"
         >
-          <div className="w-[400px] mx-auto">
-            <div className="text-[#7ba0ff] font-bold text-[40px] text-center">Create account</div>
-            <div className="flex gap-4 mt-6 items-center justify-around">
-              <div className="bg-white rounded-[30px] text-xs font-bold flex p-2 gap-2 items-center cursor-pointer">
+          <div className="mx-auto w-[400px]">
+            <div className="text-center text-[40px] font-bold text-[#7ba0ff]">Create account</div>
+            <div className="mt-6 flex items-center justify-around gap-4">
+              <div className="flex cursor-pointer items-center gap-2 rounded-[30px] bg-white p-2 text-xs font-bold">
                 <img src={IcLoginFacebook} />
                 <div>Sign in with Facebook</div>
               </div>
               <div>OR</div>
-              <div className="bg-[#4c81e4] text-white rounded-[30px] text-xs font-bold flex p-2 gap-2 items-center cursor-pointer">
+              <div className="flex cursor-pointer items-center gap-2 rounded-[30px] bg-[#4c81e4] p-2 text-xs font-bold text-white">
                 <img src={IcLoginGoogle} />
                 <div>Sign in with Google</div>
               </div>
@@ -78,13 +78,13 @@ const AuthRegister = () => {
             <div className="mt-5">
               <FormInput name="userName" label="User Name" type="text" required />
             </div>
-            <div className="text-center mt-10">
+            <div className="mt-10 text-center">
               <Button type="submit">Sign up</Button>
             </div>
           </div>
         </Form>
       </div>
-      <div className="max-w-[630px] mx-auto py-16">
+      <div className="mx-auto max-w-[630px] py-16">
         <Footer />
       </div>
     </div>

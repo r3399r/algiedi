@@ -17,9 +17,9 @@ const Cover = ({ size = 100, url, clickable = false, onClick }: Props) => (
     }}
   >
     {url ? (
-      <img src={url} className="object-cover rounded-full" style={{ width: size, height: size }} />
+      <img src={url} className="rounded-full object-cover" style={{ width: size, height: size }} />
     ) : (
-      <div className="bg-grey rounded-full" style={{ width: size, height: size }} />
+      <div className="rounded-full bg-grey" style={{ width: size, height: size }} />
     )}
   </div>
 );

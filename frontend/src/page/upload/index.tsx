@@ -20,12 +20,12 @@ const Upload = () => {
 
   return (
     <>
-      <div className="text-[20px] mb-10">Upload</div>
-      <div className="bg-white rounded-xl w-full p-8">
-        <div className="flex gap-4 mb-6">
+      <div className="mb-10 text-[20px]">Upload</div>
+      <div className="w-full rounded-xl bg-white p-8">
+        <div className="mb-6 flex gap-4">
           <div
             className={classNames('cursor-pointer', {
-              'text-purple border-b-[1px] border-b-purple': tab === 'track',
+              'border-b-[1px] border-b-purple text-purple': tab === 'track',
             })}
             onClick={() => setTab('track')}
           >
@@ -33,7 +33,7 @@ const Upload = () => {
           </div>
           <div
             className={classNames('cursor-pointer', {
-              'text-purple border-b-[1px] border-b-purple': tab === 'lyrics',
+              'border-b-[1px] border-b-purple text-purple': tab === 'lyrics',
             })}
             onClick={() => setTab('lyrics')}
           >
@@ -49,7 +49,7 @@ const Upload = () => {
           )}
         </div>
       </div>
-      <div className="max-w-[630px] mx-auto py-16">
+      <div className="mx-auto max-w-[630px] py-16">
         <Footer />
       </div>
     </>

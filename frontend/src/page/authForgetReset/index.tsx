@@ -44,10 +44,10 @@ const AuthForgetReset = () => {
       <Form
         methods={methods}
         onSubmit={onSubmit}
-        className="max-w-[1000px] mx-auto rounded-[30px] bg-[#f5f5f5] p-12"
+        className="mx-auto max-w-[1000px] rounded-[30px] bg-[#f5f5f5] p-12"
       >
-        <div className="text-[#8ea1d0] font-bold text-[40px] text-center">Reset password</div>
-        <div className="text-[#2d2d2d] text-center">Please enter your new password.</div>
+        <div className="text-center text-[40px] font-bold text-[#8ea1d0]">Reset password</div>
+        <div className="text-center text-[#2d2d2d]">Please enter your new password.</div>
         <div className="mt-5">
           <Input value={query.email} label="Email" />
         </div>
@@ -57,11 +57,11 @@ const AuthForgetReset = () => {
         <div className="mt-5">
           <FormInput name="confirmPassword" label="Confirm Password" type="password" required />
         </div>
-        <div className="text-center mt-10">
+        <div className="mt-10 text-center">
           <Button type="submit">Reset</Button>
         </div>
       </Form>
-      <div className="max-w-[630px] mx-auto py-16">
+      <div className="mx-auto max-w-[630px] py-16">
         <Footer />
       </div>
     </div>

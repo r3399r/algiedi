@@ -13,7 +13,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, Props>(
     <div>
       {label && (
         <div
-          className={classNames('text-[14px] leading-normal text-navy-700 mb-[5px]', {
+          className={classNames('text-navy-700 mb-[5px] text-[14px] leading-normal', {
             'opacity-30': disabled,
           })}
         >
@@ -21,10 +21,10 @@ const Textarea = forwardRef<HTMLTextAreaElement, Props>(
         </div>
       )}
       <textarea
-        className={classNames('bg-transparent outline-none p-2 w-full', className, {
-          'rounded border-solid border-[1px] border-black placeholder:text-black':
+        className={classNames('w-full bg-transparent p-2 outline-none', className, {
+          'rounded border-[1px] border-solid border-black placeholder:text-black':
             appearance === 'outline',
-          'border-solid border-b-[1px] border-[#7ba0ff] placeholder:text-[#7ba0ff]':
+          'border-b-[1px] border-solid border-[#7ba0ff] placeholder:text-[#7ba0ff]':
             appearance === 'underline',
           'border-red-500': !!error,
         })}
@@ -36,9 +36,9 @@ const Textarea = forwardRef<HTMLTextAreaElement, Props>(
       {(typeof error === 'string' || helper) && (
         <div className="mt-[5px]">
           {typeof error === 'string' && (
-            <div className="text-red-500 text-[12px] leading-normal">{error}</div>
+            <div className="text-[12px] leading-normal text-red">{error}</div>
           )}
-          {helper && <div className="text-black text-[12px] leading-normal">{helper}</div>}
+          {helper && <div className="text-[12px] leading-normal text-black">{helper}</div>}
         </div>
       )}
     </div>

@@ -16,7 +16,7 @@ type Props = {
 const ModalPublish = ({ open, handleClose, onPublish, project }: Props) => (
   <Modal open={open} handleClose={handleClose}>
     <div>
-      <div className="font-bold text-xl">
+      <div className="text-xl font-bold">
         Please check the content. Note that this action is irreversible.
       </div>
       <Cover url={project.coverFileUrl} />
@@ -44,7 +44,7 @@ const ModalPublish = ({ open, handleClose, onPublish, project }: Props) => (
         <div className="w-[100px] font-bold">Caption</div>
         <div>{project.caption}</div>
       </div>
-      <div className="flex items-center gap-2 my-2">
+      <div className="my-2 flex items-center gap-2">
         <audio src={project.song?.fileUrl ?? undefined} controls />
         {project.song?.tabFileUrl && (
           <DownloadForOfflineIcon
@@ -63,7 +63,7 @@ const ModalPublish = ({ open, handleClose, onPublish, project }: Props) => (
           </Accordion>
         </div>
       )}
-      <div className="flex gap-2 justify-center">
+      <div className="flex justify-center gap-2">
         <Button onClick={onPublish}>Publish</Button>
         <Button color="purple" onClick={handleClose}>
           Cancel

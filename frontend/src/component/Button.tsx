@@ -10,16 +10,16 @@ type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
 const Button = ({ color = 'blue', size = 'l', className, ...props }: Props) => (
   <button
     className={twMerge(
-      classNames('rounded-[36px] outline-none leading-[1.5]', {
-        'bg-blue/70 hover:bg-blue/80 active:bg-blue disabled:bg-blue/30 text-white':
+      classNames('rounded-[36px] leading-[1.5] outline-none', {
+        'bg-blue/70 text-white hover:bg-blue/80 active:bg-blue disabled:bg-blue/30':
           color === 'blue',
-        'bg-purple/70 hover:bg-purple/80 active:bg-purple disabled:bg-purple/30 text-white':
+        'bg-purple/70 text-white hover:bg-purple/80 active:bg-purple disabled:bg-purple/30':
           color === 'purple',
         'border border-solid border-dark bg-transparent hover:bg-grey active:bg-black/30':
           color === 'transparent',
-        'text-[20px] px-5 py-[10px]': size === 'l',
-        'text-[16px] px-4 py-2': size === 'm',
-        'text-[14px] px-3 py-1': size === 's',
+        'px-5 py-[10px] text-[20px]': size === 'l',
+        'px-4 py-2 text-[16px]': size === 'm',
+        'px-3 py-1 text-[14px]': size === 's',
       }),
       className,
     )}

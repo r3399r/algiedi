@@ -79,14 +79,14 @@ const ExploreDetail = () => {
 
   return (
     <>
-      <div onClick={() => navigate(-1)} className="ml-10 my-4">
+      <div onClick={() => navigate(-1)} className="my-4 ml-10">
         Back
       </div>
       <div
-        className="bg-blue/30 bg-center h-[200px] flex items-center"
+        className="flex h-[200px] items-center bg-blue/30 bg-center"
         style={{ backgroundImage: creation.coverFileUrl ? `url(${creation.coverFileUrl})` : '' }}
       >
-        <div className="ml-10 p-4 bg-dark/30 w-fit rounded-md text-white">
+        <div className="ml-10 w-fit rounded-md bg-dark/30 p-4 text-white">
           <div>{creation.name}</div>
           <div>{creation.genre}</div>
           <div>Publish Date: {format(new Date(creation.createdAt ?? ''), 'yyyy.MM.dd')}</div>
@@ -96,7 +96,7 @@ const ExploreDetail = () => {
           </div>
         </div>
       </div>
-      <div className="flex gap-4 justify-end mr-10 mt-4">
+      <div className="mr-10 mt-4 flex justify-end gap-4">
         {isLogin ? (
           creation.like ? (
             <FavoriteIcon
@@ -118,9 +118,9 @@ const ExploreDetail = () => {
           <ShareIcon className="cursor-pointer" />
         </CopyToClipboard>
       </div>
-      <div className="p-4 border border-solid border-dark rounded-3xl mx-10 mt-10">
+      <div className="mx-10 mt-10 rounded-3xl border border-solid border-dark p-4">
         {creation.fileUrl && (
-          <div className="flex items-center mb-4 gap-2">
+          <div className="mb-4 flex items-center gap-2">
             <audio src={creation.fileUrl} controls />
             {creation.tabFileUrl && (
               <DownloadForOfflineIcon
@@ -143,10 +143,10 @@ const ExploreDetail = () => {
       </div>
       <div className="flex p-10">
         {creation.type === 'song' && (
-          <div className="w-1/2 flex flex-col gap-3">
+          <div className="flex w-1/2 flex-col gap-3">
             {creation.author.map((v) => (
-              <div key={v.id} className="flex gap-5 items-center">
-                <img src={IcProfile} className="w-[80px] h-[80px]" />
+              <div key={v.id} className="flex items-center gap-5">
+                <img src={IcProfile} className="h-[80px] w-[80px]" />
                 <div>{v.username}</div>
                 <div>
                   <Button
@@ -162,8 +162,8 @@ const ExploreDetail = () => {
           </div>
         )}
         {creation.type !== 'song' && (
-          <div className="w-1/2 flex gap-5 items-center">
-            <img src={IcProfile} className="w-[80px] h-[80px]" />
+          <div className="flex w-1/2 items-center gap-5">
+            <img src={IcProfile} className="h-[80px] w-[80px]" />
             <div>
               <div>{creation.username}</div>
               <div className="text-sm text-grey">{creation.author[0].role}</div>
@@ -183,12 +183,12 @@ const ExploreDetail = () => {
             </div>
           </div>
         )}
-        <div className="w-1/2 border border-solid border-dark rounded-3xl p-4">
+        <div className="w-1/2 rounded-3xl border border-solid border-dark p-4">
           <div className="font-bold">Description</div>
           <div className="whitespace-pre">{creation.description}</div>
         </div>
       </div>
-      <div className="text-right px-10 mb-4">
+      <div className="mb-4 px-10 text-right">
         <Button
           size="m"
           color="purple"
@@ -198,14 +198,14 @@ const ExploreDetail = () => {
         </Button>
       </div>
       <Divider />
-      <div className="flex px-10 my-4">
+      <div className="my-4 flex px-10">
         <div className="w-1/2">
-          <div className="font-bold text-xl mb-4">Inspired By</div>
-          <div className="flex gap-4 flex-wrap">
+          <div className="mb-4 text-xl font-bold">Inspired By</div>
+          <div className="flex flex-wrap gap-4">
             {creation.inspired.map((v) => (
               <div
                 key={v.id}
-                className="cursor-pointer w-fit text-center"
+                className="w-fit cursor-pointer text-center"
                 onClick={() => navigate(`${Page.Explore}/${v.id}`)}
               >
                 <Cover url={v.coverFileUrl} />
@@ -216,12 +216,12 @@ const ExploreDetail = () => {
           {creation.inspired.length === 0 && <div>This is an original</div>}
         </div>
         <div className="w-1/2">
-          <div className="font-bold text-xl mb-4">Inspired</div>
-          <div className="flex gap-4 flex-wrap">
+          <div className="mb-4 text-xl font-bold">Inspired</div>
+          <div className="flex flex-wrap gap-4">
             {creation.inspiration.map((v) => (
               <div
                 key={v.id}
-                className="cursor-pointer w-fit text-center"
+                className="w-fit cursor-pointer text-center"
                 onClick={() => navigate(`${Page.Explore}/${v.id}`)}
               >
                 <Cover url={v.coverFileUrl} />
@@ -233,15 +233,15 @@ const ExploreDetail = () => {
         </div>
       </div>
       <Divider />
-      <div className="px-10 my-4">
-        <div className="font-bold text-xl mb-4">Comment</div>
+      <div className="my-4 px-10">
+        <div className="mb-4 text-xl font-bold">Comment</div>
         <div className="flex gap-4">
-          <div className="w-1/2 flex flex-col gap-4">
+          <div className="flex w-1/2 flex-col gap-4">
             {creation.comments.map((v, i) => (
-              <div key={i} className="border border-solid border-dark rounded-3xl flex p-4 gap-2">
+              <div key={i} className="flex gap-2 rounded-3xl border border-solid border-dark p-4">
                 <img src={IcProfile} />
                 <div className="flex-1">
-                  <div className="flex gap-4 justify-between">
+                  <div className="flex justify-between gap-4">
                     <div className="font-bold">{v.user?.username}</div>
                     <div className="text-grey">
                       {v.timestamp ? formatDistanceToNow(new Date(v.timestamp)) : ''}
@@ -254,7 +254,7 @@ const ExploreDetail = () => {
           </div>
           <div className="w-1/2">
             <textarea
-              className="w-full border-[1px] border-black px-2 rounded h-[200px]"
+              className="h-[200px] w-full rounded border-[1px] border-black px-2"
               value={myComment}
               onChange={(e) => setMyComment(e.target.value)}
               disabled={!isLogin}

@@ -16,14 +16,14 @@ const Modal = ({ open, handleClose, children, disableBackdropClick = false, ...p
 
   return (
     <MuiModal open={open} onClose={onMuiModalClose} {...props}>
-      <div className="bg-white rounded-xl w-[920px] box-border pt-12 pb-10 max-h-[calc(100vh-100px)] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+      <div className="absolute left-1/2 top-1/2 box-border max-h-[calc(100vh-100px)] w-[920px] -translate-x-1/2 -translate-y-1/2 rounded-xl bg-white pb-10 pt-12">
         <div
-          className="absolute cursor-pointer top-4 right-4 sm:top-6 sm:right-6"
+          className="absolute right-4 top-4 cursor-pointer sm:right-6 sm:top-6"
           onClick={onCloseButtonClick}
         >
           x
         </div>
-        <div className="w-full px-10 h-full max-h-[calc(100vh-188px)] overflow-y-auto">
+        <div className="h-full max-h-[calc(100vh-188px)] w-full overflow-y-auto px-10">
           {children}
         </div>
       </div>

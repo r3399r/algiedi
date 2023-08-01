@@ -37,7 +37,7 @@ const Lyrics = ({ defaultInspiredId, inspiration }: Props) => {
     <>
       <Form methods={methods} onSubmit={onSubmit}>
         <div className="flex gap-6">
-          <div className="w-3/5 flex flex-col gap-4">
+          <div className="flex w-3/5 flex-col gap-4">
             <FormInput name="name" label="Name" placeholder="Name of your creation" required />
             <FormTextarea name="description" className="h-[100px]" label="Description" required />
             <FormTextarea name="lyrics" className="h-[140px]" label="Lyrics" required />
@@ -49,8 +49,8 @@ const Lyrics = ({ defaultInspiredId, inspiration }: Props) => {
             <FormInput name="caption" label="Caption" required />
           </div>
         </div>
-        <div className="flex gap-6 mt-10">
-          <div className="flex items-center gap-2 mb-4 w-3/5">
+        <div className="mt-10 flex gap-6">
+          <div className="mb-4 flex w-3/5 items-center gap-2">
             <div className="flex-1">
               <Input
                 placeholder="Select a cover photo (jpg.)"

@@ -45,8 +45,8 @@ const ModalTrack = ({ open, handleClose, targetTrack, targetProjectId, doRefresh
   return (
     <Modal open={open} handleClose={handleClose}>
       <div>
-        <div className="font-bold text-2xl">Track</div>
-        <div className="flex items-center gap-2 my-4">
+        <div className="text-2xl font-bold">Track</div>
+        <div className="my-4 flex items-center gap-2">
           <div className="flex-1">
             <Input
               placeholder="*Select a file (mp3. or wav.)"
@@ -59,7 +59,7 @@ const ModalTrack = ({ open, handleClose, targetTrack, targetProjectId, doRefresh
             Browse...
           </Button>
         </div>
-        <div className="flex items-center gap-2 my-4">
+        <div className="my-4 flex items-center gap-2">
           <div className="flex-1">
             <Input
               placeholder="Select a 30 sec. tab file (pdf.)"

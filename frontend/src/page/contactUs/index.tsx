@@ -29,36 +29,36 @@ const ContactUs = () => {
 
   return (
     <div>
-      <div className="mx-10 flex items-center mb-20 flex-wrap">
-        <div className="text-[50px] font-bold border-r-[1px] border-black pr-10 mr-10">
+      <div className="mx-10 mb-20 flex flex-wrap items-center">
+        <div className="mr-10 border-r-[1px] border-black pr-10 text-[50px] font-bold">
           Contact us
         </div>
         <div>
           <div className="flex flex-col sm:flex-row sm:gap-8">
             <div className="flex gap-2">
-              <img className="w-5 h-5" src={IcInvite} />
+              <img className="h-5 w-5" src={IcInvite} />
               <div className="w-[160px]">contact@gotron.com</div>
             </div>
             <div className="flex gap-2">
-              <img className="w-5 h-5" src={IcTwitter} />
+              <img className="h-5 w-5" src={IcTwitter} />
               <div className="w-[160px]">#gotronmusic</div>
             </div>
           </div>
           <div className="flex flex-col sm:flex-row sm:gap-8">
             <div className="flex gap-2">
-              <img className="w-5 h-5" src={IcInstagram} />
+              <img className="h-5 w-5" src={IcInstagram} />
               <div className="w-[160px]">@gotronmusic</div>
             </div>
             <div className="flex gap-2">
-              <img className="w-5 h-5" src={IcFacebook} />
+              <img className="h-5 w-5" src={IcFacebook} />
               <div className="w-[160px]">gotronmusic</div>
             </div>
           </div>
         </div>
       </div>
       <div className="bg-gradient-to-l from-[#fff8c4] to-[#00c3ff]">
-        <div className="flex flex-col sm:flex-row gap-8 p-5 items-center">
-          <Form methods={methods} onSubmit={onSubmit} className="w-full sm:w-1/2 px-5">
+        <div className="flex flex-col items-center gap-8 p-5 sm:flex-row">
+          <Form methods={methods} onSubmit={onSubmit} className="w-full px-5 sm:w-1/2">
             <div className="flex gap-1">
               <div className="w-1/2">
                 <FormInput name="firstName" label="First name" required />
@@ -71,7 +71,7 @@ const ContactUs = () => {
               <FormInput name="email" label="Email" required />
             </div>
             <FormTextarea name="message" placeholder="Message..." required />
-            <div className="text-center mt-5">
+            <div className="mt-5 text-center">
               <Button color="transparent" type="submit">
                 Send
               </Button>
@@ -81,7 +81,7 @@ const ContactUs = () => {
             <img src={PicLocation} />
           </div>
         </div>
-        <div className="max-w-[630px] mx-auto py-16">
+        <div className="mx-auto max-w-[630px] py-16">
           <Footer />
         </div>
       </div>

@@ -39,8 +39,8 @@ const Prepare = ({ project, doRefresh }: Props) => {
 
   return (
     <>
-      <div className="text-[20px] mb-10">Project</div>
-      <div className="bg-[#f2f2f2] rounded-xl p-5">
+      <div className="mb-10 text-[20px]">Project</div>
+      <div className="rounded-xl bg-[#f2f2f2] p-5">
         <div className="flex gap-4">
           <div className="w-1/2">
             <Info
@@ -55,7 +55,7 @@ const Prepare = ({ project, doRefresh }: Props) => {
           </div>
         </div>
         {ownerCreation.user.id === userId && (
-          <div className="text-right mt-4">
+          <div className="mt-4 text-right">
             <Button onClick={() => setIsStartModalOpen(true)}>Start Project</Button>
           </div>
         )}

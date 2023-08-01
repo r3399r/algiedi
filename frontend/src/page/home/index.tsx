@@ -20,7 +20,7 @@ const Home = () => (
   <div>
     <div className="px-4 sm:flex sm:items-center sm:justify-around sm:px-10">
       <div className="text-center sm:text-left">
-        <div className="text-[40px] leading-[40px] xs:text-[60px] font-bold xs:leading-[60px] my-12">
+        <div className="my-12 text-[40px] font-bold leading-[40px] xs:text-[60px] xs:leading-[60px]">
           GoTron,
           <br />
           create together
@@ -33,10 +33,10 @@ const Home = () => (
         </div>
       </div>
     </div>
-    <div className="py-36 bg-gradient-to-l from-[#fff8c4] to-[#00c3ff] text-center">
-      <div className="text-white text-4xl font-bold mb-16">Create Together</div>
-      <div className="bg-white p-3 xs:p-12 mx-4 sm:mx-auto sm:max-w-[990px] border-[1px] border-[#707070] rounded-3xl xs:rounded-[80px]">
-        <div className="flex flex-wrap justify-between items-center gap-1 xs:gap-4">
+    <div className="bg-gradient-to-l from-[#fff8c4] to-[#00c3ff] py-36 text-center">
+      <div className="mb-16 text-4xl font-bold text-white">Create Together</div>
+      <div className="mx-4 rounded-3xl border-[1px] border-[#707070] bg-white p-3 xs:rounded-[80px] xs:p-12 sm:mx-auto sm:max-w-[990px]">
+        <div className="flex flex-wrap items-center justify-between gap-1 xs:gap-4">
           <div className="flex flex-col items-center gap-6">
             <div className="text-[20px] leading-[24px]">Share your Creation</div>
             <img src={IcStep1} />
@@ -63,56 +63,56 @@ const Home = () => (
             <img src={IcStep4} />
           </div>
         </div>
-        <Button className="px-auto mt-12 text-2xl">{"LET'S CREATE"}</Button>
+        <Button className="mt-12 text-2xl">{"LET'S CREATE"}</Button>
       </div>
     </div>
-    <div className="py-[200px] px-4 bg-[#fafafa]">
-      <div className="max-w-[1200px] mx-auto">
-        <div className="text-[40px] font-bold mb-16">Features (What we provide...)</div>
+    <div className="bg-[#fafafa] px-4 py-[200px]">
+      <div className="mx-auto max-w-[1200px]">
+        <div className="mb-16 text-[40px] font-bold">Features (What we provide...)</div>
         <div className="flex flex-wrap gap-4 sm:gap-12">
-          <div className="w-auto sm:w-[calc((100%-100px)/3)] rounded-[19px] bg-white text-center p-8">
+          <div className="w-auto rounded-[19px] bg-white p-8 text-center sm:w-[calc((100%-100px)/3)]">
             <img src={IcFeature1} className="mx-auto" />
-            <div className="text-[35px] bold my-4">Great Quality</div>
+            <div className="my-4 text-[35px] font-bold">Great Quality</div>
             <div className="text-[14px]">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
               incididunt ut labore et dolore magna aliqua. Ut enim ad
             </div>
           </div>
-          <div className="w-auto sm:w-[calc((100%-100px)/3)] rounded-[19px] bg-white text-center p-8">
+          <div className="w-auto rounded-[19px] bg-white p-8 text-center sm:w-[calc((100%-100px)/3)]">
             <img src={IcFeature2} className="mx-auto" />
-            <div className="text-[35px] bold my-4">Great Quality</div>
+            <div className="my-4 text-[35px] font-bold">Great Quality</div>
             <div className="text-[14px]">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
               incididunt ut labore et dolore magna aliqua. Ut enim ad
             </div>
           </div>
-          <div className="w-auto sm:w-[calc((100%-100px)/3)] rounded-[19px] bg-white text-center p-8">
+          <div className="w-auto rounded-[19px] bg-white p-8 text-center sm:w-[calc((100%-100px)/3)]">
             <img src={IcFeature3} className="mx-auto" />
-            <div className="text-[35px] bold my-4">Great Quality</div>
+            <div className="my-4 text-[35px] font-bold">Great Quality</div>
             <div className="text-[14px]">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
               incididunt ut labore et dolore magna aliqua. Ut enim ad
             </div>
           </div>
-          <div className="w-auto sm:w-[calc((100%-100px)/3)] rounded-[19px] bg-white text-center p-8">
+          <div className="w-auto rounded-[19px] bg-white p-8 text-center sm:w-[calc((100%-100px)/3)]">
             <img src={IcFeature4} className="mx-auto" />
-            <div className="text-[35px] bold my-4">Great Quality</div>
+            <div className="my-4 text-[35px] font-bold">Great Quality</div>
             <div className="text-[14px]">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
               incididunt ut labore et dolore magna aliqua. Ut enim ad
             </div>
           </div>
-          <div className="w-auto sm:w-[calc((100%-100px)/3)] rounded-[19px] bg-white text-center p-8">
+          <div className="w-auto rounded-[19px] bg-white p-8 text-center sm:w-[calc((100%-100px)/3)]">
             <img src={IcFeature5} className="mx-auto" />
-            <div className="text-[35px] bold my-4">Great Quality</div>
+            <div className="my-4 text-[35px] font-bold">Great Quality</div>
             <div className="text-[14px]">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
               incididunt ut labore et dolore magna aliqua. Ut enim ad
             </div>
           </div>
-          <div className="w-auto sm:w-[calc((100%-100px)/3)] rounded-[19px] bg-white text-center p-8">
+          <div className="w-auto rounded-[19px] bg-white p-8 text-center sm:w-[calc((100%-100px)/3)]">
             <img src={IcFeature6} className="mx-auto" />
-            <div className="text-[35px] bold my-4">Great Quality</div>
+            <div className="my-4 text-[35px] font-bold">Great Quality</div>
             <div className="text-[14px]">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
               incididunt ut labore et dolore magna aliqua. Ut enim ad
@@ -121,12 +121,12 @@ const Home = () => (
         </div>
       </div>
     </div>
-    <div className="py-[100px] px-4 flex items-center flex-wrap">
+    <div className="flex flex-wrap items-center px-4 py-[100px]">
       <div className="w-full sm:w-1/2">
         <img src={PicHero2} />
       </div>
       <div className="w-full sm:w-1/2 sm:p-16">
-        <div className="mb-10 text-[40px] font-bold break-words">Music/Lyrics/Artists</div>
+        <div className="mb-10 break-words text-[40px] font-bold">Music/Lyrics/Artists</div>
         <div>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
           ut labore et dolore magna aliqua. Ut enim ad
@@ -134,11 +134,11 @@ const Home = () => (
         <Button className="mt-[100px] text-2xl">Explore</Button>
       </div>
     </div>
-    <div className="flex mb-14">
+    <div className="mb-14 flex">
       <img className="w-1/2" src={PicHero3} />
       <img className="w-1/2" src={PicHero4} />
     </div>
-    <div className="max-w-[630px] mx-auto mb-16">
+    <div className="mx-auto mb-16 max-w-[630px]">
       <Footer />
     </div>
   </div>

@@ -19,22 +19,22 @@ const NavbarDrawer = ({ open, onClose }: NavbarDrawerProps) => {
 
   return (
     <Drawer anchor="right" open={open} onClose={onClose}>
-      <div className="ml-auto w-[30px] h-[30px]" onClick={onClose}>
+      <div className="ml-auto h-[30px] w-[30px]" onClick={onClose}>
         x
       </div>
-      <div className="pt-2 px-4 pb-1" onClick={() => navigate(isLogin ? Page.Profile : Page.Login)}>
+      <div className="px-4 pb-1 pt-2" onClick={() => navigate(isLogin ? Page.Profile : Page.Login)}>
         Create Now
       </div>
-      <div className="pt-2 px-4 pb-1" onClick={goto(Page.Explore)}>
+      <div className="px-4 pb-1 pt-2" onClick={goto(Page.Explore)}>
         Explore
       </div>
-      <div className="pt-2 px-4 pb-1" onClick={goto(Page.AboutUs)}>
+      <div className="px-4 pb-1 pt-2" onClick={goto(Page.AboutUs)}>
         About
       </div>
-      <div className="pt-2 px-4 pb-1" onClick={goto(Page.Faq)}>
+      <div className="px-4 pb-1 pt-2" onClick={goto(Page.Faq)}>
         FAQ
       </div>
-      <div className="pt-2 px-4 pb-1" onClick={goto(Page.ContatUs)}>
+      <div className="px-4 pb-1 pt-2" onClick={goto(Page.ContatUs)}>
         Contact Us
       </div>
     </Drawer>

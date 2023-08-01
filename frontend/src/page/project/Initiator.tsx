@@ -22,9 +22,9 @@ const Initiator = ({ project, doRefresh }: Props) => {
 
   return (
     <>
-      <div className="font-bold mb-2 text-xl">Initiator</div>
-      <div className="border-[#707070] bg-white border-[1px] border-solid rounded-2xl p-4">
-        <div className="flex gap-2 items-center mb-4">
+      <div className="mb-2 text-xl font-bold">Initiator</div>
+      <div className="rounded-2xl border-[1px] border-solid border-[#707070] bg-white p-4">
+        <div className="mb-4 flex items-center gap-2">
           <img src={IcProfile} />
           <div>{ownerCreation.user.username}</div>
         </div>
