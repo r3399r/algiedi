@@ -9,6 +9,8 @@ source db/table/track_history.sql
 source db/table/project_user.sql
 source db/table/comment.sql
 source db/table/like.sql
+source db/table/follow.sql
+source db/table/chat.sql
 source db/view/v_track.sql
 source db/view/v_lyrics.sql
 source db/view/v_song.sql

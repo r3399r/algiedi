@@ -1,5 +1,6 @@
 import creationEndpoint from 'src/api/creationEndpoint';
 import exploreEndpoint from 'src/api/exploreEndpoint';
+import userEndpoint from 'src/api/userEndpoint';
 import { DetailedCreation } from 'src/model/backend/Project';
 import { dispatch, getState } from 'src/redux/store';
 import { finishWaiting, startWaiting } from 'src/redux/uiSlice';
@@ -65,6 +66,26 @@ export const commentById = async (id: string, comment: string) => {
     dispatch(startWaiting());
 
     await creationEndpoint.postCreationIdComment(id, { comment });
+  } finally {
+    dispatch(finishWaiting());
+  }
+};
+
+export const followByUserId = async (id: string) => {
+  try {
+    dispatch(startWaiting());
+
+    await userEndpoint.postUserIdFollow(id);
+  } finally {
+    dispatch(finishWaiting());
+  }
+};
+
+export const unfollowByUserId = async (id: string) => {
+  try {
+    dispatch(startWaiting());
+
+    await userEndpoint.postUserIdUnfollow(id);
   } finally {
     dispatch(finishWaiting());
   }

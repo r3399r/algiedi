@@ -21,6 +21,12 @@ export async function user(
       case '/api/user':
         res = await apiUser(event, service);
         break;
+      case '/api/user/{id}/follow':
+        res = await apiUserIdFollow(event, service);
+        break;
+      case '/api/user/{id}/unfollow':
+        res = await apiUserIdUnfollow(event, service);
+        break;
       default:
         throw new InternalServerError('unknown resource');
     }
@@ -40,6 +46,32 @@ async function apiUser(event: LambdaEvent, service: UserService) {
         throw new BadRequestError('body should not be empty');
 
       return service.initUser(JSON.parse(event.body) as PatchUserRequest);
+    default:
+      throw new InternalServerError('unknown http method');
+  }
+}
+
+async function apiUserIdFollow(event: LambdaEvent, service: UserService) {
+  if (event.pathParameters === null)
+    throw new BadRequestError('pathParameters should not be empty');
+  if (event.headers === null)
+    throw new BadRequestError('headers should not be empty');
+  switch (event.httpMethod) {
+    case 'POST':
+      return service.followUser(event.pathParameters.id);
+    default:
+      throw new InternalServerError('unknown http method');
+  }
+}
+
+async function apiUserIdUnfollow(event: LambdaEvent, service: UserService) {
+  if (event.pathParameters === null)
+    throw new BadRequestError('pathParameters should not be empty');
+  if (event.headers === null)
+    throw new BadRequestError('headers should not be empty');
+  switch (event.httpMethod) {
+    case 'POST':
+      return service.unfollowUser(event.pathParameters.id);
     default:
       throw new InternalServerError('unknown http method');
   }

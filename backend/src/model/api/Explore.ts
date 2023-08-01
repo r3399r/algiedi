@@ -4,7 +4,7 @@ import { DetailedCreation } from 'src/model/Project';
 export type GetExploreResponse = DetailedCreation[];
 
 export type GetExploreIdResponse = DetailedCreation & {
-  user: User;
+  author: (User & { following: boolean | null })[];
   inspired: DetailedCreation[];
   inspiration: DetailedCreation[];
   like: boolean;

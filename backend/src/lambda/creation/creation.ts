@@ -19,13 +19,13 @@ export async function creation(
 
     switch (event.resource) {
       case '/api/creation/{id}/like':
-        res = await apiSocialIdLike(event, service);
+        res = await apiCreationIdLike(event, service);
         break;
       case '/api/creation/{id}/unlike':
-        res = await apiSocialIdUnlike(event, service);
+        res = await apiCreationIdUnlike(event, service);
         break;
       case '/api/creation/{id}/comment':
-        res = await apiSocialIdComment(event, service);
+        res = await apiCreationIdComment(event, service);
         break;
       default:
         throw new InternalServerError('unknown resource');
@@ -39,7 +39,7 @@ export async function creation(
   }
 }
 
-async function apiSocialIdLike(event: LambdaEvent, service: CreationService) {
+async function apiCreationIdLike(event: LambdaEvent, service: CreationService) {
   if (event.pathParameters === null)
     throw new BadRequestError('pathParameters should not be empty');
   if (event.headers === null)
@@ -52,7 +52,10 @@ async function apiSocialIdLike(event: LambdaEvent, service: CreationService) {
   }
 }
 
-async function apiSocialIdUnlike(event: LambdaEvent, service: CreationService) {
+async function apiCreationIdUnlike(
+  event: LambdaEvent,
+  service: CreationService
+) {
   if (event.pathParameters === null)
     throw new BadRequestError('pathParameters should not be empty');
   if (event.headers === null)
@@ -65,7 +68,7 @@ async function apiSocialIdUnlike(event: LambdaEvent, service: CreationService) {
   }
 }
 
-async function apiSocialIdComment(
+async function apiCreationIdComment(
   event: LambdaEvent,
   service: CreationService
 ) {

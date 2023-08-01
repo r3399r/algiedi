@@ -2,6 +2,7 @@ import { inject, injectable } from 'inversify';
 import { In, Not } from 'typeorm';
 import { CommentAccess } from 'src/access/CommentAccess';
 import { DbAccess } from 'src/access/DbAccess';
+import { FollowAccess } from 'src/access/FollowAccess';
 import { LikeAccess } from 'src/access/LikeAccess';
 import { ProjectUserAccess } from 'src/access/ProjectUserAccess';
 import { UserAccess } from 'src/access/UserAccess';
@@ -45,6 +46,9 @@ export class ExploreService {
   @inject(CommentAccess)
   private readonly commentAccess!: CommentAccess;
 
+  @inject(FollowAccess)
+  private readonly followAccess!: FollowAccess;
+
   public async cleanup() {
     await this.dbAccess.cleanup();
   }
@@ -63,7 +67,7 @@ export class ExploreService {
   public async getExploreById(id: string): Promise<GetExploreIdResponse> {
     const creation = await this.viewCreationExploreAccess.findOneByIdOrFail(id);
 
-    const user = await this.userAccess.findOneByIdOrFail(creation.userId);
+    let user = [await this.userAccess.findOneByIdOrFail(creation.userId)];
 
     let inspiredIds: string[] = [];
     if (creation.inspiredId && creation.type !== Type.Song)
@@ -79,6 +83,9 @@ export class ExploreService {
         ...pu.filter((v) => v.lyricsId !== null).map((v) => v.lyricsId ?? 'xx'),
         ...pu.filter((v) => v.trackId !== null).map((v) => v.trackId ?? 'xx'),
       ].filter((v) => v !== 'xx');
+      user = await this.userAccess.find({
+        where: { id: In(pu.map((v) => v.userId)) },
+      });
     }
     const inspired = await this.viewCreationExploreAccess.find({
       where: { id: In(inspiredIds) },
@@ -108,12 +115,25 @@ export class ExploreService {
       )
     );
 
+    const myFollowees = await this.followAccess.find({
+      where: { followerId: this.cognitoUserId },
+    });
+    const author = user.map((v) => {
+      let following: boolean | null =
+        myFollowees.find((o) => o.followeeId === v.id) !== undefined
+          ? true
+          : false;
+      if (v.id === this.cognitoUserId) following = null;
+
+      return { ...v, following };
+    });
+
     return {
       ...creation,
       fileUrl: this.awsService.getS3SignedUrl(creation.fileUri),
       tabFileUrl: this.awsService.getS3SignedUrl(creation.tabFileUri),
       coverFileUrl: this.awsService.getS3SignedUrl(creation.coverFileUri),
-      user,
+      author,
       inspired: inspired.map((v) => ({
         ...v,
         fileUrl: this.awsService.getS3SignedUrl(v.fileUri),

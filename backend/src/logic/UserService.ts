@@ -1,6 +1,8 @@
 import { CognitoIdentityServiceProvider, Lambda } from 'aws-sdk';
 import { inject, injectable } from 'inversify';
+import { FollowAccess } from 'src/access/FollowAccess';
 import { PatchUserRequest } from 'src/model/api/User';
+import { FollowEntity } from 'src/model/entity/FollowEntity';
 import { cognitoSymbol } from 'src/util/LambdaSetup';
 
 /**
@@ -16,6 +18,9 @@ export class UserService {
 
   @inject(CognitoIdentityServiceProvider)
   private readonly cognitoProvider!: CognitoIdentityServiceProvider;
+
+  @inject(FollowAccess)
+  private readonly followAccess!: FollowAccess;
 
   public async initUser(data: PatchUserRequest) {
     // update cognito
@@ -48,5 +53,19 @@ export class UserService {
         }),
       })
       .promise();
+  }
+
+  public async followUser(id: string) {
+    const followEntity = new FollowEntity();
+    followEntity.followerId = this.cognitoUserId;
+    followEntity.followeeId = id;
+    await this.followAccess.save(followEntity);
+  }
+
+  public async unfollowUser(id: string) {
+    const oldLike = await this.followAccess.findOneOrFail({
+      where: { followerId: this.cognitoUserId, followeeId: id },
+    });
+    await this.followAccess.hardDeleteById(oldLike.id);
   }
 }

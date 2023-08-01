@@ -15,7 +15,14 @@ export enum Page {
   Profile = '/profile',
   Project = '/project',
   Upload = '/upload',
+  Notification = '/notification',
 }
 
 // pages with sideMenu
-export const DashboardPage = [Page.Overall, Page.Profile, Page.Upload, Page.Project];
+export const DashboardPage = [
+  Page.Overall,
+  Page.Profile,
+  Page.Upload,
+  Page.Project,
+  Page.Notification,
+];

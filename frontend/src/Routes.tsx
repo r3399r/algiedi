@@ -14,6 +14,7 @@ import Explore from './page/explore';
 import ExploreDetail from './page/exploreDetail';
 import Faq from './page/faq';
 import Home from './page/home';
+import Notification from './page/notification';
 import Overall from './page/overall';
 import Profile from './page/profile';
 import Project from './page/project';
@@ -53,6 +54,7 @@ const AppRoutes = () => {
           <Route path={Page.Profile} element={<Profile />} />
           <Route path={Page.Project} element={<Project />} />
           <Route path={Page.Upload} element={<Upload />} />
+          <Route path={Page.Notification} element={<Notification />} />
         </>
       )}
       <Route path="/*" element={<Navigate to={Page.Home} />} />

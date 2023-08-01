@@ -47,7 +47,12 @@ const SideMenu = () => {
         Upload
       </div>
       <div className="px-4 py-2 cursor-pointer hover:bg-grey">Practice Room</div>
-      <div className="px-4 py-2 cursor-pointer hover:bg-grey">Notifications</div>
+      <div
+        className="px-4 py-2 cursor-pointer hover:bg-grey"
+        onClick={() => navigate(Page.Notification)}
+      >
+        Notifications
+      </div>
       <div className="px-4 py-2 cursor-pointer hover:bg-grey">Explore</div>
       <Divider className="bg-grey" />
       <div className="px-4 py-2 cursor-pointer hover:bg-grey">GROUPS</div>

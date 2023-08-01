@@ -10,6 +10,7 @@ import { Container } from 'inversify';
 import { ChatAccess } from './access/ChatAccess';
 import { CommentAccess } from './access/CommentAccess';
 import { DbAccess } from './access/DbAccess';
+import { FollowAccess } from './access/FollowAccess';
 import { InfoAccess } from './access/InfoAccess';
 import { LikeAccess } from './access/LikeAccess';
 import { LyricsAccess } from './access/LyricsAccess';
@@ -36,6 +37,7 @@ import { VpcService } from './logic/VpcService';
 import { WsService } from './logic/WsService';
 import { ChatEntity } from './model/entity/ChatEntity';
 import { CommentEntity } from './model/entity/CommentEntity';
+import { FollowEntity } from './model/entity/FollowEntity';
 import { InfoEntity } from './model/entity/InfoEntity';
 import { LikeEntity } from './model/entity/LikeEntity';
 import { LyricsEntity } from './model/entity/LyricsEntity';
@@ -69,6 +71,7 @@ container.bind<Function>(dbEntitiesBindingId).toFunction(TrackHistoryEntity);
 container.bind<Function>(dbEntitiesBindingId).toFunction(UserEntity);
 container.bind<Function>(dbEntitiesBindingId).toFunction(LikeEntity);
 container.bind<Function>(dbEntitiesBindingId).toFunction(CommentEntity);
+container.bind<Function>(dbEntitiesBindingId).toFunction(FollowEntity);
 container.bind<Function>(dbEntitiesBindingId).toFunction(ViewCreationEntity);
 container
   .bind<Function>(dbEntitiesBindingId)
@@ -91,6 +94,7 @@ container.bind<ViewCreationAccess>(ViewCreationAccess).toSelf();
 container.bind<ViewCreationExploreAccess>(ViewCreationExploreAccess).toSelf();
 container.bind<LikeAccess>(LikeAccess).toSelf();
 container.bind<CommentAccess>(CommentAccess).toSelf();
+container.bind<FollowAccess>(FollowAccess).toSelf();
 
 // service
 container.bind<AwsService>(AwsService).toSelf();

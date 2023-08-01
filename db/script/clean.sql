@@ -3,6 +3,8 @@ TRUNCATE TABLE gotron.lyrics_history;
 TRUNCATE TABLE gotron.project_history;
 TRUNCATE TABLE gotron.track_history;
 TRUNCATE TABLE gotron.`like`;
+TRUNCATE TABLE gotron.chat;
+TRUNCATE TABLE gotron.follow;
 TRUNCATE TABLE gotron.project_user;
 delete from gotron.lyrics;
 delete from gotron.track;

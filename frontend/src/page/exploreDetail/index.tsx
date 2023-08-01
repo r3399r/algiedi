@@ -17,7 +17,14 @@ import IcProfile from 'src/image/ic-profile.svg';
 import { GetExploreIdResponse } from 'src/model/backend/api/Explore';
 import { RootState } from 'src/redux/store';
 import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
-import { commentById, getExploreById, likeById, unlikeById } from 'src/service/ExploreService';
+import {
+  commentById,
+  followByUserId,
+  getExploreById,
+  likeById,
+  unfollowByUserId,
+  unlikeById,
+} from 'src/service/ExploreService';
 
 const ExploreDetail = () => {
   const navigate = useNavigate();
@@ -52,6 +59,18 @@ const ExploreDetail = () => {
   const onComment = () => {
     if (id === undefined || myComment === '') return;
     commentById(id, myComment)
+      .then(() => setRefresh(!refresh))
+      .catch((err) => dispatch(openFailSnackbar(err)));
+  };
+
+  const onFollow = (userId: string) => () => {
+    followByUserId(userId)
+      .then(() => setRefresh(!refresh))
+      .catch((err) => dispatch(openFailSnackbar(err)));
+  };
+
+  const onUnfollow = (userId: string) => () => {
+    unfollowByUserId(userId)
       .then(() => setRefresh(!refresh))
       .catch((err) => dispatch(openFailSnackbar(err)));
   };
@@ -125,12 +144,18 @@ const ExploreDetail = () => {
       <div className="flex p-10">
         {creation.type === 'song' && (
           <div className="w-1/2 flex flex-col gap-3">
-            {creation.inspired.map((v) => (
+            {creation.author.map((v) => (
               <div key={v.id} className="flex gap-5 items-center">
-                <img src={IcProfile} />
+                <img src={IcProfile} className="w-[80px] h-[80px]" />
                 <div>{v.username}</div>
                 <div>
-                  <Button size="s">Follow</Button>
+                  <Button
+                    size="s"
+                    disabled={v.following === null}
+                    onClick={v.following === true ? onUnfollow(v.id) : onFollow(v.id)}
+                  >
+                    {v.following === true ? 'Unfollow' : 'Follow'}
+                  </Button>
                 </div>
               </div>
             ))}
@@ -138,13 +163,23 @@ const ExploreDetail = () => {
         )}
         {creation.type !== 'song' && (
           <div className="w-1/2 flex gap-5 items-center">
-            <img src={IcProfile} />
+            <img src={IcProfile} className="w-[80px] h-[80px]" />
             <div>
               <div>{creation.username}</div>
-              <div className="text-sm text-grey">{creation.user.role}</div>
+              <div className="text-sm text-grey">{creation.author[0].role}</div>
             </div>
             <div>
-              <Button size="s">Follow</Button>
+              <Button
+                size="s"
+                disabled={creation.author[0].following === null}
+                onClick={
+                  creation.author[0].following === true
+                    ? onUnfollow(creation.author[0].id)
+                    : onFollow(creation.author[0].id)
+                }
+              >
+                {creation.author[0].following === true ? 'Unfollow' : 'Follow'}
+              </Button>
             </div>
           </div>
         )}
