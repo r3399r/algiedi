@@ -51,17 +51,20 @@ const Collaborate = ({ project, doRefresh }: Props) => {
     getChatsById(project.id).then((res) => setChats(res));
   }, []);
 
-  const { readyState, sendJsonMessage } = useWebSocket('wss://dev.gotronmusic.com/socket', {
-    queryParams: { userId },
-    shouldReconnect: () => true,
-    onMessage: ({ data }) => {
-      const res: WebsocketResponse<Chat> = JSON.parse(data);
-      if (res.a === 'chat') setChats([res.d, ...chats]);
+  const { readyState, sendJsonMessage } = useWebSocket(
+    `${window.location.origin.replace(/^http/, 'ws')}/socket`,
+    {
+      queryParams: { userId },
+      shouldReconnect: () => true,
+      onMessage: ({ data }) => {
+        const res: WebsocketResponse<Chat> = JSON.parse(data);
+        if (res.a === 'chat') setChats([res.d, ...chats]);
+      },
+      // onOpen: () => console.log('open'),
+      // onClose: () => console.log('close'),
+      // onError: () => console.log('error'),
     },
-    // onOpen: () => console.log('open'),
-    // onClose: () => console.log('close'),
-    // onError: () => console.log('error'),
-  });
+  );
 
   const onPublish = () => {
     publishProject(project.id)

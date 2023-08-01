@@ -1,5 +1,11 @@
 import 'reflect-metadata';
-import { CognitoIdentityServiceProvider, Lambda, S3, SNS } from 'aws-sdk';
+import {
+  ApiGatewayManagementApi,
+  CognitoIdentityServiceProvider,
+  Lambda,
+  S3,
+  SNS,
+} from 'aws-sdk';
 import { Container } from 'inversify';
 import { ChatAccess } from './access/ChatAccess';
 import { CommentAccess } from './access/CommentAccess';
@@ -103,9 +109,12 @@ container.bind<WsService>(WsService).toSelf();
 container.bind<SNS>(SNS).toDynamicValue(() => new SNS());
 container.bind<S3>(S3).toDynamicValue(() => new S3());
 container.bind<Lambda>(Lambda).toDynamicValue(() => new Lambda());
-// container.bind<ApiGatewayManagementApi>(ApiGatewayManagementApi).toDynamicValue(() => new ApiGatewayManagementApi({
-//   endpoint: '0nnwr8j4y2.execute-api.ap-southeast-1.amazonaws.com/ws'
-// }));
+container.bind<ApiGatewayManagementApi>(ApiGatewayManagementApi).toDynamicValue(
+  () =>
+    new ApiGatewayManagementApi({
+      endpoint: process.env.WS_ENDPOINT,
+    })
+);
 container
   .bind<CognitoIdentityServiceProvider>(CognitoIdentityServiceProvider)
   .toDynamicValue(() => new CognitoIdentityServiceProvider());

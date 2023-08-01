@@ -1494,6 +1494,7 @@ Resources:
         Variables:
           PROJECT: !Sub ${Project}
           ENVR: !Sub ${TargetEnvr}
+          WS_ENDPOINT: !Sub ${WebsocketApi}.execute-api.${AWS::Region}.amazonaws.com/socket
           DB_ENDPOINT:
             Fn::ImportValue: !Sub ${Project}-${TargetEnvr}-db-endpoint
           DB_PORT:

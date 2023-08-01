@@ -10,7 +10,7 @@ module.exports = function (app) {
   );
   app.use(
     createProxyMiddleware('/socket', {
-      target: 'wss://0nnwr8j4y2.execute-api.ap-southeast-1.amazonaws.com/',
+      target: 'wss://dev.gotronmusic.com/',
       ws: true,
       changeOrigin: true,
     }),

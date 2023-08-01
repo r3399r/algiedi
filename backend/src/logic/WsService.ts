@@ -13,8 +13,8 @@ import { ChatEntity } from 'src/model/entity/ChatEntity';
  */
 @injectable()
 export class WsService {
-  // @inject(ApiGatewayManagementApi)
-  // private readonly apiGatewayManagementApi!: ApiGatewayManagementApi;
+  @inject(ApiGatewayManagementApi)
+  private readonly apiGatewayManagementApi!: ApiGatewayManagementApi;
 
   @inject(DbAccess)
   private readonly dbAccess!: DbAccess;
@@ -60,10 +60,6 @@ export class WsService {
     chat.content = content;
     const newChat = await this.chatAccess.save(chat);
 
-    const client = new ApiGatewayManagementApi({
-      endpoint: '0nnwr8j4y2.execute-api.ap-southeast-1.amazonaws.com/socket',
-    });
-
     const pu = await this.projectUserAccess.findByProjectId(projectId);
     const users = await this.userAccess.find({
       where: { id: In(pu.map((p) => p.userId)) },
@@ -81,7 +77,7 @@ export class WsService {
     await Promise.all(
       users.map(async (u) => {
         if (!u.connectionId) return;
-        await client
+        await this.apiGatewayManagementApi
           .postToConnection({
             ConnectionId: u.connectionId,
             Data: JSON.stringify(message),
