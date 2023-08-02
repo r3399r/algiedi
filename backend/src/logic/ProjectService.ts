@@ -1,3 +1,4 @@
+import { ApiGatewayManagementApi } from 'aws-sdk';
 import { inject, injectable } from 'inversify';
 import { In } from 'typeorm';
 import { ChatAccess } from 'src/access/ChatAccess';
@@ -5,6 +6,7 @@ import { DbAccess } from 'src/access/DbAccess';
 import { InfoAccess } from 'src/access/InfoAccess';
 import { LyricsAccess } from 'src/access/LyricsAccess';
 import { LyricsHistoryAccess } from 'src/access/LyricsHistoryAccess';
+import { NotificationAccess } from 'src/access/NotificationAccess';
 import { ProjectAccess } from 'src/access/ProjectAccess';
 import { ProjectHistoryAccess } from 'src/access/ProjectHistoryAccess';
 import { ProjectUserAccess } from 'src/access/ProjectUserAccess';
@@ -23,6 +25,7 @@ import { Role, Status } from 'src/model/constant/Project';
 import { InfoEntity } from 'src/model/entity/InfoEntity';
 import { LyricsEntity } from 'src/model/entity/LyricsEntity';
 import { LyricsHistoryEntity } from 'src/model/entity/LyricsHistoryEntity';
+import { NotificationEntity, Type } from 'src/model/entity/NotificationEntity';
 import { TrackEntity } from 'src/model/entity/TrackEntity';
 import { TrackHistoryEntity } from 'src/model/entity/TrackHistoryEntity';
 import { BadRequestError, InternalServerError } from 'src/model/error';
@@ -41,6 +44,9 @@ export class ProjectService {
 
   @inject(AwsService)
   private readonly awsService!: AwsService;
+
+  @inject(ApiGatewayManagementApi)
+  private readonly apiGatewayManagementApi!: ApiGatewayManagementApi;
 
   @inject(DbAccess)
   private readonly dbAccess!: DbAccess;
@@ -77,6 +83,9 @@ export class ProjectService {
 
   @inject(ChatAccess)
   private readonly chatAccess!: ChatAccess;
+
+  @inject(NotificationAccess)
+  private readonly notificationAccess!: NotificationAccess;
 
   public async cleanup() {
     await this.dbAccess.cleanup();
@@ -345,12 +354,51 @@ export class ProjectService {
       await this.projectAccess.save(project);
 
       const projectUsers = await this.projectUserAccess.findByProjectId(id);
+      const users = await this.userAccess.find({
+        where: { id: In(projectUsers.map((p) => p.userId)) },
+      });
+      const notification = new NotificationEntity();
+      notification.isRead = false;
+
       for (const pu of projectUsers) {
+        const user = users.find((v) => v.id === pu.userId);
         if (pu.role === Role.Owner) continue;
         if (pu.isAccepted === true) {
           pu.role = Role.Collaborator;
           pu.isReady = false;
-        } else pu.role = Role.Rejected;
+
+          notification.userId = pu.userId;
+          notification.type = Type.ProjectStart;
+          const newNotification = await this.notificationAccess.save(
+            notification
+          );
+          await this.apiGatewayManagementApi
+            .postToConnection({
+              ConnectionId: user?.connectionId ?? '',
+              Data: JSON.stringify({
+                a: 'project-start',
+                d: newNotification,
+              }),
+            })
+            .promise();
+        } else {
+          pu.role = Role.Rejected;
+
+          notification.userId = pu.userId;
+          notification.type = Type.ProjectReject;
+          const newNotification = await this.notificationAccess.save(
+            notification
+          );
+          await this.apiGatewayManagementApi
+            .postToConnection({
+              ConnectionId: user?.connectionId ?? '',
+              Data: JSON.stringify({
+                a: 'project-reject',
+                d: newNotification,
+              }),
+            })
+            .promise();
+        }
 
         await this.projectUserAccess.save(pu);
       }

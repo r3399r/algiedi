@@ -1,0 +1,11 @@
+CREATE TABLE IF NOT EXISTS `notification` (
+	id VARCHAR(36) NOT NULL,
+	user_id VARCHAR(36) NOT NULL,
+	is_read BOOLEAN NOT NULL,
+	type VARCHAR(255) NOT NULL,
+	target_id VARCHAR(36) NULL,
+	created_at TIMESTAMP NULL,
+	updated_at TIMESTAMP NULL,
+	PRIMARY KEY (id ASC),
+	FOREIGN KEY (user_id) REFERENCES user(id)
+);

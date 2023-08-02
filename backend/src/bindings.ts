@@ -15,6 +15,7 @@ import { InfoAccess } from './access/InfoAccess';
 import { LikeAccess } from './access/LikeAccess';
 import { LyricsAccess } from './access/LyricsAccess';
 import { LyricsHistoryAccess } from './access/LyricsHistoryAccess';
+import { NotificationAccess } from './access/NotificationAccess';
 import { ProjectAccess } from './access/ProjectAccess';
 import { ProjectHistoryAccess } from './access/ProjectHistoryAccess';
 import { ProjectUserAccess } from './access/ProjectUserAccess';
@@ -29,6 +30,7 @@ import { CognitoService } from './logic/CognitoService';
 import { CreationService } from './logic/CreationService';
 import { ExploreService } from './logic/ExploreService';
 import { MeService } from './logic/MeService';
+import { NotificationService } from './logic/NotificationService';
 import { ProjectService } from './logic/ProjectService';
 import { SnsService } from './logic/SnsService';
 import { UploadService } from './logic/UploadService';
@@ -42,6 +44,7 @@ import { InfoEntity } from './model/entity/InfoEntity';
 import { LikeEntity } from './model/entity/LikeEntity';
 import { LyricsEntity } from './model/entity/LyricsEntity';
 import { LyricsHistoryEntity } from './model/entity/LyricsHistoryEntity';
+import { NotificationEntity } from './model/entity/NotificationEntity';
 import { ProjectEntity } from './model/entity/ProjectEntity';
 import { ProjectHistoryEntity } from './model/entity/ProjectHistoryEntity';
 import { ProjectUserEntity } from './model/entity/ProjectUserEntity';
@@ -72,6 +75,7 @@ container.bind<Function>(dbEntitiesBindingId).toFunction(UserEntity);
 container.bind<Function>(dbEntitiesBindingId).toFunction(LikeEntity);
 container.bind<Function>(dbEntitiesBindingId).toFunction(CommentEntity);
 container.bind<Function>(dbEntitiesBindingId).toFunction(FollowEntity);
+container.bind<Function>(dbEntitiesBindingId).toFunction(NotificationEntity);
 container.bind<Function>(dbEntitiesBindingId).toFunction(ViewCreationEntity);
 container
   .bind<Function>(dbEntitiesBindingId)
@@ -95,6 +99,7 @@ container.bind<ViewCreationExploreAccess>(ViewCreationExploreAccess).toSelf();
 container.bind<LikeAccess>(LikeAccess).toSelf();
 container.bind<CommentAccess>(CommentAccess).toSelf();
 container.bind<FollowAccess>(FollowAccess).toSelf();
+container.bind<NotificationAccess>(NotificationAccess).toSelf();
 
 // service
 container.bind<AwsService>(AwsService).toSelf();
@@ -108,6 +113,7 @@ container.bind<VpcService>(VpcService).toSelf();
 container.bind<MeService>(MeService).toSelf();
 container.bind<CreationService>(CreationService).toSelf();
 container.bind<WsService>(WsService).toSelf();
+container.bind<NotificationService>(NotificationService).toSelf();
 
 // AWS
 container.bind<SNS>(SNS).toDynamicValue(() => new SNS());

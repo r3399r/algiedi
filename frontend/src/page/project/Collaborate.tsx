@@ -7,7 +7,6 @@ import Button from 'src/component/Button';
 import Form from 'src/component/Form';
 import FormInput from 'src/component/FormInput';
 import { Page } from 'src/constant/Page';
-import useWs from 'src/hook/useWs';
 import { GetProjectIdChatResponse } from 'src/model/backend/api/Project';
 import { Role } from 'src/model/backend/constant/Project';
 import { DetailedProject } from 'src/model/backend/Project';
@@ -15,6 +14,7 @@ import { MessageForm } from 'src/model/Form';
 import { RootState } from 'src/redux/store';
 import { openFailSnackbar } from 'src/redux/uiSlice';
 import { getChatsById, publishProject } from 'src/service/ProjectService';
+import { wsSend } from 'src/util/wsTick';
 import Activities from './Activities';
 import CollaborateMaster from './CollaborateMaster';
 import Info from './Info';
@@ -34,12 +34,12 @@ const Collaborate = ({ project, doRefresh }: Props) => {
   const { lastChat } = useSelector((root: RootState) => root.ws);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [chats, setChats] = useState<GetProjectIdChatResponse>([]);
-  const { readyState, sendJsonMessage } = useWs();
 
   const owner = useMemo(
     () => project.collaborators.find((v) => v.role === Role.Owner)?.user,
     [project],
   );
+
   const canPublish = useMemo(
     () =>
       project.collaborators.length === project.collaborators.filter((v) => v.isReady).length &&
@@ -63,8 +63,7 @@ const Collaborate = ({ project, doRefresh }: Props) => {
   };
 
   const onSend = (data: MessageForm) => {
-    if (readyState !== 1) return;
-    sendJsonMessage({
+    wsSend({
       action: 'chat',
       content: data.content,
       userId,
