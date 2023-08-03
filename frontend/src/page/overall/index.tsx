@@ -33,7 +33,7 @@ const Overall = () => {
             <div className="w-fit rounded-lg bg-grey/70 p-2">{v?.name}</div>
           </div>
         ))}
-      <div className="mt-10 text-[20px]">Porjects in Progress</div>
+      <div className="mt-10 text-[20px]">Projects in Progress</div>
       <div className="text-grey">
         {projects?.filter((v) => v.status === Status.InProgress).length} projects
       </div>

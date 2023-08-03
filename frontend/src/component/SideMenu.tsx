@@ -55,11 +55,6 @@ const SideMenu = () => {
       </div>
       <div className="cursor-pointer px-4 py-2 hover:bg-grey">Explore</div>
       <Divider className="bg-grey" />
-      <div className="cursor-pointer px-4 py-2 hover:bg-grey">GROUPS</div>
-      <div className="cursor-pointer px-4 py-2 hover:bg-grey">Lyrics</div>
-      <div className="cursor-pointer px-4 py-2 hover:bg-grey">Music</div>
-      <div className="cursor-pointer px-4 py-2 hover:bg-grey">Add Group</div>
-      <Divider className="bg-grey" />
       <div className="cursor-pointer px-4 py-2 hover:bg-grey" onClick={logout}>
         Sign out
       </div>
