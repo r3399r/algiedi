@@ -79,7 +79,7 @@ const ExploreDetail = () => {
 
   return (
     <>
-      <div onClick={() => navigate(-1)} className="my-4 ml-10">
+      <div onClick={() => navigate(-1)} className="my-4 ml-10 cursor-pointer">
         Back
       </div>
       <div

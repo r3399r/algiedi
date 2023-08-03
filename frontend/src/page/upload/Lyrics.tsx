@@ -46,7 +46,7 @@ const Lyrics = ({ defaultInspiredId, inspiration }: Props) => {
             <FormInput name="theme" className="mb-4" label="Theme" required />
             <FormInput name="genre" className="mb-4" label="Genre" required />
             <FormInput name="language" className="mb-4" label="Language" required />
-            <FormInput name="caption" label="Caption" required />
+            {/* <FormInput name="caption" label="Caption" required /> */}
           </div>
         </div>
         <div className="mt-10 flex gap-6">

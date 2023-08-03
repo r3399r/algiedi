@@ -22,7 +22,7 @@ const Info = ({ project, doRefresh, isOwner }: Props) => {
   const [theme, setTheme] = useState<string>(project.theme ?? '');
   const [genre, setGenre] = useState<string>(project.genre ?? '');
   const [language, setLanguage] = useState<string>(project.language ?? '');
-  const [caption, setCaption] = useState<string>(project.caption ?? '');
+  // const [caption, setCaption] = useState<string>(project.caption ?? '');
 
   const onSave = () => {
     updateProject(project.id, {
@@ -31,7 +31,7 @@ const Info = ({ project, doRefresh, isOwner }: Props) => {
       theme,
       genre,
       language,
-      caption,
+      caption: '',
     })
       .then(doRefresh)
       .catch((err) => dispatch(openFailSnackbar(err)));
@@ -115,14 +115,14 @@ const Info = ({ project, doRefresh, isOwner }: Props) => {
             <div>{language}</div>
           )}
         </div>
-        <div className="flex gap-1">
+        {/* <div className="flex gap-1">
           <div className="w-[90px] font-bold">Caption</div>
           {isEdit ? (
             <Input value={caption} onChange={(e) => setCaption(e.target.value)} />
           ) : (
             <div>{caption}</div>
           )}
-        </div>
+        </div> */}
       </div>
       {isOwner && (
         <input

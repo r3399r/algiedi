@@ -59,7 +59,7 @@ const Track = ({ defaultInspiredId, inspiration }: Props) => {
             <FormInput name="theme" label="Theme" required />
             <FormInput name="genre" label="Genre" required />
             <FormInput name="language" label="Language" required />
-            <FormInput name="caption" label="Caption" required />
+            {/* <FormInput name="caption" label="Caption" required /> */}
           </div>
         </div>
         <div className="mt-10 flex gap-6">

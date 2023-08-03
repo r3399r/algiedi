@@ -40,10 +40,10 @@ const ModalPublish = ({ open, handleClose, onPublish, project }: Props) => (
         <div className="w-[100px] font-bold">Language</div>
         <div>{project.language}</div>
       </div>
-      <div className="flex gap-2">
+      {/* <div className="flex gap-2">
         <div className="w-[100px] font-bold">Caption</div>
         <div>{project.caption}</div>
-      </div>
+      </div> */}
       <div className="my-2 flex items-center gap-2">
         <audio src={project.song?.fileUrl ?? undefined} controls />
         {project.song?.tabFileUrl && (

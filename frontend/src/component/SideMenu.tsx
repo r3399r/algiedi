@@ -46,14 +46,18 @@ const SideMenu = () => {
       <div className="cursor-pointer px-4 py-2 hover:bg-grey" onClick={() => navigate(Page.Upload)}>
         Upload
       </div>
-      <div className="cursor-pointer px-4 py-2 hover:bg-grey">Practice Room</div>
       <div
         className="cursor-pointer px-4 py-2 hover:bg-grey"
         onClick={() => navigate(Page.Notification)}
       >
         Notifications
       </div>
-      <div className="cursor-pointer px-4 py-2 hover:bg-grey">Explore</div>
+      <div
+        className="cursor-pointer px-4 py-2 hover:bg-grey"
+        onClick={() => navigate(Page.Explore)}
+      >
+        Explore
+      </div>
       <Divider className="bg-grey" />
       <div className="cursor-pointer px-4 py-2 hover:bg-grey" onClick={logout}>
         Sign out
