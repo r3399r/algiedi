@@ -1274,7 +1274,6 @@ Resources:
                 "theme":{"type": "string"},
                 "genre":{"type": "string"},
                 "language":{"type": "string"},
-                "caption":{"type": "string"}
               }
             },
             "postProjectIdOriginal": {
@@ -1293,9 +1292,8 @@ Resources:
                 "theme":{"type": "string"},
                 "genre":{"type": "string"},
                 "language":{"type": "string"},
-                "caption":{"type": "string"},
               },
-              "required": ["type","name","description","theme","genre","language","caption"]
+              "required": ["type","name","description","theme","genre","language"]
             },
             "putUploadId": {
               "type": "object",
