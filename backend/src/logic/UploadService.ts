@@ -95,7 +95,7 @@ export class UploadService {
     if (data.coverFile) {
       const key = await this.awsService.s3Upload(
         data.coverFile,
-        `info/${info.id}`
+        `info/${newInfo.id}`
       );
       newInfo.coverFileUri = key;
       newInfo = await this.infoAccess.save(newInfo);
