@@ -1468,33 +1468,6 @@ Resources:
       Action: 'lambda:InvokeFunction'
       Principal: apigateway.amazonaws.com
       SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ServerlessApi}/*
-  LambdaVpc:
-    Type: AWS::Serverless::Function
-    Properties:
-      Architectures: [arm64]
-      Handler: index.vpc
-      Runtime: nodejs18.x
-      FunctionName: !Sub ${Project}-${TargetEnvr}-vpc
-      Role: !GetAtt ExecutionRole.Arn
-      CodeUri: ../../dist/webpack/lambda
-      MemorySize: 128
-      VpcConfig:
-        SecurityGroupIds: [sg-00a1e2a1668125d11]
-        SubnetIds: 
-        - subnet-0ae38472a33a75137
-        - subnet-0dfc7a78154dec1f1
-        - subnet-0b77ba257fb40880b
-      Environment:
-        Variables:
-          PROJECT: !Sub ${Project}
-          ENVR: !Sub ${TargetEnvr}
-          DB_ENDPOINT:
-            Fn::ImportValue: !Sub ${Project}-${TargetEnvr}-db-endpoint
-          DB_PORT:
-            Fn::ImportValue: !Sub ${Project}-${TargetEnvr}-db-port
-          DB_USERNAME:
-            Fn::ImportValue: !Sub ${Project}-${TargetEnvr}-db-username
-          DB_PASSWORD: !Sub '{{resolve:ssm:${Project}-${TargetEnvr}-db-pwd}}'
   LambdaUser:
     Type: AWS::Serverless::Function
     Properties:

@@ -114,16 +114,3 @@ export type CognitoSignupEvent = {
     autoVerifyPhone: false;
   };
 };
-
-export type FromOutsideEvent = InitUserEvent;
-
-export type InitUserEvent = {
-  source: 'init-user';
-  data: {
-    id: string;
-    role: string;
-    language: string;
-    bio: string;
-    tag: string;
-  };
-};

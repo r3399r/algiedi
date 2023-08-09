@@ -1,6 +1,8 @@
-import { CognitoIdentityServiceProvider, Lambda } from 'aws-sdk';
+import { CognitoIdentityServiceProvider } from 'aws-sdk';
 import { inject, injectable } from 'inversify';
+import { DbAccess } from 'src/access/DbAccess';
 import { FollowAccess } from 'src/access/FollowAccess';
+import { UserAccess } from 'src/access/UserAccess';
 import { PatchUserRequest } from 'src/model/api/User';
 import { FollowEntity } from 'src/model/entity/FollowEntity';
 import { cognitoSymbol } from 'src/util/LambdaSetup';
@@ -13,14 +15,24 @@ export class UserService {
   @inject(cognitoSymbol)
   private readonly cognitoUserId!: string;
 
-  @inject(Lambda)
-  private readonly lambda!: Lambda;
+  // @inject(Lambda)
+  // private readonly lambda!: Lambda;
 
   @inject(CognitoIdentityServiceProvider)
   private readonly cognitoProvider!: CognitoIdentityServiceProvider;
 
+  @inject(DbAccess)
+  private readonly dbAccess!: DbAccess;
+
+  @inject(UserAccess)
+  private readonly userAccess!: UserAccess;
+
   @inject(FollowAccess)
   private readonly followAccess!: FollowAccess;
+
+  public async cleanup() {
+    await this.dbAccess.cleanup();
+  }
 
   public async initUser(data: PatchUserRequest) {
     // update cognito
@@ -37,22 +49,14 @@ export class UserService {
       })
       .promise();
 
-    // trigger lambda to update db
-    await this.lambda
-      .invoke({
-        FunctionName: `${process.env.PROJECT}-${process.env.ENVR}-vpc`,
-        Payload: JSON.stringify({
-          source: 'init-user',
-          data: {
-            id: this.cognitoUserId,
-            role: data.role,
-            language: data.language,
-            bio: `I am good at playing the ${data.instrument}.`,
-            tag: data.favoriate,
-          },
-        }),
-      })
-      .promise();
+    // init user
+    const user = await this.userAccess.findOneByIdOrFail(this.cognitoUserId);
+    user.role = data.role;
+    user.language = data.language;
+    user.bio = `I am good at playing the ${data.instrument}.`;
+    user.tag = data.favoriate;
+
+    await this.userAccess.save(user);
   }
 
   public async followUser(id: string) {
