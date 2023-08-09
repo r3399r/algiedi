@@ -9,11 +9,11 @@ import { useEffect, useState } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
+import Avatar from 'src/component/Avatar';
 import Button from 'src/component/Button';
 import Cover from 'src/component/Cover';
 import Divider from 'src/component/Divider';
 import { Page } from 'src/constant/Page';
-import IcProfile from 'src/image/ic-profile.svg';
 import { GetExploreIdResponse } from 'src/model/backend/api/Explore';
 import { RootState } from 'src/redux/store';
 import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
@@ -146,7 +146,7 @@ const ExploreDetail = () => {
           <div className="flex w-1/2 flex-col gap-3">
             {creation.author.map((v) => (
               <div key={v.id} className="flex items-center gap-5">
-                <img src={IcProfile} className="h-[80px] w-[80px]" />
+                <Avatar url={v.avatarUrl} size={80} />
                 <div>{v.username}</div>
                 <div>
                   <Button
@@ -163,7 +163,7 @@ const ExploreDetail = () => {
         )}
         {creation.type !== 'song' && (
           <div className="flex w-1/2 items-center gap-5">
-            <img src={IcProfile} className="h-[80px] w-[80px]" />
+            <Avatar url={creation.author[0].avatarUrl} size={80} />
             <div>
               <div>{creation.username}</div>
               <div className="text-sm text-grey">{creation.author[0].role}</div>
@@ -239,7 +239,7 @@ const ExploreDetail = () => {
           <div className="flex w-1/2 flex-col gap-4">
             {creation.comments.map((v, i) => (
               <div key={i} className="flex gap-2 rounded-3xl border border-solid border-dark p-4">
-                <img src={IcProfile} />
+                <Avatar url={v.user?.avatarUrl ?? null} size={80} />
                 <div className="flex-1">
                   <div className="flex justify-between gap-4">
                     <div className="font-bold">{v.user?.username}</div>

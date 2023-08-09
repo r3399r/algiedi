@@ -2,17 +2,17 @@ import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Page } from 'src/constant/Page';
-import IcProfile from 'src/image/ic-profile.svg';
 import Logo from 'src/image/logo.svg';
 import { RootState } from 'src/redux/store';
 import { logout } from 'src/service/AuthService';
 import { loadProfileData } from 'src/service/ProfileService';
+import Avatar from './Avatar';
 import Divider from './Divider';
 
 const SideMenu = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { username } = useSelector((rootState: RootState) => rootState.me);
+  const { username, avatar } = useSelector((rootState: RootState) => rootState.me);
 
   useEffect(() => {
     if (location.pathname !== Page.Profile) loadProfileData();
@@ -27,7 +27,7 @@ const SideMenu = () => {
         className="flex cursor-pointer items-center gap-4 px-4 py-2 hover:bg-grey"
         onClick={() => navigate(Page.Profile)}
       >
-        <img src={IcProfile} />
+        <Avatar url={avatar} size={60} />
         <div>{username}</div>
       </div>
       <Divider className="bg-grey" />

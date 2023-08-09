@@ -2,7 +2,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import IcProfile from 'src/image/ic-profile.svg';
+import Avatar from 'src/component/Avatar';
 import { Role } from 'src/model/backend/constant/Project';
 import { DetailedProject } from 'src/model/backend/Project';
 import { RootState } from 'src/redux/store';
@@ -64,7 +64,7 @@ const Inspired = ({ project, doRefresh }: Props) => {
             </button>
           </div>
           <div className="mb-4 flex items-center gap-2">
-            <img src={IcProfile} />
+            <Avatar url={v.user.avatarUrl} size={80} />
             <div>{v.user.username}</div>
           </div>
           <Creation

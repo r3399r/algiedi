@@ -1,12 +1,12 @@
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import Avatar from 'src/component/Avatar';
 import Button from 'src/component/Button';
 import Checkbox from 'src/component/Checkbox';
 import Input from 'src/component/Input';
 import NotificationWidget from 'src/component/NotificationWidget';
 import IcFacebook from 'src/image/ic-facebook.svg';
 import IcInstagram from 'src/image/ic-instagram.svg';
-import IcProfile from 'src/image/ic-profile.svg';
 import IcSoundcloud from 'src/image/ic-soundcloud.svg';
 import IcYoutube from 'src/image/ic-youtube.svg';
 import Sample1 from 'src/image/sample1.png';
@@ -14,11 +14,11 @@ import Sample2 from 'src/image/sample2.png';
 import Sample3 from 'src/image/sample3.png';
 import { RootState } from 'src/redux/store';
 import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
-import { editProfile, loadProfileData } from 'src/service/ProfileService';
+import { editProfile, loadProfileData, updateAvatar } from 'src/service/ProfileService';
 
 const Profile = () => {
   const dispatch = useDispatch();
-  const { username, email } = useSelector((rootState: RootState) => rootState.me);
+  const { username, email, avatar } = useSelector((rootState: RootState) => rootState.me);
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [refresh, setRefresh] = useState<boolean>(false);
   const [role, setRole] = useState<string[]>([]);
@@ -30,6 +30,7 @@ const Profile = () => {
   const [instagram, setInstagram] = useState<string>('');
   const [youtube, setYoutube] = useState<string>('');
   const [soundcloud, setSoundcloud] = useState<string>('');
+  const avatarInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     loadProfileData().then((res) => {
@@ -81,7 +82,12 @@ const Profile = () => {
       </div>
       <div className="my-5 flex items-center justify-between gap-1">
         <div className="flex items-center gap-6">
-          <img src={IcProfile} />
+          <Avatar
+            url={avatar}
+            size={120}
+            clickable
+            onClick={() => avatarInputRef.current?.click()}
+          />
           <div>
             <div className="text-[20px] font-bold">{username}</div>
             {isEdit ? (
@@ -262,6 +268,17 @@ const Profile = () => {
           <div>於是以後</div>
         </div>
       </div>
+      <input
+        type="file"
+        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+          if (e.target.files && e.target.files.length === 1)
+            updateAvatar(e.target.files[0]).then(() => setRefresh(!refresh));
+        }}
+        ref={avatarInputRef}
+        className="hidden"
+        accept="image/jpeg"
+        multiple={false}
+      />
     </div>
   );
 };

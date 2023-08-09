@@ -2,7 +2,6 @@ import 'reflect-metadata';
 import {
   ApiGatewayManagementApi,
   CognitoIdentityServiceProvider,
-  Lambda,
   S3,
   SNS,
 } from 'aws-sdk';
@@ -116,7 +115,6 @@ container.bind<NotificationService>(NotificationService).toSelf();
 // AWS
 container.bind<SNS>(SNS).toDynamicValue(() => new SNS());
 container.bind<S3>(S3).toDynamicValue(() => new S3());
-container.bind<Lambda>(Lambda).toDynamicValue(() => new Lambda());
 container.bind<ApiGatewayManagementApi>(ApiGatewayManagementApi).toDynamicValue(
   () =>
     new ApiGatewayManagementApi({

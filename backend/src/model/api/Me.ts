@@ -1,6 +1,6 @@
 import { User } from 'src/model/entity/UserEntity';
 
-export type GetMeResponse = User;
+export type GetMeResponse = User & { avatarUrl: string | null };
 
 export type PutMeRequest = {
   role?: string;
@@ -14,4 +14,4 @@ export type PutMeRequest = {
   soundcloud?: string;
 };
 
-export type PutMeResponse = User;
+export type PutMeResponse = User & { avatarUrl: string | null };

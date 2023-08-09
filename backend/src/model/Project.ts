@@ -15,7 +15,7 @@ export type DetailedProject = Project & {
   song: DetailedCreation | null;
   collaborators: {
     id: string;
-    user: User;
+    user: User & { avatarUrl: string | null };
     role: Role;
     isAccepted: boolean | null;
     isReady: boolean | null;

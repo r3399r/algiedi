@@ -7,6 +7,7 @@ import { ProjectUserAccess } from 'src/access/ProjectUserAccess';
 import { UserAccess } from 'src/access/UserAccess';
 import { Chat, WebsocketResponse } from 'src/model/api/Ws';
 import { ChatEntity } from 'src/model/entity/ChatEntity';
+import { AwsService } from './AwsService';
 
 /**
  * Service class for Websocket
@@ -27,6 +28,9 @@ export class WsService {
 
   @inject(ProjectUserAccess)
   private readonly projectUserAccess!: ProjectUserAccess;
+
+  @inject(AwsService)
+  private readonly awsService!: AwsService;
 
   public async cleanup() {
     await this.dbAccess.cleanup();
@@ -68,7 +72,12 @@ export class WsService {
     const message: WebsocketResponse<Chat> = {
       a: 'chat',
       d: {
-        user: sender,
+        user: sender
+          ? {
+              ...sender,
+              avatarUrl: this.awsService.getS3SignedUrl(sender.avatar),
+            }
+          : undefined,
         content,
         createdAt: newChat.createdAt,
       },

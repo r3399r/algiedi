@@ -3,9 +3,10 @@ import { inject, injectable } from 'inversify';
 import { DbAccess } from 'src/access/DbAccess';
 import { FollowAccess } from 'src/access/FollowAccess';
 import { UserAccess } from 'src/access/UserAccess';
-import { PatchUserRequest } from 'src/model/api/User';
+import { PatchUserRequest, PutUserAvatarRequest } from 'src/model/api/User';
 import { FollowEntity } from 'src/model/entity/FollowEntity';
 import { cognitoSymbol } from 'src/util/LambdaSetup';
+import { AwsService } from './AwsService';
 
 /**
  * Service class for User
@@ -15,8 +16,8 @@ export class UserService {
   @inject(cognitoSymbol)
   private readonly cognitoUserId!: string;
 
-  // @inject(Lambda)
-  // private readonly lambda!: Lambda;
+  @inject(AwsService)
+  private readonly awsService!: AwsService;
 
   @inject(CognitoIdentityServiceProvider)
   private readonly cognitoProvider!: CognitoIdentityServiceProvider;
@@ -56,6 +57,17 @@ export class UserService {
     user.bio = `I am good at playing the ${data.instrument}.`;
     user.tag = data.favoriate;
 
+    await this.userAccess.save(user);
+  }
+
+  public async updateAvatar(data: PutUserAvatarRequest) {
+    const user = await this.userAccess.findOneByIdOrFail(this.cognitoUserId);
+
+    const key = await this.awsService.s3Upload(
+      data.file,
+      `user/${this.cognitoUserId}`
+    );
+    user.avatar = key;
     await this.userAccess.save(user);
   }
 

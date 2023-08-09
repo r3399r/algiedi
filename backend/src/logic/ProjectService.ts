@@ -147,7 +147,10 @@ export class ProjectService {
 
                 return {
                   id: v.id,
-                  user,
+                  user: {
+                    ...user,
+                    avatarUrl: this.awsService.getS3SignedUrl(user.avatar),
+                  },
                   role: v.role,
                   isAccepted: v.isAccepted,
                   isReady: v.isReady,
@@ -456,7 +459,12 @@ export class ProjectService {
 
     return chats
       .map((v) => ({
-        user: users.find((u) => u.id === v.userId),
+        user: users
+          .map((u) => ({
+            ...u,
+            avatarUrl: this.awsService.getS3SignedUrl(u.avatar),
+          }))
+          .find((u) => u.id === v.userId),
         content: v.content,
         createdAt: v.createdAt ?? '',
       }))

@@ -3,8 +3,8 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import Avatar from 'src/component/Avatar';
 import Button from 'src/component/Button';
-import IcProfile from 'src/image/ic-profile.svg';
 import { Role } from 'src/model/backend/constant/Project';
 import { DetailedProject } from 'src/model/backend/Project';
 import { RootState } from 'src/redux/store';
@@ -39,7 +39,7 @@ const Partners = ({ project, doRefresh }: Props) => {
         {project.collaborators.map((v) => (
           <div key={v.id} className="flex w-fit flex-col items-center px-4 py-2 text-center">
             {v.role === Role.Owner && <StarBorderIcon />}
-            <img src={IcProfile} />
+            <Avatar url={v.user.avatarUrl} size={80} />
             <div>{v.user.username}</div>
             <div>
               {v.isReady ? (

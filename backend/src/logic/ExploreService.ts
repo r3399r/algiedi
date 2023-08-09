@@ -133,7 +133,10 @@ export class ExploreService {
       fileUrl: this.awsService.getS3SignedUrl(creation.fileUri),
       tabFileUrl: this.awsService.getS3SignedUrl(creation.tabFileUri),
       coverFileUrl: this.awsService.getS3SignedUrl(creation.coverFileUri),
-      author,
+      author: author.map((o) => ({
+        ...o,
+        avatarUrl: this.awsService.getS3SignedUrl(o.avatar),
+      })),
       inspired: inspired.map((v) => ({
         ...v,
         fileUrl: this.awsService.getS3SignedUrl(v.fileUri),
@@ -150,7 +153,13 @@ export class ExploreService {
       likeCount: likes.length,
       comments: comments
         .map((v) => ({
-          user: commenters.find((o) => o.id === v.userId) ?? null,
+          user:
+            commenters
+              .map((o) => ({
+                ...o,
+                avatarUrl: this.awsService.getS3SignedUrl(o.avatar),
+              }))
+              .find((o) => o.id === v.userId) ?? null,
           comment: v.comment,
           timestamp: v.createdAt,
         }))

@@ -4,3 +4,7 @@ export type PatchUserRequest = {
   instrument: string;
   favoriate: string;
 };
+
+export type PutUserAvatarRequest = {
+  file: string;
+};

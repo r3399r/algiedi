@@ -1,7 +1,7 @@
 import { User } from 'src/model/entity/UserEntity';
 
 export type Chat = {
-  user?: User;
+  user?: User & { avatarUrl: string | null };
   content: string;
   createdAt: string;
 };

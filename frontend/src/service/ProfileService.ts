@@ -1,7 +1,9 @@
 import meEndpoint from 'src/api/meEndpoint';
+import userEndpoint from 'src/api/userEndpoint';
 import { setMe } from 'src/redux/meSlice';
 import { dispatch } from 'src/redux/store';
 import { finishWaiting, setLoadingProfile, startWaiting } from 'src/redux/uiSlice';
+import { file2Base64 } from 'src/util/fileConverter';
 
 const loadMe = async () => {
   try {
@@ -23,6 +25,7 @@ const loadMe = async () => {
       instagram: user.instagram ?? '',
       youtube: user.youtube ?? '',
       soundcloud: user.soundcloud ?? '',
+      avatar: user.avatarUrl,
       lastProjectId: user.lastProjectId ?? undefined,
     };
     dispatch(setMe(me));
@@ -86,9 +89,19 @@ export const editProfile = async (
         instagram: user.instagram ?? '',
         youtube: user.youtube ?? '',
         soundcloud: user.soundcloud ?? '',
+        avatar: user.avatarUrl,
         lastProjectId: user.lastProjectId ?? undefined,
       }),
     );
+  } finally {
+    dispatch(finishWaiting());
+  }
+};
+
+export const updateAvatar = async (avatarFile: File) => {
+  try {
+    dispatch(startWaiting());
+    await userEndpoint.putUserAvatar({ file: await file2Base64(avatarFile) });
   } finally {
     dispatch(finishWaiting());
   }

@@ -1,6 +1,6 @@
 import { bindings } from 'src/bindings';
 import { UserService } from 'src/logic/UserService';
-import { PatchUserRequest } from 'src/model/api/User';
+import { PatchUserRequest, PutUserAvatarRequest } from 'src/model/api/User';
 import { BadRequestError, InternalServerError } from 'src/model/error';
 import { LambdaContext, LambdaEvent, LambdaOutput } from 'src/model/Lambda';
 import { errorOutput, successOutput } from 'src/util/lambdaHelper';
@@ -20,6 +20,9 @@ export async function user(
     switch (event.resource) {
       case '/api/user':
         res = await apiUser(event, service);
+        break;
+      case '/api/user/avatar':
+        res = await apiUserAvatar(event, service);
         break;
       case '/api/user/{id}/follow':
         res = await apiUserIdFollow(event, service);
@@ -48,6 +51,21 @@ async function apiUser(event: LambdaEvent, service: UserService) {
         throw new BadRequestError('body should not be empty');
 
       return service.initUser(JSON.parse(event.body) as PatchUserRequest);
+    default:
+      throw new InternalServerError('unknown http method');
+  }
+}
+
+async function apiUserAvatar(event: LambdaEvent, service: UserService) {
+  if (event.headers === null)
+    throw new BadRequestError('headers should not be empty');
+  if (event.body === null)
+    throw new BadRequestError('body should not be empty');
+  switch (event.httpMethod) {
+    case 'PUT':
+      return service.updateAvatar(
+        JSON.parse(event.body) as PutUserAvatarRequest
+      );
     default:
       throw new InternalServerError('unknown http method');
   }
