@@ -6,7 +6,7 @@ export type Chat = {
   createdAt: string;
 };
 
-export type WebsocketResponse<T = { [key: string]: any }> = {
+export type WebsocketMessage<T = { [key: string]: any }> = {
   a: string; // action
   d: T; //  data
 };

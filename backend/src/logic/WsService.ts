@@ -1,11 +1,10 @@
-import { ApiGatewayManagementApi } from 'aws-sdk';
 import { inject, injectable } from 'inversify';
 import { In } from 'typeorm';
 import { ChatAccess } from 'src/access/ChatAccess';
 import { DbAccess } from 'src/access/DbAccess';
 import { ProjectUserAccess } from 'src/access/ProjectUserAccess';
 import { UserAccess } from 'src/access/UserAccess';
-import { Chat, WebsocketResponse } from 'src/model/api/Ws';
+import { Chat, WebsocketMessage } from 'src/model/api/Ws';
 import { ChatEntity } from 'src/model/entity/ChatEntity';
 import { AwsService } from './AwsService';
 
@@ -14,9 +13,6 @@ import { AwsService } from './AwsService';
  */
 @injectable()
 export class WsService {
-  @inject(ApiGatewayManagementApi)
-  private readonly apiGatewayManagementApi!: ApiGatewayManagementApi;
-
   @inject(DbAccess)
   private readonly dbAccess!: DbAccess;
 
@@ -69,7 +65,7 @@ export class WsService {
       where: { id: In(pu.map((p) => p.userId)) },
     });
     const sender = users.find((v) => v.id === userId);
-    const message: WebsocketResponse<Chat> = {
+    const message: WebsocketMessage<Chat> = {
       a: 'chat',
       d: {
         user: sender
@@ -86,12 +82,7 @@ export class WsService {
     await Promise.all(
       users.map(async (u) => {
         if (!u.connectionId) return;
-        await this.apiGatewayManagementApi
-          .postToConnection({
-            ConnectionId: u.connectionId,
-            Data: JSON.stringify(message),
-          })
-          .promise();
+        await this.awsService.sendWsMessage(u.connectionId, message);
       })
     );
 

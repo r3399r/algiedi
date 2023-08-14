@@ -1,4 +1,3 @@
-import { ApiGatewayManagementApi } from 'aws-sdk';
 import { inject, injectable } from 'inversify';
 import { In } from 'typeorm';
 import { ChatAccess } from 'src/access/ChatAccess';
@@ -44,9 +43,6 @@ export class ProjectService {
 
   @inject(AwsService)
   private readonly awsService!: AwsService;
-
-  @inject(ApiGatewayManagementApi)
-  private readonly apiGatewayManagementApi!: ApiGatewayManagementApi;
 
   @inject(DbAccess)
   private readonly dbAccess!: DbAccess;
@@ -375,15 +371,11 @@ export class ProjectService {
           const newNotification = await this.notificationAccess.save(
             notification
           );
-          await this.apiGatewayManagementApi
-            .postToConnection({
-              ConnectionId: user?.connectionId ?? '',
-              Data: JSON.stringify({
-                a: 'project-start',
-                d: newNotification,
-              }),
-            })
-            .promise();
+          if (user)
+            await this.awsService.sendWsMessage(user.connectionId, {
+              a: 'project-start',
+              d: newNotification,
+            });
         } else {
           pu.role = Role.Rejected;
 
@@ -392,15 +384,11 @@ export class ProjectService {
           const newNotification = await this.notificationAccess.save(
             notification
           );
-          await this.apiGatewayManagementApi
-            .postToConnection({
-              ConnectionId: user?.connectionId ?? '',
-              Data: JSON.stringify({
-                a: 'project-reject',
-                d: newNotification,
-              }),
-            })
-            .promise();
+          if (user)
+            await this.awsService.sendWsMessage(user.connectionId, {
+              a: 'project-reject',
+              d: newNotification,
+            });
         }
 
         await this.projectUserAccess.save(pu);

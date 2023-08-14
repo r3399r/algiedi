@@ -1,5 +1,6 @@
-import { S3 } from 'aws-sdk';
+import { ApiGatewayManagementApi, S3 } from 'aws-sdk';
 import { inject, injectable } from 'inversify';
+import { WebsocketMessage } from 'src/model/api/Ws';
 
 /**
  * Service class for Aws
@@ -8,6 +9,9 @@ import { inject, injectable } from 'inversify';
 export class AwsService {
   @inject(S3)
   private readonly s3!: S3;
+
+  @inject(ApiGatewayManagementApi)
+  private readonly apiGatewayManagementApi!: ApiGatewayManagementApi;
 
   public getS3SignedUrl(uri: string | null) {
     const bucket = `${process.env.PROJECT}-${process.env.ENVR}-storage`;
@@ -37,5 +41,18 @@ export class AwsService {
       .promise();
 
     return key;
+  }
+
+  public async sendWsMessage<T>(
+    targetConnectionId: string | null,
+    message: WebsocketMessage<T>
+  ) {
+    if (!targetConnectionId) return;
+    await this.apiGatewayManagementApi
+      .postToConnection({
+        ConnectionId: targetConnectionId,
+        Data: JSON.stringify(message),
+      })
+      .promise();
   }
 }

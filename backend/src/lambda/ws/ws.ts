@@ -1,6 +1,6 @@
 import { bindings } from 'src/bindings';
 import { WsService } from 'src/logic/WsService';
-import { WebsocketResponse } from 'src/model/api/Ws';
+import { WebsocketMessage } from 'src/model/api/Ws';
 import { LambdaContext } from 'src/model/Lambda';
 
 export async function ws(event: any, _context?: LambdaContext): Promise<any> {
@@ -12,7 +12,7 @@ export async function ws(event: any, _context?: LambdaContext): Promise<any> {
     const connectionId = event.requestContext.connectionId as string;
     const userId = event.queryStringParameters?.userId as string;
 
-    let res: WebsocketResponse;
+    let res: WebsocketMessage;
 
     switch (routeKey) {
       case '$connect':
