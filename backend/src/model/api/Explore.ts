@@ -1,7 +1,9 @@
 import { User } from 'src/model/entity/UserEntity';
 import { DetailedCreation } from 'src/model/Project';
 
-export type GetExploreResponse = DetailedCreation[];
+export type GetExploreResponse = (DetailedCreation & {
+  author: (User & { avatarUrl: string | null })[];
+})[];
 
 export type GetExploreIdResponse = DetailedCreation & {
   author: (User & { following: boolean | null; avatarUrl: string | null })[];

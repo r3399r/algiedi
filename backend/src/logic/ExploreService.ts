@@ -56,12 +56,27 @@ export class ExploreService {
   public async getExplore(): Promise<GetExploreResponse> {
     const creations = await this.viewCreationExploreAccess.find();
 
-    return creations.map((c) => ({
-      ...c,
-      fileUrl: this.awsService.getS3SignedUrl(c.fileUri),
-      tabFileUrl: this.awsService.getS3SignedUrl(c.tabFileUri),
-      coverFileUrl: this.awsService.getS3SignedUrl(c.coverFileUri),
-    }));
+    return await Promise.all(
+      creations.map(async (v) => {
+        const pu = await this.projectUserAccess.find({
+          where: { projectId: v.id, role: Not(Role.Rejected) },
+        });
+        const author = await this.userAccess.find({
+          where: { id: In(pu.map((v) => v.userId)) },
+        });
+
+        return {
+          ...v,
+          author: author.map((o) => ({
+            ...o,
+            avatarUrl: this.awsService.getS3SignedUrl(o.avatar),
+          })),
+          fileUrl: this.awsService.getS3SignedUrl(v.fileUri),
+          tabFileUrl: this.awsService.getS3SignedUrl(v.tabFileUri),
+          coverFileUrl: this.awsService.getS3SignedUrl(v.coverFileUri),
+        };
+      })
+    );
   }
 
   public async getExploreById(id: string): Promise<GetExploreIdResponse> {

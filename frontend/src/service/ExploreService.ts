@@ -1,7 +1,7 @@
 import creationEndpoint from 'src/api/creationEndpoint';
 import exploreEndpoint from 'src/api/exploreEndpoint';
 import userEndpoint from 'src/api/userEndpoint';
-import { DetailedCreation } from 'src/model/backend/Project';
+import { GetExploreResponse } from 'src/model/backend/api/Explore';
 import { dispatch, getState } from 'src/redux/store';
 import { finishWaiting, startWaiting } from 'src/redux/uiSlice';
 
@@ -11,9 +11,9 @@ export const getExplore = async () => {
 
     const res = await exploreEndpoint.getExplore();
 
-    const tracks: DetailedCreation[] = [];
-    const lyrics: DetailedCreation[] = [];
-    const songs: DetailedCreation[] = [];
+    const tracks: GetExploreResponse = [];
+    const lyrics: GetExploreResponse = [];
+    const songs: GetExploreResponse = [];
     res.data.forEach((v) => {
       if (v.type === 'track') tracks.push(v);
       else if (v.type === 'lyrics') lyrics.push(v);

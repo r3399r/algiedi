@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Button from 'src/component/Button';
 import Cover from 'src/component/Cover';
 import { DetailedCreation } from 'src/model/backend/Project';
 import { getExplore } from 'src/service/ExploreService';
@@ -20,7 +21,12 @@ const Explore = () => {
 
   return (
     <div className="mx-4 bg-[#fafafa]">
-      <div className="mb-4 text-xl font-bold">FEATURED SONGS</div>
+      <div className="mb-4 flex items-center gap-4">
+        <div className="text-xl font-bold">FEATURED SONGS</div>
+        <Button size="s" color="transparent" onClick={() => navigate('song', { state: songs })}>
+          More Songs
+        </Button>
+      </div>
       <div className="w-full overflow-x-auto">
         <div className="mb-6 flex gap-4">
           {songs?.map((v) => (
@@ -37,7 +43,12 @@ const Explore = () => {
       </div>
       <div className="mt-4 flex gap-4">
         <div className="w-1/2">
-          <div className="mb-4 text-xl font-bold">Music</div>
+          <div className="mb-4 flex items-center gap-4">
+            <div className="text-xl font-bold">Music</div>
+            <Button size="s" color="transparent">
+              More Music
+            </Button>
+          </div>
           {/* <div className="flex gap-4">
             <div>This week</div>
             <div>This month</div>
@@ -60,7 +71,12 @@ const Explore = () => {
           </div>
         </div>
         <div className="w-1/2">
-          <div className="mb-4 text-xl font-bold">Lyrics</div>
+          <div className="mb-4 flex items-center gap-4">
+            <div className="text-xl font-bold">Lyrics</div>
+            <Button size="s" color="transparent">
+              More Lyrics
+            </Button>
+          </div>
           {/* <div className="flex gap-4">
             <div>This week</div>
             <div>This month</div>
