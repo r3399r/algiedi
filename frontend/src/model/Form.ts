@@ -31,20 +31,12 @@ export type ResetPasswordForm = {
 export type UploadTrackForm = {
   name: string;
   description: string;
-  theme: string;
-  genre: string;
-  language: string;
-  caption: string;
 };
 
 export type UploadLyricsForm = {
   name: string;
   description: string;
   lyrics: string;
-  theme: string;
-  genre: string;
-  language: string;
-  caption: string;
 };
 
 export type UpdateLyricsForm = {

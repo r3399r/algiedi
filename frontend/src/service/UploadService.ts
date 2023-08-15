@@ -1,13 +1,12 @@
 import exploreEndpoint from 'src/api/exploreEndpoint';
 import uploadEndpoint from 'src/api/uploadEndpoint';
-import { UploadLyricsForm, UploadTrackForm } from 'src/model/Form';
 import { dispatch } from 'src/redux/store';
 import { finishWaiting, startWaiting } from 'src/redux/uiSlice';
 import { file2Base64 } from 'src/util/fileConverter';
 import { loadProjects } from './OverallService';
 
 export const uploadTrack = async (
-  data: UploadTrackForm,
+  data: { name: string; description: string; theme: string; genre: string; language: string },
   files: { track: File; tab: File | null; cover: File | null },
   inspiredId: string | null,
 ) => {
@@ -19,6 +18,7 @@ export const uploadTrack = async (
       tabFile: files.tab ? await file2Base64(files.tab) : null,
       coverFile: files.cover ? await file2Base64(files.cover) : null,
       inspiredId,
+      caption: '',
       ...data,
     });
 
@@ -29,7 +29,14 @@ export const uploadTrack = async (
 };
 
 export const uploadLyrics = async (
-  data: UploadLyricsForm,
+  data: {
+    name: string;
+    description: string;
+    lyrics: string;
+    theme: string;
+    genre: string;
+    language: string;
+  },
   coverFile: File | null,
   inspiredId: string | null,
 ) => {
@@ -39,6 +46,7 @@ export const uploadLyrics = async (
       type: 'lyrics',
       coverFile: coverFile ? await file2Base64(coverFile) : null,
       inspiredId,
+      caption: '',
       ...data,
     });
 

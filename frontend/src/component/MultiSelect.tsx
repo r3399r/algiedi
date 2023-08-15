@@ -21,9 +21,10 @@ type Props = {
   disabled?: boolean;
   defaultValue?: string;
   onChange?: (v: string) => void;
+  error?: boolean | string;
 };
 
-const MultiSelect = ({ children, label, disabled, onChange }: Props) => {
+const MultiSelect = ({ children, label, disabled, onChange, error }: Props) => {
   const [open, setOpen] = useState<boolean>(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const ref = useRef<HTMLDivElement>(null);
@@ -40,7 +41,12 @@ const MultiSelect = ({ children, label, disabled, onChange }: Props) => {
 
   return (
     <SelectContext.Provider value={{ current: [...selected].join(), handleChange }}>
-      <div className="min-w-[160px] border-b-[1px] border-b-black">
+      <div
+        className={classNames('min-w-[160px] border-b', {
+          'border-b-black': !error,
+          'border-b-red': !!error,
+        })}
+      >
         {label && (
           <div
             className={classNames('text-navy-700 mb-[5px] text-[14px] leading-normal', {

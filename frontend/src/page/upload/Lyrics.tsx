@@ -8,6 +8,8 @@ import Form from 'src/component/Form';
 import FormInput from 'src/component/FormInput';
 import FormTextarea from 'src/component/FormTextarea';
 import Input from 'src/component/Input';
+import MultiSelect from 'src/component/MultiSelect';
+import MultiSelectOption from 'src/component/MultiSelectOption';
 import { DetailedCreation } from 'src/model/backend/Project';
 import { UploadLyricsForm } from 'src/model/Form';
 import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
@@ -25,10 +27,27 @@ const Lyrics = ({ defaultInspiredId, inspiration }: Props) => {
   const [checkInspiration, setCheckInspiration] = useState<boolean>(!!defaultInspiredId);
   const [coverFile, setCoverFile] = useState<File>();
   const [inspiredId, setInspiredId] = useState<string>(defaultInspiredId ?? '');
+  const [theme, setTheme] = useState<string>();
+  const [genre, setGenre] = useState<string>();
+  const [language, setLanguage] = useState<string>();
+  const [errorTheme, setErrorTheme] = useState<boolean>(false);
+  const [errorGenre, setErrorGenre] = useState<boolean>(false);
+  const [errorLanguage, setErrorLanguage] = useState<boolean>(false);
   const methods = useForm<UploadLyricsForm>();
 
   const onSubmit = (data: UploadLyricsForm) => {
-    uploadLyrics(data, coverFile ?? null, checkInspiration ? inspiredId : null)
+    if (theme === undefined || genre === undefined || language === undefined) {
+      setErrorTheme(!theme);
+      setErrorGenre(!genre);
+      setErrorLanguage(!language);
+
+      return;
+    }
+    uploadLyrics(
+      { ...data, theme, genre, language },
+      coverFile ?? null,
+      checkInspiration ? inspiredId : null,
+    )
       .then(() => dispatch(openSuccessSnackbar('Uploaded Successfully')))
       .catch((err) => dispatch(openFailSnackbar(err)));
   };
@@ -43,10 +62,21 @@ const Lyrics = ({ defaultInspiredId, inspiration }: Props) => {
             <FormTextarea name="lyrics" className="h-[140px]" label="Lyrics" required />
           </div>
           <div className="w-2/5">
-            <FormInput name="theme" className="mb-4" label="Theme" required />
-            <FormInput name="genre" className="mb-4" label="Genre" required />
-            <FormInput name="language" className="mb-4" label="Language" required />
-            {/* <FormInput name="caption" label="Caption" required /> */}
+            <MultiSelect label="Theme" onChange={(v) => setTheme(v)} error={errorTheme}>
+              <MultiSelectOption value="Romantic">Romantic</MultiSelectOption>
+              <MultiSelectOption value="Relax">Relax</MultiSelectOption>
+              <MultiSelectOption value="Deep Focus">Deep Focus</MultiSelectOption>
+            </MultiSelect>
+            <MultiSelect label="Genre" onChange={(v) => setGenre(v)} error={errorGenre}>
+              <MultiSelectOption value="Pop">Pop</MultiSelectOption>
+              <MultiSelectOption value="Rock">Rock</MultiSelectOption>
+              <MultiSelectOption value="Electronics">Electronics</MultiSelectOption>
+            </MultiSelect>
+            <MultiSelect label="Language" onChange={(v) => setLanguage(v)} error={errorLanguage}>
+              <MultiSelectOption value="Cantonese">Cantonese</MultiSelectOption>
+              <MultiSelectOption value="English">English</MultiSelectOption>
+              <MultiSelectOption value="Mandarin">Mandarin</MultiSelectOption>
+            </MultiSelect>
           </div>
         </div>
         <div className="mt-10 flex gap-6">
