@@ -1,15 +1,17 @@
 import { BeforeInsert, BeforeUpdate, Column, Entity, Generated } from 'typeorm';
 
-export enum Type {
+export enum NotificationType {
   ProjectStart = 'project-start',
   ProjectReject = 'project-reject',
+  CreationUpdated = 'creation-updated',
+  NewParticipant = 'new-participant',
 }
 
 export type Notification = {
   id: string;
   userId: string;
   isRead: boolean;
-  type: Type;
+  type: NotificationType;
   targetId: string | null;
   createdAt: string | null;
   updatedAt: string | null;
@@ -28,7 +30,7 @@ export class NotificationEntity implements Notification {
   isRead!: boolean;
 
   @Column({ type: 'varchar' })
-  type!: Type;
+  type!: NotificationType;
 
   @Column({ type: 'uuid', name: 'target_id', default: null })
   targetId!: string | null;

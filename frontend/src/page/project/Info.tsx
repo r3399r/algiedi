@@ -3,6 +3,8 @@ import { useDispatch } from 'react-redux';
 import Button from 'src/component/Button';
 import Cover from 'src/component/Cover';
 import Input from 'src/component/Input';
+import MultiSelect from 'src/component/MultiSelect';
+import MultiSelectOption from 'src/component/MultiSelectOption';
 import { DetailedProject } from 'src/model/backend/Project';
 import { openFailSnackbar } from 'src/redux/uiSlice';
 import { updateCover, updateProject } from 'src/service/ProjectService';
@@ -22,9 +24,18 @@ const Info = ({ project, doRefresh, isOwner }: Props) => {
   const [theme, setTheme] = useState<string>(project.theme ?? '');
   const [genre, setGenre] = useState<string>(project.genre ?? '');
   const [language, setLanguage] = useState<string>(project.language ?? '');
-  // const [caption, setCaption] = useState<string>(project.caption ?? '');
+  const [errorTheme, setErrorTheme] = useState<boolean>(false);
+  const [errorGenre, setErrorGenre] = useState<boolean>(false);
+  const [errorLanguage, setErrorLanguage] = useState<boolean>(false);
 
   const onSave = () => {
+    if (theme === undefined || genre === undefined || language === undefined) {
+      setErrorTheme(!theme);
+      setErrorGenre(!genre);
+      setErrorLanguage(!language);
+
+      return;
+    }
     updateProject(project.id, {
       name,
       description,
@@ -91,38 +102,42 @@ const Info = ({ project, doRefresh, isOwner }: Props) => {
             <div className="whitespace-pre">{description}</div>
           )}
         </div>
-        <div className="flex gap-1">
+        <div className="flex items-center gap-1">
           <div className="w-[90px] font-bold">Theme</div>
           {isEdit ? (
-            <Input value={theme} onChange={(e) => setTheme(e.target.value)} />
+            <MultiSelect onChange={(v) => setTheme(v)} error={errorTheme}>
+              <MultiSelectOption value="Romantic">Romantic</MultiSelectOption>
+              <MultiSelectOption value="Relax">Relax</MultiSelectOption>
+              <MultiSelectOption value="Deep Focus">Deep Focus</MultiSelectOption>
+            </MultiSelect>
           ) : (
             <div>{theme}</div>
           )}
         </div>
-        <div className="flex gap-1">
+        <div className="flex items-center gap-1">
           <div className="w-[90px] font-bold">Genre</div>
           {isEdit ? (
-            <Input value={genre} onChange={(e) => setGenre(e.target.value)} />
+            <MultiSelect onChange={(v) => setGenre(v)} error={errorGenre}>
+              <MultiSelectOption value="Pop">Pop</MultiSelectOption>
+              <MultiSelectOption value="Rock">Rock</MultiSelectOption>
+              <MultiSelectOption value="Electronics">Electronics</MultiSelectOption>
+            </MultiSelect>
           ) : (
             <div>{genre}</div>
           )}
         </div>
-        <div className="flex gap-1">
+        <div className="flex items-center gap-1">
           <div className="w-[90px] font-bold">Language</div>
           {isEdit ? (
-            <Input value={language} onChange={(e) => setLanguage(e.target.value)} />
+            <MultiSelect onChange={(v) => setLanguage(v)} error={errorLanguage}>
+              <MultiSelectOption value="Cantonese">Cantonese</MultiSelectOption>
+              <MultiSelectOption value="English">English</MultiSelectOption>
+              <MultiSelectOption value="Mandarin">Mandarin</MultiSelectOption>
+            </MultiSelect>
           ) : (
             <div>{language}</div>
           )}
         </div>
-        {/* <div className="flex gap-1">
-          <div className="w-[90px] font-bold">Caption</div>
-          {isEdit ? (
-            <Input value={caption} onChange={(e) => setCaption(e.target.value)} />
-          ) : (
-            <div>{caption}</div>
-          )}
-        </div> */}
       </div>
       {isOwner && (
         <input

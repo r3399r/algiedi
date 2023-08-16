@@ -19,6 +19,14 @@ const NavbarExploreMenu = ({ open, onClose, anchorEl }: Props) => {
     >
       <ListItem
         onClick={() => {
+          navigate(Page.Explore);
+          onClose();
+        }}
+      >
+        Explore Home
+      </ListItem>
+      <ListItem
+        onClick={() => {
           navigate(`${Page.Explore}/idea`);
           onClose();
         }}
@@ -27,11 +35,11 @@ const NavbarExploreMenu = ({ open, onClose, anchorEl }: Props) => {
       </ListItem>
       <ListItem
         onClick={() => {
-          navigate(Page.Explore);
+          navigate(`${Page.Explore}/song`);
           onClose();
         }}
       >
-        Explore Ideas
+        Explore Songs
       </ListItem>
     </Popover>
   );

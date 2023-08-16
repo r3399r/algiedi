@@ -4,7 +4,7 @@ import { ChatAccess } from 'src/access/ChatAccess';
 import { DbAccess } from 'src/access/DbAccess';
 import { ProjectUserAccess } from 'src/access/ProjectUserAccess';
 import { UserAccess } from 'src/access/UserAccess';
-import { Chat, WebsocketMessage } from 'src/model/api/Ws';
+import { Chat, WebsocketMessage, WsType } from 'src/model/api/Ws';
 import { ChatEntity } from 'src/model/entity/ChatEntity';
 import { AwsService } from './AwsService';
 
@@ -37,7 +37,7 @@ export class WsService {
     user.connectionId = connectionId;
     await this.userAccess.save(user);
 
-    return { a: 'channel', d: {} };
+    return { a: WsType.Channel, d: {} };
   }
 
   public async receiveDisconnect(connectionId: string) {
@@ -47,7 +47,7 @@ export class WsService {
     user.connectionId = null;
     await this.userAccess.save(user);
 
-    return { a: 'channel', d: {} };
+    return { a: WsType.Channel, d: {} };
   }
 
   public async receiveChat(body: any) {
@@ -66,7 +66,7 @@ export class WsService {
     });
     const sender = users.find((v) => v.id === userId);
     const message: WebsocketMessage<Chat> = {
-      a: 'chat',
+      a: WsType.Chat,
       d: {
         user: sender
           ? {
@@ -86,11 +86,11 @@ export class WsService {
       })
     );
 
-    return { a: 'channel', d: {} };
+    return { a: WsType.Channel, d: {} };
   }
 
   public async receiveDefault() {
     // TODO
-    return { a: 'channel', d: {} };
+    return { a: WsType.Channel, d: {} };
   }
 }

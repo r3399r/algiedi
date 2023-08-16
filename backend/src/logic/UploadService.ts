@@ -21,6 +21,7 @@ import { Role, Status } from 'src/model/constant/Project';
 import { InfoEntity } from 'src/model/entity/InfoEntity';
 import { Lyrics, LyricsEntity } from 'src/model/entity/LyricsEntity';
 import { LyricsHistoryEntity } from 'src/model/entity/LyricsHistoryEntity';
+import { NotificationType } from 'src/model/entity/NotificationEntity';
 import { ProjectEntity } from 'src/model/entity/ProjectEntity';
 import { ProjectHistoryEntity } from 'src/model/entity/ProjectHistoryEntity';
 import { ProjectUserEntity } from 'src/model/entity/ProjectUserEntity';
@@ -33,6 +34,7 @@ import {
 } from 'src/model/error';
 import { cognitoSymbol } from 'src/util/LambdaSetup';
 import { AwsService } from './AwsService';
+import { NotificationService } from './NotificationService';
 
 /**
  * Service class for Uplaod
@@ -44,6 +46,9 @@ export class UploadService {
 
   @inject(AwsService)
   private readonly awsService!: AwsService;
+
+  @inject(NotificationService)
+  private readonly notificationService!: NotificationService;
 
   @inject(DbAccess)
   private readonly dbAccess!: DbAccess;
@@ -222,7 +227,7 @@ export class UploadService {
       if (creation === null)
         throw new InternalServerError('creation should exist');
 
-      // add project-user pair if can join project
+      // add project-user pair if can join project and notify
       if (canJoinProject) {
         const pu = await this.projectUserAccess.findOne({
           where: { projectId, userId: this.cognitoUserId },
@@ -254,6 +259,18 @@ export class UploadService {
         );
         user.lastProjectId = projectId;
         await this.userAccess.save(user);
+
+        // notify
+        const ownerPu = await this.projectUserAccess.findOneOrFail({
+          where: { projectId, role: Role.Owner },
+        });
+        const owner = await this.userAccess.findOneByIdOrFail(ownerPu.userId);
+        if (ownerPu.userId !== this.cognitoUserId)
+          await this.notificationService.notify(
+            NotificationType.NewParticipant,
+            owner,
+            projectId
+          );
       }
 
       await this.dbAccess.commitTransaction();
@@ -353,6 +370,30 @@ export class UploadService {
 
         await this.projectHistoryAccess.save(newProjectHistory);
       } else throw new BadRequestError('type not found');
+
+      // notify
+      const creation = await this.viewCreationAccess.findOneByIdOrFail(
+        creationId
+      );
+      const projectUser = await this.projectUserAccess.findByProjectId(
+        creation.projectId
+      );
+
+      for (const pu of projectUser) {
+        if (pu.userId === this.cognitoUserId) continue;
+        if (creation.projectStatus === Status.Published) continue;
+        if (
+          creation.projectStatus === Status.InProgress &&
+          pu.role === Role.Rejected
+        )
+          continue;
+        const user = await this.userAccess.findOneByIdOrFail(pu.userId);
+        await this.notificationService.notify(
+          NotificationType.CreationUpdated,
+          user,
+          creation.projectId
+        );
+      }
 
       await this.dbAccess.commitTransaction();
     } catch (e) {

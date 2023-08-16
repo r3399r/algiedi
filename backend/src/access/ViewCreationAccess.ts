@@ -22,6 +22,17 @@ export class ViewCreationAccess {
     });
   }
 
+  public async findOneByIdOrFail(id: string) {
+    const qr = await this.database.getQueryRunner();
+
+    return await qr.manager.findOneOrFail<ViewCreation>(
+      ViewCreationEntity.name,
+      {
+        where: { id },
+      }
+    );
+  }
+
   public async findByUserId(userId: string) {
     const qr = await this.database.getQueryRunner();
 

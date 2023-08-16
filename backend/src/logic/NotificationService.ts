@@ -5,7 +5,13 @@ import {
   GetNotificationResponse,
   PatchNotificationResponse,
 } from 'src/model/api/Notification';
+import {
+  NotificationEntity,
+  NotificationType,
+} from 'src/model/entity/NotificationEntity';
+import { User } from 'src/model/entity/UserEntity';
 import { cognitoSymbol } from 'src/util/LambdaSetup';
+import { AwsService } from './AwsService';
 
 /**
  * Service class for Notification
@@ -20,6 +26,9 @@ export class NotificationService {
 
   @inject(NotificationAccess)
   private readonly notificationAccess!: NotificationAccess;
+
+  @inject(AwsService)
+  private readonly awsService!: AwsService;
 
   public async cleanup() {
     await this.dbAccess.cleanup();
@@ -36,5 +45,18 @@ export class NotificationService {
     notification.isRead = true;
 
     return await this.notificationAccess.save(notification);
+  }
+
+  public async notify(type: NotificationType, user: User, targetId?: string) {
+    const notification = new NotificationEntity();
+    notification.isRead = false;
+    notification.userId = user.id;
+    if (targetId) notification.targetId = targetId;
+    notification.type = type;
+    const newNotification = await this.notificationAccess.save(notification);
+    await this.awsService.sendWsMessage(user.connectionId, {
+      a: type,
+      d: newNotification,
+    });
   }
 }

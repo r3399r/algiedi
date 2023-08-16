@@ -5,7 +5,6 @@ import { DbAccess } from 'src/access/DbAccess';
 import { InfoAccess } from 'src/access/InfoAccess';
 import { LyricsAccess } from 'src/access/LyricsAccess';
 import { LyricsHistoryAccess } from 'src/access/LyricsHistoryAccess';
-import { NotificationAccess } from 'src/access/NotificationAccess';
 import { ProjectAccess } from 'src/access/ProjectAccess';
 import { ProjectHistoryAccess } from 'src/access/ProjectHistoryAccess';
 import { ProjectUserAccess } from 'src/access/ProjectUserAccess';
@@ -24,7 +23,10 @@ import { Role, Status } from 'src/model/constant/Project';
 import { InfoEntity } from 'src/model/entity/InfoEntity';
 import { LyricsEntity } from 'src/model/entity/LyricsEntity';
 import { LyricsHistoryEntity } from 'src/model/entity/LyricsHistoryEntity';
-import { NotificationEntity, Type } from 'src/model/entity/NotificationEntity';
+import {
+  NotificationEntity,
+  NotificationType,
+} from 'src/model/entity/NotificationEntity';
 import { TrackEntity } from 'src/model/entity/TrackEntity';
 import { TrackHistoryEntity } from 'src/model/entity/TrackHistoryEntity';
 import { BadRequestError, InternalServerError } from 'src/model/error';
@@ -32,6 +34,7 @@ import { DetailedCreation } from 'src/model/Project';
 import { compare } from 'src/util/compare';
 import { cognitoSymbol } from 'src/util/LambdaSetup';
 import { AwsService } from './AwsService';
+import { NotificationService } from './NotificationService';
 
 /**
  * Service class for Project
@@ -43,6 +46,9 @@ export class ProjectService {
 
   @inject(AwsService)
   private readonly awsService!: AwsService;
+
+  @inject(NotificationService)
+  private readonly notificationService!: NotificationService;
 
   @inject(DbAccess)
   private readonly dbAccess!: DbAccess;
@@ -79,9 +85,6 @@ export class ProjectService {
 
   @inject(ChatAccess)
   private readonly chatAccess!: ChatAccess;
-
-  @inject(NotificationAccess)
-  private readonly notificationAccess!: NotificationAccess;
 
   public async cleanup() {
     await this.dbAccess.cleanup();
@@ -247,21 +250,25 @@ export class ProjectService {
     projectId: string,
     data: PostProjectIdOriginalRequest
   ) {
-    const projectUser = await this.projectUserAccess.findOneOrFail({
-      where: { userId: this.cognitoUserId, projectId, role: Role.Owner },
-    });
-    if (projectUser.lyricsId !== null && projectUser.trackId !== null)
+    const projectUser = await this.projectUserAccess.findByProjectId(projectId);
+    const ownerProjectUser = projectUser.find(
+      (v) => v.userId === this.cognitoUserId
+    );
+
+    if (ownerProjectUser === undefined)
+      throw new BadRequestError('data not found');
+    if (ownerProjectUser.lyricsId !== null && ownerProjectUser.trackId !== null)
       throw new InternalServerError('original already exists');
-    if (data.type === 'track' && projectUser.lyricsId === null)
+    if (data.type === 'track' && ownerProjectUser.lyricsId === null)
       throw new BadRequestError('there is no lyrics');
-    if (data.type === 'lyrics' && projectUser.trackId === null)
+    if (data.type === 'lyrics' && ownerProjectUser.trackId === null)
       throw new BadRequestError('there is no track');
 
     const project = await this.projectAccess.findOneByIdOrFail(projectId);
 
-    if (data.type === 'track' && projectUser.lyricsId) {
+    if (data.type === 'track' && ownerProjectUser.lyricsId) {
       const lyrics = await this.lyricsAccess.findOneOrFailById(
-        projectUser.lyricsId
+        ownerProjectUser.lyricsId
       );
       const track = new TrackEntity();
       track.userId = this.cognitoUserId;
@@ -295,11 +302,11 @@ export class ProjectService {
       newTrackHistory.tabFileUri = tabFileKey;
       await this.trackHistoryAccess.save(newTrackHistory);
 
-      projectUser.trackId = newTrack.id;
-      await this.projectUserAccess.save(projectUser);
-    } else if (data.type === 'lyrics' && projectUser.trackId) {
+      ownerProjectUser.trackId = newTrack.id;
+      await this.projectUserAccess.save(ownerProjectUser);
+    } else if (data.type === 'lyrics' && ownerProjectUser.trackId) {
       const track = await this.trackAccess.findOneOrFailById(
-        projectUser.trackId
+        ownerProjectUser.trackId
       );
       const lyrics = new LyricsEntity();
       lyrics.userId = this.cognitoUserId;
@@ -312,8 +319,22 @@ export class ProjectService {
       lyricsHistory.lyricsText = data.lyrics;
       await this.lyricsHistoryAccess.save(lyricsHistory);
 
-      projectUser.lyricsId = newLyrics.id;
-      await this.projectUserAccess.save(projectUser);
+      ownerProjectUser.lyricsId = newLyrics.id;
+      await this.projectUserAccess.save(ownerProjectUser);
+    }
+
+    // notify
+    for (const pu of projectUser) {
+      if (pu.userId === this.cognitoUserId) continue;
+      if (project.status === Status.Published) continue;
+      if (project.status === Status.InProgress && pu.role === Role.Rejected)
+        continue;
+      const user = await this.userAccess.findOneByIdOrFail(pu.userId);
+      await this.notificationService.notify(
+        NotificationType.CreationUpdated,
+        user,
+        project.id
+      );
     }
   }
 
@@ -365,30 +386,20 @@ export class ProjectService {
         if (pu.isAccepted === true) {
           pu.role = Role.Collaborator;
           pu.isReady = false;
-
-          notification.userId = pu.userId;
-          notification.type = Type.ProjectStart;
-          const newNotification = await this.notificationAccess.save(
-            notification
-          );
           if (user)
-            await this.awsService.sendWsMessage(user.connectionId, {
-              a: 'project-start',
-              d: newNotification,
-            });
+            await this.notificationService.notify(
+              NotificationType.ProjectStart,
+              user,
+              pu.projectId
+            );
         } else {
           pu.role = Role.Rejected;
-
-          notification.userId = pu.userId;
-          notification.type = Type.ProjectReject;
-          const newNotification = await this.notificationAccess.save(
-            notification
-          );
           if (user)
-            await this.awsService.sendWsMessage(user.connectionId, {
-              a: 'project-reject',
-              d: newNotification,
-            });
+            await this.notificationService.notify(
+              NotificationType.ProjectReject,
+              user,
+              pu.projectId
+            );
         }
 
         await this.projectUserAccess.save(pu);
