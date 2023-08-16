@@ -5,7 +5,11 @@ type Props = HTMLAttributes<HTMLDivElement> & { focus?: boolean };
 
 const ListItem = ({ children, focus, className, ...props }: Props) => (
   <div
-    className={classNames('hover:bg-gray-100 p-[10px]', className, { 'text-[#00c3ff]': focus })}
+    className={classNames(
+      'cursor-pointer p-[10px] hover:bg-grey/30',
+      { 'text-blue': focus },
+      className,
+    )}
     {...props}
   >
     {children}
