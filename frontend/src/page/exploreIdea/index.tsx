@@ -12,18 +12,19 @@ import { RootState } from 'src/redux/store';
 import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
 import { getExplore, likeById, unlikeById } from 'src/service/ExploreService';
 
-const ExploreSong = () => {
+const ExploreIdea = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
   const { isLogin } = useSelector((rootState: RootState) => rootState.ui);
   const state = location.state as GetExploreResponse;
-  const [songs, setSongs] = useState<GetExploreResponse>();
+  const [idea, setIdea] = useState<GetExploreResponse>();
   const [refresh, setRefresh] = useState<boolean>();
 
   useEffect(() => {
-    if (refresh !== undefined || state === null) getExplore().then((res) => setSongs(res.songs));
-    else setSongs(state);
+    if (refresh !== undefined || state === null)
+      getExplore().then((res) => setIdea([...res.tracks, ...res.lyrics]));
+    else setIdea(state);
   }, [state, refresh]);
 
   const onLike = (id: string) => (e: MouseEvent<HTMLOrSVGElement>) => {
@@ -42,23 +43,33 @@ const ExploreSong = () => {
 
   return (
     <div className="mx-4 bg-[#fafafa]">
-      <div className="mb-4 text-xl font-bold">EXPLORE SONGS</div>
-      <div>
-        {songs?.map((v) => (
+      <div className="mb-4 text-xl font-bold">EXPLORE IDEA</div>
+      <div className="flex flex-wrap gap-6">
+        {idea?.map((v) => (
           <div
             key={v.id}
-            className="flex cursor-pointer items-center p-2 hover:bg-blue/30"
+            className="relative flex w-[calc(50%-12px)] cursor-pointer items-center gap-2 rounded-xl bg-white p-4 hover:bg-blue/30"
             onClick={() => navigate(`${Page.Explore}/${v.id}`)}
           >
-            <div className="flex w-1/2 items-center gap-2">
+            <div className="flex w-1/3 flex-col items-center">
               <Cover url={v.coverFileUrl} size={50} />
-              <div>
-                <div className="font-bold">{v.name}</div>
-                <div className="text-sm text-grey">{v.author.map((o) => o.username).join()}</div>
-              </div>
+              <div className="text-sm text-grey">{v.author.map((o) => o.username).join()}</div>
             </div>
-            <div className="w-1/4">{v.genre}</div>
-            <div className="flex w-1/4 justify-end gap-2">
+            <div className="w-1/2">
+              <div className="font-bold">{v.name}</div>
+              <div className="my-2 w-fit rounded-xl border border-black bg-white p-1 text-xs">
+                {v.genre}
+              </div>
+              <div className="text-xs">{v.description}</div>
+            </div>
+            <div className="absolute right-4 top-4 text-xs">
+              {v.projectStatus === 'created'
+                ? 'Join me'
+                : v.projectStatus === 'in-progress'
+                ? 'In progress'
+                : 'Published'}
+            </div>
+            <div className="absolute bottom-4 right-4 flex">
               <div>
                 {isLogin ? (
                   v.like ? (
@@ -91,4 +102,4 @@ const ExploreSong = () => {
   );
 };
 
-export default ExploreSong;
+export default ExploreIdea;

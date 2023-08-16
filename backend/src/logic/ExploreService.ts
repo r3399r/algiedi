@@ -61,12 +61,15 @@ export class ExploreService {
 
     return await Promise.all(
       creations.map(async (v) => {
-        const pu = await this.projectUserAccess.find({
-          where: { projectId: v.id, role: Not(Role.Rejected) },
-        });
-        const author = await this.userAccess.find({
-          where: { id: In(pu.map((v) => v.userId)) },
-        });
+        let author = [await this.userAccess.findOneByIdOrFail(v.userId)];
+        if (v.type === Type.Song && v.projectStatus === Status.Published) {
+          const pu = await this.projectUserAccess.find({
+            where: { projectId: v.id, role: Not(Role.Rejected) },
+          });
+          author = await this.userAccess.find({
+            where: { id: In(pu.map((v) => v.userId)) },
+          });
+        }
 
         return {
           ...v,

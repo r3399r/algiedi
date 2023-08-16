@@ -45,7 +45,11 @@ const Explore = () => {
         <div className="w-1/2">
           <div className="mb-4 flex items-center gap-4">
             <div className="text-xl font-bold">Music</div>
-            <Button size="s" color="transparent">
+            <Button
+              size="s"
+              color="transparent"
+              onClick={() => navigate('idea', { state: [...(tracks ?? []), ...(lyrics ?? [])] })}
+            >
               More Music
             </Button>
           </div>
@@ -73,7 +77,11 @@ const Explore = () => {
         <div className="w-1/2">
           <div className="mb-4 flex items-center gap-4">
             <div className="text-xl font-bold">Lyrics</div>
-            <Button size="s" color="transparent">
+            <Button
+              size="s"
+              color="transparent"
+              onClick={() => navigate('idea', { state: [...(tracks ?? []), ...(lyrics ?? [])] })}
+            >
               More Lyrics
             </Button>
           </div>

@@ -13,7 +13,6 @@ export const getExplore = async () => {
     const res = isLogin
       ? await exploreEndpoint.getExploreAuth()
       : await exploreEndpoint.getExplore();
-    // const res=await exploreEndpoint.getExplore();
 
     const tracks: GetExploreResponse = [];
     const lyrics: GetExploreResponse = [];
