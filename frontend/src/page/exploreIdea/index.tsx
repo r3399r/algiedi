@@ -1,5 +1,7 @@
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import HistoryEduIcon from '@mui/icons-material/HistoryEdu';
+import MusicNoteIcon from '@mui/icons-material/MusicNote';
 import ShareIcon from '@mui/icons-material/Share';
 import classNames from 'classnames';
 import { MouseEvent, useEffect, useState } from 'react';
@@ -66,7 +68,22 @@ const ExploreIdea = () => {
             >
               <div className="flex w-1/3 flex-col items-center">
                 <Cover url={v.coverFileUrl} size={50} />
-                <div className="text-sm text-grey">{v.author.map((o) => o.username).join()}</div>
+                <div className="flex">
+                  {v.type === 'track' ? (
+                    <MusicNoteIcon
+                      color="primary"
+                      classes={{ colorPrimary: '!text-blue' }}
+                      fontSize="small"
+                    />
+                  ) : (
+                    <HistoryEduIcon
+                      color="primary"
+                      classes={{ colorPrimary: '!text-red' }}
+                      fontSize="small"
+                    />
+                  )}
+                  <div className="text-sm text-grey">{v.author.map((o) => o.username).join()}</div>
+                </div>
               </div>
               <div className="w-1/2">
                 <div className="font-bold">{v.name}</div>
