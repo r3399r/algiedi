@@ -15,7 +15,6 @@ import { GetExploreResponse } from 'src/model/backend/api/Explore';
 import { RootState } from 'src/redux/store';
 import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
 import { getExplore, likeById, unlikeById } from 'src/service/ExploreService';
-import { compare } from 'src/util/compare';
 
 const ExploreIdea = () => {
   const navigate = useNavigate();
@@ -59,7 +58,6 @@ const ExploreIdea = () => {
 
             return true;
           })
-          ?.sort(compare('projectCreatedAt', 'desc'))
           .map((v) => (
             <div
               key={v.id}

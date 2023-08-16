@@ -72,50 +72,45 @@ const Home = () => (
         <div className="flex flex-wrap gap-4 sm:gap-12">
           <div className="w-auto rounded-[19px] bg-white p-8 text-center sm:w-[calc((100%-100px)/3)]">
             <img src={IcFeature1} className="mx-auto" />
-            <div className="my-4 text-[35px] font-bold">Great Quality</div>
+            <div className="my-4 text-2xl font-bold">Connect musicians</div>
             <div className="text-[14px]">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-              incididunt ut labore et dolore magna aliqua. Ut enim ad
+              Make new music connections to sparkle ideas and work on uploaded music projects
             </div>
           </div>
           <div className="w-auto rounded-[19px] bg-white p-8 text-center sm:w-[calc((100%-100px)/3)]">
             <img src={IcFeature2} className="mx-auto" />
-            <div className="my-4 text-[35px] font-bold">Great Quality</div>
+            <div className="my-4 text-2xl font-bold">Promotion</div>
             <div className="text-[14px]">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-              incididunt ut labore et dolore magna aliqua. Ut enim ad
+              Promote original music in our community and to the general public with immersive
+              experience
             </div>
           </div>
           <div className="w-auto rounded-[19px] bg-white p-8 text-center sm:w-[calc((100%-100px)/3)]">
             <img src={IcFeature3} className="mx-auto" />
-            <div className="my-4 text-[35px] font-bold">Great Quality</div>
+            <div className="my-4 text-2xl font-bold">One click publish (coming soon)</div>
             <div className="text-[14px]">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-              incididunt ut labore et dolore magna aliqua. Ut enim ad
+              Publish on platform directly, selected song to post on Social Media and mint NFT
             </div>
           </div>
           <div className="w-auto rounded-[19px] bg-white p-8 text-center sm:w-[calc((100%-100px)/3)]">
             <img src={IcFeature4} className="mx-auto" />
-            <div className="my-4 text-[35px] font-bold">Great Quality</div>
+            <div className="my-4 text-2xl font-bold">Royalty income (coming soon)</div>
             <div className="text-[14px]">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-              incididunt ut labore et dolore magna aliqua. Ut enim ad
+              Passive income from streaming platform plays / NFT sales
             </div>
           </div>
           <div className="w-auto rounded-[19px] bg-white p-8 text-center sm:w-[calc((100%-100px)/3)]">
             <img src={IcFeature5} className="mx-auto" />
-            <div className="my-4 text-[35px] font-bold">Great Quality</div>
+            <div className="my-4 text-2xl font-bold">DAW on the go (coming soon)</div>
             <div className="text-[14px]">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-              incididunt ut labore et dolore magna aliqua. Ut enim ad
+              Mobile responsive real-time DAW allows music editing anywhere and anytime
             </div>
           </div>
           <div className="w-auto rounded-[19px] bg-white p-8 text-center sm:w-[calc((100%-100px)/3)]">
             <img src={IcFeature6} className="mx-auto" />
-            <div className="my-4 text-[35px] font-bold">Great Quality</div>
+            <div className="my-4 text-2xl font-bold">Work with Professionals (coming soon)</div>
             <div className="text-[14px]">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-              incididunt ut labore et dolore magna aliqua. Ut enim ad
+              Work with professionals within the community to create quality music
             </div>
           </div>
         </div>
@@ -126,10 +121,23 @@ const Home = () => (
         <img src={PicHero2} />
       </div>
       <div className="w-full sm:w-1/2 sm:p-16">
-        <div className="mb-10 break-words text-[40px] font-bold">Music/Lyrics/Artists</div>
+        <div className="mb-10 break-words text-3xl font-bold">
+          Aaryn Cheung – Frontman from Charming Way
+        </div>
         <div>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-          ut labore et dolore magna aliqua. Ut enim ad
+          {
+            'Charming Way is a Hong Kong indie band that was formed in 2019. The band members include Aaryn Cheung on vocal and keyboard, KaLun Wong on guitar and synths, Ajax Li on bass guitar, and Terry Chan on drums. They are known for their classic rock & roll sound with a vintage vibe, which they achieved by fusing the sounds of British bands from the nineties with canto-style melodies. Their music is primarily in English, as they want their story and ideas to be understood by people all around the world.'
+          }
+          <br />
+          <br />
+          {
+            "Charming Way's music is a reflection of their experiences growing up in British colony Hong Kong. They want to share their perspective on the city and its people through their music. Their songs are nostalgic yet fresh, and their sound is both unique and captivating."
+          }
+          <br />
+          <br />
+          {
+            'The band has released several singles, including "Victoria" "EXIT" "Blue Moon Day" and "Fall Back to Bed" They have also performed at various music festivals and events in Hong Kong, including the EarUp Music Festival, Chill Club, and the West Kowloon Art Park Festival. Their music has garnered a loyal following in Hong Kong and beyond, and they are considered one of the most promising indie bands in the local music scene. With their talent and dedication to creating meaningful music, Charming Way is a band to watch out for.'
+          }
         </div>
         <Button className="mt-[100px] text-2xl">Explore</Button>
       </div>
