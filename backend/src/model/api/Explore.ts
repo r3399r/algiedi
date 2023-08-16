@@ -3,6 +3,7 @@ import { DetailedCreation } from 'src/model/Project';
 
 export type GetExploreResponse = (DetailedCreation & {
   author: (User & { avatarUrl: string | null })[];
+  like: boolean;
 })[];
 
 export type GetExploreIdResponse = DetailedCreation & {

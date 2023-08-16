@@ -20,6 +20,9 @@ export async function explore(
       case '/api/explore':
         res = await apiExplore(event, service);
         break;
+      case '/api/explore/auth':
+        res = await apiExplore(event, service);
+        break;
       case '/api/explore/{id}':
         res = await apiExploreId(event, service);
         break;

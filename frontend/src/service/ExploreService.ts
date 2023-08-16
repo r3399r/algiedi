@@ -7,9 +7,13 @@ import { finishWaiting, startWaiting } from 'src/redux/uiSlice';
 
 export const getExplore = async () => {
   try {
+    const { isLogin } = getState().ui;
     dispatch(startWaiting());
 
-    const res = await exploreEndpoint.getExplore();
+    const res = isLogin
+      ? await exploreEndpoint.getExploreAuth()
+      : await exploreEndpoint.getExplore();
+    // const res=await exploreEndpoint.getExplore();
 
     const tracks: GetExploreResponse = [];
     const lyrics: GetExploreResponse = [];

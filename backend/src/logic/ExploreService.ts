@@ -55,6 +55,9 @@ export class ExploreService {
 
   public async getExplore(): Promise<GetExploreResponse> {
     const creations = await this.viewCreationExploreAccess.find();
+    const likes = await this.likeAccess.find({
+      where: { creationId: In(creations.map((v) => v.id)) },
+    });
 
     return await Promise.all(
       creations.map(async (v) => {
@@ -71,6 +74,10 @@ export class ExploreService {
             ...o,
             avatarUrl: this.awsService.getS3SignedUrl(o.avatar),
           })),
+          like:
+            likes.find(
+              (o) => o.userId === this.cognitoUserId && o.creationId === v.id
+            ) !== undefined,
           fileUrl: this.awsService.getS3SignedUrl(v.fileUri),
           tabFileUrl: this.awsService.getS3SignedUrl(v.tabFileUri),
           coverFileUrl: this.awsService.getS3SignedUrl(v.coverFileUri),
