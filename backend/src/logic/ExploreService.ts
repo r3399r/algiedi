@@ -59,7 +59,7 @@ export class ExploreService {
       where: { creationId: In(creations.map((v) => v.id)) },
     });
 
-    return await Promise.all(
+    const explores = await Promise.all(
       creations.map(async (v) => {
         let author = [await this.userAccess.findOneByIdOrFail(v.userId)];
         if (v.type === Type.Song && v.projectStatus === Status.Published) {
@@ -87,6 +87,8 @@ export class ExploreService {
         };
       })
     );
+
+    return explores.sort(compare('projectCreatedAt', 'desc'));
   }
 
   public async getExploreById(id: string): Promise<GetExploreIdResponse> {

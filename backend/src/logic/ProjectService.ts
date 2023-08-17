@@ -427,8 +427,23 @@ export class ProjectService {
       if (projectHistory.length === 0) throw new BadRequestError('no content');
 
       const project = await this.projectAccess.findOneByIdOrFail(id);
+      if (project.status !== Status.InProgress)
+        throw new BadRequestError('project is not in progress');
+
       project.status = Status.Published;
       await this.projectAccess.save(project);
+
+      // notify
+      const projectUser = await this.projectUserAccess.findByProjectId(id);
+      for (const pu of projectUser) {
+        const user = await this.userAccess.findOneByIdOrFail(pu.userId);
+        if (pu.role === Role.Owner) continue;
+        await this.notificationService.notify(
+          NotificationType.ProjectPublish,
+          user,
+          pu.projectId
+        );
+      }
 
       await this.dbAccess.commitTransaction();
     } catch (e) {

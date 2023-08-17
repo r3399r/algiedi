@@ -3,18 +3,22 @@ import { useDispatch, useSelector } from 'react-redux';
 import Avatar from 'src/component/Avatar';
 import Button from 'src/component/Button';
 import Checkbox from 'src/component/Checkbox';
+import Cover from 'src/component/Cover';
 import Input from 'src/component/Input';
 import NotificationWidget from 'src/component/NotificationWidget';
 import IcFacebook from 'src/image/ic-facebook.svg';
 import IcInstagram from 'src/image/ic-instagram.svg';
 import IcSoundcloud from 'src/image/ic-soundcloud.svg';
 import IcYoutube from 'src/image/ic-youtube.svg';
-import Sample1 from 'src/image/sample1.png';
-import Sample2 from 'src/image/sample2.png';
-import Sample3 from 'src/image/sample3.png';
+import { GetExploreResponse } from 'src/model/backend/api/Explore';
 import { RootState } from 'src/redux/store';
 import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
-import { editProfile, loadProfileData, updateAvatar } from 'src/service/ProfileService';
+import {
+  editProfile,
+  getRecentlyPublished,
+  loadProfileData,
+  updateAvatar,
+} from 'src/service/ProfileService';
 
 const Profile = () => {
   const dispatch = useDispatch();
@@ -30,7 +34,12 @@ const Profile = () => {
   const [instagram, setInstagram] = useState<string>('');
   const [youtube, setYoutube] = useState<string>('');
   const [soundcloud, setSoundcloud] = useState<string>('');
+  const [recentlyPublished, setRecentlyPublished] = useState<GetExploreResponse>();
   const avatarInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    getRecentlyPublished().then((res) => setRecentlyPublished(res));
+  }, []);
 
   useEffect(() => {
     loadProfileData().then((res) => {
@@ -255,18 +264,14 @@ const Profile = () => {
       </div>
       <div className="my-6 text-[18px] font-bold">Recently Published</div>
       <div className="flex gap-6">
-        <div className="text-center">
-          <img src={Sample1} className="h-[150px] w-[150px]" />
-          <div>愛贏</div>
-        </div>
-        <div className="text-center">
-          <img src={Sample2} className="h-[150px] w-[150px]" />
-          <div>有隻落水</div>
-        </div>
-        <div className="text-center">
-          <img src={Sample3} className="h-[150px] w-[150px]" />
-          <div>於是以後</div>
-        </div>
+        {recentlyPublished
+          ? recentlyPublished.map((v) => (
+              <div key={v.id} className="text-center">
+                <Cover url={v.coverFileUrl} size={150} />
+                <div className="font-bold">{v.name}</div>
+              </div>
+            ))
+          : 'There is no published song.'}
       </div>
       <input
         type="file"

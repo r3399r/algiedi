@@ -40,7 +40,7 @@ const NotificationWidget = ({ className }: Props) => {
         )}
         onClick={handleClick}
       >
-        {notification.length}
+        {notification.filter((v) => !v.isRead).length}
       </div>
       <Popover
         open={Boolean(anchorEl)}
@@ -57,14 +57,16 @@ const NotificationWidget = ({ className }: Props) => {
       >
         <div className="px-2 pt-2">Notifications</div>
         <div className="flex flex-col gap-2">
-          {notification.map((v) => (
-            <div key={v.id} className="relative m-2 cursor-pointer rounded bg-grey/30 p-3">
-              {!v.isRead && (
-                <div className="absolute left-5 top-1/2 h-[5px] w-[5px] rounded-full bg-red" />
-              )}
-              <div className="pl-5">{v.type}</div>
-            </div>
-          ))}
+          {notification
+            .filter((v) => !v.isRead)
+            .map((v) => (
+              <div key={v.id} className="relative m-2 cursor-pointer rounded bg-grey/30 p-3">
+                {!v.isRead && (
+                  <div className="absolute left-5 top-1/2 h-[5px] w-[5px] rounded-full bg-red" />
+                )}
+                <div className="pl-5">{v.type}</div>
+              </div>
+            ))}
         </div>
       </Popover>
     </>

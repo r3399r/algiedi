@@ -3,6 +3,7 @@ import { BeforeInsert, BeforeUpdate, Column, Entity, Generated } from 'typeorm';
 export enum NotificationType {
   ProjectStart = 'project-start',
   ProjectReject = 'project-reject',
+  ProjectPublish = 'project-publish',
   CreationUpdated = 'creation-updated',
   NewParticipant = 'new-participant',
 }

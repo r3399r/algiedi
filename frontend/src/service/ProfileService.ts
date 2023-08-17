@@ -1,9 +1,11 @@
 import meEndpoint from 'src/api/meEndpoint';
 import userEndpoint from 'src/api/userEndpoint';
+import { GetExploreResponse } from 'src/model/backend/api/Explore';
 import { setMe } from 'src/redux/meSlice';
-import { dispatch } from 'src/redux/store';
+import { dispatch, getState } from 'src/redux/store';
 import { finishWaiting, setLoadingProfile, startWaiting } from 'src/redux/uiSlice';
 import { file2Base64 } from 'src/util/fileConverter';
+import { getExplore } from './ExploreService';
 
 const loadMe = async () => {
   try {
@@ -43,6 +45,19 @@ export const loadProfileData = async () => {
     dispatch(startWaiting());
 
     return await loadMe();
+  } finally {
+    dispatch(finishWaiting());
+  }
+};
+
+export const getRecentlyPublished = async (): Promise<GetExploreResponse> => {
+  try {
+    dispatch(startWaiting());
+    const explores = await getExplore();
+
+    const state = getState();
+
+    return explores.songs.filter((v) => v.author.map((o) => o.id).includes(state.me.id));
   } finally {
     dispatch(finishWaiting());
   }

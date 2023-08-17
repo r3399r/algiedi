@@ -4,7 +4,6 @@ import userEndpoint from 'src/api/userEndpoint';
 import { GetExploreResponse } from 'src/model/backend/api/Explore';
 import { dispatch, getState } from 'src/redux/store';
 import { finishWaiting, startWaiting } from 'src/redux/uiSlice';
-import { compare } from 'src/util/compare';
 
 export const getExplore = async () => {
   try {
@@ -25,9 +24,9 @@ export const getExplore = async () => {
     });
 
     return {
-      tracks: tracks.sort(compare('projectCreatedAt', 'desc')),
-      lyrics: lyrics.sort(compare('projectCreatedAt', 'desc')),
-      songs: songs.sort(compare('projectCreatedAt', 'desc')),
+      tracks,
+      lyrics,
+      songs,
     };
   } finally {
     dispatch(finishWaiting());
