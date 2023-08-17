@@ -15,6 +15,7 @@ import { GetExploreResponse } from 'src/model/backend/api/Explore';
 import { RootState } from 'src/redux/store';
 import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
 import { getExplore, likeById, unlikeById } from 'src/service/ExploreService';
+import { compare } from 'src/util/compare';
 
 const ExploreIdea = () => {
   const navigate = useNavigate();
@@ -52,6 +53,7 @@ const ExploreIdea = () => {
       <Tabs labels={['Tracks', 'Lyrics', 'All']} onChange={(i) => setTab(i)} defaultIndex={0} />
       <div className="mt-4 flex flex-wrap gap-6">
         {idea
+          ?.sort(compare('projectCreatedAt', 'desc'))
           ?.filter((v) => {
             if (tab === 0) return v.type === 'track';
             if (tab === 1) return v.type === 'lyrics';
