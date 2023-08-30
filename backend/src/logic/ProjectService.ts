@@ -201,6 +201,21 @@ export class ProjectService {
       info.caption = data.caption ?? info.caption;
       await this.infoAccess.save(info);
 
+      // notify
+      const projectUser = await this.projectUserAccess.findByProjectId(id);
+      for (const pu of projectUser) {
+        if (pu.userId === this.cognitoUserId) continue;
+        if (project.status === Status.Published) continue;
+        if (project.status === Status.InProgress && pu.role === Role.Rejected)
+          continue;
+        const user = await this.userAccess.findOneByIdOrFail(pu.userId);
+        await this.notificationService.notify(
+          NotificationType.ProjectUpdated,
+          user,
+          project.id
+        );
+      }
+
       await this.dbAccess.commitTransaction();
     } catch (e) {
       await this.dbAccess.rollbackTransaction();
@@ -209,34 +224,74 @@ export class ProjectService {
   }
 
   public async projectApproval(projectId: string, userId: string) {
-    // valiate owner
-    await this.projectUserAccess.findOneOrFail({
-      where: {
-        userId: this.cognitoUserId,
-        projectId,
-        role: Role.Owner,
-      },
-    });
+    try {
+      await this.dbAccess.startTransaction();
+      // valiate owner
+      await this.projectUserAccess.findOneOrFail({
+        where: {
+          userId: this.cognitoUserId,
+          projectId,
+          role: Role.Owner,
+        },
+      });
 
-    const projectUser = await this.projectUserAccess.findOneOrFail({
-      where: {
-        userId,
-        projectId,
-      },
-    });
-    projectUser.isAccepted = !projectUser.isAccepted;
-    await this.projectUserAccess.save(projectUser);
+      const projectUser = await this.projectUserAccess.findOneOrFail({
+        where: {
+          userId,
+          projectId,
+        },
+      });
+      projectUser.isAccepted = !projectUser.isAccepted;
+      await this.projectUserAccess.save(projectUser);
+
+      // notify
+      const user = await this.userAccess.findOneByIdOrFail(userId);
+      await this.notificationService.notify(
+        projectUser.isAccepted
+          ? NotificationType.InspiredApproved
+          : NotificationType.InspiredUnapproved,
+        user,
+        projectId
+      );
+
+      await this.dbAccess.commitTransaction();
+    } catch (e) {
+      await this.dbAccess.rollbackTransaction();
+    }
   }
 
   public async projectReady(projectId: string) {
-    const projectUser = await this.projectUserAccess.findOneOrFail({
-      where: {
-        userId: this.cognitoUserId,
-        projectId,
-      },
-    });
-    projectUser.isReady = !projectUser.isReady;
-    await this.projectUserAccess.save(projectUser);
+    try {
+      await this.dbAccess.startTransaction();
+      const projectUser = await this.projectUserAccess.findByProjectId(
+        projectId
+      );
+      const mePu = projectUser.find((v) => v.userId === this.cognitoUserId);
+      if (!mePu) throw new Error('unexpected error');
+      mePu.isReady = !mePu.isReady;
+      await this.projectUserAccess.save(mePu);
+
+      // notify
+      const project = await this.projectAccess.findOneByIdOrFail(projectId);
+      for (const pu of projectUser) {
+        if (pu.userId === this.cognitoUserId) continue;
+        if (project.status === Status.Published) continue;
+        if (project.status === Status.InProgress && pu.role === Role.Rejected)
+          continue;
+        const user = await this.userAccess.findOneByIdOrFail(pu.userId);
+        await this.notificationService.notify(
+          mePu.isReady
+            ? NotificationType.PartnerReady
+            : NotificationType.PartnerNotReady,
+          user,
+          project.id
+        );
+      }
+
+      await this.dbAccess.commitTransaction();
+    } catch (e) {
+      await this.dbAccess.rollbackTransaction();
+    }
   }
 
   public async setLastProject(id: string) {
@@ -331,7 +386,7 @@ export class ProjectService {
         continue;
       const user = await this.userAccess.findOneByIdOrFail(pu.userId);
       await this.notificationService.notify(
-        NotificationType.CreationUpdated,
+        NotificationType.CreationUploaded,
         user,
         project.id
       );
@@ -453,16 +508,41 @@ export class ProjectService {
   }
 
   public async updateProjectCover(id: string, data: PutProjectIdCoverRequest) {
-    const project = await this.projectAccess.findOneByIdOrFail(id);
-    if (project.infoId === null) throw new InternalServerError('no info found');
+    try {
+      await this.dbAccess.startTransaction();
 
-    const key = await this.awsService.s3Upload(
-      data.file,
-      `info/${project.infoId}`
-    );
-    const info = await this.infoAccess.findOneOrFailById(project.infoId);
-    info.coverFileUri = key;
-    await this.infoAccess.save(info);
+      const project = await this.projectAccess.findOneByIdOrFail(id);
+      if (project.infoId === null)
+        throw new InternalServerError('no info found');
+
+      const key = await this.awsService.s3Upload(
+        data.file,
+        `info/${project.infoId}`
+      );
+      const info = await this.infoAccess.findOneOrFailById(project.infoId);
+      info.coverFileUri = key;
+      await this.infoAccess.save(info);
+
+      // notify
+      const projectUser = await this.projectUserAccess.findByProjectId(id);
+      for (const pu of projectUser) {
+        if (pu.userId === this.cognitoUserId) continue;
+        if (project.status === Status.Published) continue;
+        if (project.status === Status.InProgress && pu.role === Role.Rejected)
+          continue;
+        const user = await this.userAccess.findOneByIdOrFail(pu.userId);
+        await this.notificationService.notify(
+          NotificationType.ProjectUpdated,
+          user,
+          project.id
+        );
+      }
+
+      await this.dbAccess.commitTransaction();
+    } catch (e) {
+      await this.dbAccess.rollbackTransaction();
+      throw e;
+    }
   }
 
   public async getProjectChat(id: string): Promise<GetProjectIdChatResponse> {
