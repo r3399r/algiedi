@@ -2,6 +2,7 @@ import creationEndpoint from 'src/api/creationEndpoint';
 import exploreEndpoint from 'src/api/exploreEndpoint';
 import userEndpoint from 'src/api/userEndpoint';
 import { GetExploreResponse } from 'src/model/backend/api/Explore';
+import { setExplores } from 'src/redux/apiSlice';
 import { dispatch, getState } from 'src/redux/store';
 import { finishWaiting, startWaiting } from 'src/redux/uiSlice';
 
@@ -13,6 +14,8 @@ export const getExplore = async () => {
     const res = isLogin
       ? await exploreEndpoint.getExploreAuth()
       : await exploreEndpoint.getExplore();
+
+    dispatch(setExplores(res.data));
 
     const tracks: GetExploreResponse = [];
     const lyrics: GetExploreResponse = [];

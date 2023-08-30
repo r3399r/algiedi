@@ -50,14 +50,42 @@ export const loadProfileData = async () => {
   }
 };
 
-export const getRecentlyPublished = async (): Promise<GetExploreResponse> => {
+export const getExplores = async (): Promise<{
+  published: GetExploreResponse;
+  original: GetExploreResponse;
+  inspiration: GetExploreResponse;
+}> => {
   try {
     dispatch(startWaiting());
-    const explores = await getExplore();
-
     const state = getState();
 
-    return explores.songs.filter((v) => v.author.map((o) => o.id).includes(state.me.id));
+    let tracks: GetExploreResponse = [];
+    let lyrics: GetExploreResponse = [];
+    let songs: GetExploreResponse = [];
+    if (!state.api.explores) {
+      const res = await getExplore();
+      tracks = res.tracks;
+      lyrics = res.lyrics;
+      songs = res.songs;
+    } else {
+      tracks = state.api.explores.filter((v) => v.type === 'track');
+      lyrics = state.api.explores.filter((v) => v.type === 'lyrics');
+      songs = state.api.explores.filter((v) => v.type === 'song');
+    }
+
+    const published = songs.filter((v) => v.author.map((o) => o.id).includes(state.me.id));
+    const original = [...tracks, ...lyrics].filter(
+      (v) => v.inspiredId === null && v.userId === state.me.id,
+    );
+    const inspiration = [...tracks, ...lyrics, ...songs].filter(
+      (v) => v.inspiredId !== null && v.userId === state.me.id,
+    );
+
+    return {
+      published,
+      original,
+      inspiration,
+    };
   } finally {
     dispatch(finishWaiting());
   }
