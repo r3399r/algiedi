@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Avatar from 'src/component/Avatar';
 import Cover from 'src/component/Cover';
 import Tabs from 'src/component/Tabs';
 import { Page } from 'src/constant/Page';
 import { GetExploreResponse } from 'src/model/backend/api/Explore';
-import { getExplores } from 'src/service/ProfileService';
+import { GetMeSocialResponse } from 'src/model/backend/api/Me';
+import { getExplores, getSocials } from 'src/service/ProfileService';
 
 const Exhibits = () => {
   const navigate = useNavigate();
@@ -12,12 +14,18 @@ const Exhibits = () => {
   const [published, setPublished] = useState<GetExploreResponse>([]);
   const [original, setOriginal] = useState<GetExploreResponse>([]);
   const [inspiration, setInspiration] = useState<GetExploreResponse>([]);
+  const [likes, setLikes] = useState<GetMeSocialResponse['creation']>([]);
+  const [followee, setFollowee] = useState<GetMeSocialResponse['followee']>([]);
 
   useEffect(() => {
     getExplores().then((res) => {
       setPublished(res.published);
       setOriginal(res.original);
       setInspiration(res.inspiration);
+    });
+    getSocials().then((res) => {
+      setLikes(res.creation);
+      setFollowee(res.followee);
     });
   }, []);
 
@@ -73,6 +81,34 @@ const Exhibits = () => {
                 >
                   <Cover url={v.coverFileUrl} size={150} />
                   <div className="font-bold">{v.name}</div>
+                </div>
+              ))
+            : 'There is no inspiration creation.'}
+        </div>
+      )}
+      {tab === 3 && (
+        <div className="flex flex-wrap gap-6">
+          {likes.length > 0
+            ? likes.map((v) => (
+                <div
+                  key={v.id}
+                  className="cursor-pointer text-center"
+                  onClick={() => navigate(`${Page.Explore}/${v.id}`)}
+                >
+                  <Cover url={v.coverFileUrl} size={150} />
+                  <div className="font-bold">{v.name}</div>
+                </div>
+              ))
+            : 'There is no inspiration creation.'}
+        </div>
+      )}
+      {tab === 4 && (
+        <div className="flex flex-wrap gap-6">
+          {followee.length > 0
+            ? followee.map((v) => (
+                <div key={v.id} className="text-center">
+                  <Avatar url={v.avatarUrl} size={150} />
+                  <div className="font-bold">{v.username}</div>
                 </div>
               ))
             : 'There is no inspiration creation.'}

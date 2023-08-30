@@ -1,7 +1,16 @@
 import { inject, injectable } from 'inversify';
+import { In } from 'typeorm';
 import { DbAccess } from 'src/access/DbAccess';
+import { FollowAccess } from 'src/access/FollowAccess';
+import { LikeAccess } from 'src/access/LikeAccess';
 import { UserAccess } from 'src/access/UserAccess';
-import { GetMeResponse, PutMeRequest, PutMeResponse } from 'src/model/api/Me';
+import { ViewCreationExploreAccess } from 'src/access/ViewCreationExploreAccess';
+import {
+  GetMeResponse,
+  GetMeSocialResponse,
+  PutMeRequest,
+  PutMeResponse,
+} from 'src/model/api/Me';
 import { cognitoSymbol } from 'src/util/LambdaSetup';
 import { AwsService } from './AwsService';
 
@@ -19,8 +28,17 @@ export class MeService {
   @inject(UserAccess)
   private readonly userAccess!: UserAccess;
 
+  @inject(LikeAccess)
+  private readonly likeAccess!: LikeAccess;
+
+  @inject(FollowAccess)
+  private readonly followAccess!: FollowAccess;
+
   @inject(AwsService)
   private readonly awsService!: AwsService;
+
+  @inject(ViewCreationExploreAccess)
+  private readonly viewCreationExploreAccess!: ViewCreationExploreAccess;
 
   public async cleanup() {
     await this.dbAccess.cleanup();
@@ -47,5 +65,33 @@ export class MeService {
     await this.userAccess.save(user);
 
     return { ...user, avatarUrl: this.awsService.getS3SignedUrl(user.avatar) };
+  }
+
+  public async getMySocial(): Promise<GetMeSocialResponse> {
+    const likes = await this.likeAccess.find({
+      where: { userId: this.cognitoUserId },
+    });
+    const follows = await this.followAccess.find({
+      where: { followerId: this.cognitoUserId },
+    });
+    const creation = await this.viewCreationExploreAccess.find({
+      where: { id: In(likes.map((v) => v.creationId)) },
+    });
+    const followee = await this.userAccess.find({
+      where: { id: In(follows.map((v) => v.followeeId)) },
+    });
+
+    return {
+      creation: creation.map((v) => ({
+        ...v,
+        fileUrl: this.awsService.getS3SignedUrl(v.fileUri),
+        tabFileUrl: this.awsService.getS3SignedUrl(v.tabFileUri),
+        coverFileUrl: this.awsService.getS3SignedUrl(v.coverFileUri),
+      })),
+      followee: followee.map((v) => ({
+        ...v,
+        avatarUrl: this.awsService.getS3SignedUrl(v.avatar),
+      })),
+    };
   }
 }

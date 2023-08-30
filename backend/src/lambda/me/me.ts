@@ -21,6 +21,9 @@ export async function me(
       case '/api/me':
         res = await apiMe(event, service);
         break;
+      case '/api/me/social':
+        res = await apiMeSocial(event, service);
+        break;
       default:
         throw new InternalServerError('unknown resource');
     }
@@ -42,6 +45,17 @@ async function apiMe(event: LambdaEvent, service: MeService) {
         throw new BadRequestError('body should not be empty');
 
       return service.updateMe(JSON.parse(event.body) as PutMeRequest);
+    default:
+      throw new InternalServerError('unknown http method');
+  }
+}
+
+async function apiMeSocial(event: LambdaEvent, service: MeService) {
+  if (event.headers === null)
+    throw new BadRequestError('headers should not be empty');
+  switch (event.httpMethod) {
+    case 'GET':
+      return service.getMySocial();
     default:
       throw new InternalServerError('unknown http method');
   }

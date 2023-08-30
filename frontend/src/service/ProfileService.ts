@@ -1,6 +1,7 @@
 import meEndpoint from 'src/api/meEndpoint';
 import userEndpoint from 'src/api/userEndpoint';
 import { GetExploreResponse } from 'src/model/backend/api/Explore';
+import { GetMeSocialResponse } from 'src/model/backend/api/Me';
 import { setMe } from 'src/redux/meSlice';
 import { dispatch, getState } from 'src/redux/store';
 import { finishWaiting, setLoadingProfile, startWaiting } from 'src/redux/uiSlice';
@@ -45,6 +46,18 @@ export const loadProfileData = async () => {
     dispatch(startWaiting());
 
     return await loadMe();
+  } finally {
+    dispatch(finishWaiting());
+  }
+};
+
+export const getSocials = async (): Promise<GetMeSocialResponse> => {
+  try {
+    dispatch(startWaiting());
+
+    const res = await meEndpoint.getMeSocial();
+
+    return res.data;
   } finally {
     dispatch(finishWaiting());
   }
