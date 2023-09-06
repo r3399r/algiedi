@@ -22,15 +22,24 @@ const Navbar = () => {
       <div className="mx-4 flex flex-wrap items-center justify-between">
         <img src={Logo} className="cursor-pointer pt-2" onClick={() => navigate(Page.Home)} />
         <div className="hidden items-center gap-10 sm:flex">
-          <div
-            className={classNames('cursor-pointer decoration-blue hover:underline', {
-              underline: pathname.startsWith(Page.Explore),
-            })}
-            onClick={() => navigate(Page.Explore)}
-            onMouseEnter={() => setMenuOpen(true)}
-            ref={exploreRef}
-          >
-            Explore
+          <div onMouseEnter={() => setMenuOpen(true)} onMouseLeave={() => setMenuOpen(false)}>
+            <div
+              className={classNames('cursor-pointer decoration-blue hover:underline', {
+                underline: pathname.startsWith(Page.Explore),
+              })}
+              onClick={() => {
+                navigate(Page.Explore);
+                setMenuOpen(false);
+              }}
+              ref={exploreRef}
+            >
+              Explore
+            </div>
+            <NavbarExploreMenu
+              open={menuOpen}
+              onClose={() => setMenuOpen(false)}
+              anchorEl={exploreRef.current}
+            />
           </div>
           <div
             className={classNames('cursor-pointer decoration-blue hover:underline', {
@@ -66,11 +75,6 @@ const Navbar = () => {
         </div>
       </div>
       <NavbarDrawer open={open} onClose={() => setOpen(false)} />
-      <NavbarExploreMenu
-        open={menuOpen}
-        onClose={() => setMenuOpen(false)}
-        anchorEl={exploreRef.current}
-      />
     </>
   );
 };
