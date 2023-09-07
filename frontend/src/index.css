@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  font-family: 'source han sans sc';
+  font-family: 'source-han-sans-simplified-c', sans-serif;
   font-size: 16px;
   color: #2d2d2d;
 }
