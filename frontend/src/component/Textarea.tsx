@@ -5,11 +5,24 @@ export type Props = TextareaHTMLAttributes<HTMLTextAreaElement> & {
   label?: string;
   helper?: string;
   error?: boolean | string;
+  asterisked?: boolean;
   appearance?: 'outline' | 'underline';
 };
 
 const Textarea = forwardRef<HTMLTextAreaElement, Props>(
-  ({ label, helper, error, disabled, className, appearance = 'outline', ...props }, ref) => (
+  (
+    {
+      label,
+      helper,
+      error,
+      disabled,
+      className,
+      asterisked = false,
+      appearance = 'outline',
+      ...props
+    },
+    ref,
+  ) => (
     <div>
       {label && (
         <div
@@ -18,11 +31,12 @@ const Textarea = forwardRef<HTMLTextAreaElement, Props>(
           })}
         >
           {label}
+          {asterisked && <span className="text-red">*</span>}
         </div>
       )}
       <textarea
         className={classNames('w-full bg-transparent p-2 outline-none', className, {
-          'rounded border-[1px] border-solid border-black placeholder:text-black':
+          'placeholder:text-grey-500 rounded border-[1px] border-solid border-black':
             appearance === 'outline',
           'border-b-[1px] border-solid border-[#7ba0ff] placeholder:text-[#7ba0ff]':
             appearance === 'underline',

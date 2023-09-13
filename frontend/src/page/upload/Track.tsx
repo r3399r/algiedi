@@ -75,25 +75,43 @@ const Track = ({ defaultInspiredId, inspiration }: Props) => {
       <Form methods={methods} onSubmit={onSubmit}>
         <div className="flex gap-6">
           <div className="flex w-3/5 flex-col gap-4">
-            <FormInput name="name" label="Name" placeholder="Name of your creation" required />
-            <FormTextarea name="description" className="h-[240px]" label="Description" required />
+            <FormInput
+              name="name"
+              label="Name"
+              placeholder="Name of your creation"
+              required
+              asterisked
+            />
+            <FormTextarea
+              name="description"
+              className="h-[240px]"
+              label="Description"
+              placeholder="Please describe your creation here"
+              required
+              asterisked
+            />
           </div>
           <div className="flex w-2/5 flex-col gap-4">
-            <MultiSelect label="Theme" onChange={(v) => setTheme(v)} error={errorTheme}>
+            <MultiSelect label="Theme" onChange={(v) => setTheme(v)} error={errorTheme} asterisked>
               {Theme.map((v, i) => (
                 <MultiSelectOption key={i} value={v.name}>
                   {v.name}
                 </MultiSelectOption>
               ))}
             </MultiSelect>
-            <MultiSelect label="Genre" onChange={(v) => setGenre(v)} error={errorGenre}>
+            <MultiSelect label="Genre" onChange={(v) => setGenre(v)} error={errorGenre} asterisked>
               {Genre.map((v, i) => (
                 <MultiSelectOption key={i} value={v.name}>
                   {v.name}
                 </MultiSelectOption>
               ))}
             </MultiSelect>
-            <MultiSelect label="Language" onChange={(v) => setLanguage(v)} error={errorLanguage}>
+            <MultiSelect
+              label="Language"
+              onChange={(v) => setLanguage(v)}
+              error={errorLanguage}
+              asterisked
+            >
               {Language.map((v, i) => (
                 <MultiSelectOption key={i} value={v.name}>
                   {v.name}

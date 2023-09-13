@@ -22,9 +22,10 @@ type Props = {
   defaultValue?: string;
   onChange?: (v: string) => void;
   error?: boolean | string;
+  asterisked?: boolean;
 };
 
-const MultiSelect = ({ children, label, disabled, onChange, error }: Props) => {
+const MultiSelect = ({ children, label, disabled, onChange, error, asterisked = false }: Props) => {
   const [open, setOpen] = useState<boolean>(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const ref = useRef<HTMLDivElement>(null);
@@ -54,6 +55,7 @@ const MultiSelect = ({ children, label, disabled, onChange, error }: Props) => {
             })}
           >
             {label}
+            {asterisked && <span className="text-red">*</span>}
           </div>
         )}
         <div
@@ -73,7 +75,7 @@ const MultiSelect = ({ children, label, disabled, onChange, error }: Props) => {
               'text-navy-900': !disabled,
             })}
           >
-            {[...selected].join()}
+            {selected.size > 0 ? [...selected].join() : 'Please Select'}
           </div>
           <div>{disabled ? <img src={IcSelectDisabled} /> : <img src={IcSelect} />}</div>
         </div>
