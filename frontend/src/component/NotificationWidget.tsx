@@ -2,9 +2,10 @@ import { Popover } from '@mui/material';
 import classNames from 'classnames';
 import { MouseEvent, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Notification as NotificationType } from 'src/model/backend/entity/NotificationEntity';
+import { useLocation } from 'react-router-dom';
+import { Page } from 'src/constant/Page';
 import { RootState } from 'src/redux/store';
-import { getNotification } from 'src/service/NotificationService';
+import { loadNotification } from 'src/service/NotificationService';
 
 type Props = {
   className?: string;
@@ -12,16 +13,12 @@ type Props = {
 
 const NotificationWidget = ({ className }: Props) => {
   const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
-  const [notification, setNotification] = useState<NotificationType[]>([]);
-  const { lastNotification } = useSelector((root: RootState) => root.ws);
+  const { notifications } = useSelector((root: RootState) => root.api);
+  const location = useLocation();
 
   useEffect(() => {
-    getNotification().then((res) => setNotification(res));
+    if (location.pathname !== Page.Notification && !notifications) loadNotification();
   }, []);
-
-  useEffect(() => {
-    if (lastNotification) setNotification([lastNotification, ...notification]);
-  }, [lastNotification]);
 
   const handleClick = (event: MouseEvent<HTMLDivElement>) => {
     setAnchorEl(event.currentTarget);
@@ -40,7 +37,7 @@ const NotificationWidget = ({ className }: Props) => {
         )}
         onClick={handleClick}
       >
-        {notification.filter((v) => !v.isRead).length}
+        {(notifications ?? []).filter((v) => !v.isRead).length}
       </div>
       <Popover
         open={Boolean(anchorEl)}
@@ -57,7 +54,7 @@ const NotificationWidget = ({ className }: Props) => {
       >
         <div className="px-2 pt-2">Notifications</div>
         <div className="flex flex-col gap-2">
-          {notification
+          {(notifications ?? [])
             .filter((v) => !v.isRead)
             .map((v) => (
               <div key={v.id} className="relative m-2 cursor-pointer rounded bg-grey/30 p-3">

@@ -16,7 +16,7 @@ const SideMenu = () => {
   const { username, avatar } = useSelector((rootState: RootState) => rootState.me);
 
   useEffect(() => {
-    if (location.pathname !== Page.Profile) loadProfileData();
+    if (location.pathname !== Page.Profile && !username) loadProfileData();
   }, [location.pathname]);
 
   return (

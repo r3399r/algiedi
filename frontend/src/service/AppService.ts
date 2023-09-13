@@ -1,7 +1,8 @@
 import { Chat, WebsocketMessage } from 'src/model/backend/api/Ws';
 import { Notification } from 'src/model/backend/entity/NotificationEntity';
+import { setLastNotification } from 'src/redux/apiSlice';
 import { dispatch, getState } from 'src/redux/store';
-import { setLastChat, setLastNotification } from 'src/redux/wsSlice';
+import { setLastChat } from 'src/redux/wsSlice';
 import { wsStart } from 'src/util/wsTick';
 
 export const wsInit = () => {
