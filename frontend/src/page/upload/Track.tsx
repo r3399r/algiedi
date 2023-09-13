@@ -2,6 +2,7 @@ import { Autocomplete, TextField } from '@mui/material';
 import { ChangeEvent, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import Button from 'src/component/Button';
 import Checkbox from 'src/component/Checkbox';
 import Form from 'src/component/Form';
@@ -10,6 +11,7 @@ import FormTextarea from 'src/component/FormTextarea';
 import Input from 'src/component/Input';
 import MultiSelect from 'src/component/MultiSelect';
 import MultiSelectOption from 'src/component/MultiSelectOption';
+import { Page } from 'src/constant/Page';
 import { Genre, Language, Theme } from 'src/constant/Property';
 import { DetailedCreation } from 'src/model/backend/Project';
 import { UploadTrackForm } from 'src/model/Form';
@@ -22,6 +24,7 @@ type Props = {
 };
 
 const Track = ({ defaultInspiredId, inspiration }: Props) => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const trackInputRef = useRef<HTMLInputElement>(null);
   const tabInputRef = useRef<HTMLInputElement>(null);
@@ -60,7 +63,10 @@ const Track = ({ defaultInspiredId, inspiration }: Props) => {
       { track: trackFile, tab: tabFile ?? null, cover: coverFile ?? null },
       checkInspiration ? inspiredId : null,
     )
-      .then(() => dispatch(openSuccessSnackbar('Uploaded Successfully')))
+      .then(() => {
+        navigate(Page.Overall);
+        dispatch(openSuccessSnackbar('Uploaded Successfully'));
+      })
       .catch((err) => dispatch(openFailSnackbar(err)));
   };
 
