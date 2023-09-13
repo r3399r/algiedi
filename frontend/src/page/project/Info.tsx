@@ -5,6 +5,7 @@ import Cover from 'src/component/Cover';
 import Input from 'src/component/Input';
 import MultiSelect from 'src/component/MultiSelect';
 import MultiSelectOption from 'src/component/MultiSelectOption';
+import { Genre, Language, Theme } from 'src/constant/Property';
 import { DetailedProject } from 'src/model/backend/Project';
 import { openFailSnackbar } from 'src/redux/uiSlice';
 import { updateCover, updateProject } from 'src/service/ProjectService';
@@ -106,9 +107,11 @@ const Info = ({ project, doRefresh, isOwner }: Props) => {
           <div className="w-[90px] font-bold">Theme</div>
           {isEdit ? (
             <MultiSelect onChange={(v) => setTheme(v)} error={errorTheme}>
-              <MultiSelectOption value="Romantic">Romantic</MultiSelectOption>
-              <MultiSelectOption value="Relax">Relax</MultiSelectOption>
-              <MultiSelectOption value="Deep Focus">Deep Focus</MultiSelectOption>
+              {Theme.map((v, i) => (
+                <MultiSelectOption key={i} value={v.name}>
+                  {v.name}
+                </MultiSelectOption>
+              ))}
             </MultiSelect>
           ) : (
             <div>{theme}</div>
@@ -118,9 +121,11 @@ const Info = ({ project, doRefresh, isOwner }: Props) => {
           <div className="w-[90px] font-bold">Genre</div>
           {isEdit ? (
             <MultiSelect onChange={(v) => setGenre(v)} error={errorGenre}>
-              <MultiSelectOption value="Pop">Pop</MultiSelectOption>
-              <MultiSelectOption value="Rock">Rock</MultiSelectOption>
-              <MultiSelectOption value="Electronics">Electronics</MultiSelectOption>
+              {Genre.map((v, i) => (
+                <MultiSelectOption key={i} value={v.name}>
+                  {v.name}
+                </MultiSelectOption>
+              ))}
             </MultiSelect>
           ) : (
             <div>{genre}</div>
@@ -130,9 +135,11 @@ const Info = ({ project, doRefresh, isOwner }: Props) => {
           <div className="w-[90px] font-bold">Language</div>
           {isEdit ? (
             <MultiSelect onChange={(v) => setLanguage(v)} error={errorLanguage}>
-              <MultiSelectOption value="Cantonese">Cantonese</MultiSelectOption>
-              <MultiSelectOption value="English">English</MultiSelectOption>
-              <MultiSelectOption value="Mandarin">Mandarin</MultiSelectOption>
+              {Language.map((v, i) => (
+                <MultiSelectOption key={i} value={v.name}>
+                  {v.name}
+                </MultiSelectOption>
+              ))}
             </MultiSelect>
           ) : (
             <div>{language}</div>

@@ -10,6 +10,7 @@ import FormTextarea from 'src/component/FormTextarea';
 import Input from 'src/component/Input';
 import MultiSelect from 'src/component/MultiSelect';
 import MultiSelectOption from 'src/component/MultiSelectOption';
+import { Genre, Language, Theme } from 'src/constant/Property';
 import { DetailedCreation } from 'src/model/backend/Project';
 import { UploadTrackForm } from 'src/model/Form';
 import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
@@ -73,19 +74,25 @@ const Track = ({ defaultInspiredId, inspiration }: Props) => {
           </div>
           <div className="flex w-2/5 flex-col gap-4">
             <MultiSelect label="Theme" onChange={(v) => setTheme(v)} error={errorTheme}>
-              <MultiSelectOption value="Romantic">Romantic</MultiSelectOption>
-              <MultiSelectOption value="Relax">Relax</MultiSelectOption>
-              <MultiSelectOption value="Deep Focus">Deep Focus</MultiSelectOption>
+              {Theme.map((v, i) => (
+                <MultiSelectOption key={i} value={v.name}>
+                  {v.name}
+                </MultiSelectOption>
+              ))}
             </MultiSelect>
             <MultiSelect label="Genre" onChange={(v) => setGenre(v)} error={errorGenre}>
-              <MultiSelectOption value="Pop">Pop</MultiSelectOption>
-              <MultiSelectOption value="Rock">Rock</MultiSelectOption>
-              <MultiSelectOption value="Electronics">Electronics</MultiSelectOption>
+              {Genre.map((v, i) => (
+                <MultiSelectOption key={i} value={v.name}>
+                  {v.name}
+                </MultiSelectOption>
+              ))}
             </MultiSelect>
             <MultiSelect label="Language" onChange={(v) => setLanguage(v)} error={errorLanguage}>
-              <MultiSelectOption value="Cantonese">Cantonese</MultiSelectOption>
-              <MultiSelectOption value="English">English</MultiSelectOption>
-              <MultiSelectOption value="Mandarin">Mandarin</MultiSelectOption>
+              {Language.map((v, i) => (
+                <MultiSelectOption key={i} value={v.name}>
+                  {v.name}
+                </MultiSelectOption>
+              ))}
             </MultiSelect>
           </div>
         </div>

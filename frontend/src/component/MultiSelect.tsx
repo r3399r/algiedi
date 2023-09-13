@@ -81,7 +81,7 @@ const MultiSelect = ({ children, label, disabled, onChange, error }: Props) => {
           open={open}
           onClose={() => setOpen(false)}
           anchorEl={ref.current}
-          // cssProperties={{ width: ref.current?.offsetWidth }}
+          cssProperties={{ width: ref.current?.offsetWidth }}
         >
           <>{children}</>
         </Popover>

@@ -4,6 +4,7 @@ import Avatar from 'src/component/Avatar';
 import Button from 'src/component/Button';
 import Checkbox from 'src/component/Checkbox';
 import Input from 'src/component/Input';
+import { Genre, Language, Role } from 'src/constant/Property';
 import IcFacebook from 'src/image/ic-facebook.svg';
 import IcInstagram from 'src/image/ic-instagram.svg';
 import IcSoundcloud from 'src/image/ic-soundcloud.svg';
@@ -80,12 +81,12 @@ const BasicInfo = () => {
             <div className="text-[20px] font-bold">{username}</div>
             {isEdit ? (
               <div className="flex gap-2">
-                {['Composer', 'Lyricist', 'Singer', 'Producer'].map((v) => (
+                {Role.map((v, i) => (
                   <Checkbox
-                    key={v}
-                    checked={role.includes(v)}
-                    name={v}
-                    label={v}
+                    key={i}
+                    checked={role.includes(v.name)}
+                    name={v.name}
+                    label={v.name}
                     onChange={onRoleChange}
                   />
                 ))}
@@ -129,12 +130,12 @@ const BasicInfo = () => {
         <div className="w-[150px] text-dark">Language</div>
         {isEdit ? (
           <div className="flex gap-2">
-            {['Cantonese', 'Mandarin', 'English', 'Japanese'].map((v) => (
+            {Language.map((v, i) => (
               <Checkbox
-                key={v}
-                checked={language.includes(v)}
-                name={v}
-                label={v}
+                key={i}
+                checked={language.includes(v.name)}
+                name={v.name}
+                label={v.name}
                 onChange={onLangChange}
               />
             ))}
@@ -157,12 +158,12 @@ const BasicInfo = () => {
         <div className="w-[150px] text-dark">Music tags</div>
         {isEdit ? (
           <div className="flex gap-2">
-            {['Pop', 'Rock', 'Electronics'].map((v) => (
+            {Genre.map((v, i) => (
               <Checkbox
-                key={v}
-                checked={tag.includes(v)}
-                name={v}
-                label={v}
+                key={i}
+                checked={tag.includes(v.name)}
+                name={v.name}
+                label={v.name}
                 onChange={onTagChange}
               />
             ))}

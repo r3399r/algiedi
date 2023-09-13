@@ -6,6 +6,7 @@ import Footer from 'src/component/Footer';
 import MultiSelect from 'src/component/MultiSelect';
 import MultiSelectOption from 'src/component/MultiSelectOption';
 import { Page } from 'src/constant/Page';
+import { Genre, Instrument, Language, Role } from 'src/constant/Property';
 import { openFailSnackbar } from 'src/redux/uiSlice';
 import { saveQuestionnaire } from 'src/service/AuthService';
 
@@ -51,42 +52,36 @@ const AuthQuestionnaire = () => {
             <div className="flex flex-wrap items-center gap-2">
               I want to create music as a
               <MultiSelect onChange={(v) => setRole(v)}>
-                <MultiSelectOption value="Composer">
-                  <div className="text-[16px] font-bold">Composer</div>
-                  <div className="text-[12px] text-[#a7a7a7]">Upload audio melody tracks</div>
-                </MultiSelectOption>
-                <MultiSelectOption value="Lyricist">
-                  <div className="text-[16px] font-bold">Lyricist</div>
-                  <div className="text-[12px] text-[#a7a7a7]">Fill in lyrics for melodies</div>
-                </MultiSelectOption>
-                <MultiSelectOption value="Singer">
-                  <div className="text-[16px] font-bold">Singer</div>
-                  <div className="text-[12px] text-[#a7a7a7]">Record demo for songs</div>
-                </MultiSelectOption>
-                <MultiSelectOption value="Producer">
-                  <div className="text-[16px] font-bold">Producer</div>
-                  <div className="text-[12px] text-[#a7a7a7]">
-                    Remaster songs to implement sophisticated music components
-                  </div>
-                </MultiSelectOption>
+                {Role.map((v, i) => (
+                  <MultiSelectOption key={i} value={v.name}>
+                    <div className="text-[16px] font-bold">{v.name}</div>
+                    {v.note && <div className="text-[12px] text-[#a7a7a7]">{v.note}</div>}
+                  </MultiSelectOption>
+                ))}
               </MultiSelect>
               in
               <MultiSelect onChange={(v) => setLanguage(v)}>
-                <MultiSelectOption value="Cantonese">Cantonese</MultiSelectOption>
-                <MultiSelectOption value="English">English</MultiSelectOption>
-                <MultiSelectOption value="Mandarin">Mandarin</MultiSelectOption>
+                {Language.map((v, i) => (
+                  <MultiSelectOption key={i} value={v.name}>
+                    {v.name}
+                  </MultiSelectOption>
+                ))}
               </MultiSelect>
               . I am good at playing
               <MultiSelect onChange={(v) => setInstrument(v)}>
-                <MultiSelectOption value="Piano">Piano</MultiSelectOption>
-                <MultiSelectOption value="Drum">Drum</MultiSelectOption>
-                <MultiSelectOption value="Guitar">Guitar</MultiSelectOption>
+                {Instrument.map((v, i) => (
+                  <MultiSelectOption key={i} value={v.name}>
+                    {v.name}
+                  </MultiSelectOption>
+                ))}
               </MultiSelect>
               and I love
               <MultiSelect onChange={(v) => setFavoriate(v)}>
-                <MultiSelectOption value="Pop">Pop</MultiSelectOption>
-                <MultiSelectOption value="Rock">Rock</MultiSelectOption>
-                <MultiSelectOption value="Electronics">Electronics</MultiSelectOption>
+                {Genre.map((v, i) => (
+                  <MultiSelectOption key={i} value={v.name}>
+                    {v.name}
+                  </MultiSelectOption>
+                ))}
               </MultiSelect>
               music.
             </div>
