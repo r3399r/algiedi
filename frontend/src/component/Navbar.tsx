@@ -1,3 +1,4 @@
+import MenuIcon from '@mui/icons-material/Menu';
 import classNames from 'classnames';
 import { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -67,11 +68,8 @@ const Navbar = () => {
           </div>
           <Button onClick={() => navigate(isLogin ? Page.Profile : Page.Login)}>Create Now</Button>
         </div>
-        <div
-          className="cursor-pointer decoration-blue hover:underline sm:hidden"
-          onClick={() => setOpen(true)}
-        >
-          Menu
+        <div className="cursor-pointer sm:hidden" onClick={() => setOpen(true)}>
+          <MenuIcon />
         </div>
       </div>
       <NavbarDrawer open={open} onClose={() => setOpen(false)} />

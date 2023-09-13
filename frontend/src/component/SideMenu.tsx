@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -24,7 +25,9 @@ const SideMenu = () => {
         <img src={Logo} className="cursor-pointer" onClick={() => navigate(Page.Home)} />
       </div>
       <div
-        className="flex cursor-pointer items-center gap-4 px-4 py-2 hover:bg-grey"
+        className={classNames('flex cursor-pointer items-center gap-4 px-4 py-2 hover:bg-grey', {
+          'bg-grey': location.pathname === Page.Profile,
+        })}
         onClick={() => navigate(Page.Profile)}
       >
         <Avatar url={avatar} size={60} />
@@ -32,22 +35,33 @@ const SideMenu = () => {
       </div>
       <Divider className="bg-grey" />
       <div
-        className="cursor-pointer px-4 py-2 hover:bg-grey"
+        className={classNames('cursor-pointer px-4 py-2 hover:bg-grey', {
+          'bg-grey': location.pathname === Page.Overall,
+        })}
         onClick={() => navigate(Page.Overall)}
       >
         Overall
       </div>
       <div
-        className="cursor-pointer px-4 py-2 hover:bg-grey"
+        className={classNames('cursor-pointer px-4 py-2 hover:bg-grey', {
+          'bg-grey': location.pathname === Page.Project,
+        })}
         onClick={() => navigate(Page.Project)}
       >
         Project
       </div>
-      <div className="cursor-pointer px-4 py-2 hover:bg-grey" onClick={() => navigate(Page.Upload)}>
+      <div
+        className={classNames('cursor-pointer px-4 py-2 hover:bg-grey', {
+          'bg-grey': location.pathname === Page.Upload,
+        })}
+        onClick={() => navigate(Page.Upload)}
+      >
         Upload
       </div>
       <div
-        className="cursor-pointer px-4 py-2 hover:bg-grey"
+        className={classNames('cursor-pointer px-4 py-2 hover:bg-grey', {
+          'bg-grey': location.pathname === Page.Notification,
+        })}
         onClick={() => navigate(Page.Notification)}
       >
         Notifications

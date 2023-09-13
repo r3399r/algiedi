@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Page } from 'src/constant/Page';
 import { RootState } from 'src/redux/store';
+import Button from './Button';
 import Drawer, { DrawerProps } from './Drawer';
 
 type NavbarDrawerProps = DrawerProps & {
@@ -24,12 +25,7 @@ const NavbarDrawer = ({ open, onClose }: NavbarDrawerProps) => {
       <div className="ml-auto h-[30px] w-[30px] cursor-pointer" onClick={onClose}>
         x
       </div>
-      <div
-        className="mx-4 mt-3 cursor-pointer decoration-blue hover:underline"
-        onClick={() => navigate(isLogin ? Page.Profile : Page.Login)}
-      >
-        Create Now
-      </div>
+      <Button onClick={() => navigate(isLogin ? Page.Profile : Page.Login)}>Create Now</Button>
       <div
         className={classNames('mx-4 mt-3 cursor-pointer decoration-blue hover:underline', {
           underline: pathname === Page.Explore,
