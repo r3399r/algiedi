@@ -20,6 +20,9 @@ const mapping = {
   'inspired-unapproved': 'Your inspiration has been unapproved',
   'partner-ready': 'A partner has set the project as ready',
   'partner-not-ready': 'A partner thought that the project needs more work',
+  follow: 'You have been followed',
+  like: 'Your creation has been liked',
+  comment: 'Your creation has been commented',
 };
 
 const Notification = () => {
@@ -47,6 +50,7 @@ const Notification = () => {
       ].includes(data.type)
     )
       navigate(`${Page.Project}`, { state: { id: data.targetId } });
+    else if (['like', 'comment'].includes(data.type)) navigate(`${Page.Explore}/${data.targetId}`);
   };
 
   return (

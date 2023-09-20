@@ -5,8 +5,10 @@ import { FollowAccess } from 'src/access/FollowAccess';
 import { UserAccess } from 'src/access/UserAccess';
 import { PatchUserRequest, PutUserAvatarRequest } from 'src/model/api/User';
 import { FollowEntity } from 'src/model/entity/FollowEntity';
+import { NotificationType } from 'src/model/entity/NotificationEntity';
 import { cognitoSymbol } from 'src/util/LambdaSetup';
 import { AwsService } from './AwsService';
+import { NotificationService } from './NotificationService';
 
 /**
  * Service class for User
@@ -30,6 +32,9 @@ export class UserService {
 
   @inject(FollowAccess)
   private readonly followAccess!: FollowAccess;
+
+  @inject(NotificationService)
+  private readonly notificationService!: NotificationService;
 
   public async cleanup() {
     await this.dbAccess.cleanup();
@@ -76,6 +81,15 @@ export class UserService {
     followEntity.followerId = this.cognitoUserId;
     followEntity.followeeId = id;
     await this.followAccess.save(followEntity);
+
+    const user = await this.userAccess.findOneByIdOrFail(id);
+
+    // notify
+    await this.notificationService.notify(
+      NotificationType.Follow,
+      user,
+      this.cognitoUserId
+    );
   }
 
   public async unfollowUser(id: string) {

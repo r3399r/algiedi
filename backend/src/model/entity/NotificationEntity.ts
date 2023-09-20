@@ -12,6 +12,9 @@ export enum NotificationType {
   InspiredUnapproved = 'inspired-unapproved',
   PartnerReady = 'partner-ready',
   PartnerNotReady = 'partner-not-ready',
+  Follow = 'follow',
+  Like = 'like',
+  Comment = 'comment',
 }
 
 export type Notification = {

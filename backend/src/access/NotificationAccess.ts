@@ -37,6 +37,7 @@ export class NotificationAccess {
 
     return await qr.manager.find<Notification>(NotificationEntity.name, {
       where: { userId },
+      order: { createdAt: 'DESC' },
     });
   }
 
