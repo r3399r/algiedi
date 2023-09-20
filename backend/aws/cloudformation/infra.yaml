@@ -32,7 +32,6 @@ Resources:
       RoleName: !Sub ${Project}-${TargetEnvr}-infra-lambda-execution-role
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
-        - arn:aws:iam::aws:policy/AmazonVPCCrossAccountNetworkInterfaceOperations
   ########################################
   ##### AWS RDS and related services #####
   ########################################
@@ -58,7 +57,6 @@ Resources:
       StorageType: gp2
       AllocatedStorage: 20
       PubliclyAccessible: true
-      VPCSecurityGroups: [sg-00a1e2a1668125d11]
       DBSubnetGroupName: !Ref RdsSubnetGroup
   #####################################
   ##### Required Lambda functions #####
@@ -71,7 +69,7 @@ Resources:
       Runtime: nodejs18.x
       FunctionName: !Sub ${Project}-${TargetEnvr}-message
       Role: !GetAtt ExecutionRole.Arn
-      CodeUri: ../../dist/webpack/lambda
+      CodeUri: ../../lib/src
       MemorySize: 128
       Environment:
         Variables:
@@ -93,14 +91,8 @@ Resources:
       Runtime: nodejs18.x
       FunctionName: !Sub ${Project}-${TargetEnvr}-signup
       Role: !GetAtt ExecutionRole.Arn
-      CodeUri: ../../dist/webpack/lambda
+      CodeUri: ../../lib/src
       MemorySize: 128
-      VpcConfig:
-        SecurityGroupIds: [sg-00a1e2a1668125d11]
-        SubnetIds: 
-        - subnet-0ae38472a33a75137
-        - subnet-0dfc7a78154dec1f1
-        - subnet-0b77ba257fb40880b
       Environment:
         Variables:
           PROJECT: !Sub ${Project}

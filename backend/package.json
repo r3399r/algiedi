@@ -16,10 +16,11 @@
     "copy":"run-s cp:*",
     "test": "jest -c jest.config.js",
     "test:coverage": "npm run test -- --coverage --verbose",
-    "build": "webpack --config webpack.config.js",
-    "pre:commit": "run-s lint test:coverage build",
+    "build:layer": "npm install --production && mkdir -p dist/nodejs && cp -R node_modules dist/nodejs",
+    "build:lambda":"npm install && ttsc",
+    "pre:commit": "run-s lint test:coverage build:*",
     "pre:dev": "run-s fix test:coverage",
-    "pre:deploy": "run-s clean build"
+    "pre:deploy": "run-s clean build:*"
   },
   "license": "ISC",
   "dependencies": {
