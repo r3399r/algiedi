@@ -21,7 +21,6 @@ export default async (lambdaEvent: LambdaEvent) => {
 };
 
 const listNotifications = () => {
-  console.log(event);
   switch (event.httpMethod) {
     case 'GET':
       return service.getNotifications();

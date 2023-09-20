@@ -48,9 +48,7 @@ export class CreationService {
     await this.likeAccess.save(likeEntity);
 
     const creation = await this.viewCreationExploreAccess.findOneByIdOrFail(id);
-    console.log(creation);
     const user = await this.userAccess.findOneByIdOrFail(creation.userId);
-    console.log(user);
 
     // notify
     await this.notificationService.notify(NotificationType.Like, user, id);

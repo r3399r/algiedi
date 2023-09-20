@@ -36,6 +36,22 @@ export type LambdaEvent = {
   };
 };
 
+export type WsEvent = {
+  queryStringParameters: { [key: string]: string } | null;
+  requestContext: {
+    routeKey: string;
+    eventType: string;
+    extendedRequestId: string;
+    requestTime: string;
+    messageDirection: string;
+    stage: string;
+    connectedAt: number;
+    requestTimeEpoch: number;
+    connectionId: string;
+  };
+  body: string;
+};
+
 export type CognitoEvent = {
   version: string;
   region: string;

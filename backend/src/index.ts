@@ -3,6 +3,7 @@ import {
   CognitoSignupEvent,
   LambdaContext,
   LambdaEvent,
+  WsEvent,
 } from 'src/model/Lambda';
 import { DbAccess } from './access/DbAccess';
 import { bindings } from './bindings';
@@ -70,7 +71,10 @@ export const api = async (event: LambdaEvent, _context?: LambdaContext) => {
   }
 };
 
-export async function ws(event: any, _context?: LambdaContext): Promise<any> {
+export async function ws(
+  event: WsEvent,
+  _context?: LambdaContext
+): Promise<any> {
   console.log(event);
   let service: WsService | null = null;
   try {
