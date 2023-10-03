@@ -17,10 +17,10 @@ export class NotificationAccess {
   public async find(options: FindManyOptions<Notification>) {
     const qr = await this.database.getQueryRunner();
 
-    return await qr.manager.find<Notification>(
-      NotificationEntity.name,
-      options
-    );
+    return await qr.manager.find<Notification>(NotificationEntity.name, {
+      relations: { toUser: true, fromUser: true, project: true },
+      ...options,
+    });
   }
 
   public async findOneByIdOrFail(id: string) {
@@ -33,10 +33,8 @@ export class NotificationAccess {
   }
 
   public async findByUserId(userId: string) {
-    const qr = await this.database.getQueryRunner();
-
-    return await qr.manager.find<Notification>(NotificationEntity.name, {
-      where: { userId },
+    return await this.find({
+      where: { toUserId: userId },
       order: { createdAt: 'DESC' },
     });
   }

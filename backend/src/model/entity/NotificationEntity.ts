@@ -1,4 +1,16 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity, Generated } from 'typeorm';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  Generated,
+  JoinColumn,
+  ManyToOne,
+} from 'typeorm';
+import { Lyrics, LyricsEntity } from './LyricsEntity';
+import { Project, ProjectEntity } from './ProjectEntity';
+import { Track, TrackEntity } from './TrackEntity';
+import { User, UserEntity } from './UserEntity';
 
 export enum NotificationType {
   ProjectStart = 'project-start',
@@ -19,10 +31,16 @@ export enum NotificationType {
 
 export type Notification = {
   id: string;
-  userId: string;
+  toUserId: string;
+  toUser: User;
   isRead: boolean;
   type: NotificationType;
-  targetId: string | null;
+  fromUserId: string;
+  fromUser: User;
+  projectId: string | null;
+  project: Project | null;
+  lyricsId: string | null;
+  trackId: string | null;
   createdAt: string | null;
   updatedAt: string | null;
 };
@@ -33,8 +51,12 @@ export class NotificationEntity implements Notification {
   @Generated('uuid')
   id!: string;
 
-  @Column({ type: 'uuid', name: 'user_id' })
-  userId!: string;
+  @Column({ type: 'uuid', name: 'to_user_id' })
+  toUserId!: string;
+
+  @ManyToOne(() => UserEntity)
+  @JoinColumn({ name: 'to_user_id' })
+  toUser!: User;
 
   @Column({ type: 'boolean', name: 'is_read' })
   isRead!: boolean;
@@ -42,8 +64,33 @@ export class NotificationEntity implements Notification {
   @Column({ type: 'varchar' })
   type!: NotificationType;
 
-  @Column({ type: 'uuid', name: 'target_id', default: null })
-  targetId!: string | null;
+  @Column({ type: 'uuid', name: 'from_user_id' })
+  fromUserId!: string;
+
+  @ManyToOne(() => UserEntity)
+  @JoinColumn({ name: 'from_user_id' })
+  fromUser!: User;
+
+  @Column({ type: 'uuid', name: 'project_id' })
+  projectId!: string | null;
+
+  @ManyToOne(() => ProjectEntity)
+  @JoinColumn({ name: 'project_id' })
+  project!: Project | null;
+
+  @Column({ type: 'uuid', name: 'lyrics_id' })
+  lyricsId!: string | null;
+
+  @ManyToOne(() => LyricsEntity)
+  @JoinColumn({ name: 'lyrics_id' })
+  lyrics!: Lyrics | null;
+
+  @Column({ type: 'uuid', name: 'track_id' })
+  trackId!: string | null;
+
+  @ManyToOne(() => TrackEntity)
+  @JoinColumn({ name: 'track_id' })
+  track!: Track | null;
 
   @Column({ type: 'timestamp', name: 'created_at', default: null })
   createdAt!: string;

@@ -85,11 +85,7 @@ export class UserService {
     const user = await this.userAccess.findOneByIdOrFail(id);
 
     // notify
-    await this.notificationService.notify(
-      NotificationType.Follow,
-      user,
-      this.cognitoUserId
-    );
+    await this.notificationService.notify(NotificationType.Follow, user);
   }
 
   public async unfollowUser(id: string) {

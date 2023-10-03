@@ -47,12 +47,34 @@ export class NotificationService {
     return await this.notificationAccess.save(notification);
   }
 
-  public async notify(type: NotificationType, user: User, targetId?: string) {
+  public async notify(type: NotificationType, user: User, _targetId?: string) {
     const notification = new NotificationEntity();
     notification.isRead = false;
-    notification.userId = user.id;
-    if (targetId) notification.targetId = targetId;
+    notification.toUserId = user.id;
+    notification.fromUserId = this.cognitoUserId;
     notification.type = type;
+
+    // if (targetId) {
+    //   switch (type) {
+    //     case NotificationType.ProjectStart:
+    //     case NotificationType.ProjectReject:
+    //     case NotificationType.ProjectPublish:
+    //     case NotificationType.ProjectUpdated:
+    //     case NotificationType.CreationUpdated:
+    //     case NotificationType.CreationUploaded:
+    //     case NotificationType.NewParticipant:
+    //     case NotificationType.InspiredApproved:
+    //     case NotificationType.InspiredUnapproved:
+    //     case NotificationType.PartnerReady:
+    //     case NotificationType.PartnerNotReady:
+    //       notification.projectId = targetId
+    //       break;
+    //     case NotificationType.Follow:
+    //       break;
+    //       // case NotificationType.Comment
+    //   }
+    // }
+
     const newNotification = await this.notificationAccess.save(notification);
     await this.awsService.sendWsMessage(user.connectionId, {
       a: type,
