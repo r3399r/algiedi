@@ -547,18 +547,10 @@ export class ProjectService {
 
   public async getProjectChat(id: string): Promise<GetProjectIdChatResponse> {
     const chats = await this.chatAccess.find({ where: { projectId: id } });
-    const users = await this.userAccess.find({
-      where: { id: In(chats.map((c) => c.userId)) },
-    });
 
     return chats
       .map((v) => ({
-        user: users
-          .map((u) => ({
-            ...u,
-            avatarUrl: this.awsService.getS3SignedUrl(u.avatar),
-          }))
-          .find((u) => u.id === v.userId),
+        user: v.user,
         content: v.content,
         createdAt: v.createdAt ?? '',
       }))

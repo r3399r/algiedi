@@ -14,14 +14,9 @@ export class ChatAccess {
   public async find(options: FindManyOptions<Chat>) {
     const qr = await this.database.getQueryRunner();
 
-    return await qr.manager.find<Chat>(ChatEntity.name, options);
-  }
-
-  public async findOneOrFailById(id: string) {
-    const qr = await this.database.getQueryRunner();
-
-    return await qr.manager.findOneOrFail<Chat>(ChatEntity.name, {
-      where: { id },
+    return await qr.manager.find<Chat>(ChatEntity.name, {
+      relations: { user: true, project: true },
+      ...options,
     });
   }
 

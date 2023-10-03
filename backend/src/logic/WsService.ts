@@ -68,12 +68,7 @@ export class WsService {
     const message: WebsocketMessage<Chat> = {
       a: WsType.Chat,
       d: {
-        user: sender
-          ? {
-              ...sender,
-              avatarUrl: this.awsService.getS3SignedUrl(sender.avatar),
-            }
-          : undefined,
+        user: sender,
         content,
         createdAt: newChat.createdAt,
       },

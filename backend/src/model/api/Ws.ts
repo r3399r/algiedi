@@ -7,7 +7,7 @@ export enum WsType {
 }
 
 export type Chat = {
-  user?: User & { avatarUrl: string | null };
+  user?: User;
   content: string;
   createdAt: string;
 };

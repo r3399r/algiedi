@@ -1,9 +1,21 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity, Generated } from 'typeorm';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  Generated,
+  JoinColumn,
+  ManyToOne,
+} from 'typeorm';
+import { Project, ProjectEntity } from './ProjectEntity';
+import { User, UserEntity } from './UserEntity';
 
 export type Chat = {
   id: string;
   userId: string;
+  user: User;
   projectId: string;
+  project: Project;
   content: string;
   createdAt: string | null;
   updatedAt: string | null;
@@ -18,8 +30,16 @@ export class ChatEntity implements Chat {
   @Column({ type: 'uuid', name: 'user_id' })
   userId!: string;
 
+  @ManyToOne(() => UserEntity)
+  @JoinColumn({ name: 'user_id' })
+  user!: User;
+
   @Column({ type: 'uuid', name: 'project_id' })
   projectId!: string;
+
+  @ManyToOne(() => ProjectEntity)
+  @JoinColumn({ name: 'project_id' })
+  project!: Project;
 
   @Column({ type: 'varchar' })
   content!: string;
