@@ -1,11 +1,24 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity, Generated } from 'typeorm';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  Generated,
+  JoinColumn,
+  ManyToOne,
+} from 'typeorm';
+import { Info, InfoEntity } from './InfoEntity';
+import { User, UserEntity } from './UserEntity';
 
 export type Track = {
   id: string;
   userId: string;
-  infoId: string | null;
+  user: User;
+  infoId: string;
+  info: Info;
   projectId: string | null;
   inspiredId: string | null;
+  countLike: string;
   createdAt: string | null;
   updatedAt: string | null;
 };
@@ -19,14 +32,25 @@ export class TrackEntity implements Track {
   @Column({ type: 'uuid', name: 'user_id' })
   userId!: string;
 
-  @Column({ type: 'uuid', name: 'info_id', default: null })
-  infoId: string | null = null;
+  @ManyToOne(() => UserEntity)
+  @JoinColumn({ name: 'user_id' })
+  user!: User;
+
+  @Column({ type: 'uuid', name: 'info_id' })
+  infoId!: string;
+
+  @ManyToOne(() => InfoEntity)
+  @JoinColumn({ name: 'info_id' })
+  info!: Info;
 
   @Column({ type: 'uuid', name: 'project_id' })
   projectId: string | null = null;
 
   @Column({ type: 'uuid', name: 'inspired_id', default: null })
   inspiredId: string | null = null;
+
+  @Column({ type: 'int', name: 'count_like' })
+  countLike!: string;
 
   @Column({ type: 'timestamp', name: 'created_at', default: null })
   createdAt!: string;

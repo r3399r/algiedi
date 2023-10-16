@@ -13,11 +13,11 @@
     "cp:compile": "ttsc",
     "cp:remove": "rm -rf ../frontend/src/model/backend",
     "cp:move": "cp -R lib/src/model ../frontend/src/model/backend",
-    "copy":"run-s cp:*",
+    "copy": "run-s cp:*",
     "test": "jest -c jest.config.js",
     "test:coverage": "npm run test -- --coverage --verbose",
     "build:layer": "npm install --production && mkdir -p dist/nodejs && cp -R node_modules dist/nodejs",
-    "build:lambda":"npm install && ttsc",
+    "build:lambda": "npm install && ttsc",
     "pre:commit": "run-s lint test:coverage build:*",
     "pre:dev": "run-s fix test:coverage",
     "pre:deploy": "run-s clean build:*"
@@ -26,6 +26,7 @@
   "dependencies": {
     "aws-sdk": "^2.1333.0",
     "bignumber.js": "^9.1.0",
+    "date-fns": "^2.30.0",
     "file-type": "^18.3.0",
     "inversify": "^6.0.1",
     "mysql2": "^3.2.4",

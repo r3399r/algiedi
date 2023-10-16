@@ -14,7 +14,10 @@ export class TrackAccess {
   public async find(options: FindManyOptions<Track>) {
     const qr = await this.database.getQueryRunner();
 
-    return await qr.manager.find<Track>(TrackEntity.name, options);
+    return await qr.manager.find<Track>(TrackEntity.name, {
+      relations: { user: true, info: true },
+      ...options,
+    });
   }
 
   public async findOneById(id: string) {

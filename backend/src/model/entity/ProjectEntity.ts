@@ -1,10 +1,21 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity, Generated } from 'typeorm';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  Generated,
+  JoinColumn,
+  ManyToOne,
+} from 'typeorm';
 import { Status } from 'src/model/constant/Project';
+import { Info, InfoEntity } from './InfoEntity';
 
 export type Project = {
   id: string;
   status: Status;
-  infoId: string | null;
+  infoId: string;
+  info: Info;
+  countLike: string;
   startedAt: string | null;
   createdAt: string | null;
   updatedAt: string | null;
@@ -19,8 +30,15 @@ export class ProjectEntity implements Project {
   @Column({ type: 'varchar' })
   status!: Status;
 
-  @Column({ type: 'uuid', name: 'info_id', default: null })
-  infoId: string | null = null;
+  @Column({ type: 'uuid', name: 'info_id' })
+  infoId!: string;
+
+  @ManyToOne(() => InfoEntity)
+  @JoinColumn({ name: 'info_id' })
+  info!: Info;
+
+  @Column({ type: 'int', name: 'count_like' })
+  countLike!: string;
 
   @Column({ type: 'timestamp', name: 'started_at', default: null })
   startedAt!: string;

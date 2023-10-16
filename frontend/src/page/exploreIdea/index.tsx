@@ -3,11 +3,12 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import HistoryEduIcon from '@mui/icons-material/HistoryEdu';
 import MusicNoteIcon from '@mui/icons-material/MusicNote';
 import ShareIcon from '@mui/icons-material/Share';
+import { Pagination } from '@mui/material';
 import classNames from 'classnames';
-import { MouseEvent, useEffect, useMemo, useState } from 'react';
+import { ChangeEvent, MouseEvent, useEffect, useMemo, useState } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Cover from 'src/component/Cover';
 import Tabs from 'src/component/Tabs';
 import { Page } from 'src/constant/Page';
@@ -15,7 +16,9 @@ import { GetExploreResponse } from 'src/model/backend/api/Explore';
 import { Type } from 'src/model/backend/constant/Creation';
 import { RootState } from 'src/redux/store';
 import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
-import { getExplore, getExploreIdea, likeById, unlikeById } from 'src/service/ExploreService';
+import { getExploreIdea, likeById, unlikeById } from 'src/service/ExploreService';
+
+const DEFAULT_LIMIT = '10';
 
 const ExploreIdea = () => {
   const navigate = useNavigate();
@@ -24,8 +27,13 @@ const ExploreIdea = () => {
   const [idea, setIdea] = useState<GetExploreResponse>();
   const [refresh, setRefresh] = useState<boolean>();
   const [tab, setTab] = useState<number>(0);
+  const [page, setPage] = useState<number>(1);
+  const [offset, setOffset] = useState<number>(0);
+  const [count, setCount] = useState<number>(0);
 
   const type = useMemo(() => {
+    setOffset(0);
+    setPage(1);
     if (tab === 0) return [Type.Track];
     if (tab === 1) return [Type.Lyrics];
 
@@ -33,8 +41,11 @@ const ExploreIdea = () => {
   }, [tab]);
 
   useEffect(() => {
-    getExploreIdea(type, '10', '5').then((res) => setIdea(res.data));
-  }, [type, refresh]);
+    getExploreIdea(type, DEFAULT_LIMIT, String(offset)).then((res) => {
+      setIdea(res.data);
+      setCount(res.paginate.count);
+    });
+  }, [type, refresh, offset]);
 
   const onLike = (id: string) => (e: MouseEvent<HTMLOrSVGElement>) => {
     e.stopPropagation();
@@ -48,6 +59,11 @@ const ExploreIdea = () => {
     unlikeById(id)
       .then(() => setRefresh(!refresh))
       .catch((err) => dispatch(openFailSnackbar(err)));
+  };
+
+  const handlePaginationChange = (event: ChangeEvent<unknown>, value: number) => {
+    setPage(value);
+    setOffset((value - 1) * Number(DEFAULT_LIMIT));
   };
 
   return (
@@ -64,7 +80,7 @@ const ExploreIdea = () => {
             <div className="flex w-1/3 flex-col items-center">
               <Cover url={v.info.coverFileUrl} size={50} />
               <div className="flex">
-                {Number(v.type) === Type.Track ? (
+                {v.type === Type.Track ? (
                   <MusicNoteIcon
                     color="primary"
                     classes={{ colorPrimary: '!text-blue' }}
@@ -128,6 +144,13 @@ const ExploreIdea = () => {
             </div>
           </div>
         ))}
+      </div>
+      <div className="my-4 flex justify-center">
+        <Pagination
+          count={Math.ceil(count / Number(DEFAULT_LIMIT))}
+          page={page}
+          onChange={handlePaginationChange}
+        />
       </div>
     </div>
   );

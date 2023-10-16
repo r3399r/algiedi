@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { In } from 'typeorm';
+import { FindManyOptions, In } from 'typeorm';
 import { Project, ProjectEntity } from 'src/model/entity/ProjectEntity';
 import { Database } from 'src/util/Database';
 
@@ -11,10 +11,13 @@ export class ProjectAccess {
   @inject(Database)
   private readonly database!: Database;
 
-  public async find() {
+  public async find(options?: FindManyOptions<Project>) {
     const qr = await this.database.getQueryRunner();
 
-    return await qr.manager.find<Project>(ProjectEntity.name);
+    return await qr.manager.find<Project>(ProjectEntity.name, {
+      relations: { info: true },
+      ...options,
+    });
   }
 
   public async findOneByIdOrFail(id: string) {

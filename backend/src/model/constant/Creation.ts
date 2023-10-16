@@ -1,5 +1,5 @@
 export enum Type {
-  Lyrics,
-  Track,
-  Song,
+  Lyrics = '0',
+  Track = '1',
+  Song = '2',
 }

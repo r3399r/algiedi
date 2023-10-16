@@ -34,7 +34,7 @@ export class ViewCreationExploreEntity implements ViewCreationExplore {
   id!: string;
 
   @ViewColumn()
-  type!: number;
+  type!: Type;
 
   @ViewColumn({ name: 'user_id' })
   userId: string | null = null;

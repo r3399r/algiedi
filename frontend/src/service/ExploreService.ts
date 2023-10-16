@@ -37,6 +37,32 @@ export const getExplore = async () => {
   }
 };
 
+export const getExploreSong = async (limit: string, offset: string) => {
+  try {
+    const { isLogin } = getState().ui;
+    dispatch(startWaiting());
+
+    const res = isLogin
+      ? await exploreEndpoint.getExploreAuth({ type: Type.Song, limit, offset })
+      : await exploreEndpoint.getExplore({ type: Type.Song, limit, offset });
+
+    return res.data;
+  } finally {
+    dispatch(finishWaiting());
+  }
+};
+
+export const getExploreFeatured = async () => {
+  try {
+    dispatch(startWaiting());
+    const res = await exploreEndpoint.getExploreFeatured();
+
+    return res.data;
+  } finally {
+    dispatch(finishWaiting());
+  }
+};
+
 export const getExploreIdea = async (type: Type[], limit: string, offset: string) => {
   try {
     const { isLogin } = getState().ui;

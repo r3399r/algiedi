@@ -1,13 +1,18 @@
+import { subWeeks } from 'date-fns';
 import { inject, injectable } from 'inversify';
-import { In, Not } from 'typeorm';
+import { In, MoreThan, Not } from 'typeorm';
 import { CommentAccess } from 'src/access/CommentAccess';
 import { DbAccess } from 'src/access/DbAccess';
 import { FollowAccess } from 'src/access/FollowAccess';
 import { LikeAccess } from 'src/access/LikeAccess';
+import { LyricsAccess } from 'src/access/LyricsAccess';
+import { ProjectAccess } from 'src/access/ProjectAccess';
 import { ProjectUserAccess } from 'src/access/ProjectUserAccess';
+import { TrackAccess } from 'src/access/TrackAccess';
 import { UserAccess } from 'src/access/UserAccess';
 import { ViewCreationExploreAccess } from 'src/access/ViewCreationExploreAccess';
 import {
+  GetExploreFeaturedResponse,
   GetExploreIdResponse,
   GetExploreParams,
   GetExploreResponse,
@@ -50,6 +55,15 @@ export class ExploreService {
 
   @inject(FollowAccess)
   private readonly followAccess!: FollowAccess;
+
+  @inject(LyricsAccess)
+  private readonly lyricsAccess!: LyricsAccess;
+
+  @inject(TrackAccess)
+  private readonly trackAccess!: TrackAccess;
+
+  @inject(ProjectAccess)
+  private readonly projectAccess!: ProjectAccess;
 
   public async cleanup() {
     await this.dbAccess.cleanup();
@@ -107,10 +121,12 @@ export class ExploreService {
             },
           ];
         else if (pu !== null)
-          user = pu.map((o) => ({
-            ...o.user,
-            avatarUrl: this.awsService.getS3SignedUrl(o.user.avatar),
-          }));
+          user = pu
+            .filter((o) => o.projectId === v.projectId)
+            .map((o) => ({
+              ...o.user,
+              avatarUrl: this.awsService.getS3SignedUrl(o.user.avatar),
+            }));
 
         return {
           ...v,
@@ -126,8 +142,96 @@ export class ExploreService {
     return { data, paginate: { limit, offset, count } };
   }
 
-  public async getFeaturedExplore() {
-    return {};
+  public async getFeaturedExplore(): Promise<GetExploreFeaturedResponse> {
+    const [featuredSong, featuredLyrics, featuredTrack] = await Promise.all([
+      this.projectAccess.find({
+        order: { countLike: 'desc' },
+      }),
+      this.lyricsAccess.find({
+        where: { createdAt: MoreThan(subWeeks(new Date(), 8).toISOString()) },
+        order: { countLike: 'desc' },
+      }),
+      this.trackAccess.find({
+        where: { createdAt: MoreThan(subWeeks(new Date(), 8).toISOString()) },
+        order: { countLike: 'desc' },
+      }),
+    ]);
+
+    return {
+      song: featuredSong
+        .map((v) => ({
+          ...v,
+          info: {
+            ...v.info,
+            coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
+          },
+        }))
+        .slice(0, 20),
+      lyrics: {
+        thisWeek: featuredLyrics
+          .filter((v) => new Date(v.createdAt ?? '') >= subWeeks(new Date(), 1))
+          .map((v) => ({
+            ...v,
+            info: {
+              ...v.info,
+              coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
+            },
+          }))
+          .slice(0, 6),
+        thisMonth: featuredLyrics
+          .filter((v) => new Date(v.createdAt ?? '') >= subWeeks(new Date(), 4))
+          .map((v) => ({
+            ...v,
+            info: {
+              ...v.info,
+              coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
+            },
+          }))
+          .slice(0, 6),
+        lastMonth: featuredLyrics
+          .filter((v) => new Date(v.createdAt ?? '') <= subWeeks(new Date(), 4))
+          .map((v) => ({
+            ...v,
+            info: {
+              ...v.info,
+              coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
+            },
+          }))
+          .slice(0, 6),
+      },
+      track: {
+        thisWeek: featuredTrack
+          .filter((v) => new Date(v.createdAt ?? '') >= subWeeks(new Date(), 1))
+          .map((v) => ({
+            ...v,
+            info: {
+              ...v.info,
+              coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
+            },
+          }))
+          .slice(0, 6),
+        thisMonth: featuredTrack
+          .filter((v) => new Date(v.createdAt ?? '') >= subWeeks(new Date(), 4))
+          .map((v) => ({
+            ...v,
+            info: {
+              ...v.info,
+              coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
+            },
+          }))
+          .slice(0, 6),
+        lastMonth: featuredTrack
+          .filter((v) => new Date(v.createdAt ?? '') <= subWeeks(new Date(), 4))
+          .map((v) => ({
+            ...v,
+            info: {
+              ...v.info,
+              coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
+            },
+          }))
+          .slice(0, 6),
+      },
+    };
   }
 
   public async getExploreById(id: string): Promise<GetExploreIdResponse> {

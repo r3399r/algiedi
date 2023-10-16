@@ -1,21 +1,40 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from 'src/component/Button';
 import Cover from 'src/component/Cover';
-import { GetExploreResponse } from 'src/model/backend/api/Explore';
-import { getExplore } from 'src/service/ExploreService';
+import Tabs from 'src/component/Tabs';
+import { GetExploreFeaturedResponse } from 'src/model/backend/api/Explore';
+import { getExploreFeatured } from 'src/service/ExploreService';
 
 const Explore = () => {
   const navigate = useNavigate();
-  const [tracks, setTracks] = useState<GetExploreResponse>();
-  const [lyrics, setLyrics] = useState<GetExploreResponse>();
-  const [songs, setSongs] = useState<GetExploreResponse>();
+  const [tabMusic, setTabMusic] = useState<number>(0);
+  const [tabLyrics, setTabLyrics] = useState<number>(0);
+  const [tracks, setTracks] = useState<GetExploreFeaturedResponse['track']>();
+  const [lyrics, setLyrics] = useState<GetExploreFeaturedResponse['lyrics']>();
+  const [songs, setSongs] = useState<GetExploreFeaturedResponse['song']>();
+
+  const tabDataMusic = useMemo(() => {
+    if (!tracks) return;
+    if (tabMusic === 0) return tracks.thisWeek;
+    if (tabMusic === 1) return tracks.thisMonth;
+
+    return tracks.lastMonth; // tabMusic = 2
+  }, [tabMusic, tracks]);
+
+  const tabDataLyrics = useMemo(() => {
+    if (!lyrics) return;
+    if (tabLyrics === 0) return lyrics.thisWeek;
+    if (tabLyrics === 1) return lyrics.thisMonth;
+
+    return lyrics.lastMonth; // tabLyrics = 2
+  }, [tabLyrics, lyrics]);
 
   useEffect(() => {
-    getExplore().then((res) => {
-      setTracks(res.tracks);
+    getExploreFeatured().then((res) => {
+      setTracks(res.track);
       setLyrics(res.lyrics);
-      setSongs(res.songs);
+      setSongs(res.song);
     });
   }, []);
 
@@ -45,21 +64,17 @@ const Explore = () => {
         <div className="w-1/2">
           <div className="mb-4 flex items-center gap-4">
             <div className="text-xl font-bold">Music</div>
-            <Button
-              size="s"
-              color="transparent"
-              onClick={() => navigate('idea', { state: [...(tracks ?? []), ...(lyrics ?? [])] })}
-            >
+            <Button size="s" color="transparent" onClick={() => navigate('idea')}>
               More Music
             </Button>
           </div>
-          {/* <div className="flex gap-4">
-            <div>This week</div>
-            <div>This month</div>
-            <div>Last month</div>
-          </div> */}
+          <Tabs
+            labels={['This week', 'This month', 'Last month']}
+            onChange={(i) => setTabMusic(i)}
+            defaultIndex={0}
+          />
           <div className="flex flex-col gap-4">
-            {tracks?.map((v) => (
+            {tabDataMusic?.map((v) => (
               <div
                 key={v.id}
                 className="flex cursor-pointer rounded-lg bg-white p-4"
@@ -68,7 +83,7 @@ const Explore = () => {
                 <Cover url={v.info.coverFileUrl} size={120} />
                 <div className="m-4 flex flex-col justify-center">
                   <div className="font-bold">{v.info.name}</div>
-                  <div className="text-grey">by {v.user.length > 0 ? v.user[0].username : ''}</div>
+                  <div className="text-grey">by {v.user.username}</div>
                 </div>
               </div>
             ))}
@@ -77,21 +92,17 @@ const Explore = () => {
         <div className="w-1/2">
           <div className="mb-4 flex items-center gap-4">
             <div className="text-xl font-bold">Lyrics</div>
-            <Button
-              size="s"
-              color="transparent"
-              onClick={() => navigate('idea', { state: [...(tracks ?? []), ...(lyrics ?? [])] })}
-            >
+            <Button size="s" color="transparent" onClick={() => navigate('idea')}>
               More Lyrics
             </Button>
           </div>
-          {/* <div className="flex gap-4">
-            <div>This week</div>
-            <div>This month</div>
-            <div>Last month</div>
-          </div> */}
+          <Tabs
+            labels={['This week', 'This month', 'Last month']}
+            onChange={(i) => setTabLyrics(i)}
+            defaultIndex={0}
+          />
           <div className="flex flex-col gap-4">
-            {lyrics?.map((v) => (
+            {tabDataLyrics?.map((v) => (
               <div
                 key={v.id}
                 className="flex cursor-pointer rounded-lg bg-white p-4"
@@ -100,7 +111,7 @@ const Explore = () => {
                 <Cover url={v.info.coverFileUrl} size={120} />
                 <div className="m-4 flex flex-col justify-center">
                   <div className="font-bold">{v.info.name}</div>
-                  <div className="text-grey">by {v.user.length > 0 ? v.user[0].username : ''}</div>
+                  <div className="text-grey">by {v.user.username}</div>
                 </div>
               </div>
             ))}

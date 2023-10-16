@@ -1,4 +1,5 @@
 import {
+  GetExploreFeaturedResponse,
   GetExploreIdResponse,
   GetExploreParams,
   GetExploreResponse,
@@ -12,9 +13,12 @@ const getExplore = async (params?: GetExploreParams) =>
 const getExploreAuth = async (params?: GetExploreParams) =>
   await http.authGet<Pagination<GetExploreResponse>>('explore/auth', { params });
 
+const getExploreFeatured = async () =>
+  await http.get<GetExploreFeaturedResponse>('explore/featured');
+
 const getExploreId = async (id: string) => await http.get<GetExploreIdResponse>(`explore/${id}`);
 
 const getExploreIdAuth = async (id: string) =>
   await http.authGet<GetExploreIdResponse>(`explore/${id}/auth`);
 
-export default { getExplore, getExploreAuth, getExploreId, getExploreIdAuth };
+export default { getExplore, getExploreAuth, getExploreFeatured, getExploreId, getExploreIdAuth };

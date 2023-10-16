@@ -1,9 +1,10 @@
 CREATE TABLE IF NOT EXISTS track (
 	id VARCHAR(36) NOT NULL,
 	user_id VARCHAR(36) NOT NULL,
-	info_id VARCHAR(36) NULL,
+	info_id VARCHAR(36) NOT NULL,
 	project_id VARCHAR(36) NULL,
 	inspired_id VARCHAR(36) NULL,
+	count_like INT NOT NULL,
 	created_at TIMESTAMP NULL,
 	updated_at TIMESTAMP NULL,
 	PRIMARY KEY (id ASC),
