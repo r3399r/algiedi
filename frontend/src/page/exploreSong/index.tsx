@@ -51,27 +51,27 @@ const ExploreSong = () => {
             onClick={() => navigate(`${Page.Explore}/${v.id}`)}
           >
             <div className="flex w-1/2 items-center gap-2">
-              <Cover url={v.coverFileUrl} size={50} />
+              <Cover url={v.info.coverFileUrl} size={50} />
               <div>
-                <div className="font-bold">{v.name}</div>
-                <div className="text-sm text-grey">{v.author.map((o) => o.username).join()}</div>
+                <div className="font-bold">{v.info.name}</div>
+                <div className="text-sm text-grey">{v.user.map((o) => o.username).join()}</div>
               </div>
             </div>
-            <div className="w-1/4">{v.genre}</div>
+            <div className="w-1/4">{v.info.genre}</div>
             <div className="flex w-1/4 justify-end gap-2">
               <div>
                 {isLogin ? (
-                  v.like ? (
-                    <FavoriteIcon
-                      onClick={onUnlike(v.id)}
-                      className="cursor-pointer"
-                      color="primary"
-                      classes={{ colorPrimary: '!text-red' }}
-                    />
-                  ) : (
-                    <FavoriteBorderIcon onClick={onLike(v.id)} className="cursor-pointer" />
-                  )
+                  // v.like ? (
+                  //   <FavoriteIcon
+                  //     onClick={onUnlike(v.id)}
+                  //     className="cursor-pointer"
+                  //     color="primary"
+                  //     classes={{ colorPrimary: '!text-red' }}
+                  //   />
+                  // ) : (
+                  <FavoriteBorderIcon onClick={onLike(v.id)} className="cursor-pointer" />
                 ) : (
+                  // )
                   <FavoriteBorderIcon color="primary" classes={{ colorPrimary: '!text-grey' }} />
                 )}
               </div>

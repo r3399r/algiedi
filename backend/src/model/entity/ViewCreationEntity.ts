@@ -1,4 +1,4 @@
-import { ViewColumn, ViewEntity } from 'typeorm';
+import { PrimaryColumn, ViewColumn, ViewEntity } from 'typeorm';
 import { Type } from 'src/model/constant/Creation';
 import { Status as ProjectStatus } from 'src/model/constant/Project';
 
@@ -30,6 +30,7 @@ export type ViewCreation = {
 @ViewEntity({ name: 'v_creation' })
 export class ViewCreationEntity implements ViewCreation {
   @ViewColumn()
+  @PrimaryColumn()
   id!: string;
 
   @ViewColumn()

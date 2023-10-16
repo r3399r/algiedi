@@ -1,9 +1,20 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity, Generated } from 'typeorm';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  Generated,
+  JoinColumn,
+  ManyToOne,
+} from 'typeorm';
+import { User, UserEntity } from './UserEntity';
 
 export type Follow = {
   id: string;
   followerId: string;
+  follower: User;
   followeeId: string;
+  followee: User;
   createdAt: string | null;
   updatedAt: string | null;
 };
@@ -17,8 +28,16 @@ export class FollowEntity implements Follow {
   @Column({ type: 'uuid', name: 'follower_id' })
   followerId!: string;
 
+  @ManyToOne(() => UserEntity)
+  @JoinColumn({ name: 'follower_id' })
+  follower!: User;
+
   @Column({ type: 'uuid', name: 'followee_id' })
   followeeId!: string;
+
+  @ManyToOne(() => UserEntity)
+  @JoinColumn({ name: 'followee_id' })
+  followee!: User;
 
   @Column({ type: 'timestamp', name: 'created_at', default: null })
   createdAt!: string;

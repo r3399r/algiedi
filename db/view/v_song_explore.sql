@@ -1,19 +1,13 @@
 CREATE OR REPLACE VIEW v_song_explore AS
 select p.id,
-    i.name,
-    i.description,
-    i.theme,
-    i.genre,
-    i.language,
-    i.caption,
-    i.cover_file_uri,
-    latest_project.track_file_uri,
-    latest_project.tab_file_uri,
-    latest_project.lyrics_text,
     p.status,
+    p.info_id,
     p.started_at,
     p.created_at,
-    p.updated_at
+    p.updated_at,
+    latest_project.track_file_uri,
+    latest_project.tab_file_uri,
+    latest_project.lyrics_text
 from project p
     left join info i on p.info_id = i.id
     left join (
@@ -30,5 +24,4 @@ from project p
                 GROUP by project_id
             ) tmp on ph.project_id = tmp.project_id
             and ph.created_at = tmp.latest_created_at
-    ) latest_project on p.id = latest_project.project_id
-where p.status = 'published';
+    ) latest_project on p.id = latest_project.project_id;

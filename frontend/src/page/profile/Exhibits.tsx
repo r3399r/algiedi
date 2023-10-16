@@ -47,8 +47,8 @@ const Exhibits = () => {
                   className="cursor-pointer text-center"
                   onClick={() => navigate(`${Page.Explore}/${v.id}`)}
                 >
-                  <Cover url={v.coverFileUrl} size={150} />
-                  <div className="font-bold">{v.name}</div>
+                  <Cover url={v.info.coverFileUrl} size={150} />
+                  <div className="font-bold">{v.info.name}</div>
                 </div>
               ))
             : 'There is no published song.'}
@@ -63,8 +63,8 @@ const Exhibits = () => {
                   className="cursor-pointer text-center"
                   onClick={() => navigate(`${Page.Explore}/${v.id}`)}
                 >
-                  <Cover url={v.coverFileUrl} size={150} />
-                  <div className="font-bold">{v.name}</div>
+                  <Cover url={v.info.coverFileUrl} size={150} />
+                  <div className="font-bold">{v.info.name}</div>
                 </div>
               ))
             : 'There is no original creation.'}
@@ -79,8 +79,8 @@ const Exhibits = () => {
                   className="cursor-pointer text-center"
                   onClick={() => navigate(`${Page.Explore}/${v.id}`)}
                 >
-                  <Cover url={v.coverFileUrl} size={150} />
-                  <div className="font-bold">{v.name}</div>
+                  <Cover url={v.info.coverFileUrl} size={150} />
+                  <div className="font-bold">{v.info.name}</div>
                 </div>
               ))
             : 'There is no inspiration creation.'}

@@ -19,6 +19,7 @@ import {
   PutProjectIdCoverRequest,
   PutProjectRequest,
 } from 'src/model/api/Project';
+import { Type } from 'src/model/constant/Creation';
 import { Role, Status } from 'src/model/constant/Project';
 import { InfoEntity } from 'src/model/entity/InfoEntity';
 import { LyricsEntity } from 'src/model/entity/LyricsEntity';
@@ -137,7 +138,7 @@ export class ProjectService {
           caption: info.caption,
           coverFileUri: info.coverFileUri,
           coverFileUrl: this.awsService.getS3SignedUrl(info.coverFileUri),
-          song: detailedCreations.find((o) => o.type === 'song') ?? null,
+          song: detailedCreations.find((o) => o.type === Type.Song) ?? null,
           collaborators: await Promise.all(
             projectUser
               .filter((v) => v.role !== Role.Rejected)

@@ -17,22 +17,21 @@ export class ProjectUserAccess {
   public async find(options?: FindManyOptions<ProjectUser>) {
     const qr = await this.database.getQueryRunner();
 
-    return await qr.manager.find<ProjectUser>(ProjectUserEntity.name, options);
+    return await qr.manager.find<ProjectUser>(ProjectUserEntity.name, {
+      relations: { project: true, user: true, lyrics: true, track: true },
+      ...options,
+    });
   }
 
   public async findByProjectId(projectId: string) {
-    const qr = await this.database.getQueryRunner();
-
-    return await qr.manager.find<ProjectUser>(ProjectUserEntity.name, {
+    return this.find({
       where: { projectId },
-      order: { createdAt: 'desc' },
+      order: { createdAt: 'asc' },
     });
   }
 
   public async findByUserId(userId: string) {
-    const qr = await this.database.getQueryRunner();
-
-    return await qr.manager.find<ProjectUser>(ProjectUserEntity.name, {
+    return this.find({
       where: { userId },
       order: { createdAt: 'desc' },
     });

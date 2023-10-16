@@ -19,7 +19,22 @@ export class ViewCreationExploreAccess {
 
     return await qr.manager.find<ViewCreationExplore>(
       ViewCreationExploreEntity.name,
-      options
+      {
+        relations: { info: true, project: true, user: true },
+        ...options,
+      }
+    );
+  }
+
+  public async findAndCount(options?: FindManyOptions<ViewCreationExplore>) {
+    const qr = await this.database.getQueryRunner();
+
+    return await qr.manager.findAndCount<ViewCreationExplore>(
+      ViewCreationExploreEntity.name,
+      {
+        relations: { info: true, project: true, user: true },
+        ...options,
+      }
     );
   }
 
@@ -28,7 +43,7 @@ export class ViewCreationExploreAccess {
 
     return await qr.manager.findOneOrFail<ViewCreationExplore>(
       ViewCreationExploreEntity.name,
-      { where: { id } }
+      { where: { id }, relations: { info: true, project: true, user: true } }
     );
   }
 }

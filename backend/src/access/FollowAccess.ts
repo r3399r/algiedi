@@ -14,13 +14,19 @@ export class FollowAccess {
   public async find(options: FindManyOptions<Follow>) {
     const qr = await this.database.getQueryRunner();
 
-    return await qr.manager.find<Follow>(FollowEntity.name, options);
+    return await qr.manager.find<Follow>(FollowEntity.name, {
+      relations: { followee: true, follower: true },
+      ...options,
+    });
   }
 
   public async findOneOrFail(options: FindOneOptions<Follow>) {
     const qr = await this.database.getQueryRunner();
 
-    return await qr.manager.findOneOrFail<Follow>(FollowEntity.name, options);
+    return await qr.manager.findOneOrFail<Follow>(FollowEntity.name, {
+      relations: { followee: true, follower: true },
+      ...options,
+    });
   }
 
   public async hardDeleteById(id: string) {

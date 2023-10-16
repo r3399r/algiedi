@@ -2,6 +2,7 @@ import meEndpoint from 'src/api/meEndpoint';
 import userEndpoint from 'src/api/userEndpoint';
 import { GetExploreResponse } from 'src/model/backend/api/Explore';
 import { GetMeSocialResponse } from 'src/model/backend/api/Me';
+import { Type } from 'src/model/backend/constant/Creation';
 import { setMe } from 'src/redux/meSlice';
 import { dispatch, getState } from 'src/redux/store';
 import { finishWaiting, setLoadingProfile, startWaiting } from 'src/redux/uiSlice';
@@ -81,12 +82,12 @@ export const getExplores = async (): Promise<{
       lyrics = res.lyrics;
       songs = res.songs;
     } else {
-      tracks = state.api.explores.filter((v) => v.type === 'track');
-      lyrics = state.api.explores.filter((v) => v.type === 'lyrics');
-      songs = state.api.explores.filter((v) => v.type === 'song');
+      tracks = state.api.explores.filter((v) => v.type === Type.Track);
+      lyrics = state.api.explores.filter((v) => v.type === Type.Lyrics);
+      songs = state.api.explores.filter((v) => v.type === Type.Song);
     }
 
-    const published = songs.filter((v) => v.author.map((o) => o.id).includes(state.me.id));
+    const published = songs.filter((v) => v.user.map((o) => o.id).includes(state.me.id));
     const original = [...tracks, ...lyrics].filter(
       (v) => v.inspiredId === null && v.userId === state.me.id,
     );

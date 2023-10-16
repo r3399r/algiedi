@@ -1,5 +1,6 @@
 import { bindings } from 'src/bindings';
 import { ExploreService } from 'src/logic/ExploreService';
+import { GetExploreParams } from 'src/model/api/Explore';
 import { BadRequestError } from 'src/model/error';
 import { LambdaEvent } from 'src/model/Lambda';
 
@@ -15,6 +16,8 @@ export default async (lambdaEvent: LambdaEvent) => {
       return await listExplores();
     case '/api/explore/auth':
       return await listExplores();
+    case '/api/explore/featured':
+      return await getFeaturedExplores();
     case '/api/explore/{id}':
       return await findExplore();
     case '/api/explore/{id}/auth':
@@ -27,7 +30,18 @@ export default async (lambdaEvent: LambdaEvent) => {
 const listExplores = async () => {
   switch (event.httpMethod) {
     case 'GET':
-      return await service.getExplore();
+      return await service.getExplore(
+        event.queryStringParameters as GetExploreParams | null
+      );
+  }
+
+  throw new Error('unexpected httpMethod');
+};
+
+const getFeaturedExplores = async () => {
+  switch (event.httpMethod) {
+    case 'GET':
+      return await service.getFeaturedExplore();
   }
 
   throw new Error('unexpected httpMethod');

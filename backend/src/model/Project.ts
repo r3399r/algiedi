@@ -2,6 +2,7 @@ import { Role } from './constant/Project';
 import { Project } from './entity/ProjectEntity';
 import { User } from './entity/UserEntity';
 import { ViewCreation } from './entity/ViewCreationEntity';
+import { ViewCreationExplore } from './entity/ViewCreationExploreEntity';
 
 export type DetailedProject = Project & {
   name: string | null;
@@ -25,6 +26,12 @@ export type DetailedProject = Project & {
 };
 
 export type DetailedCreation = ViewCreation & {
+  fileUrl: string | null;
+  tabFileUrl: string | null;
+  coverFileUrl: string | null;
+};
+
+export type ExtendedCreation = ViewCreationExplore & {
   fileUrl: string | null;
   tabFileUrl: string | null;
   coverFileUrl: string | null;

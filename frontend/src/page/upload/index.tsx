@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Footer from 'src/component/Footer';
-import { DetailedCreation } from 'src/model/backend/Project';
+import { GetExploreResponse } from 'src/model/backend/api/Explore';
 import { getExplore } from 'src/service/UploadService';
 import Lyrics from './Lyrics';
 import Track from './Track';
@@ -10,10 +10,10 @@ import Track from './Track';
 const Upload = () => {
   const [tab, setTab] = useState<'track' | 'lyrics'>('track');
   const state = useLocation().state as { inspiredId: string } | null;
-  const [inspiration, setInspiration] = useState<DetailedCreation[]>();
+  const [inspiration, setInspiration] = useState<GetExploreResponse>();
 
   useEffect(() => {
-    getExplore().then((res) => setInspiration(res));
+    getExplore().then((res) => setInspiration(res.data));
   }, []);
 
   if (!inspiration) return <></>;

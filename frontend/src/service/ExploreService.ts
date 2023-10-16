@@ -2,6 +2,7 @@ import creationEndpoint from 'src/api/creationEndpoint';
 import exploreEndpoint from 'src/api/exploreEndpoint';
 import userEndpoint from 'src/api/userEndpoint';
 import { GetExploreResponse } from 'src/model/backend/api/Explore';
+import { Type } from 'src/model/backend/constant/Creation';
 import { setExplores } from 'src/redux/apiSlice';
 import { dispatch, getState } from 'src/redux/store';
 import { finishWaiting, startWaiting } from 'src/redux/uiSlice';
@@ -15,15 +16,15 @@ export const getExplore = async () => {
       ? await exploreEndpoint.getExploreAuth()
       : await exploreEndpoint.getExplore();
 
-    dispatch(setExplores(res.data));
+    dispatch(setExplores(res.data.data));
 
     const tracks: GetExploreResponse = [];
     const lyrics: GetExploreResponse = [];
     const songs: GetExploreResponse = [];
-    res.data.forEach((v) => {
-      if (v.type === 'track') tracks.push(v);
-      else if (v.type === 'lyrics') lyrics.push(v);
-      else if (v.type === 'song') songs.push(v);
+    res.data.data.forEach((v) => {
+      if (v.type === Type.Track) tracks.push(v);
+      else if (v.type === Type.Lyrics) lyrics.push(v);
+      else if (v.type === Type.Song) songs.push(v);
     });
 
     return {
@@ -31,6 +32,21 @@ export const getExplore = async () => {
       lyrics,
       songs,
     };
+  } finally {
+    dispatch(finishWaiting());
+  }
+};
+
+export const getExploreIdea = async (type: Type[], limit: string, offset: string) => {
+  try {
+    const { isLogin } = getState().ui;
+    dispatch(startWaiting());
+
+    const res = isLogin
+      ? await exploreEndpoint.getExploreAuth({ type: type.join(), limit, offset })
+      : await exploreEndpoint.getExplore({ type: type.join(), limit, offset });
+
+    return res.data;
   } finally {
     dispatch(finishWaiting());
   }

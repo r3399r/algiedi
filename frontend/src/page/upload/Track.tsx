@@ -13,14 +13,14 @@ import MultiSelect from 'src/component/MultiSelect';
 import MultiSelectOption from 'src/component/MultiSelectOption';
 import { Page } from 'src/constant/Page';
 import { Genre, Language, Theme } from 'src/constant/Property';
-import { DetailedCreation } from 'src/model/backend/Project';
+import { GetExploreResponse } from 'src/model/backend/api/Explore';
 import { UploadTrackForm } from 'src/model/Form';
 import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
 import { uploadTrack } from 'src/service/UploadService';
 
 type Props = {
   defaultInspiredId?: string;
-  inspiration: DetailedCreation[];
+  inspiration: GetExploreResponse;
 };
 
 const Track = ({ defaultInspiredId, inspiration }: Props) => {
@@ -186,11 +186,14 @@ const Track = ({ defaultInspiredId, inspiration }: Props) => {
                 }}
                 options={inspiration}
                 getOptionLabel={(option) =>
-                  `${option.name} (${option.username ?? ''}, ${option.type})`
+                  `${option.info.name} (${option.user.length > 0 ? option.user[0].username : ''}, ${
+                    option.type
+                  })`
                 }
                 renderOption={(props, option) => (
                   <li {...props}>
-                    {option.name} ({option.username}, {option.type})
+                    {option.info.name} ({option.user.length > 0 ? option.user[0].username : ''},{' '}
+                    {option.type})
                   </li>
                 )}
                 renderInput={(params) => (

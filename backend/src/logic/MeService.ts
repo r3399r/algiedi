@@ -1,13 +1,13 @@
 import { inject, injectable } from 'inversify';
 import { In } from 'typeorm';
 import { DbAccess } from 'src/access/DbAccess';
-import { FollowAccess } from 'src/access/FollowAccess';
+// import { FollowAccess } from 'src/access/FollowAccess';
 import { LikeAccess } from 'src/access/LikeAccess';
 import { UserAccess } from 'src/access/UserAccess';
 import { ViewCreationExploreAccess } from 'src/access/ViewCreationExploreAccess';
 import {
   GetMeResponse,
-  GetMeSocialResponse,
+  // GetMeSocialResponse,
   PutMeRequest,
   PutMeResponse,
 } from 'src/model/api/Me';
@@ -31,8 +31,8 @@ export class MeService {
   @inject(LikeAccess)
   private readonly likeAccess!: LikeAccess;
 
-  @inject(FollowAccess)
-  private readonly followAccess!: FollowAccess;
+  // @inject(FollowAccess)
+  // private readonly followAccess!: FollowAccess;
 
   @inject(AwsService)
   private readonly awsService!: AwsService;
@@ -67,31 +67,32 @@ export class MeService {
     return { ...user, avatarUrl: this.awsService.getS3SignedUrl(user.avatar) };
   }
 
-  public async getMySocial(): Promise<GetMeSocialResponse> {
+  public async getMySocial(): Promise<any> {
     const likes = await this.likeAccess.find({
       where: { userId: this.cognitoUserId },
     });
-    const follows = await this.followAccess.find({
-      where: { followerId: this.cognitoUserId },
-    });
+    //   const follows = await this.followAccess.find({
+    //     where: { followerId: this.cognitoUserId },
+    //   });
     const creation = await this.viewCreationExploreAccess.find({
       where: { id: In(likes.map((v) => v.creationId)) },
     });
-    const followee = await this.userAccess.find({
-      where: { id: In(follows.map((v) => v.followeeId)) },
-    });
+    console.log(creation);
+    //   const followee = await this.userAccess.find({
+    //     where: { id: In(follows.map((v) => v.followeeId)) },
+    //   });
 
-    return {
-      creation: creation.map((v) => ({
-        ...v,
-        fileUrl: this.awsService.getS3SignedUrl(v.fileUri),
-        tabFileUrl: this.awsService.getS3SignedUrl(v.tabFileUri),
-        coverFileUrl: this.awsService.getS3SignedUrl(v.coverFileUri),
-      })),
-      followee: followee.map((v) => ({
-        ...v,
-        avatarUrl: this.awsService.getS3SignedUrl(v.avatar),
-      })),
-    };
+    //   return {
+    //     creation: creation.map((v) => ({
+    //       ...v,
+    //       fileUrl: this.awsService.getS3SignedUrl(v.fileUri),
+    //       tabFileUrl: this.awsService.getS3SignedUrl(v.tabFileUri),
+    //       coverFileUrl: this.awsService.getS3SignedUrl(v.coverFileUri),
+    //     })),
+    //     followee: followee.map((v) => ({
+    //       ...v,
+    //       avatarUrl: this.awsService.getS3SignedUrl(v.avatar),
+    //     })),
+    //   };
   }
 }

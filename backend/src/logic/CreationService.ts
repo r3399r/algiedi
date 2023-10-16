@@ -48,10 +48,12 @@ export class CreationService {
     await this.likeAccess.save(likeEntity);
 
     const creation = await this.viewCreationExploreAccess.findOneByIdOrFail(id);
-    const user = await this.userAccess.findOneByIdOrFail(creation.userId);
+    if (creation.userId !== null) {
+      const user = await this.userAccess.findOneByIdOrFail(creation.userId);
 
-    // notify
-    await this.notificationService.notify(NotificationType.Like, user, id);
+      // notify
+      await this.notificationService.notify(NotificationType.Like, user, id);
+    }
   }
 
   public async unlikeCreation(id: string) {
@@ -69,9 +71,11 @@ export class CreationService {
     await this.commentAccess.save(commentEntity);
 
     const creation = await this.viewCreationExploreAccess.findOneByIdOrFail(id);
-    const user = await this.userAccess.findOneByIdOrFail(creation.userId);
+    if (creation.userId !== null) {
+      const user = await this.userAccess.findOneByIdOrFail(creation.userId);
 
-    // notify
-    await this.notificationService.notify(NotificationType.Comment, user, id);
+      // notify
+      await this.notificationService.notify(NotificationType.Comment, user, id);
+    }
   }
 }

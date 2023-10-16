@@ -2,14 +2,14 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from 'src/component/Button';
 import Cover from 'src/component/Cover';
-import { DetailedCreation } from 'src/model/backend/Project';
+import { GetExploreResponse } from 'src/model/backend/api/Explore';
 import { getExplore } from 'src/service/ExploreService';
 
 const Explore = () => {
   const navigate = useNavigate();
-  const [tracks, setTracks] = useState<DetailedCreation[]>();
-  const [lyrics, setLyrics] = useState<DetailedCreation[]>();
-  const [songs, setSongs] = useState<DetailedCreation[]>();
+  const [tracks, setTracks] = useState<GetExploreResponse>();
+  const [lyrics, setLyrics] = useState<GetExploreResponse>();
+  const [songs, setSongs] = useState<GetExploreResponse>();
 
   useEffect(() => {
     getExplore().then((res) => {
@@ -35,8 +35,8 @@ const Explore = () => {
               className="flex w-[150px] shrink-0 cursor-pointer flex-col items-center gap-2 text-center"
               onClick={() => navigate(v.id)}
             >
-              <Cover url={v.coverFileUrl} size={150} />
-              <div className="font-bold">{v.name}</div>
+              <Cover url={v.info.coverFileUrl} size={150} />
+              <div className="font-bold">{v.info.name}</div>
             </div>
           ))}
         </div>
@@ -65,10 +65,10 @@ const Explore = () => {
                 className="flex cursor-pointer rounded-lg bg-white p-4"
                 onClick={() => navigate(v.id)}
               >
-                <Cover url={v.coverFileUrl} size={120} />
+                <Cover url={v.info.coverFileUrl} size={120} />
                 <div className="m-4 flex flex-col justify-center">
-                  <div className="font-bold">{v.name}</div>
-                  <div className="text-grey">by {v.username}</div>
+                  <div className="font-bold">{v.info.name}</div>
+                  <div className="text-grey">by {v.user.length > 0 ? v.user[0].username : ''}</div>
                 </div>
               </div>
             ))}
@@ -97,10 +97,10 @@ const Explore = () => {
                 className="flex cursor-pointer rounded-lg bg-white p-4"
                 onClick={() => navigate(v.id)}
               >
-                <Cover url={v.coverFileUrl} size={120} />
+                <Cover url={v.info.coverFileUrl} size={120} />
                 <div className="m-4 flex flex-col justify-center">
-                  <div className="font-bold">{v.name}</div>
-                  <div className="text-grey">by {v.username}</div>
+                  <div className="font-bold">{v.info.name}</div>
+                  <div className="text-grey">by {v.user.length > 0 ? v.user[0].username : ''}</div>
                 </div>
               </div>
             ))}

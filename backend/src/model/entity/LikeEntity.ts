@@ -1,8 +1,18 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity, Generated } from 'typeorm';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  Generated,
+  JoinColumn,
+  ManyToOne,
+} from 'typeorm';
+import { User, UserEntity } from './UserEntity';
 
 export type Like = {
   id: string;
   userId: string;
+  user: User;
   creationId: string;
   createdAt: string | null;
   updatedAt: string | null;
@@ -16,6 +26,10 @@ export class LikeEntity implements Like {
 
   @Column({ type: 'uuid', name: 'user_id' })
   userId!: string;
+
+  @ManyToOne(() => UserEntity)
+  @JoinColumn({ name: 'user_id' })
+  user!: User;
 
   @Column({ type: 'uuid', name: 'creation_id' })
   creationId!: string;

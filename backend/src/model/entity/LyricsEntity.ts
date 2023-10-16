@@ -1,9 +1,19 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity, Generated } from 'typeorm';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  Generated,
+  JoinColumn,
+  ManyToOne,
+} from 'typeorm';
+import { Info, InfoEntity } from './InfoEntity';
 
 export type Lyrics = {
   id: string;
   userId: string;
   infoId: string | null;
+  info: Info | null;
   projectId: string | null;
   inspiredId: string | null;
   createdAt: string | null;
@@ -21,6 +31,10 @@ export class LyricsEntity implements Lyrics {
 
   @Column({ type: 'uuid', name: 'info_id', default: null })
   infoId: string | null = null;
+
+  @ManyToOne(() => InfoEntity)
+  @JoinColumn({ name: 'info_id' })
+  info: Info | null = null;
 
   @Column({ type: 'uuid', name: 'project_id' })
   projectId: string | null = null;

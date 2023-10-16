@@ -14,7 +14,10 @@ export class CommentAccess {
   public async find(options: FindManyOptions<Comment>) {
     const qr = await this.database.getQueryRunner();
 
-    return await qr.manager.find<Comment>(CommentEntity.name, options);
+    return await qr.manager.find<Comment>(CommentEntity.name, {
+      relations: { user: true },
+      ...options,
+    });
   }
 
   public async save(data: Comment) {

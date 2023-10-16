@@ -15,6 +15,7 @@ import Cover from 'src/component/Cover';
 import Divider from 'src/component/Divider';
 import { Page } from 'src/constant/Page';
 import { GetExploreIdResponse } from 'src/model/backend/api/Explore';
+import { Type } from 'src/model/backend/constant/Creation';
 import { RootState } from 'src/redux/store';
 import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
 import {
@@ -84,11 +85,13 @@ const ExploreDetail = () => {
       </div>
       <div
         className="flex h-[200px] items-center bg-blue/30 bg-center"
-        style={{ backgroundImage: creation.coverFileUrl ? `url(${creation.coverFileUrl})` : '' }}
+        style={{
+          backgroundImage: creation.info.coverFileUrl ? `url(${creation.info.coverFileUrl})` : '',
+        }}
       >
         <div className="ml-10 w-fit rounded-md bg-dark/30 p-4 text-white">
-          <div>{creation.name}</div>
-          <div>{creation.genre}</div>
+          <div>{creation.info.name}</div>
+          <div>{creation.info.genre}</div>
           <div>Publish Date: {format(new Date(creation.createdAt ?? ''), 'yyyy.MM.dd')}</div>
           <div className="flex gap-2">
             <FavoriteIcon color="primary" classes={{ colorPrimary: '!text-red' }} />
@@ -142,9 +145,9 @@ const ExploreDetail = () => {
         )}
       </div>
       <div className="flex p-10">
-        {creation.type === 'song' && (
+        {creation.type === Type.Song && (
           <div className="flex w-1/2 flex-col gap-3">
-            {creation.author.map((v) => (
+            {creation.user.map((v) => (
               <div key={v.id} className="flex items-center gap-5">
                 <Avatar url={v.avatarUrl} size={80} />
                 <div>{v.username}</div>
@@ -161,31 +164,31 @@ const ExploreDetail = () => {
             ))}
           </div>
         )}
-        {creation.type !== 'song' && (
+        {creation.type !== Type.Song && (
           <div className="flex w-1/2 items-center gap-5">
-            <Avatar url={creation.author[0].avatarUrl} size={80} />
+            <Avatar url={creation.user[0].avatarUrl} size={80} />
             <div>
-              <div>{creation.username}</div>
-              <div className="text-sm text-grey">{creation.author[0].role}</div>
+              <div>{creation.user[0].username}</div>
+              <div className="text-sm text-grey">{creation.user[0].role}</div>
             </div>
             <div>
               <Button
                 size="s"
-                disabled={creation.author[0].following === null}
+                disabled={creation.user[0].following === null}
                 onClick={
-                  creation.author[0].following === true
-                    ? onUnfollow(creation.author[0].id)
-                    : onFollow(creation.author[0].id)
+                  creation.user[0].following === true
+                    ? onUnfollow(creation.user[0].id)
+                    : onFollow(creation.user[0].id)
                 }
               >
-                {creation.author[0].following === true ? 'Unfollow' : 'Follow'}
+                {creation.user[0].following === true ? 'Unfollow' : 'Follow'}
               </Button>
             </div>
           </div>
         )}
         <div className="w-1/2 rounded-3xl border border-solid border-dark p-4">
           <div className="font-bold">Description</div>
-          <div className="whitespace-pre">{creation.description}</div>
+          <div className="whitespace-pre">{creation.info.description}</div>
         </div>
       </div>
       <div className="mb-4 px-10 text-right">
@@ -209,7 +212,7 @@ const ExploreDetail = () => {
                 onClick={() => navigate(`${Page.Explore}/${v.id}`)}
               >
                 <Cover url={v.coverFileUrl} />
-                <div className="mt-2 font-bold">{v.name}</div>
+                <div className="mt-2 font-bold">{v.info.name}</div>
               </div>
             ))}
           </div>
@@ -225,7 +228,7 @@ const ExploreDetail = () => {
                 onClick={() => navigate(`${Page.Explore}/${v.id}`)}
               >
                 <Cover url={v.coverFileUrl} />
-                <div className="mt-2 font-bold">{v.name}</div>
+                <div className="mt-2 font-bold">{v.info.name}</div>
               </div>
             ))}
           </div>
@@ -254,7 +257,7 @@ const ExploreDetail = () => {
           </div>
           <div className="w-1/2">
             <textarea
-              className="h-[200px] w-full rounded border-[1px] border-black px-2"
+              className="h-[200px] w-full rounded border border-black px-2"
               value={myComment}
               onChange={(e) => setMyComment(e.target.value)}
               disabled={!isLogin}
