@@ -42,7 +42,7 @@ const Explore = () => {
     <div className="mx-4 bg-[#fafafa]">
       <div className="mb-4 flex items-center gap-4">
         <div className="text-xl font-bold">FEATURED SONGS</div>
-        <Button size="s" color="transparent" onClick={() => navigate('song', { state: songs })}>
+        <Button size="s" color="transparent" onClick={() => navigate('song')}>
           More Songs
         </Button>
       </div>
@@ -64,7 +64,7 @@ const Explore = () => {
         <div className="w-1/2">
           <div className="mb-4 flex items-center gap-4">
             <div className="text-xl font-bold">Music</div>
-            <Button size="s" color="transparent" onClick={() => navigate('idea')}>
+            <Button size="s" color="transparent" onClick={() => navigate('idea?tab=track')}>
               More Music
             </Button>
           </div>
@@ -92,7 +92,7 @@ const Explore = () => {
         <div className="w-1/2">
           <div className="mb-4 flex items-center gap-4">
             <div className="text-xl font-bold">Lyrics</div>
-            <Button size="s" color="transparent" onClick={() => navigate('idea')}>
+            <Button size="s" color="transparent" onClick={() => navigate('idea?tab=lyrics')}>
               More Lyrics
             </Button>
           </div>

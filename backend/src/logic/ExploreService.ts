@@ -1,6 +1,6 @@
 import { subWeeks } from 'date-fns';
 import { inject, injectable } from 'inversify';
-import { In, MoreThan, Not } from 'typeorm';
+import { FindOptionsWhere, In, MoreThan, Not } from 'typeorm';
 import { CommentAccess } from 'src/access/CommentAccess';
 import { DbAccess } from 'src/access/DbAccess';
 import { FollowAccess } from 'src/access/FollowAccess';
@@ -20,6 +20,7 @@ import {
 import { Type } from 'src/model/constant/Creation';
 import { Role, Status } from 'src/model/constant/Project';
 import { ProjectUser } from 'src/model/entity/ProjectUserEntity';
+import { ViewCreationExplore } from 'src/model/entity/ViewCreationExploreEntity';
 import { Pagination } from 'src/model/Pagination';
 import { cognitoSymbol } from 'src/util/LambdaSetup';
 import { AwsService } from './AwsService';
@@ -75,11 +76,24 @@ export class ExploreService {
     const limit = params?.limit ? Number(params.limit) : 50;
     const offset = params?.offset ? Number(params.offset) : 0;
 
-    const type = params?.type.split(',');
+    const type = params?.type.split(',') ?? [
+      Type.Lyrics,
+      Type.Track,
+      Type.Song,
+    ];
+    const findOptionsWhere: FindOptionsWhere<ViewCreationExplore>[] = [];
+    if (type.includes(Type.Lyrics))
+      findOptionsWhere.push({ type: Type.Lyrics });
+    if (type.includes(Type.Track)) findOptionsWhere.push({ type: Type.Track });
+    if (type.includes(Type.Song))
+      findOptionsWhere.push({
+        type: Type.Song,
+        project: { status: Status.Published },
+      });
 
     const [creations, count] =
       await this.viewCreationExploreAccess.findAndCount({
-        where: type ? { type: In(type) } : undefined,
+        where: findOptionsWhere,
         order: { createdAt: 'desc' },
         take: limit,
         skip: offset,
@@ -97,11 +111,13 @@ export class ExploreService {
     // find project-user pair by project ids
     let pu: ProjectUser[] | null = null;
     const projectIds: string[] = creations
-      .filter((v) => v.type === Type.Song && v.projectId !== null)
+      .filter(
+        (v) => v.type === Type.Song && v.project?.status === Status.Published
+      )
       .map((v) => v.projectId ?? '');
     if (projectIds.length > 0)
       pu = await this.projectUserAccess.find({
-        where: { projectId: In(projectIds) },
+        where: { projectId: In(projectIds), role: Not(Role.Rejected) },
       });
 
     const data = await Promise.all(
@@ -143,93 +159,89 @@ export class ExploreService {
   }
 
   public async getFeaturedExplore(): Promise<GetExploreFeaturedResponse> {
-    const [featuredSong, featuredLyrics, featuredTrack] = await Promise.all([
-      this.projectAccess.find({
-        order: { countLike: 'desc' },
-      }),
-      this.lyricsAccess.find({
-        where: { createdAt: MoreThan(subWeeks(new Date(), 8).toISOString()) },
-        order: { countLike: 'desc' },
-      }),
-      this.trackAccess.find({
-        where: { createdAt: MoreThan(subWeeks(new Date(), 8).toISOString()) },
-        order: { countLike: 'desc' },
-      }),
-    ]);
+    const featuredSong = await this.projectAccess.find({
+      order: { countLike: 'desc' },
+    });
+    const featuredLyrics = await this.lyricsAccess.find({
+      where: { createdAt: MoreThan(subWeeks(new Date(), 8).toISOString()) },
+      order: { countLike: 'desc' },
+    });
+    const featuredTrack = await this.trackAccess.find({
+      where: { createdAt: MoreThan(subWeeks(new Date(), 8).toISOString()) },
+      order: { countLike: 'desc' },
+    });
 
     return {
-      song: featuredSong
-        .map((v) => ({
-          ...v,
-          info: {
-            ...v.info,
-            coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
-          },
-        }))
-        .slice(0, 20),
+      song: featuredSong.slice(0, 12).map((v) => ({
+        ...v,
+        info: {
+          ...v.info,
+          coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
+        },
+      })),
       lyrics: {
         thisWeek: featuredLyrics
           .filter((v) => new Date(v.createdAt ?? '') >= subWeeks(new Date(), 1))
+          .slice(0, 6)
           .map((v) => ({
             ...v,
             info: {
               ...v.info,
               coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
             },
-          }))
-          .slice(0, 6),
+          })),
         thisMonth: featuredLyrics
           .filter((v) => new Date(v.createdAt ?? '') >= subWeeks(new Date(), 4))
+          .slice(0, 6)
           .map((v) => ({
             ...v,
             info: {
               ...v.info,
               coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
             },
-          }))
-          .slice(0, 6),
+          })),
         lastMonth: featuredLyrics
           .filter((v) => new Date(v.createdAt ?? '') <= subWeeks(new Date(), 4))
+          .slice(0, 6)
           .map((v) => ({
             ...v,
             info: {
               ...v.info,
               coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
             },
-          }))
-          .slice(0, 6),
+          })),
       },
       track: {
         thisWeek: featuredTrack
           .filter((v) => new Date(v.createdAt ?? '') >= subWeeks(new Date(), 1))
+          .slice(0, 6)
           .map((v) => ({
             ...v,
             info: {
               ...v.info,
               coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
             },
-          }))
-          .slice(0, 6),
+          })),
         thisMonth: featuredTrack
           .filter((v) => new Date(v.createdAt ?? '') >= subWeeks(new Date(), 4))
+          .slice(0, 6)
           .map((v) => ({
             ...v,
             info: {
               ...v.info,
               coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
             },
-          }))
-          .slice(0, 6),
+          })),
         lastMonth: featuredTrack
           .filter((v) => new Date(v.createdAt ?? '') <= subWeeks(new Date(), 4))
+          .slice(0, 6)
           .map((v) => ({
             ...v,
             info: {
               ...v.info,
               coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
             },
-          }))
-          .slice(0, 6),
+          })),
       },
     };
   }

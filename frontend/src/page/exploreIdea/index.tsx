@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import Cover from 'src/component/Cover';
 import Tabs from 'src/component/Tabs';
 import { Page } from 'src/constant/Page';
+import useQuery from 'src/hook/useQuery';
 import { GetExploreResponse } from 'src/model/backend/api/Explore';
 import { Type } from 'src/model/backend/constant/Creation';
 import { RootState } from 'src/redux/store';
@@ -23,10 +24,11 @@ const DEFAULT_LIMIT = '10';
 const ExploreIdea = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const query = useQuery<{ tab: string }>();
   const { isLogin } = useSelector((rootState: RootState) => rootState.ui);
   const [idea, setIdea] = useState<GetExploreResponse>();
   const [refresh, setRefresh] = useState<boolean>();
-  const [tab, setTab] = useState<number>(0);
+  const [tab, setTab] = useState<number>();
   const [page, setPage] = useState<number>(1);
   const [offset, setOffset] = useState<number>(0);
   const [count, setCount] = useState<number>(0);
@@ -39,6 +41,12 @@ const ExploreIdea = () => {
 
     return [Type.Track, Type.Lyrics]; // all
   }, [tab]);
+
+  useEffect(() => {
+    if (query.tab === 'lyrics') setTab(1);
+    else if (query.tab === 'all') setTab(2);
+    else setTab(0);
+  }, [query.tab]);
 
   useEffect(() => {
     getExploreIdea(type, DEFAULT_LIMIT, String(offset)).then((res) => {
@@ -69,7 +77,13 @@ const ExploreIdea = () => {
   return (
     <div className="mx-4 bg-[#fafafa]">
       <div className="mb-4 text-xl font-bold">EXPLORE IDEA</div>
-      <Tabs labels={['Tracks', 'Lyrics', 'All']} onChange={(i) => setTab(i)} defaultIndex={0} />
+      {tab !== undefined && (
+        <Tabs
+          labels={['Tracks', 'Lyrics', 'All']}
+          onChange={(i) => navigate(`?tab=${['track', 'lyrics', 'all'][i]}`)}
+          defaultIndex={tab}
+        />
+      )}
       <div className="mt-4 flex flex-wrap gap-6">
         {idea?.map((v) => (
           <div
