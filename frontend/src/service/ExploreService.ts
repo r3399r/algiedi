@@ -38,14 +38,26 @@ export const getExplore = async () => {
   }
 };
 
-export const getExploreSong = async (limit: string, offset: string) => {
+export const getExploreSong = async (
+  genre: string,
+  theme: string,
+  limit: string,
+  offset: string,
+) => {
   try {
     const { isLogin } = getState().ui;
     dispatch(startWaiting());
 
+    const exploreParams: GetExploreParams = {
+      type: Type.Song,
+      genre: genre === 'All' ? undefined : genre,
+      theme: theme === 'All' ? undefined : theme,
+      limit,
+      offset,
+    };
     const res = isLogin
-      ? await exploreEndpoint.getExploreAuth({ type: Type.Song, limit, offset })
-      : await exploreEndpoint.getExplore({ type: Type.Song, limit, offset });
+      ? await exploreEndpoint.getExploreAuth(exploreParams)
+      : await exploreEndpoint.getExplore(exploreParams);
 
     return res.data;
   } finally {

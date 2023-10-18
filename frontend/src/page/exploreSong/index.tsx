@@ -7,7 +7,10 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Cover from 'src/component/Cover';
+import Select from 'src/component/Select';
+import SelectOption from 'src/component/SelectOption';
 import { Page } from 'src/constant/Page';
+import { Genre, Theme } from 'src/constant/Property';
 import { GetExploreResponse } from 'src/model/backend/api/Explore';
 import { RootState } from 'src/redux/store';
 import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
@@ -20,17 +23,19 @@ const ExploreSong = () => {
   const dispatch = useDispatch();
   const { isLogin } = useSelector((rootState: RootState) => rootState.ui);
   const [songs, setSongs] = useState<GetExploreResponse>();
+  const [genre, setGenre] = useState<string>('All');
+  const [theme, setTheme] = useState<string>('All');
   const [refresh, setRefresh] = useState<boolean>();
   const [page, setPage] = useState<number>(1);
   const [offset, setOffset] = useState<number>(0);
   const [count, setCount] = useState<number>(0);
 
   useEffect(() => {
-    getExploreSong(DEFAULT_LIMIT, String(offset)).then((res) => {
+    getExploreSong(genre, theme, DEFAULT_LIMIT, String(offset)).then((res) => {
       setSongs(res.data);
       setCount(res.paginate.count);
     });
-  }, [refresh, offset]);
+  }, [refresh, offset, genre, theme]);
 
   const onLike = (id: string) => (e: MouseEvent<HTMLOrSVGElement>) => {
     e.stopPropagation();
@@ -54,6 +59,28 @@ const ExploreSong = () => {
   return (
     <div className="mx-4 bg-[#fafafa]">
       <div className="mb-4 text-xl font-bold">EXPLORE SONGS</div>
+      <div className="mb-4 flex flex-wrap gap-4">
+        <div className="flex items-center gap-2">
+          <div className="text-lg font-bold">Genre</div>
+          <Select value={genre} onChange={(v) => setGenre(v)}>
+            {[{ name: 'All' }, ...Genre].map((v, i) => (
+              <SelectOption key={i} value={v.name}>
+                {v.name}
+              </SelectOption>
+            ))}
+          </Select>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="text-lg font-bold">Theme</div>
+          <Select value={theme} onChange={(v) => setTheme(v)}>
+            {[{ name: 'All' }, ...Theme].map((v, i) => (
+              <SelectOption key={i} value={v.name}>
+                {v.name}
+              </SelectOption>
+            ))}
+          </Select>
+        </div>
+      </div>
       <div>
         {songs?.map((v) => (
           <div
@@ -61,7 +88,7 @@ const ExploreSong = () => {
             className="flex cursor-pointer items-center p-2 hover:bg-blue/30"
             onClick={() => navigate(`${Page.Explore}/${v.id}`)}
           >
-            <div className="flex w-1/2 items-center gap-2">
+            <div className="flex w-2/5 items-center gap-2">
               <Cover url={v.info.coverFileUrl} size={50} />
               <div>
                 <div className="font-bold">{v.info.name}</div>
@@ -70,8 +97,9 @@ const ExploreSong = () => {
                 }${v.user.length > 1 ? ` & ${v.user.length - 1} others` : ''}`}</div>
               </div>
             </div>
-            <div className="w-1/4">{v.info.genre}</div>
-            <div className="flex w-1/4 justify-end gap-2">
+            <div className="w-1/5">{v.info.genre}</div>
+            <div className="w-1/5">{v.info.theme}</div>
+            <div className="flex w-1/5 justify-end gap-2">
               <div>
                 {isLogin ? (
                   v.like ? (
