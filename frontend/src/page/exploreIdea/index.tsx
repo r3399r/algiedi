@@ -10,8 +10,11 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Cover from 'src/component/Cover';
+import Select from 'src/component/Select';
+import SelectOption from 'src/component/SelectOption';
 import Tabs from 'src/component/Tabs';
 import { Page } from 'src/constant/Page';
+import { Genre, Theme } from 'src/constant/Property';
 import useQuery from 'src/hook/useQuery';
 import { GetExploreResponse } from 'src/model/backend/api/Explore';
 import { Type } from 'src/model/backend/constant/Creation';
@@ -27,6 +30,8 @@ const ExploreIdea = () => {
   const query = useQuery<{ tab: string }>();
   const { isLogin } = useSelector((rootState: RootState) => rootState.ui);
   const [idea, setIdea] = useState<GetExploreResponse>();
+  const [genre, setGenre] = useState<string>('All');
+  const [theme, setTheme] = useState<string>('All');
   const [refresh, setRefresh] = useState<boolean>();
   const [tab, setTab] = useState<number>();
   const [page, setPage] = useState<number>(1);
@@ -38,8 +43,7 @@ const ExploreIdea = () => {
     setPage(1);
     if (tab === 0) return [Type.Track];
     if (tab === 1) return [Type.Lyrics];
-
-    return [Type.Track, Type.Lyrics]; // all
+    if (tab === 2) return [Type.Track, Type.Lyrics];
   }, [tab]);
 
   useEffect(() => {
@@ -49,11 +53,18 @@ const ExploreIdea = () => {
   }, [query.tab]);
 
   useEffect(() => {
-    getExploreIdea(type, DEFAULT_LIMIT, String(offset)).then((res) => {
+    if (!type) return;
+    getExploreIdea({
+      type,
+      genre,
+      theme,
+      limit: DEFAULT_LIMIT,
+      offset: String(offset),
+    }).then((res) => {
       setIdea(res.data);
       setCount(res.paginate.count);
     });
-  }, [type, refresh, offset]);
+  }, [type, refresh, offset, genre, theme]);
 
   const onLike = (id: string) => (e: MouseEvent<HTMLOrSVGElement>) => {
     e.stopPropagation();
@@ -77,6 +88,28 @@ const ExploreIdea = () => {
   return (
     <div className="mx-4 bg-[#fafafa]">
       <div className="mb-4 text-xl font-bold">EXPLORE IDEA</div>
+      <div className="mb-4 flex gap-4">
+        <div className="flex items-center gap-2">
+          <div className="text-lg font-bold">Genre</div>
+          <Select value={genre} onChange={(v) => setGenre(v)}>
+            {[{ name: 'All' }, ...Genre].map((v, i) => (
+              <SelectOption key={i} value={v.name}>
+                {v.name}
+              </SelectOption>
+            ))}
+          </Select>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="text-lg font-bold">Theme</div>
+          <Select value={theme} onChange={(v) => setTheme(v)}>
+            {[{ name: 'All' }, ...Theme].map((v, i) => (
+              <SelectOption key={i} value={v.name}>
+                {v.name}
+              </SelectOption>
+            ))}
+          </Select>
+        </div>
+      </div>
       {tab !== undefined && (
         <Tabs
           labels={['Tracks', 'Lyrics', 'All']}
@@ -112,8 +145,13 @@ const ExploreIdea = () => {
             </div>
             <div className="w-1/2">
               <div className="font-bold">{v.info.name}</div>
-              <div className="my-2 w-fit rounded-xl border border-black bg-white p-1 text-xs">
-                {v.info.genre}
+              <div className="flex gap-1">
+                <div className="my-2 w-fit rounded-xl border border-black bg-white px-1 text-xs">
+                  {v.info.genre}
+                </div>
+                <div className="my-2 w-fit rounded-xl border border-black bg-white px-1 text-xs">
+                  {v.info.theme}
+                </div>
               </div>
               <div className="text-xs">{v.info.description}</div>
             </div>

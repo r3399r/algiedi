@@ -8,7 +8,11 @@ import { PaginationParams } from 'src/model/Pagination';
 import { DetailedCreation, ExtendedCreation } from 'src/model/Project';
 
 // params: type is string of lyrics, track or song divided by comma
-export type GetExploreParams = PaginationParams & { type: string };
+export type GetExploreParams = PaginationParams & {
+  type?: string;
+  genre?: string;
+  theme?: string;
+};
 
 export type FilledCreation = Omit<ViewCreationExplore, 'user' | 'info'> & {
   fileUrl: string | null;

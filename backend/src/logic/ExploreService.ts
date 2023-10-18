@@ -1,6 +1,6 @@
 import { subWeeks } from 'date-fns';
 import { inject, injectable } from 'inversify';
-import { FindOptionsWhere, In, MoreThan, Not } from 'typeorm';
+import { FindOptionsWhere, In, Like, MoreThan, Not } from 'typeorm';
 import { CommentAccess } from 'src/access/CommentAccess';
 import { DbAccess } from 'src/access/DbAccess';
 import { FollowAccess } from 'src/access/FollowAccess';
@@ -76,19 +76,25 @@ export class ExploreService {
     const limit = params?.limit ? Number(params.limit) : 50;
     const offset = params?.offset ? Number(params.offset) : 0;
 
-    const type = params?.type.split(',') ?? [
+    const type = params?.type?.split(',') ?? [
       Type.Lyrics,
       Type.Track,
       Type.Song,
     ];
     const findOptionsWhere: FindOptionsWhere<ViewCreationExplore>[] = [];
+    const infoFilter = {
+      genre: params?.genre ? Like(`%${params.genre}%`) : undefined,
+      theme: params?.theme ? Like(`%${params.theme}%`) : undefined,
+    };
     if (type.includes(Type.Lyrics))
-      findOptionsWhere.push({ type: Type.Lyrics });
-    if (type.includes(Type.Track)) findOptionsWhere.push({ type: Type.Track });
+      findOptionsWhere.push({ type: Type.Lyrics, info: infoFilter });
+    if (type.includes(Type.Track))
+      findOptionsWhere.push({ type: Type.Track, info: infoFilter });
     if (type.includes(Type.Song))
       findOptionsWhere.push({
         type: Type.Song,
         project: { status: Status.Published },
+        info: infoFilter,
       });
 
     const [creations, count] =

@@ -1,7 +1,7 @@
 import creationEndpoint from 'src/api/creationEndpoint';
 import exploreEndpoint from 'src/api/exploreEndpoint';
 import userEndpoint from 'src/api/userEndpoint';
-import { GetExploreResponse } from 'src/model/backend/api/Explore';
+import { GetExploreParams, GetExploreResponse } from 'src/model/backend/api/Explore';
 import { Type } from 'src/model/backend/constant/Creation';
 import { setExplores } from 'src/redux/apiSlice';
 import { dispatch, getState } from 'src/redux/store';
@@ -63,14 +63,27 @@ export const getExploreFeatured = async () => {
   }
 };
 
-export const getExploreIdea = async (type: Type[], limit: string, offset: string) => {
+export const getExploreIdea = async (params: {
+  type: Type[];
+  genre: string;
+  theme: string;
+  limit: string;
+  offset: string;
+}) => {
   try {
     const { isLogin } = getState().ui;
     dispatch(startWaiting());
 
+    const exploreParams: GetExploreParams = {
+      type: params.type.join(),
+      genre: params.genre === 'All' ? undefined : params.genre,
+      theme: params.theme === 'All' ? undefined : params.theme,
+      limit: params.limit,
+      offset: params.offset,
+    };
     const res = isLogin
-      ? await exploreEndpoint.getExploreAuth({ type: type.join(), limit, offset })
-      : await exploreEndpoint.getExplore({ type: type.join(), limit, offset });
+      ? await exploreEndpoint.getExploreAuth(exploreParams)
+      : await exploreEndpoint.getExplore(exploreParams);
 
     return res.data;
   } finally {
