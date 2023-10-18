@@ -1,3 +1,4 @@
+import { Status } from 'src/model/constant/Project';
 import { Info } from 'src/model/entity/InfoEntity';
 import { Lyrics } from 'src/model/entity/LyricsEntity';
 import { Project } from 'src/model/entity/ProjectEntity';
@@ -12,6 +13,7 @@ export type GetExploreParams = PaginationParams & {
   type?: string;
   genre?: string;
   theme?: string;
+  status?: Status | 'null';
 };
 
 export type FilledCreation = Omit<ViewCreationExplore, 'user' | 'info'> & {

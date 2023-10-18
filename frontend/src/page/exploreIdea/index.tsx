@@ -18,11 +18,19 @@ import { Genre, Theme } from 'src/constant/Property';
 import useQuery from 'src/hook/useQuery';
 import { GetExploreResponse } from 'src/model/backend/api/Explore';
 import { Type } from 'src/model/backend/constant/Creation';
+import { Status } from 'src/model/backend/constant/Project';
 import { RootState } from 'src/redux/store';
 import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
 import { getExploreIdea, likeById, unlikeById } from 'src/service/ExploreService';
 
 const DEFAULT_LIMIT = '10';
+
+const statusMapping = {
+  created: 'Join me',
+  'in-progress': 'In Progress',
+  published: 'Published',
+  independent: 'Independent',
+};
 
 const ExploreIdea = () => {
   const navigate = useNavigate();
@@ -32,6 +40,7 @@ const ExploreIdea = () => {
   const [idea, setIdea] = useState<GetExploreResponse>();
   const [genre, setGenre] = useState<string>('All');
   const [theme, setTheme] = useState<string>('All');
+  const [status, setStatus] = useState<Status | 'All' | 'Null'>('All');
   const [refresh, setRefresh] = useState<boolean>();
   const [tab, setTab] = useState<number>();
   const [page, setPage] = useState<number>(1);
@@ -60,11 +69,12 @@ const ExploreIdea = () => {
       theme,
       limit: DEFAULT_LIMIT,
       offset: String(offset),
+      status,
     }).then((res) => {
       setIdea(res.data);
       setCount(res.paginate.count);
     });
-  }, [type, refresh, offset, genre, theme]);
+  }, [type, refresh, offset, genre, theme, status]);
 
   const onLike = (id: string) => (e: MouseEvent<HTMLOrSVGElement>) => {
     e.stopPropagation();
@@ -88,7 +98,7 @@ const ExploreIdea = () => {
   return (
     <div className="mx-4 bg-[#fafafa]">
       <div className="mb-4 text-xl font-bold">EXPLORE IDEA</div>
-      <div className="mb-4 flex gap-4">
+      <div className="mb-4 flex flex-wrap gap-4">
         <div className="flex items-center gap-2">
           <div className="text-lg font-bold">Genre</div>
           <Select value={genre} onChange={(v) => setGenre(v)}>
@@ -107,6 +117,16 @@ const ExploreIdea = () => {
                 {v.name}
               </SelectOption>
             ))}
+          </Select>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="text-lg font-bold">Status</div>
+          <Select value={status} onChange={(v) => setStatus(v as Status | 'All' | 'Null')}>
+            <SelectOption value={'All'}>All</SelectOption>
+            <SelectOption value={Status.Created}>Join me</SelectOption>
+            <SelectOption value={Status.InProgress}>In Progress</SelectOption>
+            <SelectOption value={Status.Published}>Published</SelectOption>
+            <SelectOption value={'Null'}>Independent</SelectOption>
           </Select>
         </div>
       </div>
@@ -160,13 +180,7 @@ const ExploreIdea = () => {
                 'text-blue': v.project?.status === 'created',
               })}
             >
-              {v.project
-                ? v.project?.status === 'created'
-                  ? 'Join me'
-                  : v.project?.status === 'in-progress'
-                  ? 'In progress'
-                  : 'Published'
-                : 'Independent'}
+              {statusMapping[v.project?.status ?? 'independent']}
             </div>
             <div className="absolute bottom-4 right-4 flex">
               <div>

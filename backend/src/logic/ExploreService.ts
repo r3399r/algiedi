@@ -1,6 +1,6 @@
 import { subWeeks } from 'date-fns';
 import { inject, injectable } from 'inversify';
-import { FindOptionsWhere, In, Like, MoreThan, Not } from 'typeorm';
+import { FindOptionsWhere, In, IsNull, Like, MoreThan, Not } from 'typeorm';
 import { CommentAccess } from 'src/access/CommentAccess';
 import { DbAccess } from 'src/access/DbAccess';
 import { FollowAccess } from 'src/access/FollowAccess';
@@ -86,10 +86,20 @@ export class ExploreService {
       genre: params?.genre ? Like(`%${params.genre}%`) : undefined,
       theme: params?.theme ? Like(`%${params.theme}%`) : undefined,
     };
+    const projectFilter =
+      params?.status === 'null' ? IsNull() : { status: params?.status };
     if (type.includes(Type.Lyrics))
-      findOptionsWhere.push({ type: Type.Lyrics, info: infoFilter });
+      findOptionsWhere.push({
+        type: Type.Lyrics,
+        info: infoFilter,
+        project: projectFilter,
+      });
     if (type.includes(Type.Track))
-      findOptionsWhere.push({ type: Type.Track, info: infoFilter });
+      findOptionsWhere.push({
+        type: Type.Track,
+        info: infoFilter,
+        project: projectFilter,
+      });
     if (type.includes(Type.Song))
       findOptionsWhere.push({
         type: Type.Song,

@@ -3,6 +3,7 @@ import exploreEndpoint from 'src/api/exploreEndpoint';
 import userEndpoint from 'src/api/userEndpoint';
 import { GetExploreParams, GetExploreResponse } from 'src/model/backend/api/Explore';
 import { Type } from 'src/model/backend/constant/Creation';
+import { Status } from 'src/model/backend/constant/Project';
 import { setExplores } from 'src/redux/apiSlice';
 import { dispatch, getState } from 'src/redux/store';
 import { finishWaiting, startWaiting } from 'src/redux/uiSlice';
@@ -69,15 +70,20 @@ export const getExploreIdea = async (params: {
   theme: string;
   limit: string;
   offset: string;
+  status: Status | 'All' | 'Null';
 }) => {
   try {
     const { isLogin } = getState().ui;
     dispatch(startWaiting());
 
+    let status: Status | undefined | 'null' = 'null';
+    if (params.status === 'All') status = undefined;
+    else if (params.status !== 'Null') status = params.status;
     const exploreParams: GetExploreParams = {
       type: params.type.join(),
       genre: params.genre === 'All' ? undefined : params.genre,
       theme: params.theme === 'All' ? undefined : params.theme,
+      status,
       limit: params.limit,
       offset: params.offset,
     };
