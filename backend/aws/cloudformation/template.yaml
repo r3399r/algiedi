@@ -1519,7 +1519,7 @@ Resources:
       FunctionName: !Sub ${Project}-${TargetEnvr}-lambda
       Role: !GetAtt ExecutionRole.Arn
       CodeUri: ../../lib/src
-      MemorySize: 128
+      MemorySize: 256
       Layers: [!Ref LambdaLayer]
       Environment:
         Variables:
@@ -1615,7 +1615,7 @@ Resources:
       FunctionName: !Sub ${Project}-${TargetEnvr}-ws
       Role: !GetAtt ExecutionRole.Arn
       CodeUri: ../../lib/src
-      MemorySize: 128
+      MemorySize: 256
       Layers: [!Ref LambdaLayer]
       Environment:
         Variables:

@@ -9,7 +9,6 @@ import { LyricsAccess } from 'src/access/LyricsAccess';
 import { ProjectAccess } from 'src/access/ProjectAccess';
 import { ProjectUserAccess } from 'src/access/ProjectUserAccess';
 import { TrackAccess } from 'src/access/TrackAccess';
-import { UserAccess } from 'src/access/UserAccess';
 import { ViewCreationExploreAccess } from 'src/access/ViewCreationExploreAccess';
 import {
   GetExploreFeaturedResponse,
@@ -41,9 +40,6 @@ export class ExploreService {
 
   @inject(ViewCreationExploreAccess)
   private readonly viewCreationExploreAccess!: ViewCreationExploreAccess;
-
-  @inject(UserAccess)
-  private readonly userAccess!: UserAccess;
 
   @inject(ProjectUserAccess)
   private readonly projectUserAccess!: ProjectUserAccess;
@@ -136,40 +132,36 @@ export class ExploreService {
         where: { projectId: In(projectIds), role: Not(Role.Rejected) },
       });
 
-    const data = await Promise.all(
-      creations.map(async (v) => {
-        const fileUrl = this.awsService.getS3SignedUrl(v.fileUri);
-        const tabFileUrl = this.awsService.getS3SignedUrl(v.tabFileUri);
-        const coverFileUrl = this.awsService.getS3SignedUrl(
-          v.info.coverFileUri
-        );
+    const data = creations.map((v) => {
+      const fileUrl = this.awsService.getS3SignedUrl(v.fileUri);
+      const tabFileUrl = this.awsService.getS3SignedUrl(v.tabFileUri);
+      const coverFileUrl = this.awsService.getS3SignedUrl(v.info.coverFileUri);
 
-        let user: GetExploreResponse[0]['user'] = [];
-        if (v.type !== Type.Song && v.user !== null)
-          user = [
-            {
-              ...v.user,
-              avatarUrl: this.awsService.getS3SignedUrl(v.user.avatar),
-            },
-          ];
-        else if (pu !== null)
-          user = pu
-            .filter((o) => o.projectId === v.projectId)
-            .map((o) => ({
-              ...o.user,
-              avatarUrl: this.awsService.getS3SignedUrl(o.user.avatar),
-            }));
+      let user: GetExploreResponse[0]['user'] = [];
+      if (v.type !== Type.Song && v.user !== null)
+        user = [
+          {
+            ...v.user,
+            avatarUrl: this.awsService.getS3SignedUrl(v.user.avatar),
+          },
+        ];
+      else if (pu !== null)
+        user = pu
+          .filter((o) => o.projectId === v.projectId)
+          .map((o) => ({
+            ...o.user,
+            avatarUrl: this.awsService.getS3SignedUrl(o.user.avatar),
+          }));
 
-        return {
-          ...v,
-          fileUrl,
-          tabFileUrl,
-          user,
-          info: { ...v.info, coverFileUrl },
-          like: likedId === null ? false : likedId.has(v.id),
-        };
-      })
-    );
+      return {
+        ...v,
+        fileUrl,
+        tabFileUrl,
+        user,
+        info: { ...v.info, coverFileUrl },
+        like: likedId === null ? false : likedId.has(v.id),
+      };
+    });
 
     return { data, paginate: { limit, offset, count } };
   }

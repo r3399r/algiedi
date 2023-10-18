@@ -1,16 +1,10 @@
 import { inject, injectable } from 'inversify';
 import { In } from 'typeorm';
 import { DbAccess } from 'src/access/DbAccess';
-// import { FollowAccess } from 'src/access/FollowAccess';
 import { LikeAccess } from 'src/access/LikeAccess';
 import { UserAccess } from 'src/access/UserAccess';
 import { ViewCreationExploreAccess } from 'src/access/ViewCreationExploreAccess';
-import {
-  GetMeResponse,
-  // GetMeSocialResponse,
-  PutMeRequest,
-  PutMeResponse,
-} from 'src/model/api/Me';
+import { GetMeResponse, PutMeRequest, PutMeResponse } from 'src/model/api/Me';
 import { cognitoSymbol } from 'src/util/LambdaSetup';
 import { AwsService } from './AwsService';
 
@@ -30,9 +24,6 @@ export class MeService {
 
   @inject(LikeAccess)
   private readonly likeAccess!: LikeAccess;
-
-  // @inject(FollowAccess)
-  // private readonly followAccess!: FollowAccess;
 
   @inject(AwsService)
   private readonly awsService!: AwsService;

@@ -1,3 +1,4 @@
+import exploreEndpoint from 'src/api/exploreEndpoint';
 import meEndpoint from 'src/api/meEndpoint';
 import userEndpoint from 'src/api/userEndpoint';
 import { GetExploreResponse } from 'src/model/backend/api/Explore';
@@ -57,6 +58,54 @@ export const getSocials = async (): Promise<GetMeSocialResponse> => {
     dispatch(startWaiting());
 
     const res = await meEndpoint.getMeSocial();
+
+    return res.data;
+  } finally {
+    dispatch(finishWaiting());
+  }
+};
+
+export const getPublished = async (limit: string, offset: string) => {
+  try {
+    dispatch(startWaiting());
+
+    const res = await exploreEndpoint.getExploreAuth({
+      limit,
+      offset,
+      type: Type.Song,
+    });
+
+    return res.data;
+  } finally {
+    dispatch(finishWaiting());
+  }
+};
+
+export const getOriginal = async (limit: string, offset: string) => {
+  try {
+    dispatch(startWaiting());
+
+    const res = await exploreEndpoint.getExploreAuth({
+      limit,
+      offset,
+      type: [Type.Lyrics, Type.Track].join(),
+    });
+
+    return res.data;
+  } finally {
+    dispatch(finishWaiting());
+  }
+};
+
+export const getInspiration = async (limit: string, offset: string) => {
+  try {
+    dispatch(startWaiting());
+
+    const res = await exploreEndpoint.getExploreAuth({
+      limit,
+      offset,
+      type: [Type.Lyrics, Type.Track].join(),
+    });
 
     return res.data;
   } finally {
