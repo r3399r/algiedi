@@ -1,28 +1,17 @@
-import { Role } from './constant/Project';
-import { Project } from './entity/ProjectEntity';
+import { ProjectUser } from './entity/ProjectUserEntity';
 import { User } from './entity/UserEntity';
 import { ViewCreation } from './entity/ViewCreationEntity';
 import { ViewCreationExplore } from './entity/ViewCreationExploreEntity';
 
-export type DetailedProject = Project & {
-  name: string | null;
-  description: string | null;
-  theme: string | null;
-  genre: string | null;
-  language: string | null;
-  caption: string | null;
-  coverFileUri: string | null;
-  coverFileUrl: string | null;
-  song: DetailedCreation | null;
-  collaborators: {
-    id: string;
+export type DetailedProject = DetailedCreation & {
+  collaborators: (Pick<
+    ProjectUser,
+    'id' | 'user' | 'role' | 'isAccepted' | 'isReady'
+  > & {
     user: User & { avatarUrl: string | null };
-    role: Role;
-    isAccepted: boolean | null;
-    isReady: boolean | null;
     track: DetailedCreation | null;
     lyrics: DetailedCreation | null;
-  }[];
+  })[];
 };
 
 export type DetailedCreation = ViewCreation & {

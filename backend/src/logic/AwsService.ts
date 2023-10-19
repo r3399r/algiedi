@@ -1,4 +1,5 @@
 import { ApiGatewayManagementApi, S3 } from 'aws-sdk';
+import { fromBuffer } from 'file-type';
 import { inject, injectable } from 'inversify';
 import { WebsocketMessage } from 'src/model/api/Ws';
 
@@ -26,9 +27,7 @@ export class AwsService {
 
   public async s3Upload(data: string, filename: string) {
     const buffer = Buffer.from(data, 'base64');
-    // workaround for ES module
-    const { fileTypeFromBuffer } = require('file-type'); // eslint-disable-line
-    const res = await fileTypeFromBuffer(buffer);
+    const res = await fromBuffer(buffer);
     const bucket = `${process.env.PROJECT}-${process.env.ENVR}-storage`;
     const key = `${filename}.${res?.ext}`;
 

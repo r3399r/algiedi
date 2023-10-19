@@ -6,7 +6,7 @@ import { Track } from 'src/model/entity/TrackEntity';
 import { User } from 'src/model/entity/UserEntity';
 import { ViewCreationExplore } from 'src/model/entity/ViewCreationExploreEntity';
 import { PaginationParams } from 'src/model/Pagination';
-import { DetailedCreation, ExtendedCreation } from 'src/model/Project';
+import { ExtendedCreation } from 'src/model/Project';
 
 // params: type is string of lyrics, track or song divided by comma
 export type GetExploreParams = PaginationParams & {
@@ -70,19 +70,6 @@ export type GetExploreIdResponse = Omit<
   info: Info & { coverFileUrl: string | null };
   inspired: ExtendedCreation[];
   inspiration: ExtendedCreation[];
-  like: boolean;
-  likeCount: number;
-  comments: {
-    user: (User & { avatarUrl: string | null }) | null;
-    comment: string;
-    timestamp: string | null;
-  }[];
-};
-
-export type GetExploreIdResponseOld = DetailedCreation & {
-  author: (User & { following: boolean | null; avatarUrl: string | null })[];
-  inspired: DetailedCreation[];
-  inspiration: DetailedCreation[];
   like: boolean;
   likeCount: number;
   comments: {

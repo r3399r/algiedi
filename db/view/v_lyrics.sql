@@ -1,18 +1,12 @@
 CREATE OR REPLACE VIEW v_lyrics AS
-select l.*,
-    i.name,
-    i.description,
-    i.theme,
-    i.genre,
-    i.language,
-    i.caption,
-    i.cover_file_uri,
-    latest_lyrics.lyrics_text,
-    u.username,
-    p.status as project_status,
-    p.started_at as project_started_at,
-    p.created_at as project_created_at,
-    p.updated_at as project_updated_at
+select l.id,
+    l.user_id,
+    l.info_id,
+    l.project_id,
+    l.inspired_id,
+    l.created_at,
+    l.updated_at,
+    latest_lyrics.lyrics_text
 from lyrics l
     left join user u on l.user_id = u.id
     left join project p on l.project_id = p.id

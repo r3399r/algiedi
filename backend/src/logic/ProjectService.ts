@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { In } from 'typeorm';
+import { In, Not } from 'typeorm';
 import { ChatAccess } from 'src/access/ChatAccess';
 import { DbAccess } from 'src/access/DbAccess';
 import { InfoAccess } from 'src/access/InfoAccess';
@@ -30,7 +30,11 @@ import {
 } from 'src/model/entity/NotificationEntity';
 import { TrackEntity } from 'src/model/entity/TrackEntity';
 import { TrackHistoryEntity } from 'src/model/entity/TrackHistoryEntity';
-import { BadRequestError, InternalServerError } from 'src/model/error';
+import {
+  BadRequestError,
+  InternalServerError,
+  UnauthorizedError,
+} from 'src/model/error';
 import { DetailedCreation } from 'src/model/Project';
 import { compare } from 'src/util/compare';
 import { cognitoSymbol } from 'src/util/LambdaSetup';
@@ -92,78 +96,60 @@ export class ProjectService {
   }
 
   public async getMyProjects(): Promise<GetProjectResponse> {
-    const myProjectUser = await this.projectUserAccess.findByUserId(
-      this.cognitoUserId
-    );
-    const myProjectIds = new Set(
-      myProjectUser
-        .filter((v) => v.role !== Role.Rejected)
-        .map((v) => v.projectId)
-    );
-    const myProjects = (
-      await Promise.all(
-        [...myProjectIds].map(
-          async (v) => await this.projectAccess.findOneByIdOrFail(v)
-        )
-      )
-    ).filter((v) => v.status !== Status.Published);
+    const myProjectUser = await this.projectUserAccess.find({
+      where: {
+        userId: this.cognitoUserId,
+        project: { status: Not(Status.Published) },
+        role: Not(Role.Rejected),
+      },
+    });
+    const myProjectIds = myProjectUser.map((v) => v.projectId);
+    const allCreations = await this.viewCreationAccess.find({
+      where: {
+        projectId: In(myProjectIds),
+      },
+    });
+    const detailedAllCreations: DetailedCreation[] = allCreations.map((c) => ({
+      ...c,
+      fileUrl: this.awsService.getS3SignedUrl(c.fileUri),
+      tabFileUrl: this.awsService.getS3SignedUrl(c.tabFileUri),
+      coverFileUrl: this.awsService.getS3SignedUrl(c.info.coverFileUri),
+    }));
+    const relatedProjectUsers = await this.projectUserAccess.find({
+      where: {
+        projectId: In(myProjectIds),
+        role: Not(Role.Rejected),
+      },
+    });
 
-    return await Promise.all(
-      myProjects.map(async (project) => {
-        if (project.infoId === null)
-          throw new InternalServerError('info not found');
-        const projectUser = await this.projectUserAccess.findByProjectId(
-          project.id
-        );
-        const creations = await this.viewCreationAccess.findByProjectId(
-          project.id
-        );
+    return myProjectUser.map((pu) => {
+      if (pu.project.infoId === null)
+        throw new InternalServerError('info not found');
+      const detail = detailedAllCreations.find(
+        (o) => o.type === Type.Song && o.projectId === pu.projectId
+      );
+      if (detail === undefined)
+        throw new InternalServerError('project not found');
 
-        const detailedCreations: DetailedCreation[] = creations.map((c) => ({
-          ...c,
-          fileUrl: this.awsService.getS3SignedUrl(c.fileUri),
-          tabFileUrl: this.awsService.getS3SignedUrl(c.tabFileUri),
-          coverFileUrl: this.awsService.getS3SignedUrl(c.coverFileUri),
-        }));
-
-        const info = await this.infoAccess.findOneOrFailById(project.infoId);
-
-        return {
-          ...project,
-          name: info.name,
-          description: info.description,
-          theme: info.theme,
-          genre: info.genre,
-          language: info.language,
-          caption: info.caption,
-          coverFileUri: info.coverFileUri,
-          coverFileUrl: this.awsService.getS3SignedUrl(info.coverFileUri),
-          song: detailedCreations.find((o) => o.type === Type.Song) ?? null,
-          collaborators: await Promise.all(
-            projectUser
-              .filter((v) => v.role !== Role.Rejected)
-              .map(async (v) => {
-                const user = await this.userAccess.findOneByIdOrFail(v.userId);
-
-                return {
-                  id: v.id,
-                  user: {
-                    ...user,
-                    avatarUrl: this.awsService.getS3SignedUrl(user.avatar),
-                  },
-                  role: v.role,
-                  isAccepted: v.isAccepted,
-                  isReady: v.isReady,
-                  track:
-                    detailedCreations.find((o) => o.id === v.trackId) ?? null,
-                  lyrics:
-                    detailedCreations.find((o) => o.id === v.lyricsId) ?? null,
-                };
-              })
-          ),
-        };
-      })
-    );
+      return {
+        ...detail,
+        collaborators: relatedProjectUsers
+          .filter((o) => o.projectId === pu.projectId)
+          .map((o) => ({
+            id: o.id,
+            user: {
+              ...o.user,
+              avatarUrl: this.awsService.getS3SignedUrl(o.user.avatar),
+            },
+            role: o.role,
+            isAccepted: o.isAccepted,
+            isReady: o.isReady,
+            track: detailedAllCreations.find((c) => c.id === o.trackId) ?? null,
+            lyrics:
+              detailedAllCreations.find((c) => c.id === o.lyricsId) ?? null,
+          })),
+      };
+    });
   }
 
   public async updateProject(
@@ -173,27 +159,22 @@ export class ProjectService {
     try {
       await this.dbAccess.startTransaction();
 
+      const pu = await this.projectUserAccess.findByProjectId(id);
+
       // valiate owner
-      await this.projectUserAccess.findOneOrFail({
-        where: {
-          userId: this.cognitoUserId,
-          projectId: id,
-          role: Role.Owner,
-        },
-      });
+      const puOwner = pu.find((v) => v.role === Role.Owner);
+      if (puOwner === undefined || puOwner?.userId !== this.cognitoUserId)
+        throw new UnauthorizedError('Unauthorized');
 
       // check if name is duplicated
       const userCreation = await this.viewCreationAccess.findOne({
-        where: { name: data.name, userId: this.cognitoUserId },
+        where: { info: { name: data.name }, userId: this.cognitoUserId },
       });
       if (userCreation !== null && userCreation.projectId !== id)
         throw new BadRequestError('this name is already used');
 
-      const project = await this.projectAccess.findOneByIdOrFail(id);
-      if (project.infoId === null)
-        throw new InternalServerError('info not found');
-
-      const info = await this.infoAccess.findOneOrFailById(project.infoId);
+      const info = puOwner.project.info;
+      console.log(puOwner);
       info.name = data.name ?? info.name;
       info.description = data.description ?? info.description;
       info.theme = data.theme ?? info.theme;
@@ -203,17 +184,15 @@ export class ProjectService {
       await this.infoAccess.save(info);
 
       // notify
-      const projectUser = await this.projectUserAccess.findByProjectId(id);
-      for (const pu of projectUser) {
-        if (pu.userId === this.cognitoUserId) continue;
-        if (project.status === Status.Published) continue;
-        if (project.status === Status.InProgress && pu.role === Role.Rejected)
+      for (const v of pu) {
+        if (v.userId === this.cognitoUserId) continue;
+        if (v.project.status === Status.Published) continue;
+        if (v.project.status === Status.InProgress && v.role === Role.Rejected)
           continue;
-        const user = await this.userAccess.findOneByIdOrFail(pu.userId);
         await this.notificationService.notify(
           NotificationType.ProjectUpdated,
-          user,
-          project.id
+          v.user,
+          v.project.id
         );
       }
 

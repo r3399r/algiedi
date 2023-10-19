@@ -23,7 +23,7 @@ const Project = () => {
   if (thisProject === null) return <>Please upload a content first.</>;
   if (thisProject === undefined) return <>Loading...</>;
 
-  if (thisProject.status === Status.Created)
+  if (thisProject.project?.status === Status.Created)
     return <Prepare project={thisProject} doRefresh={() => setRefresh(!refresh)} />;
 
   return <Collaborate project={thisProject} doRefresh={() => setRefresh(!refresh)} />;

@@ -19,10 +19,10 @@ const Overall = () => {
       <div className="text-grey">{projects?.length} pieces</div>
       <div className="mt-10 text-[20px]">Open</div>
       <div className="text-grey">
-        {projects?.filter((v) => v.status === Status.Created).length} creations
+        {projects?.filter((v) => v.project?.status === Status.Created).length} creations
       </div>
       {projects
-        ?.filter((v) => v.status === Status.Created)
+        ?.filter((v) => v.project?.status === Status.Created)
         .map((v) => (
           <div
             key={v.id}
@@ -30,15 +30,15 @@ const Overall = () => {
             style={{ backgroundImage: v.coverFileUrl ? `url(${v.coverFileUrl})` : '' }}
             onClick={() => navigate(Page.Project, { state: { id: v.id } })}
           >
-            <div className="w-fit rounded-lg bg-grey/70 p-2">{v?.name}</div>
+            <div className="w-fit rounded-lg bg-grey/70 p-2">{v?.info.name}</div>
           </div>
         ))}
       <div className="mt-10 text-[20px]">Projects in Progress</div>
       <div className="text-grey">
-        {projects?.filter((v) => v.status === Status.InProgress).length} projects
+        {projects?.filter((v) => v.project?.status === Status.InProgress).length} projects
       </div>
       {projects
-        ?.filter((v) => v.status === Status.InProgress)
+        ?.filter((v) => v.project?.status === Status.InProgress)
         .map((v) => (
           <div
             key={v.id}
@@ -46,7 +46,7 @@ const Overall = () => {
             style={{ backgroundImage: v.coverFileUrl ? `url(${v.coverFileUrl})` : '' }}
             onClick={() => navigate(Page.Project, { state: { id: v.id } })}
           >
-            <div className="w-fit rounded-lg bg-grey/70 p-2">{v?.name}</div>
+            <div className="w-fit rounded-lg bg-grey/70 p-2">{v.info.name}</div>
           </div>
         ))}
     </>

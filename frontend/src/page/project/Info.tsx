@@ -20,11 +20,11 @@ const Info = ({ project, doRefresh, isOwner }: Props) => {
   const dispatch = useDispatch();
   const coverInputRef = useRef<HTMLInputElement>(null);
   const [isEdit, setIsEdit] = useState<boolean>(false);
-  const [name, setName] = useState<string>(project.name ?? '');
-  const [description, setDescription] = useState<string>(project.description ?? '');
-  const [theme, setTheme] = useState<string>(project.theme ?? '');
-  const [genre, setGenre] = useState<string>(project.genre ?? '');
-  const [language, setLanguage] = useState<string>(project.language ?? '');
+  const [name, setName] = useState<string>(project.info.name ?? '');
+  const [description, setDescription] = useState<string>(project.info.description ?? '');
+  const [theme, setTheme] = useState<string>(project.info.theme ?? '');
+  const [genre, setGenre] = useState<string>(project.info.genre ?? '');
+  const [language, setLanguage] = useState<string>(project.info.language ?? '');
   const [errorTheme, setErrorTheme] = useState<boolean>(false);
   const [errorGenre, setErrorGenre] = useState<boolean>(false);
   const [errorLanguage, setErrorLanguage] = useState<boolean>(false);

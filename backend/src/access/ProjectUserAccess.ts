@@ -18,7 +18,12 @@ export class ProjectUserAccess {
     const qr = await this.database.getQueryRunner();
 
     return await qr.manager.find<ProjectUser>(ProjectUserEntity.name, {
-      relations: { project: true, user: true, lyrics: true, track: true },
+      relations: {
+        project: { info: true },
+        user: true,
+        lyrics: { info: true },
+        track: { info: true },
+      },
       ...options,
     });
   }

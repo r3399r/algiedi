@@ -1,19 +1,13 @@
 CREATE OR REPLACE VIEW v_track AS
-select t.*,
-    i.name,
-    i.description,
-    i.theme,
-    i.genre,
-    i.language,
-    i.caption,
-    i.cover_file_uri,
+select t.id,
+    t.user_id,
+    t.info_id,
+    t.project_id,
+    t.inspired_id,
+    t.created_at,
+    t.updated_at,
     latest_track.file_uri,
-    latest_track.tab_file_uri,
-    u.username,
-    p.status as project_status,
-    p.started_at as project_started_at,
-    p.created_at as project_created_at,
-    p.updated_at as project_updated_at
+    latest_track.tab_file_uri
 from track t
     left join user u on t.user_id = u.id
     left join project p on t.project_id = p.id

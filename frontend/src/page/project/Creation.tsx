@@ -24,7 +24,7 @@ const Creation = ({ track, lyrics, isOwner, doRefresh, project, isParticipant = 
     <>
       {track && (
         <>
-          {isParticipant && <div className="mb-2">{track.name}</div>}
+          {isParticipant && <div className="mb-2">{track.info.name}</div>}
           <div className="mb-4 flex items-center gap-2">
             <audio src={track.fileUrl ?? undefined} controls />
             {track.tabFileUrl && (
@@ -40,7 +40,7 @@ const Creation = ({ track, lyrics, isOwner, doRefresh, project, isParticipant = 
         <div className="mb-4">
           <Accordion disableGutters defaultExpanded sx={{ border: 0 }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              {isParticipant ? lyrics.name : 'Lyrics'}
+              {isParticipant ? lyrics.info.name : 'Lyrics'}
             </AccordionSummary>
             <AccordionDetails>
               <div className="whitespace-pre">{lyrics.lyricsText}</div>

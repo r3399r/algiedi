@@ -17,15 +17,11 @@ type Props = {
 const CollaborateMaster = ({ project, doRefresh }: Props) => {
   const { id: userId } = useSelector((root: RootState) => root.me);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const masterCreation = useMemo(() => project.song, [project]);
   const owner = useMemo(
     () => project.collaborators.find((v) => v.role === Role.Owner)?.user,
     [project],
   );
-  const hasUploaded = useMemo(
-    () => masterCreation?.fileUrl || masterCreation?.lyricsText,
-    [masterCreation],
-  );
+  const hasUploaded = useMemo(() => project?.fileUrl || project?.lyricsText, [project]);
 
   if (!owner) return <></>;
 
@@ -36,20 +32,20 @@ const CollaborateMaster = ({ project, doRefresh }: Props) => {
         {hasUploaded && (
           <>
             <div className="mb-4 flex items-center gap-2">
-              {masterCreation?.fileUrl && <audio src={masterCreation.fileUrl} controls />}
-              {masterCreation?.tabFileUrl && (
+              {project.fileUrl && <audio src={project.fileUrl} controls />}
+              {project.tabFileUrl && (
                 <DownloadForOfflineIcon
                   className="cursor-pointer"
-                  onClick={() => window.open(masterCreation.tabFileUrl ?? '', '_blank')}
+                  onClick={() => window.open(project.tabFileUrl ?? '', '_blank')}
                 />
               )}
             </div>
-            {masterCreation?.lyricsText && (
+            {project.lyricsText && (
               <div className="mb-4">
                 <Accordion disableGutters defaultExpanded sx={{ border: 0 }}>
                   <AccordionSummary expandIcon={<ExpandMoreIcon />}>Lyrics</AccordionSummary>
                   <AccordionDetails>
-                    <div className="whitespace-pre">{masterCreation.lyricsText}</div>
+                    <div className="whitespace-pre">{project.lyricsText}</div>
                   </AccordionDetails>
                 </Accordion>
               </div>
@@ -69,8 +65,8 @@ const CollaborateMaster = ({ project, doRefresh }: Props) => {
       </div>
       <ModalMaster
         open={isModalOpen}
-        targetCreation={masterCreation}
-        targetProjectId={project.id}
+        targetCreation={project}
+        // targetProjectId={masterCreation.id}
         handleClose={() => setIsModalOpen(false)}
         doRefresh={doRefresh}
       />

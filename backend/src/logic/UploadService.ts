@@ -183,7 +183,7 @@ export class UploadService {
 
       // check if name is duplicated
       const userCreation = await this.viewCreationAccess.findOne({
-        where: { name: data.name, userId: this.cognitoUserId },
+        where: { info: { name: data.name }, userId: this.cognitoUserId },
       });
       if (userCreation !== null)
         throw new BadRequestError('this name is already used');
@@ -200,7 +200,7 @@ export class UploadService {
           throw new BadRequestError('track/lyrics not found');
 
         projectId = inspiredCreation.projectId;
-        canJoinProject = inspiredCreation.projectStatus === Status.Created;
+        canJoinProject = inspiredCreation.project?.status === Status.Created;
       } else {
         const tmpProject = new ProjectEntity();
         tmpProject.status = Status.Created;
@@ -228,7 +228,7 @@ export class UploadService {
         throw new InternalServerError('creation should exist');
 
       // add project-user pair if can join project and notify
-      if (canJoinProject) {
+      if (canJoinProject && projectId) {
         const pu = await this.projectUserAccess.findOne({
           where: { projectId, userId: this.cognitoUserId },
         });
@@ -375,24 +375,25 @@ export class UploadService {
       const creation = await this.viewCreationAccess.findOneByIdOrFail(
         creationId
       );
-      const projectUser = await this.projectUserAccess.findByProjectId(
-        creation.projectId
-      );
-
-      for (const pu of projectUser) {
-        if (pu.userId === this.cognitoUserId) continue;
-        if (creation.projectStatus === Status.Published) continue;
-        if (
-          creation.projectStatus === Status.InProgress &&
-          pu.role === Role.Rejected
-        )
-          continue;
-        const user = await this.userAccess.findOneByIdOrFail(pu.userId);
-        await this.notificationService.notify(
-          NotificationType.CreationUpdated,
-          user,
+      if (creation.projectId) {
+        const projectUser = await this.projectUserAccess.findByProjectId(
           creation.projectId
         );
+
+        for (const pu of projectUser) {
+          if (pu.userId === this.cognitoUserId) continue;
+          if (creation.project?.status === Status.Published) continue;
+          if (
+            creation.project?.status === Status.InProgress &&
+            pu.role === Role.Rejected
+          )
+            continue;
+          await this.notificationService.notify(
+            NotificationType.CreationUpdated,
+            pu.user,
+            creation.projectId
+          );
+        }
       }
 
       await this.dbAccess.commitTransaction();

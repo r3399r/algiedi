@@ -22,43 +22,39 @@ const ModalPublish = ({ open, handleClose, onPublish, project }: Props) => (
       <Cover url={project.coverFileUrl} />
       <div className="flex gap-2">
         <div className="w-[100px] font-bold">Name</div>
-        <div>{project.name}</div>
+        <div>{project.info.name}</div>
       </div>
       <div className="flex gap-2">
         <div className="w-[100px] font-bold">Description</div>
-        <div className="whitespace-pre">{project.description}</div>
+        <div className="whitespace-pre">{project.info.description}</div>
       </div>
       <div className="flex gap-2">
         <div className="w-[100px] font-bold">Theme</div>
-        <div>{project.theme}</div>
+        <div>{project.info.theme}</div>
       </div>
       <div className="flex gap-2">
         <div className="w-[100px] font-bold">Genre</div>
-        <div>{project.genre}</div>
+        <div>{project.info.genre}</div>
       </div>
       <div className="flex gap-2">
         <div className="w-[100px] font-bold">Language</div>
-        <div>{project.language}</div>
+        <div>{project.info.language}</div>
       </div>
-      {/* <div className="flex gap-2">
-        <div className="w-[100px] font-bold">Caption</div>
-        <div>{project.caption}</div>
-      </div> */}
       <div className="my-2 flex items-center gap-2">
-        <audio src={project.song?.fileUrl ?? undefined} controls />
-        {project.song?.tabFileUrl && (
+        <audio src={project.fileUrl ?? undefined} controls />
+        {project.tabFileUrl && (
           <DownloadForOfflineIcon
             className="cursor-pointer"
-            onClick={() => window.open(project.song?.tabFileUrl ?? '', '_blank')}
+            onClick={() => window.open(project.tabFileUrl ?? '', '_blank')}
           />
         )}
       </div>
-      {project.song?.lyricsText && (
+      {project.lyricsText && (
         <div className="mb-4">
           <Accordion disableGutters defaultExpanded sx={{ border: 0 }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>Lyrics</AccordionSummary>
             <AccordionDetails>
-              <div className="whitespace-pre">{project.song.lyricsText}</div>
+              <div className="whitespace-pre">{project.lyricsText}</div>
             </AccordionDetails>
           </Accordion>
         </div>

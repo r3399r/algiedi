@@ -43,8 +43,8 @@ const Collaborate = ({ project, doRefresh }: Props) => {
   const canPublish = useMemo(
     () =>
       project.collaborators.length === project.collaborators.filter((v) => v.isReady).length &&
-      project.song?.fileUrl !== null &&
-      project.song?.lyricsText !== null,
+      project.fileUrl !== null &&
+      project.lyricsText !== null,
     [project],
   );
 

@@ -11,7 +11,6 @@ type Props = {
   open: boolean;
   handleClose: () => void;
   targetCreation: DetailedCreation | null;
-  targetProjectId: string;
   doRefresh: () => void;
 };
 
@@ -94,7 +93,6 @@ const ModalMaster = ({ open, handleClose, targetCreation, doRefresh }: Props) =>
         <textarea
           className="my-2 h-[200px] w-full rounded border border-black px-2"
           value={lyrics}
-          defaultValue={targetCreation?.lyricsText ?? ''}
           onChange={(e) => setLyrics(e.target.value)}
         />
         <div className="text-right">
