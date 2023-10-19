@@ -92,7 +92,17 @@ const ExploreDetail = () => {
         <div className="ml-10 w-fit rounded-md bg-dark/30 p-4 text-white">
           <div>{creation.info.name}</div>
           <div>{creation.info.genre}</div>
-          <div>Publish Date: {format(new Date(creation.createdAt ?? ''), 'yyyy.MM.dd')}</div>
+          <div>
+            Publish Date:{' '}
+            {format(
+              new Date(
+                (creation.type === Type.Song
+                  ? creation.project?.publishedAt
+                  : creation.createdAt) ?? '',
+              ),
+              'yyyy.MM.dd',
+            )}
+          </div>
           <div className="flex gap-2">
             <FavoriteIcon color="primary" classes={{ colorPrimary: '!text-red' }} />
             <div>{creation.likeCount}</div>

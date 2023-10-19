@@ -252,7 +252,7 @@ export class ProjectService {
       await this.projectUserAccess.save(mePu);
 
       // notify
-      const project = await this.projectAccess.findOneByIdOrFail(projectId);
+      const project = await this.projectAccess.findOneOrFailById(projectId);
       for (const pu of projectUser) {
         if (pu.userId === this.cognitoUserId) continue;
         if (project.status === Status.Published) continue;
@@ -299,7 +299,7 @@ export class ProjectService {
     if (data.type === 'lyrics' && ownerProjectUser.trackId === null)
       throw new BadRequestError('there is no track');
 
-    const project = await this.projectAccess.findOneByIdOrFail(projectId);
+    const project = await this.projectAccess.findOneOrFailById(projectId);
 
     if (data.type === 'track' && ownerProjectUser.lyricsId) {
       const lyrics = await this.lyricsAccess.findOneOrFailById(
@@ -389,7 +389,7 @@ export class ProjectService {
       if (creation === null)
         throw new InternalServerError('creation not found');
 
-      const project = await this.projectAccess.findOneByIdOrFail(id);
+      const project = await this.projectAccess.findOneOrFailById(id);
       if (project.infoId === null)
         throw new InternalServerError('info not found');
       const info = await this.infoAccess.findOneOrFailById(project.infoId);
@@ -461,11 +461,12 @@ export class ProjectService {
       });
       if (projectHistory.length === 0) throw new BadRequestError('no content');
 
-      const project = await this.projectAccess.findOneByIdOrFail(id);
+      const project = await this.projectAccess.findOneOrFailById(id);
       if (project.status !== Status.InProgress)
         throw new BadRequestError('project is not in progress');
 
       project.status = Status.Published;
+      project.publishedAt = new Date().toISOString();
       await this.projectAccess.save(project);
 
       // notify
@@ -491,7 +492,7 @@ export class ProjectService {
     try {
       await this.dbAccess.startTransaction();
 
-      const project = await this.projectAccess.findOneByIdOrFail(id);
+      const project = await this.projectAccess.findOneOrFailById(id);
       if (project.infoId === null)
         throw new InternalServerError('no info found');
 

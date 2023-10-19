@@ -20,7 +20,7 @@ export class ProjectAccess {
     });
   }
 
-  public async findOneByIdOrFail(id: string) {
+  public async findOneOrFailById(id: string) {
     const qr = await this.database.getQueryRunner();
 
     return await qr.manager.findOneOrFail<Project>(ProjectEntity.name, {

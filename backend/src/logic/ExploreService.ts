@@ -123,14 +123,15 @@ export class ExploreService {
       findOptionsWhere.push({
         type: Type.Song,
         info: infoFilter,
-        project: { status: Status.Published },
-        createdAt: paginateFilter,
+        project: { status: Status.Published, publishedAt: paginateFilter },
       });
 
     const [creations, count] =
       await this.viewCreationExploreAccess.findAndCount({
         where: findOptionsWhere,
-        order: { createdAt: 'desc' },
+        order: type.includes(Type.Song)
+          ? { project: { publishedAt: 'desc' } }
+          : { createdAt: 'desc' },
         take: limit,
         skip: offset,
       });
@@ -193,6 +194,7 @@ export class ExploreService {
   public async getFeaturedExplore(): Promise<GetExploreFeaturedResponse> {
     const featuredSong = await this.projectAccess.find({
       order: { countLike: 'desc' },
+      take: 12,
     });
     const featuredLyrics = await this.lyricsAccess.find({
       where: { createdAt: MoreThan(subWeeks(new Date(), 8).toISOString()) },
@@ -204,7 +206,7 @@ export class ExploreService {
     });
 
     return {
-      song: featuredSong.slice(0, 12).map((v) => ({
+      song: featuredSong.map((v) => ({
         ...v,
         info: {
           ...v.info,

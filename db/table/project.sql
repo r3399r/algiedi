@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS project (
 	info_id VARCHAR(36) NOT NULL,
 	count_like INT NOT NULL,
 	started_at TIMESTAMP NULL,
+	published_at TIMESTAMP NULL,
 	created_at TIMESTAMP NULL,
 	updated_at TIMESTAMP NULL,
 	PRIMARY KEY (id ASC),

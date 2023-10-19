@@ -336,7 +336,7 @@ export class UploadService {
             role: Role.Owner,
           },
         });
-        const project = await this.projectAccess.findOneByIdOrFail(creationId);
+        const project = await this.projectAccess.findOneOrFailById(creationId);
 
         const projectHistory = new ProjectHistoryEntity();
         projectHistory.projectId = project.id;

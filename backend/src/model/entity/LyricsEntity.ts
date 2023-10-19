@@ -50,7 +50,7 @@ export class LyricsEntity implements Lyrics {
   inspiredId: string | null = null;
 
   @Column({ type: 'int', name: 'count_like' })
-  countLike!: string;
+  countLike = '0';
 
   @Column({ type: 'timestamp', name: 'created_at', default: null })
   createdAt!: string;
