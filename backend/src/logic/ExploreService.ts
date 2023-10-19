@@ -1,6 +1,16 @@
 import { subWeeks } from 'date-fns';
 import { inject, injectable } from 'inversify';
-import { FindOptionsWhere, In, IsNull, Like, MoreThan, Not } from 'typeorm';
+import {
+  Between,
+  FindOperator,
+  FindOptionsWhere,
+  In,
+  IsNull,
+  LessThan,
+  Like,
+  MoreThan,
+  Not,
+} from 'typeorm';
 import { CommentAccess } from 'src/access/CommentAccess';
 import { DbAccess } from 'src/access/DbAccess';
 import { FollowAccess } from 'src/access/FollowAccess';
@@ -84,23 +94,37 @@ export class ExploreService {
     };
     const projectFilter =
       params?.status === 'null' ? IsNull() : { status: params?.status };
+    let paginateFilter: FindOperator<string> | undefined = undefined;
+    if (params?.begin && params.end)
+      paginateFilter = Between(
+        new Date(params.begin).toISOString(),
+        new Date(params.end).toISOString()
+      );
+    else if (params?.begin)
+      paginateFilter = MoreThan(new Date(params.begin).toISOString());
+    else if (params?.end)
+      paginateFilter = LessThan(new Date(params.end).toISOString());
+
     if (type.includes(Type.Lyrics))
       findOptionsWhere.push({
         type: Type.Lyrics,
         info: infoFilter,
         project: projectFilter,
+        createdAt: paginateFilter,
       });
     if (type.includes(Type.Track))
       findOptionsWhere.push({
         type: Type.Track,
         info: infoFilter,
         project: projectFilter,
+        createdAt: paginateFilter,
       });
     if (type.includes(Type.Song))
       findOptionsWhere.push({
         type: Type.Song,
-        project: { status: Status.Published },
         info: infoFilter,
+        project: { status: Status.Published },
+        createdAt: paginateFilter,
       });
 
     const [creations, count] =

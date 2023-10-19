@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import Cover from 'src/component/Cover';
 import Select from 'src/component/Select';
 import SelectOption from 'src/component/SelectOption';
+import Tabs from 'src/component/Tabs';
 import { Page } from 'src/constant/Page';
 import { Genre, Theme } from 'src/constant/Property';
 import { GetExploreResponse } from 'src/model/backend/api/Explore';
@@ -29,13 +30,16 @@ const ExploreSong = () => {
   const [page, setPage] = useState<number>(1);
   const [offset, setOffset] = useState<number>(0);
   const [count, setCount] = useState<number>(0);
+  const [tab, setTab] = useState<number>(0);
 
   useEffect(() => {
-    getExploreSong(genre, theme, DEFAULT_LIMIT, String(offset)).then((res) => {
-      setSongs(res.data);
-      setCount(res.paginate.count);
-    });
-  }, [refresh, offset, genre, theme]);
+    getExploreSong({ genre, theme, limit: DEFAULT_LIMIT, offset: String(offset), tab }).then(
+      (res) => {
+        setSongs(res.data);
+        setCount(res.paginate.count);
+      },
+    );
+  }, [refresh, offset, genre, theme, tab]);
 
   const onLike = (id: string) => (e: MouseEvent<HTMLOrSVGElement>) => {
     e.stopPropagation();
@@ -81,6 +85,11 @@ const ExploreSong = () => {
           </Select>
         </div>
       </div>
+      <Tabs
+        labels={['All', 'This Week', 'This Month', 'This Year']}
+        onChange={(i) => setTab(i)}
+        defaultIndex={0}
+      />
       <div>
         {songs?.map((v) => (
           <div

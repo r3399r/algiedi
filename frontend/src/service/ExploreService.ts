@@ -1,3 +1,4 @@
+import { subMonths, subWeeks, subYears } from 'date-fns';
 import creationEndpoint from 'src/api/creationEndpoint';
 import exploreEndpoint from 'src/api/exploreEndpoint';
 import userEndpoint from 'src/api/userEndpoint';
@@ -38,22 +39,31 @@ export const getExplore = async () => {
   }
 };
 
-export const getExploreSong = async (
-  genre: string,
-  theme: string,
-  limit: string,
-  offset: string,
-) => {
+export const getExploreSong = async (params: {
+  genre: string;
+  theme: string;
+  limit: string;
+  offset: string;
+  tab: number;
+}) => {
   try {
     const { isLogin } = getState().ui;
     dispatch(startWaiting());
+    let begin: string | undefined = undefined;
+    let end: string | undefined = new Date().toISOString();
+    if (params.tab === 1) begin = subWeeks(new Date(), 1).toISOString();
+    else if (params.tab === 2) begin = subMonths(new Date(), 1).toISOString();
+    else if (params.tab === 3) begin = subYears(new Date(), 1).toISOString();
+    else end = undefined;
 
     const exploreParams: GetExploreParams = {
       type: Type.Song,
-      genre: genre === 'All' ? undefined : genre,
-      theme: theme === 'All' ? undefined : theme,
-      limit,
-      offset,
+      genre: params.genre === 'All' ? undefined : params.genre,
+      theme: params.theme === 'All' ? undefined : params.theme,
+      limit: params.limit,
+      offset: params.offset,
+      begin,
+      end,
     };
     const res = isLogin
       ? await exploreEndpoint.getExploreAuth(exploreParams)
