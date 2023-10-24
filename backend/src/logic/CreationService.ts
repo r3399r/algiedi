@@ -11,7 +11,6 @@ import { PostCreationIdCommentRequest } from 'src/model/api/Creation';
 import { Type } from 'src/model/constant/Creation';
 import { CommentEntity } from 'src/model/entity/CommentEntity';
 import { LikeEntity } from 'src/model/entity/LikeEntity';
-import { LyricsEntity } from 'src/model/entity/LyricsEntity';
 import { NotificationType } from 'src/model/entity/NotificationEntity';
 import { bn } from 'src/util/bignumber';
 import { cognitoSymbol } from 'src/util/LambdaSetup';

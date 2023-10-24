@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from 'src/component/Button';
 import Cover from 'src/component/Cover';
+import ExploreSearch from 'src/component/ExploreSearch';
 import Tabs from 'src/component/Tabs';
 import { GetExploreFeaturedResponse } from 'src/model/backend/api/Explore';
 import { getExploreFeatured } from 'src/service/ExploreService';
@@ -39,8 +40,9 @@ const Explore = () => {
   }, []);
 
   return (
-    <div className="mx-4 bg-[#fafafa]">
-      <div className="mb-4 flex items-center gap-4">
+    <div className="bg-[#fafafa] px-4">
+      <ExploreSearch />
+      <div className="my-4 flex items-center gap-4">
         <div className="text-xl font-bold">FEATURED SONGS</div>
         <Button size="s" color="transparent" onClick={() => navigate('song')}>
           More Songs

@@ -19,17 +19,21 @@ import { LyricsAccess } from 'src/access/LyricsAccess';
 import { ProjectAccess } from 'src/access/ProjectAccess';
 import { ProjectUserAccess } from 'src/access/ProjectUserAccess';
 import { TrackAccess } from 'src/access/TrackAccess';
+import { UserAccess } from 'src/access/UserAccess';
 import { ViewCreationExploreAccess } from 'src/access/ViewCreationExploreAccess';
 import {
   GetExploreFeaturedResponse,
   GetExploreIdResponse,
   GetExploreParams,
   GetExploreResponse,
+  GetExploreSearchParams,
+  GetExploreSearchResponse,
 } from 'src/model/api/Explore';
 import { Type } from 'src/model/constant/Creation';
 import { Role, Status } from 'src/model/constant/Project';
 import { ProjectUser } from 'src/model/entity/ProjectUserEntity';
 import { ViewCreationExplore } from 'src/model/entity/ViewCreationExploreEntity';
+import { BadRequestError } from 'src/model/error';
 import { Pagination } from 'src/model/Pagination';
 import { cognitoSymbol } from 'src/util/LambdaSetup';
 import { AwsService } from './AwsService';
@@ -71,6 +75,9 @@ export class ExploreService {
 
   @inject(ProjectAccess)
   private readonly projectAccess!: ProjectAccess;
+
+  @inject(UserAccess)
+  private readonly userAccess!: UserAccess;
 
   public async cleanup() {
     await this.dbAccess.cleanup();
@@ -193,6 +200,7 @@ export class ExploreService {
 
   public async getFeaturedExplore(): Promise<GetExploreFeaturedResponse> {
     const featuredSong = await this.projectAccess.find({
+      where: { status: Status.Published },
       order: { countLike: 'desc' },
       take: 12,
     });
@@ -279,6 +287,72 @@ export class ExploreService {
       },
     };
   }
+
+  public getExploresByKeyword = async (
+    params: GetExploreSearchParams | null
+  ): Promise<GetExploreSearchResponse> => {
+    if (params === null || !params.keyword)
+      throw new BadRequestError('missing keyword');
+
+    if (params.type === 'lyrics') {
+      const lyrics = await this.lyricsAccess.find({
+        where: { info: { name: Like(`%${params.keyword}%`) } },
+        order: { countLike: 'desc' },
+        take: 20,
+      });
+
+      return lyrics.map((v) => ({
+        ...v,
+        info: {
+          ...v.info,
+          coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
+        },
+      }));
+    }
+    if (params.type === 'track') {
+      const track = await this.trackAccess.find({
+        where: { info: { name: Like(`%${params.keyword}%`) } },
+        order: { countLike: 'desc' },
+        take: 20,
+      });
+
+      return track.map((v) => ({
+        ...v,
+        info: {
+          ...v.info,
+          coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
+        },
+      }));
+    }
+    if (params.type === 'user') {
+      const user = await this.userAccess.find({
+        where: { username: Like(`%${params.keyword}%`) },
+        take: 20,
+      });
+
+      return user.map((v) => ({
+        ...v,
+        avatarUrl: this.awsService.getS3SignedUrl(v.avatar),
+      }));
+    }
+
+    const song = await this.projectAccess.find({
+      order: { countLike: 'desc' },
+      where: {
+        status: Status.Published,
+        info: { name: Like(`%${params.keyword}%`) },
+      },
+      take: 20,
+    });
+
+    return song.map((v) => ({
+      ...v,
+      info: {
+        ...v.info,
+        coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
+      },
+    }));
+  };
 
   public async getExploreById(id: string): Promise<GetExploreIdResponse> {
     const creation = await this.viewCreationExploreAccess.findOneByIdOrFail(id);

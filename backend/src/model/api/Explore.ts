@@ -16,6 +16,23 @@ export type GetExploreParams = PaginationParams & {
   status?: Status | 'null';
 };
 
+export type GetExploreSearchParams = {
+  type?: string;
+  keyword?: string;
+};
+
+export type GetExploreSearchResponse =
+  | (Omit<Project, 'info'> & {
+      info: Info & { coverFileUrl: string | null };
+    })[]
+  | (Omit<Lyrics, 'info'> & {
+      info: Info & { coverFileUrl: string | null };
+    })[]
+  | (Omit<Track, 'info'> & {
+      info: Info & { coverFileUrl: string | null };
+    })[]
+  | (User & { avatarUrl: string | null })[];
+
 export type FilledCreation = Omit<ViewCreationExplore, 'user' | 'info'> & {
   fileUrl: string | null;
   tabFileUrl: string | null;
