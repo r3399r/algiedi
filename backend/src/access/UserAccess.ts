@@ -33,6 +33,12 @@ export class UserAccess {
     return await qr.manager.find<User>(UserEntity.name, options);
   }
 
+  public async findAndCount(options: FindManyOptions<User>) {
+    const qr = await this.database.getQueryRunner();
+
+    return await qr.manager.findAndCount<User>(UserEntity.name, options);
+  }
+
   public async save(data: User) {
     const qr = await this.database.getQueryRunner();
     const entity = new UserEntity();

@@ -74,7 +74,7 @@ const ExploreSearch = ({ className }: Props) => {
             pathname = `${Page.Explore}/idea`;
             search = createSearchParams({ keyword, tab: type }).toString();
           }
-          if (type === 'user') pathname = `${Page.Explore}`;
+          if (type === 'user') pathname = `${Page.Explore}/user`;
 
           navigate({ pathname, search });
           setOpen(false);

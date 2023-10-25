@@ -2,7 +2,11 @@ import { subMonths, subWeeks, subYears } from 'date-fns';
 import creationEndpoint from 'src/api/creationEndpoint';
 import exploreEndpoint from 'src/api/exploreEndpoint';
 import userEndpoint from 'src/api/userEndpoint';
-import { GetExploreParams, GetExploreResponse } from 'src/model/backend/api/Explore';
+import {
+  GetExploreParams,
+  GetExploreResponse,
+  GetExploreUserParams,
+} from 'src/model/backend/api/Explore';
 import { Type } from 'src/model/backend/constant/Creation';
 import { Status } from 'src/model/backend/constant/Project';
 import { setExplores } from 'src/redux/apiSlice';
@@ -116,6 +120,32 @@ export const getExploreIdea = async (params: {
     const res = isLogin
       ? await exploreEndpoint.getExploreAuth(exploreParams)
       : await exploreEndpoint.getExplore(exploreParams);
+
+    return res.data;
+  } finally {
+    dispatch(finishWaiting());
+  }
+};
+
+export const getExploreUser = async (params: {
+  limit: string;
+  offset: string;
+  keyword?: string;
+  role: string;
+}) => {
+  try {
+    const { isLogin } = getState().ui;
+    dispatch(startWaiting());
+
+    const exploreParams: GetExploreUserParams = {
+      keyword: params.keyword,
+      limit: params.limit,
+      offset: params.offset,
+      role: params.role === 'All' ? undefined : params.role,
+    };
+    const res = isLogin
+      ? await exploreEndpoint.getExploreUserAuth(exploreParams)
+      : await exploreEndpoint.getExploreUser(exploreParams);
 
     return res.data;
   } finally {

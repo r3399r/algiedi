@@ -14,6 +14,7 @@ import Explore from './page/explore';
 import ExploreDetail from './page/exploreDetail';
 import ExploreIdea from './page/exploreIdea';
 import ExploreSong from './page/exploreSong';
+import ExploreUser from './page/exploreUser';
 import Faq from './page/faq';
 import Home from './page/home';
 import Notification from './page/notification';
@@ -36,6 +37,7 @@ const AppRoutes = () => {
       <Route path={Page.Explore} element={<Explore />} />
       <Route path={`${Page.Explore}/song`} element={<ExploreSong />} />
       <Route path={`${Page.Explore}/idea`} element={<ExploreIdea />} />
+      <Route path={`${Page.Explore}/user`} element={<ExploreUser />} />
       <Route path={`${Page.Explore}/:id`} element={<ExploreDetail />} />
       <Route path={Page.Verify} element={<AuthVerify />} />
       {!isLogin && (

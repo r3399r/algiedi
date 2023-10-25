@@ -96,3 +96,13 @@ export type GetExploreIdResponse = Omit<
     timestamp: string | null;
   }[];
 };
+
+export type GetExploreUserParams = PaginationParams & {
+  role?: string;
+  keyword?: string;
+};
+
+export type GetExploreUserResponse = (User & {
+  following: boolean | null;
+  avatarUrl: string | null;
+})[];

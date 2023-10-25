@@ -28,6 +28,8 @@ import {
   GetExploreResponse,
   GetExploreSearchParams,
   GetExploreSearchResponse,
+  GetExploreUserParams,
+  GetExploreUserResponse,
 } from 'src/model/api/Explore';
 import { Type } from 'src/model/constant/Creation';
 import { Role, Status } from 'src/model/constant/Project';
@@ -464,5 +466,40 @@ export class ExploreService {
         timestamp: v.createdAt,
       })),
     };
+  }
+
+  public async getExploreUser(
+    params: GetExploreUserParams | null
+  ): Promise<Pagination<GetExploreUserResponse>> {
+    if (params === null || params.keyword === undefined)
+      throw new BadRequestError('missing keyword');
+
+    const limit = params?.limit ? Number(params.limit) : 50;
+    const offset = params?.offset ? Number(params.offset) : 0;
+
+    const [user, count] = await this.userAccess.findAndCount({
+      where: {
+        username: Like(`%${params.keyword}%`),
+        role: params.role ? Like(`%${params.role}%`) : undefined,
+      },
+      take: limit,
+      skip: offset,
+    });
+
+    let myFolloweeId: Set<string> | null = null;
+    if (this.cognitoUserId !== '') {
+      const myFollowees = await this.followAccess.find({
+        where: { followerId: this.cognitoUserId },
+      });
+      myFolloweeId = new Set(myFollowees.map((v) => v.followeeId));
+    }
+
+    const data = user.map((v) => ({
+      ...v,
+      following: myFolloweeId === null ? null : myFolloweeId.has(v.id),
+      avatarUrl: this.awsService.getS3SignedUrl(v.avatar),
+    }));
+
+    return { data, paginate: { limit, offset, count } };
   }
 }

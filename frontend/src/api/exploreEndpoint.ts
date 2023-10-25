@@ -5,6 +5,8 @@ import {
   GetExploreResponse,
   GetExploreSearchParams,
   GetExploreSearchResponse,
+  GetExploreUserParams,
+  GetExploreUserResponse,
 } from 'src/model/backend/api/Explore';
 import { Pagination } from 'src/model/backend/Pagination';
 import http from 'src/util/http';
@@ -14,6 +16,12 @@ const getExplore = async (params?: GetExploreParams) =>
 
 const getExploreAuth = async (params?: GetExploreParams) =>
   await http.authGet<Pagination<GetExploreResponse>>('explore/auth', { params });
+
+const getExploreUser = async (params?: GetExploreUserParams) =>
+  await http.get<Pagination<GetExploreUserResponse>>('explore/user', { params });
+
+const getExploreUserAuth = async (params?: GetExploreUserParams) =>
+  await http.authGet<Pagination<GetExploreUserResponse>>('explore/user/auth', { params });
 
 const getExploreFeatured = async () =>
   await http.get<GetExploreFeaturedResponse>('explore/featured');
@@ -29,6 +37,8 @@ const getExploreIdAuth = async (id: string) =>
 export default {
   getExplore,
   getExploreAuth,
+  getExploreUser,
+  getExploreUserAuth,
   getExploreFeatured,
   getExploreSearch,
   getExploreId,

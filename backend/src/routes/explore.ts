@@ -3,6 +3,7 @@ import { ExploreService } from 'src/logic/ExploreService';
 import {
   GetExploreParams,
   GetExploreSearchParams,
+  GetExploreUserParams,
 } from 'src/model/api/Explore';
 import { BadRequestError } from 'src/model/error';
 import { LambdaEvent } from 'src/model/Lambda';
@@ -19,6 +20,10 @@ export default async (lambdaEvent: LambdaEvent) => {
       return await listExplores();
     case '/api/explore/auth':
       return await listExplores();
+    case '/api/explore/user':
+      return await listUsers();
+    case '/api/explore/user/auth':
+      return await listUsers();
     case '/api/explore/featured':
       return await getFeaturedExplores();
     case '/api/explore/search':
@@ -37,6 +42,17 @@ const listExplores = async () => {
     case 'GET':
       return await service.getExplore(
         event.queryStringParameters as GetExploreParams | null
+      );
+  }
+
+  throw new Error('unexpected httpMethod');
+};
+
+const listUsers = async () => {
+  switch (event.httpMethod) {
+    case 'GET':
+      return await service.getExploreUser(
+        event.queryStringParameters as GetExploreUserParams | null
       );
   }
 
