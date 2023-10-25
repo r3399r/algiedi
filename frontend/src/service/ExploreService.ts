@@ -45,6 +45,7 @@ export const getExploreSong = async (params: {
   limit: string;
   offset: string;
   tab: number;
+  keyword?: string;
 }) => {
   try {
     const { isLogin } = getState().ui;
@@ -60,6 +61,7 @@ export const getExploreSong = async (params: {
       type: Type.Song,
       genre: params.genre === 'All' ? undefined : params.genre,
       theme: params.theme === 'All' ? undefined : params.theme,
+      keyword: params.keyword,
       limit: params.limit,
       offset: params.offset,
       begin,
@@ -93,6 +95,7 @@ export const getExploreIdea = async (params: {
   limit: string;
   offset: string;
   status: Status | 'All' | 'Null';
+  keyword?: string;
 }) => {
   try {
     const { isLogin } = getState().ui;
@@ -105,6 +108,7 @@ export const getExploreIdea = async (params: {
       type: params.type.join(),
       genre: params.genre === 'All' ? undefined : params.genre,
       theme: params.theme === 'All' ? undefined : params.theme,
+      keyword: params.keyword,
       status,
       limit: params.limit,
       offset: params.offset,

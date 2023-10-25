@@ -14,6 +14,7 @@ export type GetExploreParams = PaginationParams & {
   genre?: string;
   theme?: string;
   status?: Status | 'null';
+  keyword?: string;
 };
 
 export type GetExploreSearchParams = {

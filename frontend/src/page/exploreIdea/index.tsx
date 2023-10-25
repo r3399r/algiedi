@@ -10,6 +10,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Cover from 'src/component/Cover';
+import ExploreSearch from 'src/component/ExploreSearch';
 import Select from 'src/component/Select';
 import SelectOption from 'src/component/SelectOption';
 import Tabs from 'src/component/Tabs';
@@ -35,7 +36,7 @@ const statusMapping = {
 const ExploreIdea = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const query = useQuery<{ tab: string }>();
+  const query = useQuery<{ tab?: string; keyword?: string }>();
   const { isLogin } = useSelector((rootState: RootState) => rootState.ui);
   const [idea, setIdea] = useState<GetExploreResponse>();
   const [genre, setGenre] = useState<string>('All');
@@ -70,11 +71,12 @@ const ExploreIdea = () => {
       limit: DEFAULT_LIMIT,
       offset: String(offset),
       status,
+      keyword: query.keyword,
     }).then((res) => {
       setIdea(res.data);
       setCount(res.paginate.count);
     });
-  }, [type, refresh, offset, genre, theme, status]);
+  }, [type, refresh, offset, genre, theme, status, query.keyword]);
 
   const onLike = (id: string) => (e: MouseEvent<HTMLOrSVGElement>) => {
     e.stopPropagation();
@@ -96,7 +98,8 @@ const ExploreIdea = () => {
   };
 
   return (
-    <div className="mx-4 bg-[#fafafa]">
+    <div className="bg-[#fafafa] px-4">
+      <ExploreSearch />
       <div className="mb-4 text-xl font-bold">EXPLORE IDEA</div>
       <div className="mb-4 flex flex-wrap gap-4">
         <div className="flex items-center gap-2">

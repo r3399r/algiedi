@@ -7,11 +7,13 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Cover from 'src/component/Cover';
+import ExploreSearch from 'src/component/ExploreSearch';
 import Select from 'src/component/Select';
 import SelectOption from 'src/component/SelectOption';
 import Tabs from 'src/component/Tabs';
 import { Page } from 'src/constant/Page';
 import { Genre, Theme } from 'src/constant/Property';
+import useQuery from 'src/hook/useQuery';
 import { GetExploreResponse } from 'src/model/backend/api/Explore';
 import { RootState } from 'src/redux/store';
 import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
@@ -31,15 +33,21 @@ const ExploreSong = () => {
   const [offset, setOffset] = useState<number>(0);
   const [count, setCount] = useState<number>(0);
   const [tab, setTab] = useState<number>(0);
+  const { keyword } = useQuery<{ keyword?: string }>();
 
   useEffect(() => {
-    getExploreSong({ genre, theme, limit: DEFAULT_LIMIT, offset: String(offset), tab }).then(
-      (res) => {
-        setSongs(res.data);
-        setCount(res.paginate.count);
-      },
-    );
-  }, [refresh, offset, genre, theme, tab]);
+    getExploreSong({
+      genre,
+      theme,
+      limit: DEFAULT_LIMIT,
+      offset: String(offset),
+      tab,
+      keyword,
+    }).then((res) => {
+      setSongs(res.data);
+      setCount(res.paginate.count);
+    });
+  }, [refresh, offset, genre, theme, tab, keyword]);
 
   const onLike = (id: string) => (e: MouseEvent<HTMLOrSVGElement>) => {
     e.stopPropagation();
@@ -61,7 +69,8 @@ const ExploreSong = () => {
   };
 
   return (
-    <div className="mx-4 bg-[#fafafa]">
+    <div className="bg-[#fafafa] px-4">
+      <ExploreSearch />
       <div className="mb-4 text-xl font-bold">EXPLORE SONGS</div>
       <div className="mb-4 flex flex-wrap gap-4">
         <div className="flex items-center gap-2">

@@ -98,6 +98,7 @@ export class ExploreService {
     const infoFilter = {
       genre: params?.genre ? Like(`%${params.genre}%`) : undefined,
       theme: params?.theme ? Like(`%${params.theme}%`) : undefined,
+      name: params?.keyword ? Like(`%${params.keyword}%`) : undefined,
     };
     const projectFilter =
       params?.status === 'null' ? IsNull() : { status: params?.status };

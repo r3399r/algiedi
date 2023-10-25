@@ -2,8 +2,10 @@ import SearchIcon from '@mui/icons-material/Search';
 import { Popper } from '@mui/material';
 import classNames from 'classnames';
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { createSearchParams, useNavigate } from 'react-router-dom';
 import { Page } from 'src/constant/Page';
+import { openFailSnackbar } from 'src/redux/uiSlice';
 import { getExploreSearch } from 'src/service/ExploreService';
 import Cover from './Cover';
 import Input from './Input';
@@ -21,55 +23,92 @@ const ExploreSearch = ({ className }: Props) => {
   const [type, setType] = useState<string>('song');
   const [items, setItems] = useState<{ id: string; url: string | null; name: string | null }[]>();
   const [open, setOpen] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const dispatch = useDispatch();
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (keyword.length === 0) return;
+    let unamounted = false;
+    setItems(undefined);
+    if (keyword.length === 0) {
+      setLoading(false);
+
+      return;
+    }
+    setLoading(true);
     const timer = setTimeout(() => {
-      getExploreSearch(keyword, type).then((res) => {
-        setItems(
-          res.data.map((v) => {
-            if ('avatarUrl' in v) return { id: v.id, url: v.avatarUrl, name: v.username };
-            else return { id: v.id, url: v.info.coverFileUrl, name: v.info.name };
-          }),
-        );
-      });
+      getExploreSearch(keyword, type)
+        .then((res) => {
+          if (!unamounted)
+            setItems(
+              res.data.map((v) => {
+                if ('avatarUrl' in v) return { id: v.id, url: v.avatarUrl, name: v.username };
+                else return { id: v.id, url: v.info.coverFileUrl, name: v.info.name };
+              }),
+            );
+        })
+        .catch((e) => dispatch(openFailSnackbar(e)))
+        .finally(() => setLoading(false));
     }, 500);
 
-    return () => clearTimeout(timer);
+    return () => {
+      unamounted = true;
+      clearTimeout(timer);
+    };
   }, [keyword, type]);
 
   useEffect(() => {
-    if (items && items.length > 0) setOpen(true);
+    if (items || loading) setOpen(true);
     else setOpen(false);
-  }, [items]);
+  }, [items, loading]);
 
   return (
     <div className={classNames('flex items-center gap-4 py-4', className)}>
-      <div className="flex items-center" ref={ref}>
-        <SearchIcon />
-        <Input
-          placeholder="Search"
-          className="h-[40px]"
-          value={keyword}
-          onChange={(e) => setKeyword(e.target.value)}
-        />
-      </div>
-      <Popper open={open} anchorEl={ref.current}>
-        <div className="rounded bg-[#fafafa] shadow-lg">
-          {items &&
-            items.map((v) => (
-              <ListItem
-                key={v.id}
-                className="flex items-center gap-2"
-                onClick={() => navigate(`${Page.Explore}/${v.id}`)}
-              >
-                <Cover url={v.url} size={40} />
-                <div>{v.name}</div>
-              </ListItem>
-            ))}
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (keyword.length === 0) return;
+          let pathname = `${Page.Explore}/song`;
+          let search = createSearchParams({ keyword }).toString();
+          if (type === 'track' || type === 'lyrics') {
+            pathname = `${Page.Explore}/idea`;
+            search = createSearchParams({ keyword, tab: type }).toString();
+          }
+          if (type === 'user') pathname = `${Page.Explore}`;
+
+          navigate({ pathname, search });
+          setOpen(false);
+        }}
+      >
+        <div className="flex items-center" ref={ref}>
+          <SearchIcon />
+          <Input
+            onBlur={() => setOpen(false)}
+            placeholder="Search"
+            className="h-[40px]"
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+          />
         </div>
-      </Popper>
+        <Popper open={open} anchorEl={ref.current}>
+          <div className="rounded bg-[#fafafa] shadow-lg">
+            {loading && <ListItem>Loading...</ListItem>}
+            {items && items.length === 0 && <ListItem>(No {type} found)</ListItem>}
+            {items &&
+              items.length > 0 &&
+              items.map((v) => (
+                <ListItem
+                  key={v.id}
+                  className="flex items-center gap-2"
+                  onClick={() => navigate(`${Page.Explore}/${v.id}`)}
+                >
+                  <Cover url={v.url} size={40} />
+                  <div>{v.name}</div>
+                </ListItem>
+              ))}
+          </div>
+        </Popper>
+      </form>
       <Select defaultValue={type} onChange={(v) => setType(v)}>
         <SelectOption value="song">Song</SelectOption>
         <SelectOption value="track">Track</SelectOption>
