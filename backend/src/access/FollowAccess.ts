@@ -20,6 +20,15 @@ export class FollowAccess {
     });
   }
 
+  public async findOne(options: FindOneOptions<Follow>) {
+    const qr = await this.database.getQueryRunner();
+
+    return await qr.manager.findOne<Follow>(FollowEntity.name, {
+      relations: { followee: true, follower: true },
+      ...options,
+    });
+  }
+
   public async findOneOrFail(options: FindOneOptions<Follow>) {
     const qr = await this.database.getQueryRunner();
 

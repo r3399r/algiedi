@@ -168,6 +168,18 @@ export const getExploreById = async (id: string) => {
   }
 };
 
+export const getUserById = async (id: string) => {
+  try {
+    dispatch(startWaiting());
+
+    const res = await exploreEndpoint.getExploreUserId(id);
+
+    return res.data;
+  } finally {
+    dispatch(finishWaiting());
+  }
+};
+
 export const likeById = async (id: string) => {
   try {
     dispatch(startWaiting());

@@ -4,7 +4,6 @@ export enum Page {
   Faq = '/faq',
   ContatUs = '/contact-us',
   Explore = '/explore',
-  User = '/user',
   Login = '/auth/login',
   Register = '/auth/register',
   Confirmation = '/auth/confirmation',

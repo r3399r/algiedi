@@ -13,19 +13,14 @@ import Avatar from 'src/component/Avatar';
 import Button from 'src/component/Button';
 import Cover from 'src/component/Cover';
 import Divider from 'src/component/Divider';
+import ExploreSearch from 'src/component/ExploreSearch';
+import FollowButton from 'src/component/FollowButton';
 import { Page } from 'src/constant/Page';
 import { GetExploreIdResponse } from 'src/model/backend/api/Explore';
 import { Type } from 'src/model/backend/constant/Creation';
 import { RootState } from 'src/redux/store';
 import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
-import {
-  commentById,
-  followByUserId,
-  getExploreById,
-  likeById,
-  unfollowByUserId,
-  unlikeById,
-} from 'src/service/ExploreService';
+import { commentById, getExploreById, likeById, unlikeById } from 'src/service/ExploreService';
 
 const ExploreDetail = () => {
   const navigate = useNavigate();
@@ -64,24 +59,15 @@ const ExploreDetail = () => {
       .catch((err) => dispatch(openFailSnackbar(err)));
   };
 
-  const onFollow = (userId: string) => () => {
-    followByUserId(userId)
-      .then(() => setRefresh(!refresh))
-      .catch((err) => dispatch(openFailSnackbar(err)));
-  };
-
-  const onUnfollow = (userId: string) => () => {
-    unfollowByUserId(userId)
-      .then(() => setRefresh(!refresh))
-      .catch((err) => dispatch(openFailSnackbar(err)));
-  };
-
   if (!creation) return <>loading...</>;
 
   return (
     <>
+      <div className="ml-10">
+        <ExploreSearch />
+      </div>
       <div onClick={() => navigate(-1)} className="my-4 ml-10 cursor-pointer">
-        Back
+        {'<Back'}
       </div>
       <div
         className="flex h-[200px] items-center bg-blue/30 bg-center"
@@ -158,41 +144,38 @@ const ExploreDetail = () => {
         {creation.type === Type.Song && (
           <div className="flex w-1/2 flex-col gap-3">
             {creation.user.map((v) => (
-              <div key={v.id} className="flex items-center gap-5">
+              <div
+                key={v.id}
+                className="flex w-fit cursor-pointer items-center gap-5"
+                onClick={() => navigate(`${Page.Explore}/user/${v.id}`)}
+              >
                 <Avatar url={v.avatarUrl} size={80} />
                 <div>{v.username}</div>
-                <div>
-                  <Button
-                    size="s"
-                    disabled={v.following === null}
-                    onClick={v.following === true ? onUnfollow(v.id) : onFollow(v.id)}
-                  >
-                    {v.following === true ? 'Unfollow' : 'Follow'}
-                  </Button>
-                </div>
+                <FollowButton
+                  id={v.id}
+                  following={v.following}
+                  doRefresh={() => setRefresh(!refresh)}
+                />
               </div>
             ))}
           </div>
         )}
         {creation.type !== Type.Song && (
-          <div className="flex w-1/2 items-center gap-5">
-            <Avatar url={creation.user[0].avatarUrl} size={80} />
-            <div>
-              <div>{creation.user[0].username}</div>
-              <div className="text-sm text-grey">{creation.user[0].role}</div>
-            </div>
-            <div>
-              <Button
-                size="s"
-                disabled={creation.user[0].following === null}
-                onClick={
-                  creation.user[0].following === true
-                    ? onUnfollow(creation.user[0].id)
-                    : onFollow(creation.user[0].id)
-                }
-              >
-                {creation.user[0].following === true ? 'Unfollow' : 'Follow'}
-              </Button>
+          <div className="w-1/2">
+            <div
+              className="flex w-fit cursor-pointer items-center gap-5"
+              onClick={() => navigate(`${Page.Explore}/user/${creation.user[0].id}`)}
+            >
+              <Avatar url={creation.user[0].avatarUrl} size={80} />
+              <div>
+                <div>{creation.user[0].username}</div>
+                <div className="text-sm text-grey">{creation.user[0].role}</div>
+              </div>
+              <FollowButton
+                id={creation.user[0].id}
+                following={creation.user[0].following}
+                doRefresh={() => setRefresh(!refresh)}
+              />
             </div>
           </div>
         )}

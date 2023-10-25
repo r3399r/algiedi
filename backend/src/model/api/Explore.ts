@@ -106,3 +106,10 @@ export type GetExploreUserResponse = (User & {
   following: boolean | null;
   avatarUrl: string | null;
 })[];
+
+export type GetExploreUserIdResponse = User & {
+  avatarUrl: string | null;
+  song: (Omit<Project, 'info'> & {
+    info: Info & { coverFileUrl: string | null };
+  })[];
+};

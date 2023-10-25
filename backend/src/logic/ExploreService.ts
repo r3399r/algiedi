@@ -28,6 +28,7 @@ import {
   GetExploreResponse,
   GetExploreSearchParams,
   GetExploreSearchResponse,
+  GetExploreUserIdResponse,
   GetExploreUserParams,
   GetExploreUserResponse,
 } from 'src/model/api/Explore';
@@ -501,5 +502,29 @@ export class ExploreService {
     }));
 
     return { data, paginate: { limit, offset, count } };
+  }
+
+  public async getUserById(id: string): Promise<GetExploreUserIdResponse> {
+    const user = await this.userAccess.findOneByIdOrFail(id);
+
+    const projectUser = await this.projectUserAccess.find({
+      where: { project: { status: Status.Published }, userId: id },
+      order: { project: { publishedAt: 'desc' } },
+      take: 6,
+    });
+
+    return {
+      ...user,
+      avatarUrl: this.awsService.getS3SignedUrl(user.avatar),
+      song: projectUser.map((v) => ({
+        ...v.project,
+        info: {
+          ...v.project.info,
+          coverFileUrl: this.awsService.getS3SignedUrl(
+            v.project.info.coverFileUri
+          ),
+        },
+      })),
+    };
   }
 }

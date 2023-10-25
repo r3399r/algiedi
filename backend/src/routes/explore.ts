@@ -32,6 +32,8 @@ export default async (lambdaEvent: LambdaEvent) => {
       return await findExplore();
     case '/api/explore/{id}/auth':
       return await findExplore();
+    case '/api/explore/user/{id}':
+      return await findUser();
   }
 
   throw new BadRequestError('unexpected resource');
@@ -85,6 +87,17 @@ const findExplore = async () => {
   switch (event.httpMethod) {
     case 'GET':
       return await service.getExploreById(event.pathParameters.id);
+  }
+
+  throw new Error('unexpected httpMethod');
+};
+
+const findUser = async () => {
+  if (event.pathParameters === null)
+    throw new BadRequestError('pathParameters should not be empty');
+  switch (event.httpMethod) {
+    case 'GET':
+      return await service.getUserById(event.pathParameters.id);
   }
 
   throw new Error('unexpected httpMethod');

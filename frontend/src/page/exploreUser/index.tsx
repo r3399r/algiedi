@@ -1,10 +1,9 @@
 import { Pagination } from '@mui/material';
-import { ChangeEvent, MouseEvent, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Button from 'src/component/Button';
 import Cover from 'src/component/Cover';
 import ExploreSearch from 'src/component/ExploreSearch';
+import FollowButton from 'src/component/FollowButton';
 import Select from 'src/component/Select';
 import SelectOption from 'src/component/SelectOption';
 import { Page } from 'src/constant/Page';
@@ -15,17 +14,13 @@ import IcInstagram from 'src/image/ic-instagram.svg';
 import IcSoundcloud from 'src/image/ic-soundcloud.svg';
 import IcYoutube from 'src/image/ic-youtube.svg';
 import { GetExploreUserResponse } from 'src/model/backend/api/Explore';
-import { RootState } from 'src/redux/store';
-import { openFailSnackbar } from 'src/redux/uiSlice';
-import { followByUserId, getExploreUser, unfollowByUserId } from 'src/service/ExploreService';
+import { getExploreUser } from 'src/service/ExploreService';
 
 const DEFAULT_LIMIT = '10';
 
 const ExploreUser = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const query = useQuery<{ tab?: string; keyword?: string }>();
-  const { isLogin } = useSelector((rootState: RootState) => rootState.ui);
   const [user, setUser] = useState<GetExploreUserResponse>();
   const [role, setRole] = useState<string>('All');
   const [refresh, setRefresh] = useState<boolean>();
@@ -44,20 +39,6 @@ const ExploreUser = () => {
       setCount(res.paginate.count);
     });
   }, [refresh, offset, role, query.keyword]);
-
-  const onFollow = (id: string) => (e: MouseEvent<HTMLOrSVGElement>) => {
-    e.stopPropagation();
-    followByUserId(id)
-      .then(() => setRefresh(!refresh))
-      .catch((err) => dispatch(openFailSnackbar(err)));
-  };
-
-  const onUnfollow = (id: string) => (e: MouseEvent<HTMLOrSVGElement>) => {
-    e.stopPropagation();
-    unfollowByUserId(id)
-      .then(() => setRefresh(!refresh))
-      .catch((err) => dispatch(openFailSnackbar(err)));
-  };
 
   const handlePaginationChange = (event: ChangeEvent<unknown>, value: number) => {
     setPage(value);
@@ -83,7 +64,7 @@ const ExploreUser = () => {
           <div
             key={v.id}
             className="relative flex w-[calc(50%-12px)] cursor-pointer items-center gap-2 rounded-xl bg-white p-4 hover:bg-blue/30"
-            onClick={() => navigate(`${Page.Explore}/${v.id}`)}
+            onClick={() => navigate(`${Page.Explore}/user/${v.id}`)}
           >
             <div className="flex w-1/3 flex-col items-center">
               <Cover url={v.avatarUrl} size={100} />
@@ -109,23 +90,11 @@ const ExploreUser = () => {
               <div className="text-xs">{v.bio}</div>
             </div>
             <div className="absolute bottom-4 right-4 flex">
-              <div>
-                {isLogin ? (
-                  v.following ? (
-                    <Button size="s" onClick={onUnfollow(v.id)}>
-                      Unfollow
-                    </Button>
-                  ) : (
-                    <Button size="s" onClick={onFollow(v.id)}>
-                      Follow
-                    </Button>
-                  )
-                ) : (
-                  <Button size="s" disabled>
-                    Follow
-                  </Button>
-                )}
-              </div>
+              <FollowButton
+                id={v.id}
+                following={v.following}
+                doRefresh={() => setRefresh(!refresh)}
+              />
             </div>
           </div>
         ))}

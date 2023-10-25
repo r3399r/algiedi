@@ -5,6 +5,7 @@ import {
   GetExploreResponse,
   GetExploreSearchParams,
   GetExploreSearchResponse,
+  GetExploreUserIdResponse,
   GetExploreUserParams,
   GetExploreUserResponse,
 } from 'src/model/backend/api/Explore';
@@ -34,6 +35,9 @@ const getExploreId = async (id: string) => await http.get<GetExploreIdResponse>(
 const getExploreIdAuth = async (id: string) =>
   await http.authGet<GetExploreIdResponse>(`explore/${id}/auth`);
 
+const getExploreUserId = async (id: string) =>
+  await http.get<GetExploreUserIdResponse>(`explore/user/${id}`);
+
 export default {
   getExplore,
   getExploreAuth,
@@ -43,4 +47,5 @@ export default {
   getExploreSearch,
   getExploreId,
   getExploreIdAuth,
+  getExploreUserId,
 };

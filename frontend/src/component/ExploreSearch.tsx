@@ -65,6 +65,10 @@ const ExploreSearch = ({ className }: Props) => {
   return (
     <div className={classNames('flex items-center gap-4 py-4', className)}>
       <form
+        onBlur={() => {
+          setTimeout(() => setOpen(false), 100);
+        }}
+        onFocus={() => setOpen(true)}
         onSubmit={(e) => {
           e.preventDefault();
           if (keyword.length === 0) return;
@@ -83,7 +87,6 @@ const ExploreSearch = ({ className }: Props) => {
         <div className="flex items-center" ref={ref}>
           <SearchIcon />
           <Input
-            onBlur={() => setOpen(false)}
             placeholder="Search"
             className="h-[40px]"
             value={keyword}
@@ -100,7 +103,11 @@ const ExploreSearch = ({ className }: Props) => {
                 <ListItem
                   key={v.id}
                   className="flex items-center gap-2"
-                  onClick={() => navigate(`${Page.Explore}/${v.id}`)}
+                  onClick={() =>
+                    navigate(
+                      type === 'user' ? `${Page.Explore}/user/${v.id}` : `${Page.Explore}/${v.id}`,
+                    )
+                  }
                 >
                   <Cover url={v.url} size={40} />
                   <div>{v.name}</div>
