@@ -35,7 +35,7 @@ const Notification = () => {
 
   const onClick = (data: Type) => () => {
     if (!data.isRead) readNotification(data.id);
-    if (data.type === 'project-publish') navigate(`${Page.Explore}/${data.projectId}`);
+    if (data.type === 'project-publish') navigate(`${Page.Explore}/${data.targetId}`);
     else if (
       [
         'project-start',
@@ -49,8 +49,9 @@ const Notification = () => {
         'partner-not-ready',
       ].includes(data.type)
     )
-      navigate(`${Page.Project}`, { state: { id: data.projectId } });
-    else if (['like', 'comment'].includes(data.type)) navigate(`${Page.Explore}/${data.projectId}`);
+      navigate(`${Page.Project}`, { state: { id: data.targetId } });
+    else if (['like', 'comment'].includes(data.type))
+      navigate(`${Page.Explore}/user/${data.toUserId}`);
   };
 
   return (

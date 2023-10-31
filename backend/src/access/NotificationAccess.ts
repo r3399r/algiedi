@@ -18,7 +18,7 @@ export class NotificationAccess {
     const qr = await this.database.getQueryRunner();
 
     return await qr.manager.find<Notification>(NotificationEntity.name, {
-      relations: { toUser: true, fromUser: true, project: true },
+      relations: { toUser: true, fromUser: true },
       ...options,
     });
   }

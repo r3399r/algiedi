@@ -7,9 +7,6 @@ import {
   JoinColumn,
   ManyToOne,
 } from 'typeorm';
-import { Lyrics, LyricsEntity } from './LyricsEntity';
-import { Project, ProjectEntity } from './ProjectEntity';
-import { Track, TrackEntity } from './TrackEntity';
 import { User, UserEntity } from './UserEntity';
 
 export enum NotificationType {
@@ -37,10 +34,7 @@ export type Notification = {
   type: NotificationType;
   fromUserId: string;
   fromUser: User;
-  projectId: string | null;
-  project: Project | null;
-  lyricsId: string | null;
-  trackId: string | null;
+  targetId: string | null;
   createdAt: string | null;
   updatedAt: string | null;
 };
@@ -71,26 +65,8 @@ export class NotificationEntity implements Notification {
   @JoinColumn({ name: 'from_user_id' })
   fromUser!: User;
 
-  @Column({ type: 'uuid', name: 'project_id' })
-  projectId!: string | null;
-
-  @ManyToOne(() => ProjectEntity)
-  @JoinColumn({ name: 'project_id' })
-  project!: Project | null;
-
-  @Column({ type: 'uuid', name: 'lyrics_id' })
-  lyricsId!: string | null;
-
-  @ManyToOne(() => LyricsEntity)
-  @JoinColumn({ name: 'lyrics_id' })
-  lyrics!: Lyrics | null;
-
-  @Column({ type: 'uuid', name: 'track_id' })
-  trackId!: string | null;
-
-  @ManyToOne(() => TrackEntity)
-  @JoinColumn({ name: 'track_id' })
-  track!: Track | null;
+  @Column({ type: 'uuid', name: 'target_id' })
+  targetId!: string | null;
 
   @Column({ type: 'timestamp', name: 'created_at', default: null })
   createdAt!: string;
