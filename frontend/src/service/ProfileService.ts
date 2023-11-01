@@ -71,10 +71,9 @@ export const getOriginal = async (limit: string, offset: string) => {
   try {
     dispatch(startWaiting());
 
-    const res = await exploreEndpoint.getExploreAuth({
+    const res = await meEndpoint.getMeExhibitsOriginal({
       limit,
       offset,
-      type: [Type.Lyrics, Type.Track].join(),
     });
 
     return res.data;
@@ -87,10 +86,9 @@ export const getInspiration = async (limit: string, offset: string) => {
   try {
     dispatch(startWaiting());
 
-    const res = await exploreEndpoint.getExploreAuth({
+    const res = await meEndpoint.getMeExhibitsInspiration({
       limit,
       offset,
-      type: [Type.Lyrics, Type.Track].join(),
     });
 
     return res.data;

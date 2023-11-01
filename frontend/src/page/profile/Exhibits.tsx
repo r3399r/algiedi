@@ -1,27 +1,11 @@
 import { useState } from 'react';
 import Tabs from 'src/component/Tabs';
+import ExhibitInspiration from './ExhibitInspiration';
 import ExhibitOriginal from './ExhibitOriginal';
 import ExhibitPublish from './ExhibitPublish';
 
 const Exhibits = () => {
   const [tab, setTab] = useState<number>(0);
-  // const [published, setPublished] = useState<GetExploreResponse>([]);
-  // const [original, setOriginal] = useState<GetExploreResponse>([]);
-  // const [inspiration, setInspiration] = useState<GetExploreResponse>([]);
-  // const [likes, setLikes] = useState<GetMeSocialResponse['creation']>([]);
-  // const [followee, setFollowee] = useState<GetMeSocialResponse['followee']>([]);
-
-  // useEffect(() => {
-  //   getExplores().then((res) => {
-  //     setPublished(res.published);
-  //     setOriginal(res.original);
-  //     setInspiration(res.inspiration);
-  //   });
-  //   getSocials().then((res) => {
-  //     setLikes(res.creation);
-  //     setFollowee(res.followee);
-  //   });
-  // }, []);
 
   return (
     <>
@@ -34,7 +18,7 @@ const Exhibits = () => {
       </div>
       {tab === 0 && <ExhibitPublish />}
       {tab === 1 && <ExhibitOriginal />}
-      {tab === 2 && <ExhibitOriginal />}
+      {tab === 2 && <ExhibitInspiration />}
       {tab === 3 && (
         <div className="flex flex-wrap gap-6">
           {/* {likes.length > 0

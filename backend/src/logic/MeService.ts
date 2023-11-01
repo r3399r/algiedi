@@ -1,15 +1,21 @@
 import { inject, injectable } from 'inversify';
-import { Not } from 'typeorm';
+import { IsNull, Not } from 'typeorm';
 import { DbAccess } from 'src/access/DbAccess';
 import { ProjectUserAccess } from 'src/access/ProjectUserAccess';
 import { UserAccess } from 'src/access/UserAccess';
+import { ViewCreationExploreAccess } from 'src/access/ViewCreationExploreAccess';
 import {
+  GetMeExhibitsInspirationPramas,
+  GetMeExhibitsInspirationResponse,
+  GetMeExhibitsOriginalPramas,
+  GetMeExhibitsOriginalResponse,
   GetMeExhibitsPublishedParams,
   GetMeExhibitsPublishedResponse,
   GetMeResponse,
   PutMeRequest,
   PutMeResponse,
 } from 'src/model/api/Me';
+import { Type } from 'src/model/constant/Creation';
 import { Role, Status } from 'src/model/constant/Project';
 import { Pagination } from 'src/model/Pagination';
 import { cognitoSymbol } from 'src/util/LambdaSetup';
@@ -31,6 +37,9 @@ export class MeService {
 
   @inject(ProjectUserAccess)
   private readonly projectUserAccess!: ProjectUserAccess;
+
+  @inject(ViewCreationExploreAccess)
+  private readonly viewCreationExploreAccess!: ViewCreationExploreAccess;
 
   @inject(AwsService)
   private readonly awsService!: AwsService;
@@ -84,6 +93,58 @@ export class MeService {
           coverFileUrl: this.awsService.getS3SignedUrl(
             v.project.info.coverFileUri
           ),
+        },
+      })),
+      paginate: { limit, offset, count },
+    };
+  }
+
+  public async getOriginal(
+    params: GetMeExhibitsOriginalPramas | null
+  ): Promise<Pagination<GetMeExhibitsOriginalResponse>> {
+    const limit = params?.limit ? Number(params.limit) : 20;
+    const offset = params?.offset ? Number(params.offset) : 0;
+
+    const [vc, count] = await this.viewCreationExploreAccess.findAndCount({
+      where: {
+        userId: this.cognitoUserId,
+        type: Not(Type.Song),
+        inspiredId: IsNull(),
+      },
+    });
+
+    return {
+      data: vc.map((v) => ({
+        ...v,
+        info: {
+          ...v.info,
+          coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
+        },
+      })),
+      paginate: { limit, offset, count },
+    };
+  }
+
+  public async getInspiration(
+    params: GetMeExhibitsInspirationPramas | null
+  ): Promise<Pagination<GetMeExhibitsInspirationResponse>> {
+    const limit = params?.limit ? Number(params.limit) : 20;
+    const offset = params?.offset ? Number(params.offset) : 0;
+
+    const [vc, count] = await this.viewCreationExploreAccess.findAndCount({
+      where: {
+        userId: this.cognitoUserId,
+        type: Not(Type.Song),
+        inspiredId: Not(IsNull()),
+      },
+    });
+
+    return {
+      data: vc.map((v) => ({
+        ...v,
+        info: {
+          ...v.info,
+          coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
         },
       })),
       paginate: { limit, offset, count },
