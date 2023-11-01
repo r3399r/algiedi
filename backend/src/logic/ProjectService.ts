@@ -20,14 +20,12 @@ import {
   PutProjectRequest,
 } from 'src/model/api/Project';
 import { Type } from 'src/model/constant/Creation';
+import { NotificationType } from 'src/model/constant/Notification';
 import { Role, Status } from 'src/model/constant/Project';
 import { InfoEntity } from 'src/model/entity/InfoEntity';
 import { LyricsEntity } from 'src/model/entity/LyricsEntity';
 import { LyricsHistoryEntity } from 'src/model/entity/LyricsHistoryEntity';
-import {
-  NotificationEntity,
-  NotificationType,
-} from 'src/model/entity/NotificationEntity';
+import { NotificationEntity } from 'src/model/entity/NotificationEntity';
 import { TrackEntity } from 'src/model/entity/TrackEntity';
 import { TrackHistoryEntity } from 'src/model/entity/TrackHistoryEntity';
 import {

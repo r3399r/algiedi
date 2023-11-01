@@ -17,11 +17,11 @@ import {
   UploadLyrics,
   UploadTrack,
 } from 'src/model/api/Upload';
+import { NotificationType } from 'src/model/constant/Notification';
 import { Role, Status } from 'src/model/constant/Project';
 import { InfoEntity } from 'src/model/entity/InfoEntity';
 import { Lyrics, LyricsEntity } from 'src/model/entity/LyricsEntity';
 import { LyricsHistoryEntity } from 'src/model/entity/LyricsHistoryEntity';
-import { NotificationType } from 'src/model/entity/NotificationEntity';
 import { ProjectEntity } from 'src/model/entity/ProjectEntity';
 import { ProjectHistoryEntity } from 'src/model/entity/ProjectHistoryEntity';
 import { ProjectUserEntity } from 'src/model/entity/ProjectUserEntity';

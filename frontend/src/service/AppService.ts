@@ -1,5 +1,5 @@
+import { DetailedNotification } from 'src/model/backend/api/Notification';
 import { Chat, WebsocketMessage } from 'src/model/backend/api/Ws';
-import { Notification } from 'src/model/backend/entity/NotificationEntity';
 import { setLastNotification } from 'src/redux/apiSlice';
 import { dispatch, getState } from 'src/redux/store';
 import { setLastChat } from 'src/redux/wsSlice';
@@ -14,7 +14,7 @@ export const wsInit = () => {
       const res: WebsocketMessage = JSON.parse(data);
       if (res.a === 'channel') return;
       if (res.a === 'chat') dispatch(setLastChat((res as WebsocketMessage<Chat>).d));
-      else dispatch(setLastNotification((res as WebsocketMessage<Notification>).d));
+      else dispatch(setLastNotification((res as WebsocketMessage<DetailedNotification>).d));
     },
     () => console.log('ws error'),
     () => console.log('ws open'),

@@ -1,4 +1,4 @@
-import { NotificationType } from 'src/model/entity/NotificationEntity';
+import { NotificationType } from 'src/model/constant/Notification';
 import { User } from 'src/model/entity/UserEntity';
 
 export enum WsType {

@@ -1,14 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { GetExploreResponse } from 'src/model/backend/api/Explore';
-import { GetNotificationResponse } from 'src/model/backend/api/Notification';
+import { DetailedNotification } from 'src/model/backend/api/Notification';
 import { GetProjectResponse } from 'src/model/backend/api/Project';
-import { Notification } from 'src/model/backend/entity/NotificationEntity';
 
 // define the type of state
 export type ApiState = {
   projects?: GetProjectResponse;
   explores?: GetExploreResponse;
-  notifications?: GetNotificationResponse;
+  notifications?: DetailedNotification[];
 };
 
 // define the initial value of state
@@ -32,13 +31,13 @@ export const apiSlice = createSlice({
     setExplores: (state: ApiState, action: PayloadAction<GetExploreResponse>) => {
       state.explores = action.payload;
     },
-    setNotifications: (state: ApiState, action: PayloadAction<GetNotificationResponse>) => {
+    setNotifications: (state: ApiState, action: PayloadAction<DetailedNotification[]>) => {
       state.notifications = action.payload;
     },
-    setLastNotification: (state: ApiState, action: PayloadAction<Notification>) => {
+    setLastNotification: (state: ApiState, action: PayloadAction<DetailedNotification>) => {
       state.notifications = [action.payload, ...(state.notifications ?? [])];
     },
-    replaceNotification: (state: ApiState, action: PayloadAction<Notification>) => {
+    replaceNotification: (state: ApiState, action: PayloadAction<DetailedNotification>) => {
       state.notifications = state.notifications?.map((v) =>
         v.id === action.payload.id ? action.payload : v,
       );

@@ -1,0 +1,16 @@
+export enum NotificationType {
+  ProjectStart = 'project-start',
+  ProjectReject = 'project-reject',
+  ProjectPublish = 'project-publish',
+  ProjectUpdated = 'project-updated',
+  CreationUpdated = 'creation-updated',
+  CreationUploaded = 'new-creation-uploaded',
+  NewParticipant = 'new-participant',
+  InspiredApproved = 'inspired-approved',
+  InspiredUnapproved = 'inspired-unapproved',
+  PartnerReady = 'partner-ready',
+  PartnerNotReady = 'partner-not-ready',
+  Follow = 'follow',
+  Like = 'like',
+  Comment = 'comment',
+}

@@ -1,14 +1,14 @@
 import { inject, injectable } from 'inversify';
+import { In } from 'typeorm';
 import { DbAccess } from 'src/access/DbAccess';
 import { NotificationAccess } from 'src/access/NotificationAccess';
+import { ViewCreationAccess } from 'src/access/ViewCreationAccess';
 import {
   GetNotificationResponse,
   PatchNotificationResponse,
 } from 'src/model/api/Notification';
-import {
-  NotificationEntity,
-  NotificationType,
-} from 'src/model/entity/NotificationEntity';
+import { NotificationType } from 'src/model/constant/Notification';
+import { NotificationEntity } from 'src/model/entity/NotificationEntity';
 import { User } from 'src/model/entity/UserEntity';
 import { cognitoSymbol } from 'src/util/LambdaSetup';
 import { AwsService } from './AwsService';
@@ -27,6 +27,9 @@ export class NotificationService {
   @inject(NotificationAccess)
   private readonly notificationAccess!: NotificationAccess;
 
+  @inject(ViewCreationAccess)
+  private readonly viewCreationAccess!: ViewCreationAccess;
+
   @inject(AwsService)
   private readonly awsService!: AwsService;
 
@@ -35,7 +38,26 @@ export class NotificationService {
   }
 
   public async getNotifications(): Promise<GetNotificationResponse> {
-    return await this.notificationAccess.findByUserId(this.cognitoUserId);
+    const res = await this.notificationAccess.findByUserId(this.cognitoUserId);
+    const relatedTargetIds = new Set(
+      res.filter((v) => v.targetId !== null).map((v) => v.targetId)
+    );
+    const relatedCreations = await this.viewCreationAccess.find({
+      where: { id: In([...relatedTargetIds]) },
+    });
+
+    return res.map((v) => ({
+      ...v,
+      target: relatedCreations.find((o) => o.id === v.targetId) ?? null,
+      toUser: {
+        ...v.toUser,
+        avatarUrl: this.awsService.getS3SignedUrl(v.toUser.avatar),
+      },
+      fromUser: {
+        ...v.fromUser,
+        avatarUrl: this.awsService.getS3SignedUrl(v.fromUser.avatar),
+      },
+    }));
   }
 
   public async setNotificationAsRead(
@@ -44,7 +66,22 @@ export class NotificationService {
     const notification = await this.notificationAccess.findOneByIdOrFail(id);
     notification.isRead = true;
 
-    return await this.notificationAccess.save(notification);
+    const res = await this.notificationAccess.save(notification);
+
+    return {
+      ...res,
+      target: res.targetId
+        ? await this.viewCreationAccess.findOneByIdOrFail(res.targetId)
+        : null,
+      toUser: {
+        ...res.toUser,
+        avatarUrl: this.awsService.getS3SignedUrl(res.toUser.avatar),
+      },
+      fromUser: {
+        ...res.fromUser,
+        avatarUrl: this.awsService.getS3SignedUrl(res.fromUser.avatar),
+      },
+    };
   }
 
   public async notify(type: NotificationType, user: User, targetId?: string) {
