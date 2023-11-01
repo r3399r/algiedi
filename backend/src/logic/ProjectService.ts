@@ -172,7 +172,6 @@ export class ProjectService {
         throw new BadRequestError('this name is already used');
 
       const info = puOwner.project.info;
-      console.log(puOwner);
       info.name = data.name ?? info.name;
       info.description = data.description ?? info.description;
       info.theme = data.theme ?? info.theme;
