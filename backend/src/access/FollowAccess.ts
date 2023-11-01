@@ -20,10 +20,10 @@ export class FollowAccess {
     });
   }
 
-  public async findOne(options: FindOneOptions<Follow>) {
+  public async findAndCount(options: FindManyOptions<Follow>) {
     const qr = await this.database.getQueryRunner();
 
-    return await qr.manager.findOne<Follow>(FollowEntity.name, {
+    return await qr.manager.findAndCount<Follow>(FollowEntity.name, {
       relations: { followee: true, follower: true },
       ...options,
     });

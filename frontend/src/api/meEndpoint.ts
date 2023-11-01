@@ -1,6 +1,10 @@
 import {
+  GetMeExhibitsFollowParams,
+  GetMeExhibitsFollowResponse,
   GetMeExhibitsInspirationPramas,
   GetMeExhibitsInspirationResponse,
+  GetMeExhibitsLikeParams,
+  GetMeExhibitsLikeResponse,
   GetMeExhibitsOriginalPramas,
   GetMeExhibitsOriginalResponse,
   GetMeExhibitsPublishedParams,
@@ -32,10 +36,22 @@ const getMeExhibitsInspiration = async (params: GetMeExhibitsInspirationPramas) 
     params,
   });
 
+const getMeExhibitsLikes = async (params: GetMeExhibitsLikeParams) =>
+  await http.authGet<Pagination<GetMeExhibitsLikeResponse>>('me/exhibits/likes', {
+    params,
+  });
+
+const getMeExhibitsFollows = async (params: GetMeExhibitsFollowParams) =>
+  await http.authGet<Pagination<GetMeExhibitsFollowResponse>>('me/exhibits/follows', {
+    params,
+  });
+
 export default {
   getMe,
   putMe,
   getMeExhibitsPublished,
   getMeExhibitsOriginal,
   getMeExhibitsInspiration,
+  getMeExhibitsLikes,
+  getMeExhibitsFollows,
 };

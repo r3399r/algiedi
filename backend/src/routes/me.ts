@@ -20,6 +20,10 @@ export default async (lambdaEvent: LambdaEvent) => {
       return await meOriginal();
     case '/api/me/exhibits/inspiration':
       return await meInspiration();
+    case '/api/me/exhibits/likes':
+      return await meLikes();
+    case '/api/me/exhibits/follows':
+      return await meFollow();
   }
 
   throw new BadRequestError('unexpected resource');
@@ -61,6 +65,24 @@ export const meInspiration = async () => {
   switch (event.httpMethod) {
     case 'GET':
       return await service.getInspiration(event.queryStringParameters);
+  }
+
+  throw new Error('unexpected httpMethod');
+};
+
+export const meLikes = async () => {
+  switch (event.httpMethod) {
+    case 'GET':
+      return await service.getLikeList(event.queryStringParameters);
+  }
+
+  throw new Error('unexpected httpMethod');
+};
+
+export const meFollow = async () => {
+  switch (event.httpMethod) {
+    case 'GET':
+      return await service.getFolloweeList(event.queryStringParameters);
   }
 
   throw new Error('unexpected httpMethod');

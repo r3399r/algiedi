@@ -97,42 +97,31 @@ export const getInspiration = async (limit: string, offset: string) => {
   }
 };
 
-export const getExplores = async (): Promise<{
-  published: GetExploreResponse;
-  original: GetExploreResponse;
-  inspiration: GetExploreResponse;
-}> => {
+export const getLikes = async (limit: string, offset: string) => {
   try {
     dispatch(startWaiting());
-    const state = getState();
 
-    let tracks: GetExploreResponse = [];
-    let lyrics: GetExploreResponse = [];
-    let songs: GetExploreResponse = [];
-    if (!state.api.explores) {
-      const res = await getExplore();
-      tracks = res.tracks;
-      lyrics = res.lyrics;
-      songs = res.songs;
-    } else {
-      tracks = state.api.explores.filter((v) => v.type === Type.Track);
-      lyrics = state.api.explores.filter((v) => v.type === Type.Lyrics);
-      songs = state.api.explores.filter((v) => v.type === Type.Song);
-    }
+    const res = await meEndpoint.getMeExhibitsLikes({
+      limit,
+      offset,
+    });
 
-    const published = songs.filter((v) => v.user.map((o) => o.id).includes(state.me.id));
-    const original = [...tracks, ...lyrics].filter(
-      (v) => v.inspiredId === null && v.userId === state.me.id,
-    );
-    const inspiration = [...tracks, ...lyrics, ...songs].filter(
-      (v) => v.inspiredId !== null && v.userId === state.me.id,
-    );
+    return res.data;
+  } finally {
+    dispatch(finishWaiting());
+  }
+};
 
-    return {
-      published,
-      original,
-      inspiration,
-    };
+export const getFollows = async (limit: string, offset: string) => {
+  try {
+    dispatch(startWaiting());
+
+    const res = await meEndpoint.getMeExhibitsFollows({
+      limit,
+      offset,
+    });
+
+    return res.data;
   } finally {
     dispatch(finishWaiting());
   }

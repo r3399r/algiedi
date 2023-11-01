@@ -1,4 +1,6 @@
+import { Follow } from 'src/model/entity/FollowEntity';
 import { Info } from 'src/model/entity/InfoEntity';
+import { Like } from 'src/model/entity/LikeEntity';
 import { Project } from 'src/model/entity/ProjectEntity';
 import { User } from 'src/model/entity/UserEntity';
 import { ViewCreationExplore } from 'src/model/entity/ViewCreationExploreEntity';
@@ -42,4 +44,18 @@ export type GetMeExhibitsInspirationResponse = (Omit<
   'info'
 > & {
   info: Info & { coverFileUrl: string | null };
+})[];
+
+export type GetMeExhibitsLikeParams = PaginationParams;
+
+export type GetMeExhibitsLikeResponse = (Like & {
+  creation: Omit<ViewCreationExplore, 'info'> & {
+    info: Info & { coverFileUrl: string | null };
+  };
+})[];
+
+export type GetMeExhibitsFollowParams = PaginationParams;
+
+export type GetMeExhibitsFollowResponse = (Omit<Follow, 'followee'> & {
+  followee: User & { avatarUrl: string | null };
 })[];
