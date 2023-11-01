@@ -136,7 +136,7 @@ Resources:
                 }
               }
             },
-            "/api/me/social": {
+            "/api/me/exhibits/published": {
               "get": {
                 "responses": {
                   "200": {

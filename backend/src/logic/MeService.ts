@@ -1,10 +1,17 @@
 import { inject, injectable } from 'inversify';
-import { In } from 'typeorm';
+import { Not } from 'typeorm';
 import { DbAccess } from 'src/access/DbAccess';
-import { LikeAccess } from 'src/access/LikeAccess';
+import { ProjectUserAccess } from 'src/access/ProjectUserAccess';
 import { UserAccess } from 'src/access/UserAccess';
-import { ViewCreationExploreAccess } from 'src/access/ViewCreationExploreAccess';
-import { GetMeResponse, PutMeRequest, PutMeResponse } from 'src/model/api/Me';
+import {
+  GetMeExhibitsPublishedParams,
+  GetMeExhibitsPublishedResponse,
+  GetMeResponse,
+  PutMeRequest,
+  PutMeResponse,
+} from 'src/model/api/Me';
+import { Role, Status } from 'src/model/constant/Project';
+import { Pagination } from 'src/model/Pagination';
 import { cognitoSymbol } from 'src/util/LambdaSetup';
 import { AwsService } from './AwsService';
 
@@ -22,14 +29,11 @@ export class MeService {
   @inject(UserAccess)
   private readonly userAccess!: UserAccess;
 
-  @inject(LikeAccess)
-  private readonly likeAccess!: LikeAccess;
+  @inject(ProjectUserAccess)
+  private readonly projectUserAccess!: ProjectUserAccess;
 
   @inject(AwsService)
   private readonly awsService!: AwsService;
-
-  @inject(ViewCreationExploreAccess)
-  private readonly viewCreationExploreAccess!: ViewCreationExploreAccess;
 
   public async cleanup() {
     await this.dbAccess.cleanup();
@@ -58,32 +62,31 @@ export class MeService {
     return { ...user, avatarUrl: this.awsService.getS3SignedUrl(user.avatar) };
   }
 
-  public async getMySocial(): Promise<any> {
-    const likes = await this.likeAccess.find({
-      where: { userId: this.cognitoUserId },
-    });
-    //   const follows = await this.followAccess.find({
-    //     where: { followerId: this.cognitoUserId },
-    //   });
-    const creation = await this.viewCreationExploreAccess.find({
-      where: { id: In(likes.map((v) => v.creationId)) },
-    });
-    console.log(creation);
-    //   const followee = await this.userAccess.find({
-    //     where: { id: In(follows.map((v) => v.followeeId)) },
-    //   });
+  public async getPublished(
+    params: GetMeExhibitsPublishedParams | null
+  ): Promise<Pagination<GetMeExhibitsPublishedResponse>> {
+    const limit = params?.limit ? Number(params.limit) : 20;
+    const offset = params?.offset ? Number(params.offset) : 0;
 
-    //   return {
-    //     creation: creation.map((v) => ({
-    //       ...v,
-    //       fileUrl: this.awsService.getS3SignedUrl(v.fileUri),
-    //       tabFileUrl: this.awsService.getS3SignedUrl(v.tabFileUri),
-    //       coverFileUrl: this.awsService.getS3SignedUrl(v.coverFileUri),
-    //     })),
-    //     followee: followee.map((v) => ({
-    //       ...v,
-    //       avatarUrl: this.awsService.getS3SignedUrl(v.avatar),
-    //     })),
-    //   };
+    const [pu, count] = await this.projectUserAccess.findAndCount({
+      where: {
+        userId: this.cognitoUserId,
+        project: { status: Status.Published },
+        role: Not(Role.Rejected),
+      },
+    });
+
+    return {
+      data: pu.map((v) => ({
+        ...v.project,
+        info: {
+          ...v.project.info,
+          coverFileUrl: this.awsService.getS3SignedUrl(
+            v.project.info.coverFileUri
+          ),
+        },
+      })),
+      paginate: { limit, offset, count },
+    };
   }
 }

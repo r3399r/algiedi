@@ -2,7 +2,6 @@ import exploreEndpoint from 'src/api/exploreEndpoint';
 import meEndpoint from 'src/api/meEndpoint';
 import userEndpoint from 'src/api/userEndpoint';
 import { GetExploreResponse } from 'src/model/backend/api/Explore';
-import { GetMeSocialResponse } from 'src/model/backend/api/Me';
 import { Type } from 'src/model/backend/constant/Creation';
 import { setMe } from 'src/redux/meSlice';
 import { dispatch, getState } from 'src/redux/store';
@@ -53,26 +52,13 @@ export const loadProfileData = async () => {
   }
 };
 
-export const getSocials = async (): Promise<GetMeSocialResponse> => {
-  try {
-    dispatch(startWaiting());
-
-    const res = await meEndpoint.getMeSocial();
-
-    return res.data;
-  } finally {
-    dispatch(finishWaiting());
-  }
-};
-
 export const getPublished = async (limit: string, offset: string) => {
   try {
     dispatch(startWaiting());
 
-    const res = await exploreEndpoint.getExploreAuth({
+    const res = await meEndpoint.getMeExhibitsPublished({
       limit,
       offset,
-      type: Type.Song,
     });
 
     return res.data;

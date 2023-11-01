@@ -14,8 +14,8 @@ export default async (lambdaEvent: LambdaEvent) => {
   switch (event.resource) {
     case '/api/me':
       return await meDefault();
-    case '/api/me/social':
-      return await social();
+    case '/api/me/exhibits/published':
+      return await mePublished();
   }
 
   throw new BadRequestError('unexpected resource');
@@ -35,10 +35,10 @@ const meDefault = async () => {
   throw new Error('unexpected httpMethod');
 };
 
-export const social = async () => {
+export const mePublished = async () => {
   switch (event.httpMethod) {
     case 'GET':
-      return await service.getMySocial();
+      return await service.getPublished(event.queryStringParameters);
   }
 
   throw new Error('unexpected httpMethod');

@@ -28,6 +28,20 @@ export class ProjectUserAccess {
     });
   }
 
+  public async findAndCount(options?: FindManyOptions<ProjectUser>) {
+    const qr = await this.database.getQueryRunner();
+
+    return await qr.manager.findAndCount<ProjectUser>(ProjectUserEntity.name, {
+      relations: {
+        project: { info: true },
+        user: true,
+        lyrics: { info: true },
+        track: { info: true },
+      },
+      ...options,
+    });
+  }
+
   public async findByProjectId(projectId: string) {
     return this.find({
       where: { projectId },

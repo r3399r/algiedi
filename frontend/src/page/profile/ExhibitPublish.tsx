@@ -3,14 +3,14 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Cover from 'src/component/Cover';
 import { Page } from 'src/constant/Page';
-import { GetExploreResponse } from 'src/model/backend/api/Explore';
+import { GetMeExhibitsPublishedResponse } from 'src/model/backend/api/Me';
 import { getPublished } from 'src/service/ProfileService';
 
 const DEFAULT_LIMIT = '10';
 
 const ExhibitPublish = () => {
   const navigate = useNavigate();
-  const [published, setPublished] = useState<GetExploreResponse>();
+  const [published, setPublished] = useState<GetMeExhibitsPublishedResponse>();
   const [page, setPage] = useState<number>(1);
   const [offset, setOffset] = useState<number>(0);
   const [count, setCount] = useState<number>(0);
