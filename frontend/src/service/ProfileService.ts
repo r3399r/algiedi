@@ -1,13 +1,9 @@
-import exploreEndpoint from 'src/api/exploreEndpoint';
 import meEndpoint from 'src/api/meEndpoint';
 import userEndpoint from 'src/api/userEndpoint';
-import { GetExploreResponse } from 'src/model/backend/api/Explore';
-import { Type } from 'src/model/backend/constant/Creation';
 import { setMe } from 'src/redux/meSlice';
-import { dispatch, getState } from 'src/redux/store';
+import { dispatch } from 'src/redux/store';
 import { finishWaiting, setLoadingProfile, startWaiting } from 'src/redux/uiSlice';
 import { file2Base64 } from 'src/util/fileConverter';
-import { getExplore } from './ExploreService';
 
 const loadMe = async () => {
   try {
