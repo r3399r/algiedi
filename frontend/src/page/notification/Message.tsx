@@ -11,7 +11,6 @@ const Message = ({ data }: Props) => {
   const navigate = useNavigate();
 
   const onClickCreation = () => {
-    if (!data.isRead) readNotification(data.id);
     if (data.type === NotificationType.ProjectPublish) navigate(`${Page.Explore}/${data.targetId}`);
     else if (
       [
@@ -36,7 +35,13 @@ const Message = ({ data }: Props) => {
   };
 
   const TargetButton = () => (
-    <span className="cursor-pointer font-bold text-blue hover:underline" onClick={onClickCreation}>
+    <span
+      className="cursor-pointer font-bold text-blue hover:underline"
+      onClick={() => {
+        if (!data.isRead) readNotification(data.id);
+        onClickCreation();
+      }}
+    >
       {data.target?.info.name}
     </span>
   );
@@ -44,7 +49,10 @@ const Message = ({ data }: Props) => {
   const UserButton = () => (
     <span
       className="cursor-pointer font-bold text-blue hover:underline"
-      onClick={() => navigate(`${Page.Explore}/user/${data.fromUserId}`)}
+      onClick={() => {
+        if (!data.isRead) readNotification(data.id);
+        navigate(`${Page.Explore}/user/${data.fromUserId}`);
+      }}
     >
       {data.fromUser.username}
     </span>

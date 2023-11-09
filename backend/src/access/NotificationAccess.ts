@@ -23,13 +23,22 @@ export class NotificationAccess {
     });
   }
 
-  public async findOneByIdOrFail(id: string) {
+  public async findOneOrFail(options: FindManyOptions<Notification>) {
     const qr = await this.database.getQueryRunner();
 
     return await qr.manager.findOneOrFail<Notification>(
       NotificationEntity.name,
-      { where: { id } }
+      {
+        relations: { toUser: true, fromUser: true },
+        ...options,
+      }
     );
+  }
+
+  public async findOneByIdOrFail(id: string) {
+    return await this.findOneOrFail({
+      where: { id },
+    });
   }
 
   public async findByUserId(userId: string) {
