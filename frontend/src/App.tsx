@@ -39,6 +39,7 @@ const App = () => {
 
   return (
     <>
+      <div className="fixed bottom-0 right-0 h-20 w-80 rounded-xl bg-red" />
       <Navbar />
       <AppRoutes />
     </>
