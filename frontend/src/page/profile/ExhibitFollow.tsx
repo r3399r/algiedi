@@ -6,9 +6,11 @@ import { Page } from 'src/constant/Page';
 import { GetMeExhibitsFollowResponse } from 'src/model/backend/api/Me';
 import { getFollows } from 'src/service/ProfileService';
 
-const DEFAULT_LIMIT = '10';
+type Props = {
+  countPerPage: string;
+};
 
-const ExhibitFollow = () => {
+const ExhibitFollow = ({ countPerPage }: Props) => {
   const navigate = useNavigate();
   const [original, setOriginal] = useState<GetMeExhibitsFollowResponse>();
   const [page, setPage] = useState<number>(1);
@@ -16,7 +18,7 @@ const ExhibitFollow = () => {
   const [count, setCount] = useState<number>(0);
 
   useEffect(() => {
-    getFollows(DEFAULT_LIMIT, String(offset)).then((res) => {
+    getFollows(countPerPage, String(offset)).then((res) => {
       setOriginal(res.data);
       setCount(res.paginate.count);
     });
@@ -24,7 +26,7 @@ const ExhibitFollow = () => {
 
   const handlePaginationChange = (event: ChangeEvent<unknown>, value: number) => {
     setPage(value);
-    setOffset((value - 1) * Number(DEFAULT_LIMIT));
+    setOffset((value - 1) * Number(countPerPage));
   };
 
   if (!original) return <>Loading...</>;
@@ -46,7 +48,7 @@ const ExhibitFollow = () => {
       </div>
       <div className="my-4 flex justify-center">
         <Pagination
-          count={Math.ceil(count / Number(DEFAULT_LIMIT))}
+          count={Math.ceil(count / Number(countPerPage))}
           page={page}
           onChange={handlePaginationChange}
         />

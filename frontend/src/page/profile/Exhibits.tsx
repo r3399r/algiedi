@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import Tabs from 'src/component/Tabs';
 import ExhibitFollow from './ExhibitFollow';
 import ExhibitInspiration from './ExhibitInspiration';
@@ -8,6 +8,11 @@ import ExhibitPublish from './ExhibitPublish';
 
 const Exhibits = () => {
   const [tab, setTab] = useState<number>(0);
+  const ref = useRef<HTMLDivElement>(null);
+  const countPerPage = useMemo(
+    () => (ref.current ? ((ref.current.offsetWidth / 162) * 2).toFixed() : '10'),
+    [ref.current],
+  );
 
   return (
     <>
@@ -18,11 +23,13 @@ const Exhibits = () => {
           defaultIndex={0}
         />
       </div>
-      {tab === 0 && <ExhibitPublish />}
-      {tab === 1 && <ExhibitOriginal />}
-      {tab === 2 && <ExhibitInspiration />}
-      {tab === 3 && <ExhibitLikes />}
-      {tab === 4 && <ExhibitFollow />}
+      <div ref={ref}>
+        {tab === 0 && <ExhibitPublish countPerPage={countPerPage} />}
+        {tab === 1 && <ExhibitOriginal countPerPage={countPerPage} />}
+        {tab === 2 && <ExhibitInspiration countPerPage={countPerPage} />}
+        {tab === 3 && <ExhibitLikes countPerPage={countPerPage} />}
+        {tab === 4 && <ExhibitFollow countPerPage={countPerPage} />}
+      </div>
     </>
   );
 };

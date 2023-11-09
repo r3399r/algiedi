@@ -6,9 +6,11 @@ import { Page } from 'src/constant/Page';
 import { GetMeExhibitsInspirationResponse } from 'src/model/backend/api/Me';
 import { getInspiration } from 'src/service/ProfileService';
 
-const DEFAULT_LIMIT = '10';
+type Props = {
+  countPerPage: string;
+};
 
-const ExhibitInspiration = () => {
+const ExhibitInspiration = ({ countPerPage }: Props) => {
   const navigate = useNavigate();
   const [inspiration, setInspiration] = useState<GetMeExhibitsInspirationResponse>();
   const [page, setPage] = useState<number>(1);
@@ -16,7 +18,7 @@ const ExhibitInspiration = () => {
   const [count, setCount] = useState<number>(0);
 
   useEffect(() => {
-    getInspiration(DEFAULT_LIMIT, String(offset)).then((res) => {
+    getInspiration(countPerPage, String(offset)).then((res) => {
       setInspiration(res.data);
       setCount(res.paginate.count);
     });
@@ -24,7 +26,7 @@ const ExhibitInspiration = () => {
 
   const handlePaginationChange = (event: ChangeEvent<unknown>, value: number) => {
     setPage(value);
-    setOffset((value - 1) * Number(DEFAULT_LIMIT));
+    setOffset((value - 1) * Number(countPerPage));
   };
 
   if (!inspiration) return <>Loading...</>;
@@ -46,7 +48,7 @@ const ExhibitInspiration = () => {
       </div>
       <div className="my-4 flex justify-center">
         <Pagination
-          count={Math.ceil(count / Number(DEFAULT_LIMIT))}
+          count={Math.ceil(count / Number(countPerPage))}
           page={page}
           onChange={handlePaginationChange}
         />

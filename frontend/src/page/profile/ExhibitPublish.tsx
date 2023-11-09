@@ -6,9 +6,11 @@ import { Page } from 'src/constant/Page';
 import { GetMeExhibitsPublishedResponse } from 'src/model/backend/api/Me';
 import { getPublished } from 'src/service/ProfileService';
 
-const DEFAULT_LIMIT = '10';
+type Props = {
+  countPerPage: string;
+};
 
-const ExhibitPublish = () => {
+const ExhibitPublish = ({ countPerPage }: Props) => {
   const navigate = useNavigate();
   const [published, setPublished] = useState<GetMeExhibitsPublishedResponse>();
   const [page, setPage] = useState<number>(1);
@@ -16,7 +18,7 @@ const ExhibitPublish = () => {
   const [count, setCount] = useState<number>(0);
 
   useEffect(() => {
-    getPublished(DEFAULT_LIMIT, String(offset)).then((res) => {
+    getPublished(countPerPage, String(offset)).then((res) => {
       setPublished(res.data);
       setCount(res.paginate.count);
     });
@@ -24,7 +26,7 @@ const ExhibitPublish = () => {
 
   const handlePaginationChange = (event: ChangeEvent<unknown>, value: number) => {
     setPage(value);
-    setOffset((value - 1) * Number(DEFAULT_LIMIT));
+    setOffset((value - 1) * Number(countPerPage));
   };
 
   if (!published) return <>Loading...</>;
@@ -46,7 +48,7 @@ const ExhibitPublish = () => {
       </div>
       <div className="my-4 flex justify-center">
         <Pagination
-          count={Math.ceil(count / Number(DEFAULT_LIMIT))}
+          count={Math.ceil(count / Number(countPerPage))}
           page={page}
           onChange={handlePaginationChange}
         />
