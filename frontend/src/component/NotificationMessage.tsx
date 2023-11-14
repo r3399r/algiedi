@@ -7,7 +7,7 @@ import { readNotification } from 'src/service/NotificationService';
 
 type Props = { data: DetailedNotification };
 
-const Message = ({ data }: Props) => {
+const NotificationMessage = ({ data }: Props) => {
   const navigate = useNavigate();
 
   const onClickCreation = () => {
@@ -146,4 +146,4 @@ const Message = ({ data }: Props) => {
   }
 };
 
-export default Message;
+export default NotificationMessage;

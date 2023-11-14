@@ -3,11 +3,11 @@ import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Cover from 'src/component/Cover';
+import NotificationMessage from 'src/component/NotificationMessage';
 import NotificationWidget from 'src/component/NotificationWidget';
 import { Page } from 'src/constant/Page';
 import { RootState } from 'src/redux/store';
 import { loadNotification } from 'src/service/NotificationService';
-import Message from './Message';
 
 const Notification = () => {
   const navigate = useNavigate();
@@ -25,7 +25,7 @@ const Notification = () => {
         {(notifications ?? []).map((v) => (
           <div key={v.id} className="relative flex items-center rounded bg-white p-4">
             {!v.isRead && (
-              <div className="absolute left-5 top-1/2 h-[5px] w-[5px] rounded-full bg-blue" />
+              <div className="absolute right-5 top-5 h-[5px] w-[5px] rounded-full bg-blue" />
             )}
             <Cover
               url={v.fromUser.avatarUrl}
@@ -34,7 +34,7 @@ const Notification = () => {
               onClick={() => navigate(`${Page.Explore}/user/${v.fromUserId}`)}
             />
             <div className="pl-5">
-              <Message data={v} />
+              <NotificationMessage data={v} />
             </div>
             <div className="absolute bottom-5 right-5 text-right text-sm text-grey">
               {v.createdAt ? formatDistanceToNow(new Date(v.createdAt)) : ''}

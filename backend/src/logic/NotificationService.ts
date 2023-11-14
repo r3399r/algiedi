@@ -4,6 +4,7 @@ import { DbAccess } from 'src/access/DbAccess';
 import { NotificationAccess } from 'src/access/NotificationAccess';
 import { ViewCreationAccess } from 'src/access/ViewCreationAccess';
 import {
+  DetailedNotification,
   GetNotificationResponse,
   PatchNotificationResponse,
 } from 'src/model/api/Notification';
@@ -94,10 +95,35 @@ export class NotificationService {
     notification.fromUserId = this.cognitoUserId;
     notification.targetId = targetId ?? null;
 
-    const newNotification = await this.notificationAccess.save(notification);
-    await this.awsService.sendWsMessage(user.connectionId, {
-      a: type,
-      d: newNotification,
-    });
+    const res = await this.notificationAccess.save(notification);
+    const newNotification = await this.notificationAccess.findOneByIdOrFail(
+      res.id
+    );
+    await this.awsService.sendWsMessage<DetailedNotification>(
+      user.connectionId,
+      {
+        a: type,
+        d: {
+          ...newNotification,
+          target: newNotification.targetId
+            ? await this.viewCreationAccess.findOneByIdOrFail(
+                newNotification.targetId
+              )
+            : null,
+          toUser: {
+            ...newNotification.toUser,
+            avatarUrl: this.awsService.getS3SignedUrl(
+              newNotification.toUser.avatar
+            ),
+          },
+          fromUser: {
+            ...newNotification.fromUser,
+            avatarUrl: this.awsService.getS3SignedUrl(
+              newNotification.fromUser.avatar
+            ),
+          },
+        },
+      }
+    );
   }
 }

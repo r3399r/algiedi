@@ -4,6 +4,7 @@ import { DbAccess } from 'src/access/DbAccess';
 import { LikeAccess } from 'src/access/LikeAccess';
 import { LyricsAccess } from 'src/access/LyricsAccess';
 import { ProjectAccess } from 'src/access/ProjectAccess';
+import { ProjectUserAccess } from 'src/access/ProjectUserAccess';
 import { TrackAccess } from 'src/access/TrackAccess';
 import { UserAccess } from 'src/access/UserAccess';
 import { ViewCreationExploreAccess } from 'src/access/ViewCreationExploreAccess';
@@ -12,6 +13,7 @@ import { Type } from 'src/model/constant/Creation';
 import { NotificationType } from 'src/model/constant/Notification';
 import { CommentEntity } from 'src/model/entity/CommentEntity';
 import { LikeEntity } from 'src/model/entity/LikeEntity';
+import { User } from 'src/model/entity/UserEntity';
 import { bn } from 'src/util/bignumber';
 import { cognitoSymbol } from 'src/util/LambdaSetup';
 import { NotificationService } from './NotificationService';
@@ -51,6 +53,9 @@ export class CreationService {
   @inject(ProjectAccess)
   private readonly projectAccess!: ProjectAccess;
 
+  @inject(ProjectUserAccess)
+  private readonly projectUserAccess!: ProjectUserAccess;
+
   public async cleanup() {
     await this.dbAccess.cleanup();
   }
@@ -76,13 +81,19 @@ export class CreationService {
       await this.projectAccess.save(project);
     }
 
-    // notify
-    if (creation.user !== null)
-      await this.notificationService.notify(
-        NotificationType.Like,
-        creation.user,
-        id
+    // find authors
+    const users: User[] = [];
+    if (creation.user !== null) users.push(creation.user);
+    else if (creation.projectId) {
+      const pu = await this.projectUserAccess.findByProjectId(
+        creation.projectId
       );
+      pu.forEach((v) => users.push(v.user));
+    }
+
+    // notify
+    for (const u of users)
+      await this.notificationService.notify(NotificationType.Like, u, id);
   }
 
   public async unlikeCreation(id: string) {

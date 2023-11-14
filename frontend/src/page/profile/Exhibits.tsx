@@ -10,7 +10,7 @@ const Exhibits = () => {
   const [tab, setTab] = useState<number>(0);
   const ref = useRef<HTMLDivElement>(null);
   const countPerPage = useMemo(
-    () => (ref.current ? ((ref.current.offsetWidth / 162) * 2).toFixed() : '10'),
+    () => (ref.current ? (Math.floor((ref.current.offsetWidth + 24) / 174) * 2).toString() : '10'),
     [ref.current],
   );
 
