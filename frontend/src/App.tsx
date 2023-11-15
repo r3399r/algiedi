@@ -25,23 +25,27 @@ const App = () => {
   const isDashboard =
     DashboardPage.find((value) => location.pathname.startsWith(value)) !== undefined;
 
-  if (isDashboard)
-    return (
-      <div className="flex">
-        <SideMenu />
-        <div className="h-screen flex-1 overflow-y-auto bg-[#eaeaea]">
-          <div className="mx-auto w-[85%] max-w-[1200px] pb-[90px] pt-[30px]">
-            <AppRoutes />
-          </div>
-        </div>
-      </div>
-    );
-
   return (
     <>
-      <div className="fixed bottom-0 right-0 h-20 w-80 rounded-xl bg-red" />
-      <Navbar />
-      <AppRoutes />
+      <div className="fixed bottom-0 right-0 z-50 h-20 w-80 rounded-xl bg-red" />
+      {isDashboard && (
+        <>
+          <div className="flex">
+            <SideMenu />
+            <div className="h-screen flex-1 overflow-y-auto bg-[#eaeaea]">
+              <div className="mx-auto w-[85%] max-w-[1200px] pb-[90px] pt-[30px]">
+                <AppRoutes />
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+      {!isDashboard && (
+        <>
+          <Navbar />
+          <AppRoutes />
+        </>
+      )}
     </>
   );
 };
