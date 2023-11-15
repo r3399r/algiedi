@@ -27,7 +27,7 @@ const Overall = () => {
           <div
             key={v.id}
             className="relative mt-1 cursor-pointer rounded-md bg-blue/70 bg-center p-4"
-            style={{ backgroundImage: v.coverFileUrl ? `url(${v.coverFileUrl})` : '' }}
+            style={{ backgroundImage: v.info.coverFileUrl ? `url(${v.info.coverFileUrl})` : '' }}
             onClick={() => navigate(Page.Project, { state: { id: v.id } })}
           >
             <div className="w-fit rounded-lg bg-grey/70 p-2">{v?.info.name}</div>
@@ -43,7 +43,7 @@ const Overall = () => {
           <div
             key={v.id}
             className="relative mt-1 cursor-pointer rounded-md bg-blue/70 bg-center p-4"
-            style={{ backgroundImage: v.coverFileUrl ? `url(${v.coverFileUrl})` : '' }}
+            style={{ backgroundImage: v.info.coverFileUrl ? `url(${v.info.coverFileUrl})` : '' }}
             onClick={() => navigate(Page.Project, { state: { id: v.id } })}
           >
             <div className="w-fit rounded-lg bg-grey/70 p-2">{v.info.name}</div>

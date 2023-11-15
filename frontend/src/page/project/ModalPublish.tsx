@@ -19,7 +19,7 @@ const ModalPublish = ({ open, handleClose, onPublish, project }: Props) => (
       <div className="text-xl font-bold">
         Please check the content. Note that this action is irreversible.
       </div>
-      <Cover url={project.coverFileUrl} />
+      <Cover url={project.info.coverFileUrl} />
       <div className="flex gap-2">
         <div className="w-[100px] font-bold">Name</div>
         <div>{project.info.name}</div>

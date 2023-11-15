@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
+import AudioPlayer from 'src/component/AudioPlayer';
 import Avatar from 'src/component/Avatar';
 import Button from 'src/component/Button';
 import Cover from 'src/component/Cover';
@@ -120,7 +121,7 @@ const ExploreDetail = () => {
       <div className="mx-10 mt-10 rounded-3xl border border-solid border-dark p-4">
         {creation.fileUrl && (
           <div className="mb-4 flex items-center gap-2">
-            <audio src={creation.fileUrl} controls />
+            <AudioPlayer creation={creation} />
             {creation.tabFileUrl && (
               <DownloadForOfflineIcon
                 className="cursor-pointer"

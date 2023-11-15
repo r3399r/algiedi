@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
+import AudioBox from './component/AudioBox';
 import Navbar from './component/Navbar';
 import SideMenu from './component/SideMenu';
 import { DashboardPage, Page } from './constant/Page';
@@ -27,7 +28,7 @@ const App = () => {
 
   return (
     <>
-      <div className="fixed bottom-0 right-0 z-50 h-20 w-80 rounded-xl bg-red" />
+      <AudioBox />
       {isDashboard && (
         <>
           <div className="flex">

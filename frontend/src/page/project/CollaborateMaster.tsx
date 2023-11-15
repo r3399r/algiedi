@@ -3,6 +3,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
+import AudioPlayer from 'src/component/AudioPlayer';
 import Button from 'src/component/Button';
 import { Role } from 'src/model/backend/constant/Project';
 import { DetailedProject } from 'src/model/backend/Project';
@@ -32,7 +33,11 @@ const CollaborateMaster = ({ project, doRefresh }: Props) => {
         {hasUploaded && (
           <>
             <div className="mb-4 flex items-center gap-2">
-              {project.fileUrl && <audio src={project.fileUrl} controls />}
+              {project.fileUrl && (
+                <AudioPlayer
+                  creation={{ ...project, user: project.user === null ? [] : [project.user] }}
+                />
+              )}
               {project.tabFileUrl && (
                 <DownloadForOfflineIcon
                   className="cursor-pointer"

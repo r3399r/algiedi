@@ -2,6 +2,7 @@ import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { useState } from 'react';
+import AudioPlayer from 'src/component/AudioPlayer';
 import Button from 'src/component/Button';
 import { DetailedCreation, DetailedProject } from 'src/model/backend/Project';
 import ModalLyrics from './ModalLyrics';
@@ -26,7 +27,9 @@ const Creation = ({ track, lyrics, isOwner, doRefresh, project, isParticipant = 
         <>
           {isParticipant && <div className="mb-2">{track.info.name}</div>}
           <div className="mb-4 flex items-center gap-2">
-            <audio src={track.fileUrl ?? undefined} controls />
+            {track.fileUrl && (
+              <AudioPlayer creation={{ ...track, user: track.user === null ? [] : [track.user] }} />
+            )}
             {track.tabFileUrl && (
               <DownloadForOfflineIcon
                 className="cursor-pointer"

@@ -111,7 +111,10 @@ export class ProjectService {
       ...c,
       fileUrl: this.awsService.getS3SignedUrl(c.fileUri),
       tabFileUrl: this.awsService.getS3SignedUrl(c.tabFileUri),
-      coverFileUrl: this.awsService.getS3SignedUrl(c.info.coverFileUri),
+      info: {
+        ...c.info,
+        coverFileUrl: this.awsService.getS3SignedUrl(c.info.coverFileUri),
+      },
     }));
     const relatedProjectUsers = await this.projectUserAccess.find({
       where: {

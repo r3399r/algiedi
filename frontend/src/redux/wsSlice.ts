@@ -9,7 +9,7 @@ const initialState: WsState = {
   lastChat: null,
 };
 
-export const meSlice = createSlice({
+export const wsSlice = createSlice({
   name: 'ws',
   initialState,
   reducers: {
@@ -19,6 +19,6 @@ export const meSlice = createSlice({
   },
 });
 
-export const { setLastChat } = meSlice.actions;
+export const { setLastChat } = wsSlice.actions;
 
-export default meSlice.reducer;
+export default wsSlice.reducer;
