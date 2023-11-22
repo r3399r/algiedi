@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { FindManyOptions, In } from 'typeorm';
+import { FindManyOptions, FindOneOptions, In } from 'typeorm';
 import { Project, ProjectEntity } from 'src/model/entity/ProjectEntity';
 import { Database } from 'src/util/Database';
 
@@ -20,18 +20,23 @@ export class ProjectAccess {
     });
   }
 
-  public async findOneOrFailById(id: string) {
+  public async findOneOrFail(options?: FindOneOptions<Project>) {
     const qr = await this.database.getQueryRunner();
 
     return await qr.manager.findOneOrFail<Project>(ProjectEntity.name, {
+      relations: { info: true },
+      ...options,
+    });
+  }
+
+  public async findOneOrFailById(id: string) {
+    return await this.findOneOrFail({
       where: { id },
     });
   }
 
   public async findByIds(ids: string[]) {
-    const qr = await this.database.getQueryRunner();
-
-    return await qr.manager.find<Project>(ProjectEntity.name, {
+    return await this.find({
       where: { id: In(ids) },
       order: { createdAt: 'asc' },
     });

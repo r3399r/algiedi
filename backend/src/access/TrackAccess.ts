@@ -20,34 +20,33 @@ export class TrackAccess {
     });
   }
 
-  public async findOneById(id: string) {
+  public async findOne(options: FindOneOptions<Track>) {
     const qr = await this.database.getQueryRunner();
 
     return await qr.manager.findOne<Track>(TrackEntity.name, {
+      relations: { user: true, info: true },
+      ...options,
+    });
+  }
+
+  public async findOneOrFail(options: FindOneOptions<Track>) {
+    const qr = await this.database.getQueryRunner();
+
+    return await qr.manager.findOneOrFail<Track>(TrackEntity.name, {
+      relations: { user: true, info: true },
+      ...options,
+    });
+  }
+
+  public async findOneById(id: string) {
+    return await this.findOne({
       where: { id },
     });
   }
 
   public async findOneOrFailById(id: string) {
-    const qr = await this.database.getQueryRunner();
-
-    return await qr.manager.findOneOrFail<Track>(TrackEntity.name, {
+    return await this.findOneOrFail({
       where: { id },
-    });
-  }
-
-  public async findOne(options: FindOneOptions<Track>) {
-    const qr = await this.database.getQueryRunner();
-
-    return await qr.manager.findOne<Track>(TrackEntity.name, options);
-  }
-
-  public async findByProjectId(projectId: string) {
-    const qr = await this.database.getQueryRunner();
-
-    return await qr.manager.find<Track>(TrackEntity.name, {
-      where: { projectId },
-      order: { createdAt: 'desc' },
     });
   }
 

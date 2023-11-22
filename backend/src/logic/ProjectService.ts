@@ -392,7 +392,7 @@ export class ProjectService {
       const project = await this.projectAccess.findOneOrFailById(id);
       if (project.infoId === null)
         throw new InternalServerError('info not found');
-      const info = await this.infoAccess.findOneOrFailById(project.infoId);
+      const info = project.info;
       const newInfo = new InfoEntity();
       newInfo.name = info.name;
       newInfo.description = info.description;
@@ -401,17 +401,15 @@ export class ProjectService {
       newInfo.language = info.language;
       newInfo.caption = info.caption;
       newInfo.coverFileUri = info.coverFileUri;
-      const newInfoRes = await this.infoAccess.save(newInfo);
+      const newInfoObj = await this.infoAccess.save(newInfo);
 
       project.status = Status.InProgress;
-      project.infoId = newInfoRes.id;
+      project.infoId = newInfoObj.id;
       project.startedAt = new Date().toISOString();
       await this.projectAccess.save(project);
 
       const projectUsers = await this.projectUserAccess.findByProjectId(id);
-      const users = await this.userAccess.find({
-        where: { id: In(projectUsers.map((p) => p.userId)) },
-      });
+      const users = projectUsers.map((v) => v.user);
       const notification = new NotificationEntity();
       notification.isRead = false;
 

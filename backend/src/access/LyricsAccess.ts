@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { FindManyOptions } from 'typeorm';
+import { FindManyOptions, FindOneOptions } from 'typeorm';
 import { Lyrics, LyricsEntity } from 'src/model/entity/LyricsEntity';
 import { Database } from 'src/util/Database';
 
@@ -20,18 +20,32 @@ export class LyricsAccess {
     });
   }
 
-  public async findOneById(id: string) {
+  public async findOne(options: FindOneOptions<Lyrics>) {
     const qr = await this.database.getQueryRunner();
 
     return await qr.manager.findOne<Lyrics>(LyricsEntity.name, {
+      relations: { user: true, info: true },
+      ...options,
+    });
+  }
+
+  public async findOneOrFail(options: FindOneOptions<Lyrics>) {
+    const qr = await this.database.getQueryRunner();
+
+    return await qr.manager.findOneOrFail<Lyrics>(LyricsEntity.name, {
+      relations: { user: true, info: true },
+      ...options,
+    });
+  }
+
+  public async findOneById(id: string) {
+    return await this.findOne({
       where: { id },
     });
   }
 
   public async findOneOrFailById(id: string) {
-    const qr = await this.database.getQueryRunner();
-
-    return await qr.manager.findOneOrFail<Lyrics>(LyricsEntity.name, {
+    return await this.findOneOrFail({
       where: { id },
     });
   }

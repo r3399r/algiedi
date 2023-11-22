@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { FindManyOptions } from 'typeorm';
+import { FindManyOptions, FindOneOptions } from 'typeorm';
 import {
   ViewCreationExplore,
   ViewCreationExploreEntity,
@@ -38,12 +38,19 @@ export class ViewCreationExploreAccess {
     );
   }
 
-  public async findOneByIdOrFail(id: string) {
+  public async findOneOrFail(options?: FindOneOptions<ViewCreationExplore>) {
     const qr = await this.database.getQueryRunner();
 
     return await qr.manager.findOneOrFail<ViewCreationExplore>(
       ViewCreationExploreEntity.name,
-      { where: { id }, relations: { info: true, project: true, user: true } }
+      {
+        relations: { info: true, project: true, user: true },
+        ...options,
+      }
     );
+  }
+
+  public async findOneByIdOrFail(id: string) {
+    return await this.findOneOrFail({ where: { id } });
   }
 }

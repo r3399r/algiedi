@@ -23,13 +23,19 @@ export class LikeAccess {
   public async findOneOrFail(options: FindOneOptions<Like>) {
     const qr = await this.database.getQueryRunner();
 
-    return await qr.manager.findOneOrFail<Like>(LikeEntity.name, options);
+    return await qr.manager.findOneOrFail<Like>(LikeEntity.name, {
+      relations: { user: true },
+      ...options,
+    });
   }
 
   public async findAndCount(options: FindManyOptions<Like>) {
     const qr = await this.database.getQueryRunner();
 
-    return await qr.manager.findAndCount<Like>(LikeEntity.name, options);
+    return await qr.manager.findAndCount<Like>(LikeEntity.name, {
+      relations: { user: true },
+      ...options,
+    });
   }
 
   public async hardDeleteById(id: string) {

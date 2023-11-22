@@ -27,7 +27,7 @@ const NotificationMessage = ({ data }: Props) => {
     )
       if (data.target?.project?.status === Status.Published)
         navigate(`${Page.Explore}/${data.targetId}`);
-      else navigate(`${Page.Project}`, { state: { id: data.targetId } });
+      else navigate(Page.Project, { state: { id: data.targetId } });
     else if ([NotificationType.Like, NotificationType.Comment].includes(data.type))
       navigate(`${Page.Explore}/${data.targetId}`);
     else if (data.type === NotificationType.Follow)

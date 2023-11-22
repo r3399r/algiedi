@@ -59,19 +59,29 @@ export class ProjectUserAccess {
   public async findOne(options: FindOneOptions<ProjectUser>) {
     const qr = await this.database.getQueryRunner();
 
-    return await qr.manager.findOne<ProjectUser>(
-      ProjectUserEntity.name,
-      options
-    );
+    return await qr.manager.findOne<ProjectUser>(ProjectUserEntity.name, {
+      relations: {
+        project: { info: true },
+        user: true,
+        lyrics: { info: true },
+        track: { info: true },
+      },
+      ...options,
+    });
   }
 
   public async findOneOrFail(options: FindOneOptions<ProjectUser>) {
     const qr = await this.database.getQueryRunner();
 
-    return await qr.manager.findOneOrFail<ProjectUser>(
-      ProjectUserEntity.name,
-      options
-    );
+    return await qr.manager.findOneOrFail<ProjectUser>(ProjectUserEntity.name, {
+      relations: {
+        project: { info: true },
+        user: true,
+        lyrics: { info: true },
+        track: { info: true },
+      },
+      ...options,
+    });
   }
 
   public async save(data: ProjectUser) {
