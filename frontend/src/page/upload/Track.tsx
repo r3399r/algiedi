@@ -1,4 +1,3 @@
-import { Autocomplete, TextField } from '@mui/material';
 import { ChangeEvent, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
@@ -13,28 +12,28 @@ import MultiSelect from 'src/component/MultiSelect';
 import MultiSelectOption from 'src/component/MultiSelectOption';
 import { Page } from 'src/constant/Page';
 import { Genre, Language, Theme } from 'src/constant/Property';
-import { GetExploreResponse } from 'src/model/backend/api/Explore';
+import { GetExploreIdResponse } from 'src/model/backend/api/Explore';
 import { UploadTrackForm } from 'src/model/Form';
 import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
 import { uploadTrack } from 'src/service/UploadService';
+import InspirationAntocomplete from './InspirationAutocomplete';
 
 type Props = {
-  defaultInspiredId?: string;
-  inspiration: GetExploreResponse;
+  inspiration?: GetExploreIdResponse;
 };
 
-const Track = ({ defaultInspiredId, inspiration }: Props) => {
+const Track = ({ inspiration }: Props) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const trackInputRef = useRef<HTMLInputElement>(null);
   const tabInputRef = useRef<HTMLInputElement>(null);
   const coverInputRef = useRef<HTMLInputElement>(null);
-  const [checkOriginal, setCheckOriginal] = useState<boolean>(!defaultInspiredId);
-  const [checkInspiration, setCheckInspiration] = useState<boolean>(!!defaultInspiredId);
+  const [checkOriginal, setCheckOriginal] = useState<boolean>(!inspiration);
+  const [checkInspiration, setCheckInspiration] = useState<boolean>(!!inspiration);
   const [trackFile, setTrackFile] = useState<File>();
   const [tabFile, setTabFile] = useState<File>();
   const [coverFile, setCoverFile] = useState<File>();
-  const [inspiredId, setInspiredId] = useState<string>(defaultInspiredId ?? '');
+  const [inspiredId, setInspiredId] = useState<string>(inspiration?.id ?? '');
   const [errorTrackFile, setErrorTrackFile] = useState<boolean>(false);
   const [theme, setTheme] = useState<string>();
   const [genre, setGenre] = useState<string>();
@@ -179,31 +178,9 @@ const Track = ({ defaultInspiredId, inspiration }: Props) => {
               }}
             />
             {checkInspiration && (
-              <Autocomplete
-                value={inspiration.find((v) => v.id === inspiredId)}
-                onChange={(event, newValue) => {
-                  setInspiredId(newValue?.id ?? '');
-                }}
-                options={inspiration}
-                getOptionLabel={(option) =>
-                  `${option.info.name} (${option.user.length > 0 ? option.user[0].username : ''}, ${
-                    option.type
-                  })`
-                }
-                renderOption={(props, option) => (
-                  <li {...props}>
-                    {option.info.name} ({option.user.length > 0 ? option.user[0].username : ''},{' '}
-                    {option.type})
-                  </li>
-                )}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    inputProps={{
-                      ...params.inputProps,
-                    }}
-                  />
-                )}
+              <InspirationAntocomplete
+                defaultKeyword={inspiration?.info.name}
+                onClick={(id) => setInspiredId(id)}
               />
             )}
           </div>

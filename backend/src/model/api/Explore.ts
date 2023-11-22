@@ -23,13 +23,7 @@ export type GetExploreSearchParams = {
 };
 
 export type GetExploreSearchResponse =
-  | (Omit<Project, 'info'> & {
-      info: Info & { coverFileUrl: string | null };
-    })[]
-  | (Omit<Lyrics, 'info'> & {
-      info: Info & { coverFileUrl: string | null };
-    })[]
-  | (Omit<Track, 'info'> & {
+  | (Omit<ViewCreationExplore, 'info'> & {
       info: Info & { coverFileUrl: string | null };
     })[]
   | (User & { avatarUrl: string | null })[];

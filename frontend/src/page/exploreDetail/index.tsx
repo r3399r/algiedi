@@ -189,7 +189,7 @@ const ExploreDetail = () => {
         <Button
           size="m"
           color="purple"
-          onClick={() => navigate(Page.Upload, { state: { inspiredId: creation.id } })}
+          onClick={() => navigate(Page.Upload, { state: { inspiration: creation } })}
         >
           {"I'm inspired!"}
         </Button>
@@ -230,7 +230,7 @@ const ExploreDetail = () => {
         </div>
       </div>
       <Divider />
-      <div className="my-4 px-10">
+      <div className="mb-52 mt-4 px-10">
         <div className="mb-4 text-xl font-bold">Comment</div>
         <div className="flex gap-4">
           <div className="flex w-1/2 flex-col gap-4">

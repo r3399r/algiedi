@@ -23,6 +23,7 @@ export type ViewCreationExplore = {
   fileUri: string | null;
   tabFileUri: string | null;
   lyricsText: string | null;
+  countLike: string;
   createdAt: string | null;
   updatedAt: string | null;
 };
@@ -68,6 +69,9 @@ export class ViewCreationExploreEntity implements ViewCreationExplore {
 
   @ViewColumn({ name: 'lyrics_text' })
   lyricsText: string | null = null;
+
+  @ViewColumn({ name: 'count_like' })
+  countLike = '0';
 
   @ViewColumn({ name: 'created_at' })
   createdAt: string | null = null;

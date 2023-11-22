@@ -4,6 +4,7 @@ select l.id,
     l.info_id,
     l.project_id,
     l.inspired_id,
+	l.count_like,
     l.created_at,
     l.updated_at,
     latest_lyrics.lyrics_text

@@ -298,36 +298,6 @@ export class ExploreService {
     if (params === null || !params.keyword)
       throw new BadRequestError('missing keyword');
 
-    if (params.type === 'lyrics') {
-      const lyrics = await this.lyricsAccess.find({
-        where: { info: { name: Like(`%${params.keyword}%`) } },
-        order: { countLike: 'desc' },
-        take: 20,
-      });
-
-      return lyrics.map((v) => ({
-        ...v,
-        info: {
-          ...v.info,
-          coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
-        },
-      }));
-    }
-    if (params.type === 'track') {
-      const track = await this.trackAccess.find({
-        where: { info: { name: Like(`%${params.keyword}%`) } },
-        order: { countLike: 'desc' },
-        take: 20,
-      });
-
-      return track.map((v) => ({
-        ...v,
-        info: {
-          ...v.info,
-          coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
-        },
-      }));
-    }
     if (params.type === 'user') {
       const user = await this.userAccess.find({
         where: { username: Like(`%${params.keyword}%`) },
@@ -340,16 +310,31 @@ export class ExploreService {
       }));
     }
 
-    const song = await this.projectAccess.find({
-      order: { countLike: 'desc' },
-      where: {
-        status: Status.Published,
+    // if params.type is undefined, return song,track,lyrics
+    const whereOption: FindOptionsWhere<ViewCreationExplore>[] = [];
+    if (params.type === undefined || params.type === 'track')
+      whereOption.push({
+        type: Type.Track,
         info: { name: Like(`%${params.keyword}%`) },
-      },
+      });
+    if (params.type === undefined || params.type === 'lyrics')
+      whereOption.push({
+        type: Type.Lyrics,
+        info: { name: Like(`%${params.keyword}%`) },
+      });
+    if (params.type === undefined || params.type === 'song')
+      whereOption.push({
+        type: Type.Song,
+        project: { status: Status.Published },
+        info: { name: Like(`%${params.keyword}%`) },
+      });
+    const creation = await this.viewCreationExploreAccess.find({
+      order: { countLike: 'desc' },
+      where: whereOption,
       take: 20,
     });
 
-    return song.map((v) => ({
+    return creation.map((v) => ({
       ...v,
       info: {
         ...v.info,
