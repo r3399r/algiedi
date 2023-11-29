@@ -69,7 +69,7 @@ const AuthRegister = () => {
                 label="Password"
                 type="password"
                 required
-                hint="At least 1 upper case charater, 1 lower case character, 1 number, and 8 characters"
+                tooltip="At least 1 upper case charater, 1 lower case character, 1 number, and 8 characters"
               />
             </div>
             <div className="mt-5">

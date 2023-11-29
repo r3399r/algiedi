@@ -15,7 +15,7 @@ const NavbarDrawer = ({ open, onClose }: NavbarDrawerProps) => {
   const { isLogin } = useSelector((rootState: RootState) => rootState.ui);
   const pathname = useLocation().pathname;
 
-  const goto = (path: Page) => () => {
+  const goto = (path: string) => () => {
     onClose();
     navigate(path);
   };
@@ -33,6 +33,22 @@ const NavbarDrawer = ({ open, onClose }: NavbarDrawerProps) => {
         onClick={goto(Page.Explore)}
       >
         Explore
+      </div>
+      <div
+        className={classNames('mx-4 mt-3 cursor-pointer decoration-blue hover:underline', {
+          underline: pathname === `${Page.Explore}/idea`,
+        })}
+        onClick={goto(`${Page.Explore}/idea`)}
+      >
+        Explore Idea
+      </div>
+      <div
+        className={classNames('mx-4 mt-3 cursor-pointer decoration-blue hover:underline', {
+          underline: pathname === `${Page.Explore}/song`,
+        })}
+        onClick={goto(`${Page.Explore}/song`)}
+      >
+        Explore Songs
       </div>
       <div
         className={classNames('mx-4 mt-3 cursor-pointer decoration-blue hover:underline', {

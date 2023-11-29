@@ -36,7 +36,7 @@ const ExploreUserDetail = () => {
       <div className="mb-4 text-xl font-bold">Profile</div>
       <div className="flex">
         <div className="w-2/12">
-          <Cover url={user.avatarUrl} />
+          <Cover url={user.avatarUrl} type="user" />
         </div>
         <div className="w-3/12">
           <div className="text-2xl font-bold">{user.username}</div>

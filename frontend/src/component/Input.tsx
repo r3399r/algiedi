@@ -1,3 +1,5 @@
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import { Tooltip } from '@mui/material';
 import classNames from 'classnames';
 import { ChangeEvent, forwardRef, InputHTMLAttributes, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -8,6 +10,7 @@ export type Props = InputHTMLAttributes<HTMLInputElement> & {
   error?: boolean | string;
   asterisked?: boolean;
   regex?: RegExp;
+  tooltip?: string;
 };
 
 const Input = forwardRef<HTMLInputElement, Props>(
@@ -22,6 +25,7 @@ const Input = forwardRef<HTMLInputElement, Props>(
       autoComplete = 'off',
       onChange,
       regex,
+      tooltip,
       ...props
     },
     ref,
@@ -36,9 +40,16 @@ const Input = forwardRef<HTMLInputElement, Props>(
     return (
       <div>
         {label && (
-          <div className={'text-[14px] text-dark'}>
+          <div className="flex items-center text-[14px] text-dark">
             {label}
             {asterisked && <span className="text-red">*</span>}
+            {tooltip && (
+              <div>
+                <Tooltip title={tooltip}>
+                  <InfoOutlinedIcon fontSize="small" />
+                </Tooltip>
+              </div>
+            )}
           </div>
         )}
         <input

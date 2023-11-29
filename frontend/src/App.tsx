@@ -28,7 +28,7 @@ const App = () => {
 
   return (
     <>
-      <AudioBox />
+      {!location.pathname.startsWith('/auth') && <AudioBox />}
       {isDashboard && (
         <>
           <div className="flex">

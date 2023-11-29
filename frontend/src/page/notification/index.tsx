@@ -32,6 +32,7 @@ const Notification = () => {
               size={80}
               clickable
               onClick={() => navigate(`${Page.Explore}/user/${v.fromUserId}`)}
+              type="user"
             />
             <div className="pl-5">
               <NotificationMessage data={v} />

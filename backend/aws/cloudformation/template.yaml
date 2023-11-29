@@ -11,6 +11,8 @@ Parameters:
     Type: String
   TargetEnvr:
     Type: String
+  Domain:
+    Type: String
 Conditions: 
   IsProd: !Equals [ !Ref TargetEnvr, prod ]
 Resources:
@@ -1855,6 +1857,64 @@ Resources:
       CompatibleRuntimes: [nodejs18.x]
       ContentUri: ../../dist
       RetentionPolicy: Delete
+  ###################################
+  ##### Cognito related Lambdas #####
+  ###################################
+  LambdaCognitoMessage:
+    Type: AWS::Serverless::Function
+    Properties:
+      Architectures: [arm64]
+      Handler: index.message
+      Runtime: nodejs18.x
+      FunctionName: !Sub ${Project}-${TargetEnvr}-message
+      Role: !GetAtt ExecutionRole.Arn
+      CodeUri: ../../lib/src
+      MemorySize: 128
+      Layers: [!Ref LambdaLayer]
+      Environment:
+        Variables:
+          ENVR: !Sub ${TargetEnvr}
+          DOMAIN: !Sub ${Domain}
+  InvokePermissionCognitoMessage:
+    Type: AWS::Lambda::Permission
+    DependsOn: [LambdaCognitoMessage]
+    Properties:
+      FunctionName: !Sub ${Project}-${TargetEnvr}-message
+      Action: 'lambda:InvokeFunction'
+      Principal: cognito-idp.amazonaws.com
+      SourceArn:
+        Fn::ImportValue: !Sub ${Project}-${TargetEnvr}-cognito-user-pool-arn
+  LambdaCognitoSignup:
+    Type: AWS::Serverless::Function
+    Properties:
+      Architectures: [arm64]
+      Handler: index.signup
+      Runtime: nodejs18.x
+      FunctionName: !Sub ${Project}-${TargetEnvr}-signup
+      Role: !GetAtt ExecutionRole.Arn
+      CodeUri: ../../lib/src
+      MemorySize: 128
+      Layers: [!Ref LambdaLayer]
+      Environment:
+        Variables:
+          PROJECT: !Sub ${Project}
+          ENVR: !Sub ${TargetEnvr}
+          DB_ENDPOINT:
+            Fn::ImportValue: !Sub ${Project}-${TargetEnvr}-db-endpoint
+          DB_PORT:
+            Fn::ImportValue: !Sub ${Project}-${TargetEnvr}-db-port
+          DB_USERNAME:
+            Fn::ImportValue: !Sub ${Project}-${TargetEnvr}-db-username
+          DB_PASSWORD: !Sub '{{resolve:ssm:${Project}-${TargetEnvr}-db-pwd}}'
+  InvokePermissionCognitoSignup:
+    Type: AWS::Lambda::Permission
+    DependsOn: [LambdaCognitoSignup]
+    Properties:
+      FunctionName: !Sub ${Project}-${TargetEnvr}-signup
+      Action: 'lambda:InvokeFunction'
+      Principal: cognito-idp.amazonaws.com
+      SourceArn:
+        Fn::ImportValue: !Sub ${Project}-${TargetEnvr}-cognito-user-pool-arn
   ################################################
   ##### Websocket API and associated Lambdas #####
   ################################################
@@ -2069,13 +2129,3 @@ Resources:
         - Endpoint: lamplighter.planet@gmail.com
           Protocol: email
       TopicName: !Sub ${Project}-${TargetEnvr}-contact-us-topic
-# Outputs:
-#   APIEndpoint:
-#     Description: "API Gateway endpoint URL"
-#     Value: !Sub "wss://${WebsocketApi}.execute-api.${AWS::Region}.amazonaws.com/dev"
-#   Distribution:
-#     Description: "CloudFront distribution URL"
-#     Value: !Join 
-#       - ''
-#       - - "wss://"
-#         - !GetAtt CloudFrontDistribution.DomainName

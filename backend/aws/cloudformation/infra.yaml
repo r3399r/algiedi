@@ -58,57 +58,6 @@ Resources:
       AllocatedStorage: 20
       PubliclyAccessible: true
       DBSubnetGroupName: !Ref RdsSubnetGroup
-  #####################################
-  ##### Required Lambda functions #####
-  #####################################
-  LambdaCognitoMessage:
-    Type: AWS::Serverless::Function
-    Properties:
-      Architectures: [arm64]
-      Handler: index.message
-      Runtime: nodejs18.x
-      FunctionName: !Sub ${Project}-${TargetEnvr}-message
-      Role: !GetAtt ExecutionRole.Arn
-      CodeUri: ../../lib/src
-      MemorySize: 128
-      Environment:
-        Variables:
-          ENVR: !Sub ${TargetEnvr}
-          DOMAIN: !Sub ${Domain}
-  InvokePermissionCognitoMessage:
-    Type: AWS::Lambda::Permission
-    DependsOn: [LambdaCognitoMessage]
-    Properties:
-      FunctionName: !Sub ${Project}-${TargetEnvr}-message
-      Action: 'lambda:InvokeFunction'
-      Principal: cognito-idp.amazonaws.com
-      SourceArn: !GetAtt CognitoUserPool.Arn
-  LambdaCognitoSignup:
-    Type: AWS::Serverless::Function
-    Properties:
-      Architectures: [arm64]
-      Handler: index.signup
-      Runtime: nodejs18.x
-      FunctionName: !Sub ${Project}-${TargetEnvr}-signup
-      Role: !GetAtt ExecutionRole.Arn
-      CodeUri: ../../lib/src
-      MemorySize: 128
-      Environment:
-        Variables:
-          PROJECT: !Sub ${Project}
-          ENVR: !Sub ${TargetEnvr}
-          DB_ENDPOINT: !GetAtt RdsDatabase.Endpoint.Address
-          DB_PORT: !GetAtt RdsDatabase.Endpoint.Port
-          DB_USERNAME: admin
-          DB_PASSWORD: !Sub '{{resolve:ssm:${Project}-${TargetEnvr}-db-pwd}}'
-  InvokePermissionCognitoSignup:
-    Type: AWS::Lambda::Permission
-    DependsOn: [LambdaCognitoSignup]
-    Properties:
-      FunctionName: !Sub ${Project}-${TargetEnvr}-signup
-      Action: 'lambda:InvokeFunction'
-      Principal: cognito-idp.amazonaws.com
-      SourceArn: !GetAtt CognitoUserPool.Arn
   #############################
   ##### Cognito User Pool #####
   #############################
@@ -138,8 +87,8 @@ Resources:
       UsernameAttributes: [email]
       UserPoolName: !Sub ${Project}-${TargetEnvr}
       LambdaConfig:
-        CustomMessage: !GetAtt LambdaCognitoMessage.Arn
-        PreSignUp: !GetAtt LambdaCognitoSignup.Arn
+        CustomMessage: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${Project}-${TargetEnvr}-message
+        PreSignUp: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${Project}-${TargetEnvr}-signup
   CognitoUserPoolClient:
     Type: AWS::Cognito::UserPoolClient
     DependsOn: [CognitoUserPool]

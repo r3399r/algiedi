@@ -68,6 +68,7 @@ const NotificationWidget = ({ className }: Props) => {
                 size={40}
                 clickable
                 onClick={() => navigate(`${Page.Explore}/user/${v.fromUserId}`)}
+                type="user"
               />
               <NotificationMessage data={v} />
             </div>

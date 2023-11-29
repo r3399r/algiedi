@@ -41,7 +41,7 @@ const ExhibitFollow = ({ countPerPage }: Props) => {
             className="cursor-pointer text-center"
             onClick={() => navigate(`${Page.Explore}/user/${v.followeeId}`)}
           >
-            <Cover url={v.followee.avatarUrl} size={150} />
+            <Cover url={v.followee.avatarUrl} size={150} type="user" />
             <div className="font-bold">{v.followee.username}</div>
           </div>
         ))}

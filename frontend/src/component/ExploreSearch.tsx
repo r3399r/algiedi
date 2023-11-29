@@ -109,7 +109,7 @@ const ExploreSearch = ({ className }: Props) => {
                     )
                   }
                 >
-                  <Cover url={v.url} size={40} />
+                  <Cover url={v.url} size={40} type={type === 'user' ? 'user' : 'creation'} />
                   <div>{v.name}</div>
                 </ListItem>
               ))}

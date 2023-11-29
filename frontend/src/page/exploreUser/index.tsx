@@ -67,7 +67,7 @@ const ExploreUser = () => {
             onClick={() => navigate(`${Page.Explore}/user/${v.id}`)}
           >
             <div className="flex w-1/3 flex-col items-center">
-              <Cover url={v.avatarUrl} size={100} />
+              <Cover url={v.avatarUrl} size={100} type="user" />
               <div className="flex h-5 gap-1">
                 {v.facebook && <img src={IcFacebook} className="w-5" />}
                 {v.instagram && <img src={IcInstagram} className="w-5" />}
