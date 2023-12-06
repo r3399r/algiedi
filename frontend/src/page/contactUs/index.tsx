@@ -68,7 +68,7 @@ const ContactUs = () => {
               </div>
             </div>
             <div className="my-5">
-              <FormInput name="email" label="Email" required />
+              <FormInput name="email" label="Email" required type="email" />
             </div>
             <FormTextarea name="message" placeholder="Message..." required />
             <div className="mt-5 text-center">

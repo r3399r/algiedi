@@ -25,9 +25,17 @@ type Props = {
   asterisked?: boolean;
 };
 
-const MultiSelect = ({ children, label, disabled, onChange, error, asterisked = false }: Props) => {
+const MultiSelect = ({
+  children,
+  label,
+  disabled,
+  defaultValue,
+  onChange,
+  error,
+  asterisked = false,
+}: Props) => {
   const [open, setOpen] = useState<boolean>(false);
-  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [selected, setSelected] = useState<Set<string>>(new Set(defaultValue?.split(',')));
   const ref = useRef<HTMLDivElement>(null);
 
   const handleChange = (v: string) => {

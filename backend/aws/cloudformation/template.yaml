@@ -2126,6 +2126,6 @@ Resources:
     Properties:
       DisplayName: !Sub ${Project}-${TargetEnvr}-contact-us-topic
       Subscription:
-        - Endpoint: lamplighter.planet@gmail.com
+        - Endpoint: gotronmusic@gmail.com
           Protocol: email
       TopicName: !Sub ${Project}-${TargetEnvr}-contact-us-topic

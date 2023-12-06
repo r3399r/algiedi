@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import IcGreyPeople from 'src/image/ic-grey-people.jpg';
 
 type Props = {
   size?: number;
@@ -16,11 +17,11 @@ const Avatar = ({ size = 100, url, clickable = false, onClick }: Props) => (
       if (clickable && onClick) onClick();
     }}
   >
-    {url ? (
-      <img src={url} className="rounded-full object-cover" style={{ width: size, height: size }} />
-    ) : (
-      <div className="rounded-full bg-blue" style={{ width: size, height: size }} />
-    )}
+    <img
+      src={url ?? IcGreyPeople}
+      className="rounded-full object-cover"
+      style={{ width: size, height: size }}
+    />
   </div>
 );
 

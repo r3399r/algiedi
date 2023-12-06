@@ -21,6 +21,7 @@ const BasicInfo = () => {
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const [role, setRole] = useState<string[]>([]);
   const [age, setAge] = useState<string>('');
+  const [region, setRegion] = useState<string>('');
   const [language, setLanguage] = useState<string[]>([]);
   const [bio, setBio] = useState<string>('');
   const [tag, setTag] = useState<string[]>([]);
@@ -33,6 +34,7 @@ const BasicInfo = () => {
     loadProfileData().then((res) => {
       setRole(res.role);
       setAge(res.age);
+      setRegion(res.region);
       setLanguage(res.language);
       setBio(res.bio);
       setTag(res.tag);
@@ -59,7 +61,7 @@ const BasicInfo = () => {
   };
 
   const onSave = () => {
-    editProfile(role, age, language, bio, tag, facebook, instagram, youtube, soundcloud)
+    editProfile(role, age, region, language, bio, tag, facebook, instagram, youtube, soundcloud)
       .then(() => {
         dispatch(openSuccessSnackbar('Save Successfully'));
         setRefresh(!refresh);
@@ -74,7 +76,7 @@ const BasicInfo = () => {
           <Avatar
             url={avatar}
             size={120}
-            clickable
+            clickable={isEdit}
             onClick={() => avatarInputRef.current?.click()}
           />
           <div>
@@ -123,6 +125,16 @@ const BasicInfo = () => {
             />
           ) : (
             <div>{age}</div>
+          )}
+        </div>
+      </div>
+      <div className="flex h-[40px] items-center">
+        <div className="w-[150px] text-dark">Region</div>
+        <div className="flex-1">
+          {isEdit ? (
+            <Input value={region} disabled={!isEdit} onChange={(e) => setRegion(e.target.value)} />
+          ) : (
+            <div>{region}</div>
           )}
         </div>
       </div>

@@ -100,13 +100,13 @@ const Info = ({ project, doRefresh, isOwner }: Props) => {
               onChange={(e) => setDescription(e.target.value)}
             />
           ) : (
-            <div className="whitespace-pre">{description}</div>
+            <div className="whitespace-pre-line">{description}</div>
           )}
         </div>
         <div className="flex items-center gap-1">
           <div className="w-[90px] font-bold">Theme</div>
           {isEdit ? (
-            <MultiSelect onChange={(v) => setTheme(v)} error={errorTheme}>
+            <MultiSelect defaultValue={theme} onChange={(v) => setTheme(v)} error={errorTheme}>
               {Theme.map((v, i) => (
                 <MultiSelectOption key={i} value={v.name}>
                   {v.name}
@@ -120,7 +120,7 @@ const Info = ({ project, doRefresh, isOwner }: Props) => {
         <div className="flex items-center gap-1">
           <div className="w-[90px] font-bold">Genre</div>
           {isEdit ? (
-            <MultiSelect onChange={(v) => setGenre(v)} error={errorGenre}>
+            <MultiSelect defaultValue={genre} onChange={(v) => setGenre(v)} error={errorGenre}>
               {Genre.map((v, i) => (
                 <MultiSelectOption key={i} value={v.name}>
                   {v.name}
@@ -134,7 +134,11 @@ const Info = ({ project, doRefresh, isOwner }: Props) => {
         <div className="flex items-center gap-1">
           <div className="w-[90px] font-bold">Language</div>
           {isEdit ? (
-            <MultiSelect onChange={(v) => setLanguage(v)} error={errorLanguage}>
+            <MultiSelect
+              defaultValue={language}
+              onChange={(v) => setLanguage(v)}
+              error={errorLanguage}
+            >
               {Language.map((v, i) => (
                 <MultiSelectOption key={i} value={v.name}>
                   {v.name}

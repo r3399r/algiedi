@@ -6,6 +6,7 @@ export type User = {
   username: string;
   role: string | null;
   age: number | null;
+  region: string | null;
   language: string | null;
   bio: string | null;
   tag: string | null;
@@ -36,6 +37,9 @@ export class UserEntity implements User {
 
   @Column({ type: 'int' })
   age: number | null = null;
+
+  @Column({ type: 'varchar' })
+  region: string | null = null;
 
   @Column({ type: 'varchar' })
   language: string | null = null;

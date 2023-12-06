@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Page } from 'src/constant/Page';
 import Logo from 'src/image/logo.svg';
 import { RootState } from 'src/redux/store';
+import Avatar from './Avatar';
 import Button from './Button';
 import NavbarDrawer from './NavbarDrawer';
 import NavbarExploreMenu from './NavbarExploreMenu';
@@ -14,6 +15,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState<boolean>(false);
   const { isLogin } = useSelector((rootState: RootState) => rootState.ui);
+  const { avatar } = useSelector((rootState: RootState) => rootState.me);
   const pathname = useLocation().pathname;
   const exploreRef = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
@@ -66,7 +68,10 @@ const Navbar = () => {
           >
             Contact Us
           </div>
-          <Button onClick={() => navigate(isLogin ? Page.Profile : Page.Login)}>Create Now</Button>
+          {!isLogin && <Button onClick={() => navigate(Page.Login)}>Create Now</Button>}
+          {isLogin && (
+            <Avatar size={50} url={avatar} clickable onClick={() => navigate(Page.Overall)} />
+          )}
         </div>
         <div className="cursor-pointer sm:hidden" onClick={() => setOpen(true)}>
           <MenuIcon />

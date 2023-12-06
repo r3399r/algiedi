@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import IcCover from 'src/image/ic-default-cover.svg';
 import IcGreyPeople from 'src/image/ic-grey-people.jpg';
 
 type Props = {
@@ -18,15 +19,11 @@ const Cover = ({ size = 100, url, clickable = false, onClick, type = 'creation' 
       if (clickable && onClick) onClick();
     }}
   >
-    {url || type === 'user' ? (
-      <img
-        src={url ?? IcGreyPeople}
-        className="rounded-full object-cover"
-        style={{ width: size, height: size }}
-      />
-    ) : (
-      <div className="rounded-full bg-grey" style={{ width: size, height: size }} />
-    )}
+    <img
+      src={url ?? (type === 'user' ? IcGreyPeople : IcCover)}
+      className="rounded-full object-cover"
+      style={{ width: size, height: size }}
+    />
   </div>
 );
 

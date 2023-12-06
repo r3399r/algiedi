@@ -1,8 +1,9 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Button from 'src/component/Button';
 import Footer from 'src/component/Footer';
+import Input from 'src/component/Input';
 import MultiSelect from 'src/component/MultiSelect';
 import MultiSelectOption from 'src/component/MultiSelectOption';
 import { Page } from 'src/constant/Page';
@@ -14,18 +15,15 @@ const AuthQuestionnaire = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [start, setStart] = useState<boolean>(false);
+  const [age, setAge] = useState<string>('');
+  const [region, setRegion] = useState<string>('');
   const [role, setRole] = useState<string>('');
   const [language, setLanguage] = useState<string>('');
   const [instrument, setInstrument] = useState<string>('');
   const [favoriate, setFavoriate] = useState<string>('');
 
-  const showNext = useMemo(
-    () => role.length > 0 && language.length > 0 && instrument.length > 0 && favoriate.length > 0,
-    [role, language, instrument, favoriate],
-  );
-
   const onNext = () => {
-    saveQuestionnaire({ role, language, instrument, favoriate })
+    saveQuestionnaire({ age, region, role, language, instrument, favoriate })
       .then(() => navigate(Page.Profile))
       .catch((err) => dispatch(openFailSnackbar(err)));
   };
@@ -49,47 +47,73 @@ const AuthQuestionnaire = () => {
         )}
         {start && (
           <>
-            <div className="flex flex-wrap items-center gap-2">
-              I want to create music as a
-              <MultiSelect onChange={(v) => setRole(v)}>
-                {Role.map((v, i) => (
-                  <MultiSelectOption key={i} value={v.name}>
-                    <div className="text-[16px] font-bold">{v.name}</div>
-                    {v.note && <div className="text-[12px] text-[#a7a7a7]">{v.note}</div>}
-                  </MultiSelectOption>
-                ))}
-              </MultiSelect>
-              in
-              <MultiSelect onChange={(v) => setLanguage(v)}>
-                {Language.map((v, i) => (
-                  <MultiSelectOption key={i} value={v.name}>
-                    {v.name}
-                  </MultiSelectOption>
-                ))}
-              </MultiSelect>
-              . I am good at playing
-              <MultiSelect onChange={(v) => setInstrument(v)}>
-                {Instrument.map((v, i) => (
-                  <MultiSelectOption key={i} value={v.name}>
-                    {v.name}
-                  </MultiSelectOption>
-                ))}
-              </MultiSelect>
-              and I love
-              <MultiSelect onChange={(v) => setFavoriate(v)}>
-                {Genre.map((v, i) => (
-                  <MultiSelectOption key={i} value={v.name}>
-                    {v.name}
-                  </MultiSelectOption>
-                ))}
-              </MultiSelect>
-              music.
+            <div className="flex flex-wrap gap-1">
+              <span className="inline-flex items-center gap-2">
+                I am <Input type="number" value={age} onChange={(e) => setAge(e.target.value)} />{' '}
+                years old.
+              </span>
+              {age.length > 0 && (
+                <span className="inline-flex items-center gap-2">
+                  I live in <Input value={region} onChange={(e) => setRegion(e.target.value)} />.
+                </span>
+              )}
+              {region.length > 0 && (
+                <span className="inline-flex items-center gap-2">
+                  I want to create music as a
+                  <MultiSelect onChange={(v) => setRole(v)}>
+                    {Role.map((v, i) => (
+                      <MultiSelectOption key={i} value={v.name}>
+                        <div className="text-[16px] font-bold">{v.name}</div>
+                        {v.note && <div className="text-[12px] text-[#a7a7a7]">{v.note}</div>}
+                      </MultiSelectOption>
+                    ))}
+                  </MultiSelect>
+                </span>
+              )}
+              {role.length > 0 && (
+                <span className="inline-flex items-center gap-2">
+                  in
+                  <MultiSelect onChange={(v) => setLanguage(v)}>
+                    {Language.map((v, i) => (
+                      <MultiSelectOption key={i} value={v.name}>
+                        {v.name}
+                      </MultiSelectOption>
+                    ))}
+                  </MultiSelect>
+                  .
+                </span>
+              )}
+              {language.length > 0 && (
+                <span className="inline-flex items-center gap-2">
+                  I am good at playing
+                  <MultiSelect onChange={(v) => setInstrument(v)}>
+                    {Instrument.map((v, i) => (
+                      <MultiSelectOption key={i} value={v.name}>
+                        {v.name}
+                      </MultiSelectOption>
+                    ))}
+                  </MultiSelect>
+                </span>
+              )}
+              {instrument.length > 0 && (
+                <span className="inline-flex items-center gap-2">
+                  and I love
+                  <MultiSelect onChange={(v) => setFavoriate(v)}>
+                    {Genre.map((v, i) => (
+                      <MultiSelectOption key={i} value={v.name}>
+                        {v.name}
+                      </MultiSelectOption>
+                    ))}
+                  </MultiSelect>
+                  music.
+                </span>
+              )}
             </div>
-            <div className="text-center">
-              <Button onClick={onNext} disabled={!showNext}>
-                Go to Profile
-              </Button>
-            </div>
+            {favoriate.length > 0 && (
+              <div className="mt-5 text-center">
+                <Button onClick={onNext}>Go to Profile</Button>
+              </div>
+            )}
           </>
         )}
       </div>

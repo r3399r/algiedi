@@ -74,6 +74,7 @@ export class MeService {
     user.language = data.language ?? user.language;
     user.bio = data.bio ?? user.bio;
     user.age = Number(data.age) ?? user.age;
+    user.region = data.region ?? user.region;
     user.tag = data.tag ?? user.tag;
     user.facebook = data.facebook ?? user.facebook;
     user.instagram = data.instagram ?? user.instagram;

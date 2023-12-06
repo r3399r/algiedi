@@ -13,6 +13,7 @@ export type PutMeRequest = {
   language?: string;
   bio?: string;
   age?: string;
+  region?: string;
   tag?: string;
   facebook?: string;
   instagram?: string;

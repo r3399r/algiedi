@@ -121,7 +121,7 @@ const ExploreDetail = () => {
       <div className="mx-10 mt-10 rounded-3xl border border-solid border-dark p-4">
         {creation.fileUrl && (
           <div className="mb-4 flex items-center gap-2">
-            <AudioPlayer creation={creation} />
+            <AudioPlayer creation={{ ...creation, owner: creation.user[0] }} />
             {creation.tabFileUrl && (
               <DownloadForOfflineIcon
                 className="cursor-pointer"
@@ -135,7 +135,7 @@ const ExploreDetail = () => {
             <Accordion disableGutters defaultExpanded sx={{ border: 0 }}>
               <AccordionSummary expandIcon={<ExpandMoreIcon />}>Lyrics</AccordionSummary>
               <AccordionDetails>
-                <div className="whitespace-pre">{creation.lyricsText}</div>
+                <div className="whitespace-pre-line">{creation.lyricsText}</div>
               </AccordionDetails>
             </Accordion>
           </div>
@@ -182,7 +182,7 @@ const ExploreDetail = () => {
         )}
         <div className="w-1/2 rounded-3xl border border-solid border-dark p-4">
           <div className="font-bold">Description</div>
-          <div className="whitespace-pre">{creation.info.description}</div>
+          <div className="whitespace-pre-line">{creation.info.description}</div>
         </div>
       </div>
       <div className="mb-4 px-10 text-right">
@@ -244,7 +244,7 @@ const ExploreDetail = () => {
                       {v.timestamp ? formatDistanceToNow(new Date(v.timestamp)) : ''}
                     </div>
                   </div>
-                  <div className="whitespace-pre">{v.comment}</div>
+                  <div className="whitespace-pre-line">{v.comment}</div>
                 </div>
               </div>
             ))}

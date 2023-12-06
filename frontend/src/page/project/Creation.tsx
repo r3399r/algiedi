@@ -1,6 +1,9 @@
 import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import HistoryEduIcon from '@mui/icons-material/HistoryEdu';
+import MusicNoteIcon from '@mui/icons-material/MusicNote';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
+import { formatDistanceToNow } from 'date-fns';
 import { useState } from 'react';
 import AudioPlayer from 'src/component/AudioPlayer';
 import Button from 'src/component/Button';
@@ -25,10 +28,22 @@ const Creation = ({ track, lyrics, isOwner, doRefresh, project, isParticipant = 
     <>
       {track && (
         <>
-          {isParticipant && <div className="mb-2">{track.info.name}</div>}
+          <div className="text-right text-sm">
+            {track.createdAt ? formatDistanceToNow(new Date(track.createdAt)) : ''}
+          </div>
+          {isParticipant && (
+            <div className="mb-2 flex items-center gap-1">
+              <MusicNoteIcon
+                color="primary"
+                classes={{ colorPrimary: '!text-blue' }}
+                fontSize="small"
+              />
+              <div>{track.info.name}</div>
+            </div>
+          )}
           <div className="mb-4 flex items-center gap-2">
-            {track.fileUrl && (
-              <AudioPlayer creation={{ ...track, user: track.user === null ? [] : [track.user] }} />
+            {track.fileUrl && track.user && (
+              <AudioPlayer creation={{ ...track, owner: track.user }} />
             )}
             {track.tabFileUrl && (
               <DownloadForOfflineIcon
@@ -41,12 +56,22 @@ const Creation = ({ track, lyrics, isOwner, doRefresh, project, isParticipant = 
       )}
       {lyrics && (
         <div className="mb-4">
+          <div className="text-right text-sm">
+            {lyrics.createdAt ? formatDistanceToNow(new Date(lyrics.createdAt)) : ''}
+          </div>
           <Accordion disableGutters defaultExpanded sx={{ border: 0 }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              {isParticipant ? lyrics.info.name : 'Lyrics'}
+              <div className="flex items-center gap-1">
+                <HistoryEduIcon
+                  color="primary"
+                  classes={{ colorPrimary: '!text-red' }}
+                  fontSize="small"
+                />
+                {isParticipant ? lyrics.info.name : 'Lyrics'}
+              </div>
             </AccordionSummary>
             <AccordionDetails>
-              <div className="whitespace-pre">{lyrics.lyricsText}</div>
+              <div className="whitespace-pre-line">{lyrics.lyricsText}</div>
             </AccordionDetails>
           </Accordion>
         </div>

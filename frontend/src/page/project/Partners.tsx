@@ -35,7 +35,7 @@ const Partners = ({ project, doRefresh }: Props) => {
           {user?.isReady ? 'Need more work' : 'Ready'}
         </Button>
       </div>
-      <div className="flex items-end">
+      <div className="flex flex-wrap items-end">
         {project.collaborators.map((v) => (
           <div key={v.id} className="flex w-fit flex-col items-center px-4 py-2 text-center">
             {v.role === Role.Owner && <StarBorderIcon />}

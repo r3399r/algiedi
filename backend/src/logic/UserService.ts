@@ -57,6 +57,8 @@ export class UserService {
 
     // init user
     const user = await this.userAccess.findOneByIdOrFail(this.cognitoUserId);
+    user.age = Number(data.age);
+    user.region = data.region;
     user.role = data.role;
     user.language = data.language;
     user.bio = `I am good at playing the ${data.instrument}.`;

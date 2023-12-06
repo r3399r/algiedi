@@ -26,7 +26,7 @@ const ModalPublish = ({ open, handleClose, onPublish, project }: Props) => (
       </div>
       <div className="flex gap-2">
         <div className="w-[100px] font-bold">Description</div>
-        <div className="whitespace-pre">{project.info.description}</div>
+        <div className="whitespace-pre-line">{project.info.description}</div>
       </div>
       <div className="flex gap-2">
         <div className="w-[100px] font-bold">Theme</div>
@@ -54,7 +54,7 @@ const ModalPublish = ({ open, handleClose, onPublish, project }: Props) => (
           <Accordion disableGutters defaultExpanded sx={{ border: 0 }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>Lyrics</AccordionSummary>
             <AccordionDetails>
-              <div className="whitespace-pre">{project.lyricsText}</div>
+              <div className="whitespace-pre-line">{project.lyricsText}</div>
             </AccordionDetails>
           </Accordion>
         </div>

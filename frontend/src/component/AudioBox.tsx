@@ -30,8 +30,8 @@ const AudioBox = () => {
   return (
     <div className="fixed bottom-0 right-0 z-50 flex items-center gap-2 rounded-xl border border-solid border-black bg-white p-2">
       <div className="flex flex-col items-center">
-        <Cover url={creation?.info.coverFileUrl ?? ''} size={70} />
-        <div>{creation?.user[0].username ?? 'Author'}</div>
+        <Cover url={creation?.info.coverFileUrl ?? null} size={70} />
+        <div>{creation?.owner.username ?? 'Author'}</div>
       </div>
       <div>
         <div className="mx-4 mb-2 flex items-center justify-between">

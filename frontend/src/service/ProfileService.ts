@@ -18,6 +18,7 @@ const loadMe = async () => {
       username: user.username,
       role: user.role === null || user.role === '' ? [] : user.role.split(','),
       age: String(user.age ?? ''),
+      region: user.region ?? '',
       language: user.language === null || user.language === '' ? [] : user.language.split(','),
       bio: user.bio ?? '',
       tag: user.tag === null || user.tag === '' ? [] : user.tag.split(','),
@@ -126,6 +127,7 @@ export const getFollows = async (limit: string, offset: string) => {
 export const editProfile = async (
   role: string[],
   age: string,
+  region: string,
   language: string[],
   bio: string,
   tag: string[],
@@ -142,6 +144,7 @@ export const editProfile = async (
       language: language.join(),
       bio,
       age,
+      region,
       tag: tag.join(),
       facebook,
       instagram,

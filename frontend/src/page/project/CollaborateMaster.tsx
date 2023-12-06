@@ -33,11 +33,7 @@ const CollaborateMaster = ({ project, doRefresh }: Props) => {
         {hasUploaded && (
           <>
             <div className="mb-4 flex items-center gap-2">
-              {project.fileUrl && (
-                <AudioPlayer
-                  creation={{ ...project, user: project.user === null ? [] : [project.user] }}
-                />
-              )}
+              {project.fileUrl && <AudioPlayer creation={{ ...project, owner }} />}
               {project.tabFileUrl && (
                 <DownloadForOfflineIcon
                   className="cursor-pointer"
@@ -50,7 +46,7 @@ const CollaborateMaster = ({ project, doRefresh }: Props) => {
                 <Accordion disableGutters defaultExpanded sx={{ border: 0 }}>
                   <AccordionSummary expandIcon={<ExpandMoreIcon />}>Lyrics</AccordionSummary>
                   <AccordionDetails>
-                    <div className="whitespace-pre">{project.lyricsText}</div>
+                    <div className="whitespace-pre-line">{project.lyricsText}</div>
                   </AccordionDetails>
                 </Accordion>
               </div>
@@ -71,7 +67,6 @@ const CollaborateMaster = ({ project, doRefresh }: Props) => {
       <ModalMaster
         open={isModalOpen}
         targetCreation={project}
-        // targetProjectId={masterCreation.id}
         handleClose={() => setIsModalOpen(false)}
         doRefresh={doRefresh}
       />

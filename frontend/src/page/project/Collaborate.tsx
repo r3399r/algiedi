@@ -95,7 +95,7 @@ const Collaborate = ({ project, doRefresh }: Props) => {
                     </div>
                     <div className="flex flex-1 gap-3">
                       <div className="text-blue">{v.user?.username}</div>
-                      <div className="whitespace-pre">{v.content}</div>
+                      <div className="whitespace-pre-line">{v.content}</div>
                     </div>
                   </div>
                 ))}

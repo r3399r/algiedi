@@ -61,7 +61,7 @@ const AuthRegister = () => {
               </div>
             </div>
             <div className="mt-5">
-              <FormInput name="email" label="Email" required />
+              <FormInput name="email" label="Email" required type="email" />
             </div>
             <div className="mt-5">
               <FormInput

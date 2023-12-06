@@ -1,4 +1,6 @@
 export type PatchUserRequest = {
+  age: string;
+  region: string;
   role: string;
   language: string;
   instrument: string;
