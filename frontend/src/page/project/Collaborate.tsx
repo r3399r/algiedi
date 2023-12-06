@@ -76,7 +76,7 @@ const Collaborate = ({ project, doRefresh }: Props) => {
 
   return (
     <>
-      <div className="mb-10 text-[20px]">Project</div>
+      <div className="mb-10 text-[20px]">Latest Project</div>
       <div className="rounded-xl bg-[#f2f2f2] p-5">
         <div className="flex gap-4">
           <div className="w-1/2">

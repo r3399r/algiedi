@@ -71,7 +71,7 @@ const ExploreDetail = () => {
         {'<Back'}
       </div>
       <div
-        className="flex h-[200px] items-center bg-blue/30 bg-center"
+        className="relative flex h-[200px] items-center bg-blue/30 bg-center"
         style={{
           backgroundImage: creation.info.coverFileUrl ? `url(${creation.info.coverFileUrl})` : '',
         }}
@@ -94,6 +94,9 @@ const ExploreDetail = () => {
             <FavoriteIcon color="primary" classes={{ colorPrimary: '!text-red' }} />
             <div>{creation.likeCount}</div>
           </div>
+        </div>
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white px-1 pb-1 pt-0.5">
+          {creation.fileUrl && <AudioPlayer creation={{ ...creation, owner: creation.user[0] }} />}
         </div>
       </div>
       <div className="mr-10 mt-4 flex justify-end gap-4">
@@ -118,19 +121,16 @@ const ExploreDetail = () => {
           <ShareIcon className="cursor-pointer" />
         </CopyToClipboard>
       </div>
-      <div className="mx-10 mt-10 rounded-3xl border border-solid border-dark p-4">
-        {creation.fileUrl && (
-          <div className="mb-4 flex items-center gap-2">
-            <AudioPlayer creation={{ ...creation, owner: creation.user[0] }} />
-            {creation.tabFileUrl && (
+      {(creation.tabFileUrl || creation.lyricsText) && (
+        <div className="mx-10 mt-10 rounded-3xl border border-solid border-dark p-4">
+          {creation.tabFileUrl && (
+            <div className="mb-4 flex items-center gap-2">
               <DownloadForOfflineIcon
                 className="cursor-pointer"
                 onClick={() => window.open(creation.tabFileUrl ?? '', '_blank')}
               />
-            )}
-          </div>
-        )}
-        {creation.lyricsText && (
+            </div>
+          )}
           <div className="mb-4">
             <Accordion disableGutters defaultExpanded sx={{ border: 0 }}>
               <AccordionSummary expandIcon={<ExpandMoreIcon />}>Lyrics</AccordionSummary>
@@ -139,8 +139,8 @@ const ExploreDetail = () => {
               </AccordionDetails>
             </Accordion>
           </div>
-        )}
-      </div>
+        </div>
+      )}
       <div className="flex p-10">
         {creation.type === Type.Song && (
           <div className="flex w-1/2 flex-col gap-3">

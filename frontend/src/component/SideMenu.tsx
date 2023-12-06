@@ -48,7 +48,7 @@ const SideMenu = () => {
         })}
         onClick={() => navigate(Page.Project)}
       >
-        Project
+        Latest Project
       </div>
       <div
         className={classNames('cursor-pointer px-4 py-2 hover:bg-grey', {
