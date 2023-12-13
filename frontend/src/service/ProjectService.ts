@@ -1,7 +1,7 @@
 import meEndpoint from 'src/api/meEndpoint';
 import projectEndpoint from 'src/api/projectEndpoint';
 import uploadEndpoint from 'src/api/uploadEndpoint';
-import { GetProjectResponse, PutProjectRequest } from 'src/model/backend/api/Project';
+import { PutProjectRequest } from 'src/model/backend/api/Project';
 import { DetailedProject } from 'src/model/backend/Project';
 import { setLastProjectId } from 'src/redux/meSlice';
 import { dispatch, getState } from 'src/redux/store';
@@ -24,15 +24,9 @@ export const getProject = async (projectId?: string): Promise<DetailedProject | 
   try {
     dispatch(startWaiting());
 
-    const {
-      api: { projects },
-      me: { lastProjectId },
-    } = getState();
-    let myProjects: GetProjectResponse;
+    const { lastProjectId } = getState().me;
 
-    if (projects !== undefined) myProjects = projects;
-    else myProjects = await loadProjects();
-
+    const myProjects = await loadProjects();
     if (myProjects.length === 0) return null;
 
     // save and return specific project accordingly
