@@ -23,7 +23,6 @@ const Activities = ({ project, doRefresh }: Props) => {
               track={v.track}
               lyrics={v.lyrics}
               updatable={v.isReady !== true && v.user.id === userId}
-              isOwner={v.user.id === userId && project.project?.status === Status.InProgress}
               doRefresh={doRefresh}
               project={project}
               isParticipant

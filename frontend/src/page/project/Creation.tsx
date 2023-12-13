@@ -5,10 +5,13 @@ import HistoryEduIcon from '@mui/icons-material/HistoryEdu';
 import MusicNoteIcon from '@mui/icons-material/MusicNote';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { formatDistanceToNow } from 'date-fns';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 import AudioPlayer from 'src/component/AudioPlayer';
 import Button from 'src/component/Button';
+import { Role, Status } from 'src/model/backend/constant/Project';
 import { DetailedCreation, DetailedProject } from 'src/model/backend/Project';
+import { RootState } from 'src/redux/store';
 import ModalLyrics from './ModalLyrics';
 import ModalTrack from './ModalTrack';
 
@@ -16,7 +19,6 @@ type Props = {
   track: DetailedCreation | null;
   lyrics: DetailedCreation | null;
   updatable: boolean;
-  isOwner?: boolean;
   doRefresh: () => void;
   project: DetailedProject;
   isParticipant?: boolean;
@@ -26,13 +28,23 @@ const Creation = ({
   track,
   lyrics,
   updatable,
-  isOwner = false,
   doRefresh,
   project,
   isParticipant = false,
 }: Props) => {
+  const { id: userId } = useSelector((root: RootState) => root.me);
   const [isLyricsModalOpen, setIsLyricsModalOpen] = useState<boolean>(false);
   const [isTrackModalOpen, setIsTrackModalOpen] = useState<boolean>(false);
+  const downloadable = useMemo(() => {
+    if (track?.userId === userId) return true;
+    if (
+      project.collaborators.find((v) => v.role === Role.Owner)?.user.id === userId &&
+      project.project?.status === Status.InProgress
+    )
+      return true;
+
+    return false;
+  }, [project]);
 
   return (
     <>
@@ -55,7 +67,7 @@ const Creation = ({
             {track.fileUrl && track.user && (
               <AudioPlayer creation={{ ...track, owner: track.user }} />
             )}
-            {track.fileUrl && isOwner && (
+            {track.fileUrl && downloadable && (
               <DownloadForOfflineIcon
                 className="cursor-pointer"
                 onClick={() => window.open(track.fileUrl ?? '', '_blank')}
