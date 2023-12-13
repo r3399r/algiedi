@@ -54,7 +54,7 @@ const Info = ({ project, doRefresh, isOwner }: Props) => {
       <div className="mb-4 flex items-center gap-4">
         <Cover
           url={project.info.coverFileUrl}
-          clickable={isOwner}
+          clickable={isOwner && isEdit}
           onClick={() => coverInputRef.current?.click()}
         />
         <div className="flex-1 text-center">
