@@ -107,7 +107,7 @@ export const updateCover = async (project: DetailedProject, coverFile: File) => 
 
 export const updateCreation = async (
   projectId: string,
-  files: { track: File | null; tab: File | null },
+  files: { track?: File; tab?: File | null },
   lyrics?: string,
 ) => {
   try {
@@ -115,8 +115,8 @@ export const updateCreation = async (
     await uploadEndpoint.putUploadId(projectId, {
       type: 'song',
       lyrics,
-      file: files.track ? await file2Base64(files.track) : null,
-      tabFile: files.tab ? await file2Base64(files.tab) : null,
+      file: files.track !== undefined ? await file2Base64(files.track) : undefined,
+      tabFile: files.tab ? await file2Base64(files.tab) : files.tab,
     });
 
     await loadProjects();
@@ -128,16 +128,16 @@ export const updateCreation = async (
 export const updateTrack = async (
   trackId: string,
   files: {
-    track: File;
-    tab: File | null;
+    track?: File;
+    tab?: File | null;
   },
 ) => {
   try {
     dispatch(startWaiting());
     await uploadEndpoint.putUploadId(trackId, {
       type: 'track',
-      file: await file2Base64(files.track),
-      tabFile: files.tab ? await file2Base64(files.tab) : null,
+      file: files.track ? await file2Base64(files.track) : undefined,
+      tabFile: files.tab ? await file2Base64(files.tab) : files.tab,
     });
 
     await loadProjects();

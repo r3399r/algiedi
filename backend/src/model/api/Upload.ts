@@ -24,8 +24,8 @@ export type PostUploadRequest = UploadLyrics | UploadTrack;
 export type PutUploadIdRequest =
   | {
       type: 'track';
-      file: string;
-      tabFile: string | null;
+      file?: string;
+      tabFile?: string | null;
     }
   | {
       type: 'lyrics';
@@ -33,7 +33,7 @@ export type PutUploadIdRequest =
     }
   | {
       type: 'song';
-      file: string | null;
-      tabFile: string | null;
+      file?: string | null;
+      tabFile?: string | null;
       lyrics?: string;
     };

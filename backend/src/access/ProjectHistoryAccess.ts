@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { FindManyOptions } from 'typeorm';
+import { FindManyOptions, FindOneOptions } from 'typeorm';
 import {
   ProjectHistory,
   ProjectHistoryEntity,
@@ -20,6 +20,25 @@ export class ProjectHistoryAccess {
     return await qr.manager.find<ProjectHistory>(
       ProjectHistoryEntity.name,
       options
+    );
+  }
+
+  public async findOne(options: FindOneOptions<ProjectHistory>) {
+    const qr = await this.database.getQueryRunner();
+
+    return await qr.manager.findOne<ProjectHistory>(ProjectHistoryEntity.name, {
+      ...options,
+    });
+  }
+
+  public async findOneOrFail(options: FindOneOptions<ProjectHistory>) {
+    const qr = await this.database.getQueryRunner();
+
+    return await qr.manager.findOneOrFail<ProjectHistory>(
+      ProjectHistoryEntity.name,
+      {
+        ...options,
+      }
     );
   }
 

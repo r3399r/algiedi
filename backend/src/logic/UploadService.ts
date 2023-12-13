@@ -23,10 +23,16 @@ import { InfoEntity } from 'src/model/entity/InfoEntity';
 import { Lyrics, LyricsEntity } from 'src/model/entity/LyricsEntity';
 import { LyricsHistoryEntity } from 'src/model/entity/LyricsHistoryEntity';
 import { ProjectEntity } from 'src/model/entity/ProjectEntity';
-import { ProjectHistoryEntity } from 'src/model/entity/ProjectHistoryEntity';
+import {
+  ProjectHistory,
+  ProjectHistoryEntity,
+} from 'src/model/entity/ProjectHistoryEntity';
 import { ProjectUserEntity } from 'src/model/entity/ProjectUserEntity';
 import { Track, TrackEntity } from 'src/model/entity/TrackEntity';
-import { TrackHistoryEntity } from 'src/model/entity/TrackHistoryEntity';
+import {
+  TrackHistory,
+  TrackHistoryEntity,
+} from 'src/model/entity/TrackHistoryEntity';
 import {
   BadRequestError,
   InternalServerError,
@@ -300,19 +306,34 @@ export class UploadService {
         if (track.userId !== this.cognitoUserId)
           throw new UnauthorizedError('unauthorized');
 
+        // prepare history if needed
+        let latestHistory: TrackHistory | null = null;
+        if (!data.file || !data.tabFile)
+          latestHistory = await this.trackHistoryAccess.findOneOrFail({
+            where: { trackId: track.id },
+            order: { createdAt: 'desc' },
+          });
+
         const trackHistory = new TrackHistoryEntity();
         trackHistory.trackId = track.id;
         const newTrackHistory = await this.trackHistoryAccess.save(
           trackHistory
         );
 
-        // upload file
-        const fileKey = await this.awsService.s3Upload(
-          data.file,
-          `track/${track.id}/${new Date(
-            newTrackHistory.createdAt
-          ).toISOString()}/file`
-        );
+        // upload file if exists else get the latest uri
+        let fileKey: string;
+        if (data.file)
+          fileKey = await this.awsService.s3Upload(
+            data.file,
+            `track/${track.id}/${new Date(
+              newTrackHistory.createdAt
+            ).toISOString()}/file`
+          );
+        else {
+          if (latestHistory === null)
+            throw new InternalServerError('latest history should exist');
+          fileKey = latestHistory.fileUri;
+        }
 
         // upload tab file if exists
         let tabFileKey: string | null = null;
@@ -323,6 +344,9 @@ export class UploadService {
               newTrackHistory.createdAt
             ).toISOString()}/tab`
           );
+        else
+          tabFileKey =
+            data.tabFile === null ? null : latestHistory?.tabFileUri ?? null;
 
         newTrackHistory.fileUri = fileKey;
         newTrackHistory.tabFileUri = tabFileKey;
@@ -338,6 +362,14 @@ export class UploadService {
         });
         const project = await this.projectAccess.findOneOrFailById(creationId);
 
+        // prepare history if needed
+        let latestHistory: ProjectHistory | null = null;
+        if (!data.file || !data.tabFile)
+          latestHistory = await this.projectHistoryAccess.findOne({
+            where: { projectId: project.id },
+            order: { createdAt: 'desc' },
+          });
+
         const projectHistory = new ProjectHistoryEntity();
         projectHistory.projectId = project.id;
         projectHistory.lyricsText = data.lyrics ?? null;
@@ -345,8 +377,8 @@ export class UploadService {
           projectHistory
         );
 
-        // upload file
-        let fileKey: string | null = null;
+        // upload file if exists else get the latest uri
+        let fileKey: string | null;
         if (data.file)
           fileKey = await this.awsService.s3Upload(
             data.file,
@@ -354,6 +386,11 @@ export class UploadService {
               newProjectHistory.createdAt
             ).toISOString()}/file`
           );
+        else {
+          if (latestHistory === null)
+            throw new InternalServerError('latest history should exist');
+          fileKey = latestHistory.trackFileUri;
+        }
 
         // upload tab file if exists
         let tabFileKey: string | null = null;
@@ -364,6 +401,9 @@ export class UploadService {
               newProjectHistory.createdAt
             ).toISOString()}/tab`
           );
+        else
+          tabFileKey =
+            data.tabFile === null ? null : latestHistory?.tabFileUri ?? null;
 
         newProjectHistory.trackFileUri = fileKey;
         newProjectHistory.tabFileUri = tabFileKey;

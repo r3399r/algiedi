@@ -1,4 +1,5 @@
 import { inject, injectable } from 'inversify';
+import { FindOneOptions } from 'typeorm';
 import {
   TrackHistory,
   TrackHistoryEntity,
@@ -12,6 +13,17 @@ import { Database } from 'src/util/Database';
 export class TrackHistoryAccess {
   @inject(Database)
   private readonly database!: Database;
+
+  public async findOneOrFail(options: FindOneOptions<TrackHistory>) {
+    const qr = await this.database.getQueryRunner();
+
+    return await qr.manager.findOneOrFail<TrackHistory>(
+      TrackHistoryEntity.name,
+      {
+        ...options,
+      }
+    );
+  }
 
   public async save(data: TrackHistory) {
     const qr = await this.database.getQueryRunner();
