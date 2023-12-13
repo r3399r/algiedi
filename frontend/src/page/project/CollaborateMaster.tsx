@@ -1,3 +1,4 @@
+import AudioFileIcon from '@mui/icons-material/AudioFile';
 import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
@@ -34,8 +35,14 @@ const CollaborateMaster = ({ project, doRefresh }: Props) => {
           <>
             <div className="mb-4 flex items-center gap-2">
               {project.fileUrl && <AudioPlayer creation={{ ...project, owner }} />}
-              {project.tabFileUrl && (
+              {project.fileUrl && owner.id === userId && (
                 <DownloadForOfflineIcon
+                  className="cursor-pointer"
+                  onClick={() => window.open(project.fileUrl ?? '', '_blank')}
+                />
+              )}
+              {project.tabFileUrl && (
+                <AudioFileIcon
                   className="cursor-pointer"
                   onClick={() => window.open(project.tabFileUrl ?? '', '_blank')}
                 />

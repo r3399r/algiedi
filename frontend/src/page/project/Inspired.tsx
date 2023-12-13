@@ -70,7 +70,7 @@ const Inspired = ({ project, doRefresh }: Props) => {
           <Creation
             track={v.track}
             lyrics={v.lyrics}
-            isOwner={v.user.id === userId}
+            updatable={v.user.id === userId}
             doRefresh={doRefresh}
             project={project}
             isParticipant

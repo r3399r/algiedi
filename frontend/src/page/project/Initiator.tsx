@@ -31,7 +31,7 @@ const Initiator = ({ project, doRefresh }: Props) => {
         <Creation
           track={ownerCreation.track}
           lyrics={ownerCreation.lyrics}
-          isOwner={ownerCreation.user.id === userId}
+          updatable={ownerCreation.user.id === userId}
           doRefresh={doRefresh}
           project={project}
         />

@@ -1,3 +1,4 @@
+import AudioFileIcon from '@mui/icons-material/AudioFile';
 import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import HistoryEduIcon from '@mui/icons-material/HistoryEdu';
@@ -14,13 +15,22 @@ import ModalTrack from './ModalTrack';
 type Props = {
   track: DetailedCreation | null;
   lyrics: DetailedCreation | null;
-  isOwner: boolean;
+  updatable: boolean;
+  isOwner?: boolean;
   doRefresh: () => void;
   project: DetailedProject;
   isParticipant?: boolean;
 };
 
-const Creation = ({ track, lyrics, isOwner, doRefresh, project, isParticipant = false }: Props) => {
+const Creation = ({
+  track,
+  lyrics,
+  updatable,
+  isOwner = false,
+  doRefresh,
+  project,
+  isParticipant = false,
+}: Props) => {
   const [isLyricsModalOpen, setIsLyricsModalOpen] = useState<boolean>(false);
   const [isTrackModalOpen, setIsTrackModalOpen] = useState<boolean>(false);
 
@@ -45,8 +55,14 @@ const Creation = ({ track, lyrics, isOwner, doRefresh, project, isParticipant = 
             {track.fileUrl && track.user && (
               <AudioPlayer creation={{ ...track, owner: track.user }} />
             )}
-            {track.tabFileUrl && (
+            {track.fileUrl && isOwner && (
               <DownloadForOfflineIcon
+                className="cursor-pointer"
+                onClick={() => window.open(track.fileUrl ?? '', '_blank')}
+              />
+            )}
+            {track.tabFileUrl && (
+              <AudioFileIcon
                 className="cursor-pointer"
                 onClick={() => window.open(track.tabFileUrl ?? '', '_blank')}
               />
@@ -76,7 +92,7 @@ const Creation = ({ track, lyrics, isOwner, doRefresh, project, isParticipant = 
           </Accordion>
         </div>
       )}
-      {isOwner && (
+      {updatable && (
         <div className="flex justify-center gap-2">
           {track && (
             <Button size="m" color="purple" onClick={() => setIsTrackModalOpen(true)}>

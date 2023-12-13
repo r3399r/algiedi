@@ -1,4 +1,4 @@
-import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
+import AudioFileIcon from '@mui/icons-material/AudioFile';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import Button from 'src/component/Button';
@@ -43,7 +43,7 @@ const ModalPublish = ({ open, handleClose, onPublish, project }: Props) => (
       <div className="my-2 flex items-center gap-2">
         <audio src={project.fileUrl ?? undefined} controls />
         {project.tabFileUrl && (
-          <DownloadForOfflineIcon
+          <AudioFileIcon
             className="cursor-pointer"
             onClick={() => window.open(project.tabFileUrl ?? '', '_blank')}
           />

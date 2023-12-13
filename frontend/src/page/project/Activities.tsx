@@ -1,4 +1,5 @@
 import { useSelector } from 'react-redux';
+import { Status } from 'src/model/backend/constant/Project';
 import { DetailedProject } from 'src/model/backend/Project';
 import { RootState } from 'src/redux/store';
 import Creation from './Creation';
@@ -21,7 +22,8 @@ const Activities = ({ project, doRefresh }: Props) => {
             <Creation
               track={v.track}
               lyrics={v.lyrics}
-              isOwner={v.isReady !== true && v.user.id === userId}
+              updatable={v.isReady !== true && v.user.id === userId}
+              isOwner={v.user.id === userId && project.project?.status === Status.InProgress}
               doRefresh={doRefresh}
               project={project}
               isParticipant

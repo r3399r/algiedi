@@ -1,4 +1,4 @@
-import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
+import AudioFileIcon from '@mui/icons-material/AudioFile';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -125,7 +125,7 @@ const ExploreDetail = () => {
         <div className="mx-10 mt-10 rounded-3xl border border-solid border-dark p-4">
           {creation.tabFileUrl && (
             <div className="mb-4 flex items-center gap-2">
-              <DownloadForOfflineIcon
+              <AudioFileIcon
                 className="cursor-pointer"
                 onClick={() => window.open(creation.tabFileUrl ?? '', '_blank')}
               />
