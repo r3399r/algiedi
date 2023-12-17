@@ -28,21 +28,6 @@ export type ResetPasswordForm = {
   confirmPassword: string;
 };
 
-export type UploadTrackForm = {
-  name: string;
-  description: string;
-};
-
-export type UploadLyricsForm = {
-  name: string;
-  description: string;
-  lyrics: string;
-};
-
-export type UpdateLyricsForm = {
-  lyrics: string;
-};
-
 export type MessageForm = {
   content: string;
 };

@@ -1,20 +1,14 @@
 import { ChangeEvent, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Button from 'src/component/Button';
 import Checkbox from 'src/component/Checkbox';
-import Form from 'src/component/Form';
-import FormInput from 'src/component/FormInput';
-import FormTextarea from 'src/component/FormTextarea';
 import Input from 'src/component/Input';
-import MultiSelect from 'src/component/MultiSelect';
-import MultiSelectOption from 'src/component/MultiSelectOption';
 import { Page } from 'src/constant/Page';
-import { Genre, Language, Theme } from 'src/constant/Property';
 import { GetExploreIdResponse } from 'src/model/backend/api/Explore';
-import { UploadLyricsForm } from 'src/model/Form';
+import { RootState } from 'src/redux/store';
 import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
+import { setInfo } from 'src/redux/uploadSlice';
 import { uploadLyrics } from 'src/service/UploadService';
 import InspirationAntocomplete from './InspirationAutocomplete';
 
@@ -24,30 +18,31 @@ type Props = {
 
 const Lyrics = ({ inspiration }: Props) => {
   const navigate = useNavigate();
+  const info = useSelector((rootState: RootState) => rootState.upload);
   const dispatch = useDispatch();
   const coverInputRef = useRef<HTMLInputElement>(null);
   const [checkOriginal, setCheckOriginal] = useState<boolean>(!inspiration);
   const [checkInspiration, setCheckInspiration] = useState<boolean>(!!inspiration);
   const [coverFile, setCoverFile] = useState<File>();
   const [inspiredId, setInspiredId] = useState<string>(inspiration?.id ?? '');
-  const [theme, setTheme] = useState<string>();
-  const [genre, setGenre] = useState<string>();
-  const [language, setLanguage] = useState<string>();
-  const [errorTheme, setErrorTheme] = useState<boolean>(false);
-  const [errorGenre, setErrorGenre] = useState<boolean>(false);
-  const [errorLanguage, setErrorLanguage] = useState<boolean>(false);
-  const methods = useForm<UploadLyricsForm>();
 
-  const onSubmit = (data: UploadLyricsForm) => {
-    if (theme === undefined || genre === undefined || language === undefined) {
-      setErrorTheme(!theme);
-      setErrorGenre(!genre);
-      setErrorLanguage(!language);
+  const onSubmit = () => {
+    if (!info.theme || !info.genre || !info.language) {
+      dispatch(setInfo({ errorTheme: true }));
+      dispatch(setInfo({ errorGenre: true }));
+      dispatch(setInfo({ errorLanguage: true }));
 
       return;
     }
     uploadLyrics(
-      { ...data, theme, genre, language },
+      {
+        name: info.name,
+        description: info.description,
+        lyrics: info.lyrics,
+        theme: info.theme,
+        genre: info.genre,
+        language: info.language,
+      },
       coverFile ?? null,
       checkInspiration ? inspiredId : null,
     )
@@ -60,62 +55,7 @@ const Lyrics = ({ inspiration }: Props) => {
 
   return (
     <>
-      <Form methods={methods} onSubmit={onSubmit}>
-        <div className="flex gap-6">
-          <div className="flex w-3/5 flex-col gap-4">
-            <FormInput
-              name="name"
-              label="Name"
-              placeholder="Name of your creation"
-              required
-              asterisked
-            />
-            <FormTextarea
-              name="description"
-              className="h-[100px]"
-              label="Description"
-              placeholder="Please describe your creation here"
-              required
-              asterisked
-            />
-            <FormTextarea
-              name="lyrics"
-              placeholder="Your lyrics"
-              className="h-[140px]"
-              label="Lyrics"
-              required
-              asterisked
-            />
-          </div>
-          <div className="flex w-2/5 flex-col gap-4">
-            <MultiSelect label="Theme" onChange={(v) => setTheme(v)} error={errorTheme} asterisked>
-              {Theme.map((v, i) => (
-                <MultiSelectOption key={i} value={v.name}>
-                  {v.name}
-                </MultiSelectOption>
-              ))}
-            </MultiSelect>
-            <MultiSelect label="Genre" onChange={(v) => setGenre(v)} error={errorGenre} asterisked>
-              {Genre.map((v, i) => (
-                <MultiSelectOption key={i} value={v.name}>
-                  {v.name}
-                </MultiSelectOption>
-              ))}
-            </MultiSelect>
-            <MultiSelect
-              label="Language"
-              onChange={(v) => setLanguage(v)}
-              error={errorLanguage}
-              asterisked
-            >
-              {Language.map((v, i) => (
-                <MultiSelectOption key={i} value={v.name}>
-                  {v.name}
-                </MultiSelectOption>
-              ))}
-            </MultiSelect>
-          </div>
-        </div>
+      <div>
         <div className="mt-10 flex gap-6">
           <div className="mb-4 flex w-3/5 items-center gap-2">
             <div className="flex-1">
@@ -156,9 +96,11 @@ const Lyrics = ({ inspiration }: Props) => {
           </div>
         </div>
         <div className="mt-10 text-right">
-          <Button type="submit">Submit</Button>
+          <Button type="button" onClick={onSubmit}>
+            Submit
+          </Button>
         </div>
-      </Form>
+      </div>
       <input
         type="file"
         onChange={(e: ChangeEvent<HTMLInputElement>) => {

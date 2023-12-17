@@ -46,6 +46,7 @@ export const meSlice = createSlice({
       state.username = initialState.username;
       state.role = initialState.role;
       state.age = initialState.age;
+      state.region = initialState.region;
       state.language = initialState.language;
       state.bio = initialState.bio;
       state.tag = initialState.tag;

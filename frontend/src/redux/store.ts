@@ -3,6 +3,7 @@ import apiReducer, { ApiState } from './apiSlice';
 import meReducer, { MeState } from './meSlice';
 import playlistReducer, { PlaylistState } from './playlistSlice';
 import uiReducer, { UiState } from './uiSlice';
+import uploadReducer, { UploadState } from './uploadSlice';
 import variableReducer, { VariableState } from './variableSlice';
 import wsReducer, { WsState } from './wsSlice';
 
@@ -13,6 +14,7 @@ export type RootState = {
   variable: VariableState;
   ws: WsState;
   playlist: PlaylistState;
+  upload: UploadState;
 };
 
 let store: Store<RootState>;
@@ -26,6 +28,7 @@ export const configStore = () => {
       variable: variableReducer,
       ws: wsReducer,
       playlist: playlistReducer,
+      upload: uploadReducer,
     },
   });
 
