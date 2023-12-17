@@ -64,11 +64,12 @@ export const getPublished = async (limit: string, offset: string) => {
   }
 };
 
-export const getOriginal = async (limit: string, offset: string) => {
+export const getOriginal = async (type: string, limit: string, offset: string) => {
   try {
     dispatch(startWaiting());
 
     const res = await meEndpoint.getMeExhibitsOriginal({
+      type: type === 'All' ? undefined : type,
       limit,
       offset,
     });
@@ -79,11 +80,12 @@ export const getOriginal = async (limit: string, offset: string) => {
   }
 };
 
-export const getInspiration = async (limit: string, offset: string) => {
+export const getInspiration = async (type: string, limit: string, offset: string) => {
   try {
     dispatch(startWaiting());
 
     const res = await meEndpoint.getMeExhibitsInspiration({
+      type: type === 'All' ? undefined : type,
       limit,
       offset,
     });

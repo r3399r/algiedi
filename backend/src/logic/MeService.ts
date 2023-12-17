@@ -129,7 +129,7 @@ export class MeService {
     const [vc, count] = await this.viewCreationExploreAccess.findAndCount({
       where: {
         userId: this.cognitoUserId,
-        type: Not(Type.Song),
+        type: params?.type ? (params.type as Type) : Not(Type.Song),
         inspiredId: IsNull(),
       },
       take: limit,
@@ -157,7 +157,7 @@ export class MeService {
     const [vc, count] = await this.viewCreationExploreAccess.findAndCount({
       where: {
         userId: this.cognitoUserId,
-        type: Not(Type.Song),
+        type: params?.type ? (params.type as Type) : Not(Type.Song),
         inspiredId: Not(IsNull()),
       },
       take: limit,

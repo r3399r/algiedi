@@ -29,7 +29,9 @@ export type GetMeExhibitsPublishedResponse = (Omit<Project, 'info'> & {
   info: Info & { coverFileUrl: string | null };
 })[];
 
-export type GetMeExhibitsOriginalPramas = PaginationParams;
+export type GetMeExhibitsOriginalPramas = PaginationParams & {
+  type?: string;
+};
 
 export type GetMeExhibitsOriginalResponse = (Omit<
   ViewCreationExplore,
@@ -38,7 +40,9 @@ export type GetMeExhibitsOriginalResponse = (Omit<
   info: Info & { coverFileUrl: string | null };
 })[];
 
-export type GetMeExhibitsInspirationPramas = PaginationParams;
+export type GetMeExhibitsInspirationPramas = PaginationParams & {
+  type?: string;
+};
 
 export type GetMeExhibitsInspirationResponse = (Omit<
   ViewCreationExplore,

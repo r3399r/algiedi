@@ -377,25 +377,22 @@ export class ProjectService {
     notification.isRead = false;
 
     for (const pu of projectUsers) {
-      const user = users.find((v) => v.id === pu.userId);
       if (pu.role === Role.Owner) continue;
       if (pu.isAccepted === true) {
         pu.role = Role.Collaborator;
         pu.isReady = false;
-        if (user)
-          await this.notificationService.notify(
-            NotificationType.ProjectStart,
-            user,
-            pu.projectId
-          );
+        await this.notificationService.notify(
+          NotificationType.ProjectStart,
+          pu.user,
+          pu.projectId
+        );
       } else {
         pu.role = Role.Rejected;
-        if (user)
-          await this.notificationService.notify(
-            NotificationType.ProjectReject,
-            user,
-            pu.projectId
-          );
+        await this.notificationService.notify(
+          NotificationType.ProjectReject,
+          pu.user,
+          pu.projectId
+        );
       }
 
       await this.projectUserAccess.save(pu);
