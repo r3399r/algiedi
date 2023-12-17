@@ -52,7 +52,7 @@ const InspirationAntocomplete = ({ defaultKeyword, onClick }: Props) => {
 
   return (
     <>
-      <div className="flex items-center" ref={ref}>
+      <div className="flex w-fit items-center" ref={ref}>
         <Input
           placeholder="Search"
           className="h-[40px]"

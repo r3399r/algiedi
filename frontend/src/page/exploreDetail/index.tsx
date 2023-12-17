@@ -115,7 +115,7 @@ const ExploreDetail = () => {
               classes={{ colorPrimary: '!text-red' }}
             />
           ) : (
-            <FavoriteBorderIcon onClick={onLike} className="cursor-pointer" />
+            <FavoriteBorderIcon onClick={onLike} className="cursor-pointer hover:text-red" />
           )
         ) : (
           <FavoriteBorderIcon color="primary" classes={{ colorPrimary: '!text-grey' }} />

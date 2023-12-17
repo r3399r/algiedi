@@ -70,7 +70,7 @@ const ExploreSong = () => {
   };
 
   return (
-    <div className="bg-[#fafafa] px-4">
+    <div className="bg-[#fafafa] px-4 pb-20">
       <div className="flex items-end justify-between">
         <ExploreSearch />
         {isLogin && <NotificationWidget />}
@@ -132,7 +132,10 @@ const ExploreSong = () => {
                       classes={{ colorPrimary: '!text-red' }}
                     />
                   ) : (
-                    <FavoriteBorderIcon onClick={onLike(v.id)} className="cursor-pointer" />
+                    <FavoriteBorderIcon
+                      onClick={onLike(v.id)}
+                      className="cursor-pointer hover:text-red"
+                    />
                   )
                 ) : (
                   <FavoriteBorderIcon color="primary" classes={{ colorPrimary: '!text-grey' }} />
