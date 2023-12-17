@@ -33,9 +33,17 @@ const ModalTrack = ({ open, handleClose, targetTrack, targetProjectId, doRefresh
     return updateTabFile;
   }, [targetTrack, updateTrackFile, updateTabFile, trackFile]);
 
+  const onClose = () => {
+    handleClose();
+    setUpdateTrackFile(false);
+    setUpdateTabFile(false);
+    setTrackFile(undefined);
+    setTabFile(undefined);
+  };
+
   const onSuccess = () => {
     doRefresh();
-    handleClose();
+    onClose();
     setTrackFile(undefined);
     setTabFile(undefined);
   };
@@ -58,7 +66,7 @@ const ModalTrack = ({ open, handleClose, targetTrack, targetProjectId, doRefresh
   };
 
   return (
-    <Modal open={open} handleClose={handleClose}>
+    <Modal open={open} handleClose={onClose}>
       <div>
         <div className="text-2xl font-bold">Track</div>
         <div className="my-4">

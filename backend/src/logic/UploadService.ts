@@ -392,14 +392,13 @@ export class UploadService {
     const creation = await this.viewCreationAccess.findOneByIdOrFail(
       creationId
     );
-    if (creation.projectId) {
+    if (creation.projectId && creation.project?.status !== Status.Published) {
       const projectUser = await this.projectUserAccess.findByProjectId(
         creation.projectId
       );
 
       for (const pu of projectUser) {
         if (pu.userId === this.cognitoUserId) continue;
-        if (creation.project?.status === Status.Published) continue;
         if (
           creation.project?.status === Status.InProgress &&
           pu.role === Role.Rejected

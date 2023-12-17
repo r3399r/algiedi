@@ -29,13 +29,22 @@ const ModalMaster = ({ open, handleClose, targetCreation, doRefresh }: Props) =>
   const submittable = useMemo(() => {
     if (targetCreation?.fileUrl === null && trackFile) return true;
     if (updateTrackFile) if (trackFile) return true;
+    if (targetCreation?.fileUrl !== null && lyrics !== targetCreation?.lyricsText) return true;
 
     return updateTabFile;
-  }, [targetCreation, updateTrackFile, updateTabFile, trackFile]);
+  }, [targetCreation, updateTrackFile, updateTabFile, trackFile, lyrics]);
+
+  const onClose = () => {
+    handleClose();
+    setUpdateTrackFile(false);
+    setUpdateTabFile(false);
+    setTrackFile(undefined);
+    setTabFile(undefined);
+  };
 
   const onSuccess = () => {
     doRefresh();
-    handleClose();
+    onClose();
   };
 
   const onSubmit = () => {
@@ -51,7 +60,7 @@ const ModalMaster = ({ open, handleClose, targetCreation, doRefresh }: Props) =>
   };
 
   return (
-    <Modal open={open} handleClose={handleClose}>
+    <Modal open={open} handleClose={onClose}>
       <div>
         <div className="text-2xl font-bold">Track</div>
         <div className="my-4">
