@@ -2,7 +2,9 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import Avatar from 'src/component/Avatar';
+import { Page } from 'src/constant/Page';
 import { Role } from 'src/model/backend/constant/Project';
 import { DetailedProject } from 'src/model/backend/Project';
 import { RootState } from 'src/redux/store';
@@ -16,6 +18,7 @@ type Props = {
 };
 
 const Inspired = ({ project, doRefresh }: Props) => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { id: userId } = useSelector((root: RootState) => root.me);
 
@@ -64,7 +67,12 @@ const Inspired = ({ project, doRefresh }: Props) => {
             </button>
           </div>
           <div className="mb-4 flex items-center gap-2">
-            <Avatar url={v.user.avatarUrl} size={80} />
+            <Avatar
+              url={v.user.avatarUrl}
+              size={80}
+              clickable
+              onClick={() => navigate(`${Page.Explore}/user/${v.user.id}`)}
+            />
             <div>{v.user.username}</div>
           </div>
           <Creation

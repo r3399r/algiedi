@@ -160,6 +160,7 @@ export const editProfile = async (
         username: user.username,
         role: user.role === null || user.role === '' ? [] : user.role.split(','),
         age: String(user.age ?? ''),
+        region: user.region ?? '',
         language: user.language === null || user.language === '' ? [] : user.language.split(','),
         bio: user.bio ?? '',
         tag: user.tag === null || user.tag === '' ? [] : user.tag.split(','),

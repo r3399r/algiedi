@@ -6,6 +6,7 @@ export type MeState = {
   username: string;
   role: string[];
   age: string | undefined;
+  region: string | undefined;
   language: string[];
   bio: string | undefined;
   tag: string[];
@@ -23,6 +24,7 @@ const initialState: MeState = {
   username: '',
   role: [],
   age: '',
+  region: '',
   language: [],
   bio: '',
   tag: [],
@@ -60,6 +62,7 @@ export const meSlice = createSlice({
       state.username = action.payload.username;
       state.role = action.payload.role;
       state.age = action.payload.age;
+      state.region = action.payload.region;
       state.language = action.payload.language;
       state.bio = action.payload.bio;
       state.tag = action.payload.tag;

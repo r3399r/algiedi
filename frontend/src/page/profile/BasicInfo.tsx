@@ -15,7 +15,7 @@ import { editProfile, loadProfileData, updateAvatar } from 'src/service/ProfileS
 
 const BasicInfo = () => {
   const dispatch = useDispatch();
-  const { username, email, avatar } = useSelector((rootState: RootState) => rootState.me);
+  const me = useSelector((rootState: RootState) => rootState.me);
   const [refresh, setRefresh] = useState<boolean>(false);
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const avatarInputRef = useRef<HTMLInputElement>(null);
@@ -69,18 +69,32 @@ const BasicInfo = () => {
       .catch((err) => dispatch(openFailSnackbar(err)));
   };
 
+  const onCancel = () => {
+    setIsEdit(false);
+    setRole(me.role);
+    setAge(me.age ?? '');
+    setRegion(me.region ?? '');
+    setLanguage(me.language ?? '');
+    setBio(me.bio ?? '');
+    setTag(me.tag ?? '');
+    setFacebook(me.facebook);
+    setInstagram(me.instagram);
+    setYoutube(me.youtube);
+    setSoundcloud(me.soundcloud);
+  };
+
   return (
     <>
       <div className="my-5 flex items-center justify-between gap-1">
         <div className="flex items-center gap-6">
           <Avatar
-            url={avatar}
+            url={me.avatar}
             size={120}
             clickable={isEdit}
             onClick={() => avatarInputRef.current?.click()}
           />
           <div>
-            <div className="text-[20px] font-bold">{username}</div>
+            <div className="text-[20px] font-bold">{me.username}</div>
             {isEdit ? (
               <div className="flex gap-2">
                 {Role.map((v, i) => (
@@ -98,20 +112,27 @@ const BasicInfo = () => {
             )}
           </div>
         </div>
-        <Button
-          color="purple"
-          size="s"
-          onClick={() => {
-            setIsEdit(!isEdit);
-            if (isEdit) onSave();
-          }}
-        >
-          {isEdit ? 'Save' : 'Edit'}
-        </Button>
+        <div className="flex gap-1">
+          <Button
+            color="purple"
+            size="s"
+            onClick={() => {
+              setIsEdit(!isEdit);
+              if (isEdit) onSave();
+            }}
+          >
+            {isEdit ? 'Save' : 'Edit'}
+          </Button>
+          {isEdit && (
+            <Button color="purple" size="s" onClick={onCancel}>
+              Cancel
+            </Button>
+          )}
+        </div>
       </div>
       <div className="flex h-[40px] items-center">
         <div className="w-[150px] text-dark">Email</div>
-        <div className="flex-1">{email}</div>
+        <div className="flex-1">{me.email}</div>
       </div>
       <div className="flex h-[40px] items-center">
         <div className="w-[150px] text-dark">Age</div>
@@ -122,6 +143,7 @@ const BasicInfo = () => {
               disabled={!isEdit}
               onChange={(e) => setAge(e.target.value)}
               type="number"
+              placeholder="Enter your Age"
             />
           ) : (
             <div>{age}</div>
@@ -132,7 +154,12 @@ const BasicInfo = () => {
         <div className="w-[150px] text-dark">Region</div>
         <div className="flex-1">
           {isEdit ? (
-            <Input value={region} disabled={!isEdit} onChange={(e) => setRegion(e.target.value)} />
+            <Input
+              value={region}
+              disabled={!isEdit}
+              onChange={(e) => setRegion(e.target.value)}
+              placeholder="Enter your Region"
+            />
           ) : (
             <div>{region}</div>
           )}
@@ -160,7 +187,12 @@ const BasicInfo = () => {
         <div className="w-[150px] text-dark">Bio</div>
         <div className="flex-1">
           {isEdit ? (
-            <Input value={bio} disabled={!isEdit} onChange={(e) => setBio(e.target.value)} />
+            <Input
+              value={bio}
+              disabled={!isEdit}
+              onChange={(e) => setBio(e.target.value)}
+              placeholder="Enter your Description"
+            />
           ) : (
             <div>{bio}</div>
           )}
@@ -192,7 +224,7 @@ const BasicInfo = () => {
               <img src={IcFacebook} className="w-4" />
               <div className="flex-1">
                 <Input
-                  placeholder="Enter a link"
+                  placeholder="Enter a Link"
                   value={facebook}
                   onChange={(e) => setFacebook(e.target.value)}
                 />
@@ -202,7 +234,7 @@ const BasicInfo = () => {
               <img src={IcInstagram} className="w-4" />
               <div className="flex-1">
                 <Input
-                  placeholder="Enter a link"
+                  placeholder="Enter a Link"
                   value={instagram}
                   onChange={(e) => setInstagram(e.target.value)}
                 />
@@ -212,7 +244,7 @@ const BasicInfo = () => {
               <img src={IcYoutube} className="w-4" />
               <div className="flex-1">
                 <Input
-                  placeholder="Enter a link"
+                  placeholder="Enter a Link"
                   value={youtube}
                   onChange={(e) => setYoutube(e.target.value)}
                 />
@@ -222,7 +254,7 @@ const BasicInfo = () => {
               <img src={IcSoundcloud} className="w-4" />
               <div className="flex-1">
                 <Input
-                  placeholder="Enter a link"
+                  placeholder="Enter a Link"
                   value={soundcloud}
                   onChange={(e) => setSoundcloud(e.target.value)}
                 />
