@@ -7,6 +7,7 @@ export type UiState = {
   showSnackbar: boolean;
   snackbarType: 'success' | 'fail';
   snackbarMessage: string | undefined;
+  isProjectInfoEdit: boolean;
 };
 
 const initialState: UiState = {
@@ -16,6 +17,7 @@ const initialState: UiState = {
   showSnackbar: false,
   snackbarType: 'success',
   snackbarMessage: undefined,
+  isProjectInfoEdit: false,
 };
 
 export const uiSlice = createSlice({
@@ -47,6 +49,9 @@ export const uiSlice = createSlice({
     closeSnackbar: (state: UiState) => {
       state.showSnackbar = false;
     },
+    setProjectInfoIsEdit: (state: UiState, action: PayloadAction<boolean>) => {
+      state.isProjectInfoEdit = action.payload;
+    },
   },
 });
 
@@ -58,6 +63,7 @@ export const {
   openSuccessSnackbar,
   openFailSnackbar,
   closeSnackbar,
+  setProjectInfoIsEdit,
 } = uiSlice.actions;
 
 export default uiSlice.reducer;

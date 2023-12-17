@@ -7,7 +7,7 @@ import MultiSelect from 'src/component/MultiSelect';
 import MultiSelectOption from 'src/component/MultiSelectOption';
 import { Genre, Language, Theme } from 'src/constant/Property';
 import { DetailedProject } from 'src/model/backend/Project';
-import { openFailSnackbar } from 'src/redux/uiSlice';
+import { openFailSnackbar, setProjectInfoIsEdit } from 'src/redux/uiSlice';
 import { updateCover, updateProject } from 'src/service/ProjectService';
 
 type Props = {
@@ -28,6 +28,11 @@ const Info = ({ project, doRefresh, isOwner }: Props) => {
   const [errorTheme, setErrorTheme] = useState<boolean>(false);
   const [errorGenre, setErrorGenre] = useState<boolean>(false);
   const [errorLanguage, setErrorLanguage] = useState<boolean>(false);
+
+  const setEditMode = (editing: boolean) => {
+    setIsEdit(editing);
+    dispatch(setProjectInfoIsEdit(editing));
+  };
 
   const onSave = () => {
     if (theme === undefined || genre === undefined || language === undefined) {
@@ -69,20 +74,20 @@ const Info = ({ project, doRefresh, isOwner }: Props) => {
         {isOwner && (
           <div className="mb-2 flex justify-end">
             {!isEdit && (
-              <Button size="s" color="purple" onClick={() => setIsEdit(!isEdit)}>
+              <Button size="s" color="purple" onClick={() => setEditMode(true)}>
                 Edit
               </Button>
             )}
             {isEdit && (
               <div className="flex gap-2">
-                <Button size="s" color="purple" onClick={() => setIsEdit(!isEdit)}>
+                <Button size="s" color="purple" onClick={() => setEditMode(false)}>
                   Cancel
                 </Button>
                 <Button
                   size="s"
                   color="purple"
                   onClick={() => {
-                    setIsEdit(!isEdit);
+                    setEditMode(false);
                     onSave();
                   }}
                 >

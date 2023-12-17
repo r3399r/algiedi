@@ -1,5 +1,4 @@
 import { useSelector } from 'react-redux';
-import { Status } from 'src/model/backend/constant/Project';
 import { DetailedProject } from 'src/model/backend/Project';
 import { RootState } from 'src/redux/store';
 import Creation from './Creation';

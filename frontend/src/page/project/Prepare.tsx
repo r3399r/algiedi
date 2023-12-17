@@ -19,6 +19,7 @@ type Props = {
 const Prepare = ({ project, doRefresh }: Props) => {
   const dispatch = useDispatch();
   const { id: userId } = useSelector((root: RootState) => root.me);
+  const { isProjectInfoEdit } = useSelector((root: RootState) => root.ui);
   const [isStartModalOpen, setIsStartModalOpen] = useState<boolean>(false);
 
   const ownerCreation = useMemo(
@@ -56,7 +57,9 @@ const Prepare = ({ project, doRefresh }: Props) => {
         </div>
         {ownerCreation.user.id === userId && (
           <div className="mt-4 text-right">
-            <Button onClick={() => setIsStartModalOpen(true)}>Start Project</Button>
+            <Button onClick={() => setIsStartModalOpen(true)} disabled={isProjectInfoEdit}>
+              Start Project
+            </Button>
           </div>
         )}
       </div>

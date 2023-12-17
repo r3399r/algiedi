@@ -72,9 +72,9 @@ const Explore = () => {
       <div className="mt-4 flex gap-4">
         <div className="w-1/2">
           <div className="mb-4 flex items-center gap-4">
-            <div className="text-xl font-bold">Music</div>
+            <div className="text-xl font-bold">Tracks</div>
             <Button size="s" color="transparent" onClick={() => navigate('idea?tab=track')}>
-              More Music...
+              More Tracks...
             </Button>
           </div>
           <Tabs

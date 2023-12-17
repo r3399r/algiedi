@@ -32,6 +32,7 @@ const Collaborate = ({ project, doRefresh }: Props) => {
   const methods = useForm<MessageForm>();
   const { id: userId } = useSelector((root: RootState) => root.me);
   const { lastChat } = useSelector((root: RootState) => root.ws);
+  const { isProjectInfoEdit } = useSelector((root: RootState) => root.ui);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [chats, setChats] = useState<GetProjectIdChatResponse>([]);
 
@@ -44,8 +45,9 @@ const Collaborate = ({ project, doRefresh }: Props) => {
     () =>
       project.collaborators.length === project.collaborators.filter((v) => v.isReady).length &&
       project.fileUrl !== null &&
-      project.lyricsText !== null,
-    [project],
+      project.lyricsText !== null &&
+      !isProjectInfoEdit,
+    [project, isProjectInfoEdit],
   );
 
   useEffect(() => {
