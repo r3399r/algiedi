@@ -45,7 +45,7 @@ const Explore = () => {
       <div className="my-4 flex items-center gap-4">
         <div className="text-xl font-bold">FEATURED SONGS</div>
         <Button size="s" color="transparent" onClick={() => navigate('song')}>
-          More Songs
+          More Songs...
         </Button>
       </div>
       <div className="w-full overflow-x-auto">
@@ -67,7 +67,7 @@ const Explore = () => {
           <div className="mb-4 flex items-center gap-4">
             <div className="text-xl font-bold">Music</div>
             <Button size="s" color="transparent" onClick={() => navigate('idea?tab=track')}>
-              More Music
+              More Music...
             </Button>
           </div>
           <Tabs
@@ -95,7 +95,7 @@ const Explore = () => {
           <div className="mb-4 flex items-center gap-4">
             <div className="text-xl font-bold">Lyrics</div>
             <Button size="s" color="transparent" onClick={() => navigate('idea?tab=lyrics')}>
-              More Lyrics
+              More Lyrics...
             </Button>
           </div>
           <Tabs

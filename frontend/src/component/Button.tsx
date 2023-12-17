@@ -15,7 +15,7 @@ const Button = ({ color = 'blue', size = 'l', className, ...props }: Props) => (
           color === 'blue',
         'bg-purple/70 text-white hover:bg-purple/80 active:bg-purple disabled:bg-purple/30':
           color === 'purple',
-        'border border-solid border-dark bg-transparent hover:bg-grey active:bg-black/30':
+        'border border-solid border-dark bg-transparent hover:border-transparent hover:bg-blue hover:text-white active:bg-black/30':
           color === 'transparent',
         'px-5 py-[10px] text-[20px]': size === 'l',
         'px-4 py-2 text-[16px]': size === 'm',
