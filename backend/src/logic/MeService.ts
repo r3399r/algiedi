@@ -223,6 +223,7 @@ export class MeService {
     const [follow, count] = await this.followAccess.findAndCount({
       where: {
         followerId: this.cognitoUserId,
+        followee: { role: params?.role },
       },
       take: limit,
       skip: offset,

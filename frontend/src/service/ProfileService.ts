@@ -111,11 +111,12 @@ export const getLikes = async (limit: string, offset: string) => {
   }
 };
 
-export const getFollows = async (limit: string, offset: string) => {
+export const getFollows = async (role: string, limit: string, offset: string) => {
   try {
     dispatch(startWaiting());
 
     const res = await meEndpoint.getMeExhibitsFollows({
+      role: role === 'All' ? undefined : role,
       limit,
       offset,
     });

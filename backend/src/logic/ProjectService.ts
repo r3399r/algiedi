@@ -372,7 +372,6 @@ export class ProjectService {
     await this.projectAccess.save(project);
 
     const projectUsers = await this.projectUserAccess.findByProjectId(id);
-    const users = projectUsers.map((v) => v.user);
     const notification = new NotificationEntity();
     notification.isRead = false;
 

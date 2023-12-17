@@ -59,7 +59,9 @@ export type GetMeExhibitsLikeResponse = (Like & {
   };
 })[];
 
-export type GetMeExhibitsFollowParams = PaginationParams;
+export type GetMeExhibitsFollowParams = PaginationParams & {
+  role?: string;
+};
 
 export type GetMeExhibitsFollowResponse = (Omit<Follow, 'followee'> & {
   followee: User & { avatarUrl: string | null };
