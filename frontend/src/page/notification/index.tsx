@@ -19,8 +19,10 @@ const Notification = () => {
 
   return (
     <div className="relative">
-      <NotificationWidget className="absolute right-0 top-0" />
-      <div className="text-[20px] font-bold">Notifications</div>
+      <div className="flex items-end justify-between">
+        <div className="text-[20px] font-bold">Notifications</div>
+        <NotificationWidget />
+      </div>
       <div className="mt-5 flex flex-col gap-4">
         {(notifications ?? []).map((v) => (
           <div key={v.id} className="relative flex items-center rounded bg-white p-4">

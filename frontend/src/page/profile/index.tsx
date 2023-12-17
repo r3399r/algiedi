@@ -12,8 +12,10 @@ const Profile = () => {
 
   return (
     <div className="relative">
-      <NotificationWidget className="absolute right-0 top-0" />
-      <div className="text-[20px] font-bold">My profile</div>
+      <div className="flex items-end justify-between">
+        <div className="text-[20px] font-bold">My profile</div>
+        <NotificationWidget />
+      </div>
       <div className="text-[14px] text-[#a7a7a7]">{role.join('/')}</div>
       <div className="mt-5">
         <Tabs

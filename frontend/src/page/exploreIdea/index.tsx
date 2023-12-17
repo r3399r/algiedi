@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Cover from 'src/component/Cover';
 import ExploreSearch from 'src/component/ExploreSearch';
+import NotificationWidget from 'src/component/NotificationWidget';
 import Select from 'src/component/Select';
 import SelectOption from 'src/component/SelectOption';
 import Tabs from 'src/component/Tabs';
@@ -99,7 +100,10 @@ const ExploreIdea = () => {
 
   return (
     <div className="bg-[#fafafa] px-4">
-      <ExploreSearch />
+      <div className="flex items-end justify-between">
+        <ExploreSearch />
+        {isLogin && <NotificationWidget />}
+      </div>
       <div className="mb-4 text-xl font-bold">EXPLORE IDEA</div>
       <div className="mb-4 flex flex-wrap gap-4">
         <div className="flex items-center gap-2">

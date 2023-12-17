@@ -1,14 +1,18 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Button from 'src/component/Button';
 import Cover from 'src/component/Cover';
 import ExploreSearch from 'src/component/ExploreSearch';
+import NotificationWidget from 'src/component/NotificationWidget';
 import Tabs from 'src/component/Tabs';
 import { GetExploreFeaturedResponse } from 'src/model/backend/api/Explore';
+import { RootState } from 'src/redux/store';
 import { getExploreFeatured } from 'src/service/ExploreService';
 
 const Explore = () => {
   const navigate = useNavigate();
+  const { isLogin } = useSelector((rootState: RootState) => rootState.ui);
   const [tabMusic, setTabMusic] = useState<number>(0);
   const [tabLyrics, setTabLyrics] = useState<number>(0);
   const [tracks, setTracks] = useState<GetExploreFeaturedResponse['track']>();
@@ -41,7 +45,10 @@ const Explore = () => {
 
   return (
     <div className="bg-[#fafafa] px-4">
-      <ExploreSearch />
+      <div className="flex items-end justify-between">
+        <ExploreSearch />
+        {isLogin && <NotificationWidget />}
+      </div>
       <div className="my-4 flex items-center gap-4">
         <div className="text-xl font-bold">FEATURED SONGS</div>
         <Button size="s" color="transparent" onClick={() => navigate('song')}>

@@ -1,3 +1,4 @@
+import UploadIcon from '@mui/icons-material/Upload';
 import { Popover } from '@mui/material';
 import classNames from 'classnames';
 import { MouseEvent, useEffect, useMemo, useState } from 'react';
@@ -38,14 +39,22 @@ const NotificationWidget = ({ className }: Props) => {
 
   return (
     <>
-      <div
-        className={classNames(
-          'flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-xl bg-red font-bold text-white shadow-lg',
-          className,
-        )}
-        onClick={handleClick}
-      >
-        {unreadNotifications.length}
+      <div className="flex gap-2">
+        <div
+          className="flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-xl bg-blue shadow-lg"
+          onClick={() => navigate(Page.Upload)}
+        >
+          <UploadIcon className="text-white" />
+        </div>
+        <div
+          className={classNames(
+            'flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-xl bg-red font-bold text-white shadow-lg',
+            className,
+          )}
+          onClick={handleClick}
+        >
+          {unreadNotifications.length}
+        </div>
       </div>
       <Popover
         open={Boolean(anchorEl)}

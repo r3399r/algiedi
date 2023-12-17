@@ -16,6 +16,7 @@ import Cover from 'src/component/Cover';
 import Divider from 'src/component/Divider';
 import ExploreSearch from 'src/component/ExploreSearch';
 import FollowButton from 'src/component/FollowButton';
+import NotificationWidget from 'src/component/NotificationWidget';
 import { Page } from 'src/constant/Page';
 import { GetExploreIdResponse } from 'src/model/backend/api/Explore';
 import { Type } from 'src/model/backend/constant/Creation';
@@ -64,8 +65,9 @@ const ExploreDetail = () => {
 
   return (
     <>
-      <div className="ml-10">
+      <div className="ml-10 mr-4 flex items-end justify-between">
         <ExploreSearch />
+        {isLogin && <NotificationWidget />}
       </div>
       <div onClick={() => navigate(-1)} className="my-4 ml-10 cursor-pointer">
         {'<Back'}
