@@ -60,10 +60,10 @@ const ModalPublish = ({ open, handleClose, onPublish, project }: Props) => (
         </div>
       )}
       <div className="flex justify-center gap-2">
-        <Button onClick={onPublish}>Publish</Button>
         <Button color="purple" onClick={handleClose}>
           Cancel
         </Button>
+        <Button onClick={onPublish}>Publish</Button>
       </div>
     </div>
   </Modal>

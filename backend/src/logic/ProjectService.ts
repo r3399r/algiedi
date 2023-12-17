@@ -421,6 +421,8 @@ export class ProjectService {
     project.publishedAt = new Date().toISOString();
     await this.projectAccess.save(project);
 
+    await this.chatAccess.hardDeleteByProjectId(id);
+
     // notify
     const projectUser = await this.projectUserAccess.findByProjectId(id);
     for (const pu of projectUser) {

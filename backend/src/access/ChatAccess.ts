@@ -27,4 +27,10 @@ export class ChatAccess {
 
     return await qr.manager.save(entity);
   }
+
+  public async hardDeleteByProjectId(id: string) {
+    const qr = await this.database.getQueryRunner();
+
+    await qr.manager.delete(ChatEntity.name, { projectId: id });
+  }
 }
