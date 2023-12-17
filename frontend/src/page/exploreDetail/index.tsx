@@ -97,9 +97,13 @@ const ExploreDetail = () => {
             <div>{creation.likeCount}</div>
           </div>
         </div>
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white px-1 pb-1 pt-0.5">
-          {creation.fileUrl && <AudioPlayer creation={{ ...creation, owner: creation.user[0] }} />}
-        </div>
+        {creation.type !== Type.Lyrics && (
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white px-1 pb-1 pt-0.5">
+            {creation.fileUrl && (
+              <AudioPlayer creation={{ ...creation, owner: creation.user[0] }} />
+            )}
+          </div>
+        )}
       </div>
       <div className="mr-10 mt-4 flex justify-end gap-4">
         {isLogin ? (
@@ -254,7 +258,7 @@ const ExploreDetail = () => {
           <div className="w-1/2">
             <textarea
               className="h-[200px] w-full rounded border border-black px-2"
-              value={myComment}
+              value={isLogin ? myComment : 'Please login to comment'}
               onChange={(e) => setMyComment(e.target.value)}
               disabled={!isLogin}
             />
