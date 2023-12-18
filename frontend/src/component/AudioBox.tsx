@@ -51,7 +51,7 @@ const AudioBox = () => {
             </div>
           </div>
         </div>
-        <audio src={creation?.fileUrl ?? ''} controls autoPlay />
+        <audio src={creation?.fileUrl ?? ''} controls autoPlay controlsList="nodownload" />
       </div>
     </div>
   );

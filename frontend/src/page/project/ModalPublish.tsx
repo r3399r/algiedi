@@ -41,7 +41,7 @@ const ModalPublish = ({ open, handleClose, onPublish, project }: Props) => (
         <div>{project.info.language}</div>
       </div>
       <div className="my-2 flex items-center gap-2">
-        <audio src={project.fileUrl ?? undefined} controls />
+        <audio src={project.fileUrl ?? undefined} controls controlsList="nodownload" />
         {project.tabFileUrl && (
           <AudioFileIcon
             className="cursor-pointer"
