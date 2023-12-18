@@ -5,6 +5,7 @@ import Checkbox from 'src/component/Checkbox';
 import Input from 'src/component/Input';
 import Modal from 'src/component/Modal';
 import { DetailedCreation } from 'src/model/backend/Project';
+import { removePlaylistId } from 'src/redux/playlistSlice';
 import { openFailSnackbar } from 'src/redux/uiSlice';
 import { updateTrack, uploadTrack } from 'src/service/ProjectService';
 
@@ -46,6 +47,7 @@ const ModalTrack = ({ open, handleClose, targetTrack, targetProjectId, doRefresh
     onClose();
     setTrackFile(undefined);
     setTabFile(undefined);
+    if (targetTrack) dispatch(removePlaylistId(targetTrack.id));
   };
 
   const onSubmit = () => {

@@ -5,6 +5,7 @@ import Checkbox from 'src/component/Checkbox';
 import Input from 'src/component/Input';
 import Modal from 'src/component/Modal';
 import { DetailedCreation } from 'src/model/backend/Project';
+import { removePlaylistId } from 'src/redux/playlistSlice';
 import { openFailSnackbar } from 'src/redux/uiSlice';
 import { updateCreation } from 'src/service/ProjectService';
 
@@ -42,11 +43,6 @@ const ModalMaster = ({ open, handleClose, targetCreation, doRefresh }: Props) =>
     setTabFile(undefined);
   };
 
-  const onSuccess = () => {
-    doRefresh();
-    onClose();
-  };
-
   const onSubmit = () => {
     if (!submittable) return;
     if (targetCreation === null) return;
@@ -55,7 +51,11 @@ const ModalMaster = ({ open, handleClose, targetCreation, doRefresh }: Props) =>
       { tab: updateTabFile ? tabFile ?? null : tabFile, track: trackFile },
       lyrics ?? '',
     )
-      .then(onSuccess)
+      .then(() => {
+        doRefresh();
+        onClose();
+        dispatch(removePlaylistId(targetCreation.id));
+      })
       .catch((err) => dispatch(openFailSnackbar(err)));
   };
 
