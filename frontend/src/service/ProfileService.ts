@@ -96,11 +96,12 @@ export const getInspiration = async (type: string, limit: string, offset: string
   }
 };
 
-export const getLikes = async (limit: string, offset: string) => {
+export const getLikes = async (type: string, limit: string, offset: string) => {
   try {
     dispatch(startWaiting());
 
     const res = await meEndpoint.getMeExhibitsLikes({
+      type: type === 'All' ? undefined : type,
       limit,
       offset,
     });

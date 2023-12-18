@@ -51,7 +51,9 @@ export type GetMeExhibitsInspirationResponse = (Omit<
   info: Info & { coverFileUrl: string | null };
 })[];
 
-export type GetMeExhibitsLikeParams = PaginationParams;
+export type GetMeExhibitsLikeParams = PaginationParams & {
+  type?: string;
+};
 
 export type GetMeExhibitsLikeResponse = (Like & {
   creation: Omit<ViewCreationExplore, 'info'> & {

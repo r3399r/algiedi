@@ -50,7 +50,7 @@ const ExhibitOriginal = ({ countPerPage }: Props) => {
         {original.map((v) => (
           <div
             key={v.id}
-            className="cursor-pointer text-center"
+            className="flex cursor-pointer flex-col items-center"
             onClick={() => navigate(`${Page.Explore}/${v.id}`)}
           >
             <Cover url={v.info.coverFileUrl} size={150} />

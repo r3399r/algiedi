@@ -185,6 +185,7 @@ export class MeService {
     const [like, count] = await this.likeAccess.findAndCount({
       where: {
         userId: this.cognitoUserId,
+        type: params?.type ? (params.type as Type) : undefined,
       },
       take: limit,
       skip: offset,

@@ -2,6 +2,7 @@ CREATE TABLE IF NOT EXISTS `like` (
 	id VARCHAR(36) NOT NULL,
 	user_id VARCHAR(36) NOT NULL,
 	creation_id VARCHAR(36) NOT NULL,
+	type FLOAT NOT NULL,
 	created_at TIMESTAMP NULL,
 	updated_at TIMESTAMP NULL,
 	PRIMARY KEY (id ASC),

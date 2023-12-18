@@ -7,6 +7,7 @@ import {
   JoinColumn,
   ManyToOne,
 } from 'typeorm';
+import { Type } from 'src/model/constant/Creation';
 import { User, UserEntity } from './UserEntity';
 
 export type Like = {
@@ -14,6 +15,7 @@ export type Like = {
   userId: string;
   user: User;
   creationId: string;
+  type: Type;
   createdAt: string | null;
   updatedAt: string | null;
 };
@@ -33,6 +35,9 @@ export class LikeEntity implements Like {
 
   @Column({ type: 'uuid', name: 'creation_id' })
   creationId!: string;
+
+  @Column({ type: 'float' })
+  type!: Type;
 
   @Column({ type: 'timestamp', name: 'created_at', default: null })
   createdAt!: string;

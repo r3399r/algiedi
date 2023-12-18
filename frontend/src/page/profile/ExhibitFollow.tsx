@@ -52,7 +52,7 @@ const ExhibitFollow = ({ countPerPage }: Props) => {
         {followee.map((v) => (
           <div
             key={v.id}
-            className="cursor-pointer text-center"
+            className="flex cursor-pointer flex-col items-center"
             onClick={() => navigate(`${Page.Explore}/user/${v.followeeId}`)}
           >
             <Cover url={v.followee.avatarUrl} size={150} type="user" />

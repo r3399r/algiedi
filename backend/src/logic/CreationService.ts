@@ -61,9 +61,12 @@ export class CreationService {
   }
 
   public async likeCreation(id: string) {
+    const vc = await this.viewCreationExploreAccess.findOneByIdOrFail(id);
+
     const likeEntity = new LikeEntity();
     likeEntity.userId = this.cognitoUserId;
     likeEntity.creationId = id;
+    likeEntity.type = vc.type;
     await this.likeAccess.save(likeEntity);
 
     const creation = await this.viewCreationExploreAccess.findOneByIdOrFail(id);
