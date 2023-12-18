@@ -18,12 +18,15 @@ export const playlistSlice = createSlice({
     pushPlaylist: (state: PlaylistState, action: PayloadAction<Playlist>) => {
       state.playlist = [...(state.playlist ?? []), action.payload];
     },
+    replacePlaylist: (state: PlaylistState, action: PayloadAction<Playlist[]>) => {
+      state.playlist = action.payload;
+    },
     setCurrent: (state: PlaylistState, action: PayloadAction<number>) => {
       state.current = action.payload;
     },
   },
 });
 
-export const { pushPlaylist, setCurrent } = playlistSlice.actions;
+export const { pushPlaylist, replacePlaylist, setCurrent } = playlistSlice.actions;
 
 export default playlistSlice.reducer;

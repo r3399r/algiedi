@@ -1,7 +1,7 @@
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import { useDispatch, useSelector } from 'react-redux';
 import { Playlist } from 'src/model/Playlist';
-import { pushPlaylist, setCurrent } from 'src/redux/playlistSlice';
+import { pushPlaylist, replacePlaylist, setCurrent } from 'src/redux/playlistSlice';
 import { RootState } from 'src/redux/store';
 
 type Props = {
@@ -15,6 +15,10 @@ const AudioPlayer = ({ creation }: Props) => {
   const onPlay = () => {
     const idx = playlist?.findIndex((v) => v.id === creation.id) ?? -1;
     if (idx < 0) dispatch(pushPlaylist(creation));
+    else {
+      const temp = playlist ? [...playlist] : [];
+      dispatch(replacePlaylist(temp.map((v, i) => (i === idx ? creation : v))));
+    }
     dispatch(setCurrent(idx < 0 ? playlist?.length ?? 0 : idx));
   };
 

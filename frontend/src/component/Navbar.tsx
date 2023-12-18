@@ -1,11 +1,12 @@
 import MenuIcon from '@mui/icons-material/Menu';
 import classNames from 'classnames';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Page } from 'src/constant/Page';
 import Logo from 'src/image/logo.svg';
 import { RootState } from 'src/redux/store';
+import { loadProfileData } from 'src/service/ProfileService';
 import Avatar from './Avatar';
 import Button from './Button';
 import NavbarDrawer from './NavbarDrawer';
@@ -19,6 +20,10 @@ const Navbar = () => {
   const pathname = useLocation().pathname;
   const exploreRef = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!avatar) loadProfileData();
+  }, [avatar]);
 
   return (
     <>
