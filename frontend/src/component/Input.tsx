@@ -1,8 +1,7 @@
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import { Tooltip } from '@mui/material';
 import classNames from 'classnames';
 import { ChangeEvent, forwardRef, InputHTMLAttributes, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
+import Tooltip from './Tooltip';
 
 export type Props = InputHTMLAttributes<HTMLInputElement> & {
   label?: string;
@@ -45,9 +44,7 @@ const Input = forwardRef<HTMLInputElement, Props>(
             {asterisked && <span className="text-red">*</span>}
             {tooltip && (
               <div>
-                <Tooltip title={tooltip}>
-                  <InfoOutlinedIcon fontSize="small" />
-                </Tooltip>
+                <Tooltip title={tooltip} />
               </div>
             )}
           </div>

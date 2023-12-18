@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from 'src/component/Button';
+import Tooltip from 'src/component/Tooltip';
 import { Role } from 'src/model/backend/constant/Project';
 import { DetailedProject } from 'src/model/backend/Project';
 import { RootState } from 'src/redux/store';
@@ -56,10 +57,13 @@ const Prepare = ({ project, doRefresh }: Props) => {
           </div>
         </div>
         {ownerCreation.user.id === userId && (
-          <div className="mt-4 text-right">
+          <div className="mt-4 flex items-center justify-end gap-2">
             <Button onClick={() => setIsStartModalOpen(true)} disabled={isProjectInfoEdit}>
               Start Project
             </Button>
+            <div>
+              <Tooltip title="Please note that this step is irreversible" />
+            </div>
           </div>
         )}
       </div>

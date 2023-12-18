@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import Button from 'src/component/Button';
 import Form from 'src/component/Form';
 import FormInput from 'src/component/FormInput';
+import Tooltip from 'src/component/Tooltip';
 import { Page } from 'src/constant/Page';
 import { GetProjectIdChatResponse } from 'src/model/backend/api/Project';
 import { Role } from 'src/model/backend/constant/Project';
@@ -116,10 +117,13 @@ const Collaborate = ({ project, doRefresh }: Props) => {
           </div>
         </div>
         {owner.id === userId && (
-          <div className="mt-4 text-right">
+          <div className="mt-4 flex items-center justify-end gap-2">
             <Button onClick={() => setIsModalOpen(true)} disabled={!canPublish}>
               Publish
             </Button>
+            <div>
+              <Tooltip title="Please note that this step is irreversible" />
+            </div>
           </div>
         )}
       </div>
