@@ -47,6 +47,7 @@ export type GetExploreResponse = (Omit<ViewCreationExplore, 'user' | 'info'> & {
 export type GetExploreFeaturedResponse = {
   song: (Omit<Project, 'info'> & {
     info: Info & { coverFileUrl: string | null };
+    user: (User & { avatarUrl: string | null })[];
   })[];
   lyrics: {
     thisWeek: (Omit<Lyrics, 'info'> & {

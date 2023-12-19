@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { In, IsNull, Like, Not } from 'typeorm';
+import { In, IsNull, Not } from 'typeorm';
 import { DbAccess } from 'src/access/DbAccess';
 import { FollowAccess } from 'src/access/FollowAccess';
 import { LikeAccess } from 'src/access/LikeAccess';
@@ -23,6 +23,7 @@ import {
 } from 'src/model/api/Me';
 import { Type } from 'src/model/constant/Creation';
 import { Role, Status } from 'src/model/constant/Project';
+import { ViewCreationExplore } from 'src/model/entity/ViewCreationExploreEntity';
 import { InternalServerError } from 'src/model/error';
 import { Pagination } from 'src/model/Pagination';
 import { cognitoSymbol } from 'src/util/LambdaSetup';
@@ -107,15 +108,27 @@ export class MeService {
     });
 
     return {
-      data: pu.map((v) => ({
-        ...v.project,
-        info: {
-          ...v.project.info,
-          coverFileUrl: this.awsService.getS3SignedUrl(
-            v.project.info.coverFileUri
-          ),
-        },
-      })),
+      data: await Promise.all(
+        pu.map(async (v) => {
+          const pu2 = await this.projectUserAccess.find({
+            where: { projectId: v.projectId, role: Not(Role.Rejected) },
+          });
+
+          return {
+            ...v.project,
+            info: {
+              ...v.project.info,
+              coverFileUrl: this.awsService.getS3SignedUrl(
+                v.project.info.coverFileUri
+              ),
+            },
+            user: pu2.map((o) => ({
+              ...o.user,
+              avatarUrl: this.awsService.getS3SignedUrl(o.user.avatar),
+            })),
+          };
+        })
+      ),
       paginate: { limit, offset, count },
     };
   }
@@ -176,6 +189,43 @@ export class MeService {
     };
   }
 
+  private async getExtendedExplore(creation: ViewCreationExplore) {
+    if (creation.type !== Type.Song && creation.user !== null)
+      return {
+        ...creation,
+        info: {
+          ...creation.info,
+          coverFileUrl: this.awsService.getS3SignedUrl(
+            creation.info.coverFileUri
+          ),
+        },
+        user: [
+          {
+            ...creation.user,
+            avatarUrl: this.awsService.getS3SignedUrl(creation.user.avatar),
+          },
+        ],
+      };
+
+    const pu = await this.projectUserAccess.find({
+      where: { projectId: creation.id, role: Not(Role.Rejected) },
+    });
+
+    return {
+      ...creation,
+      info: {
+        ...creation.info,
+        coverFileUrl: this.awsService.getS3SignedUrl(
+          creation.info.coverFileUri
+        ),
+      },
+      user: pu.map((o) => ({
+        ...o.user,
+        avatarUrl: this.awsService.getS3SignedUrl(o.user.avatar),
+      })),
+    };
+  }
+
   public async getLikeList(
     params: GetMeExhibitsLikeParams | null
   ): Promise<Pagination<GetMeExhibitsLikeResponse>> {
@@ -196,21 +246,17 @@ export class MeService {
     });
 
     return {
-      data: like.map((v) => {
-        const c = vc.find((o) => o.id === v.creationId);
-        if (c === undefined) throw new InternalServerError('unexpected');
+      data: await Promise.all(
+        like.map(async (v) => {
+          const c = vc.find((o) => o.id === v.creationId);
+          if (c === undefined) throw new InternalServerError('unexpected');
 
-        return {
-          ...v,
-          creation: {
-            ...c,
-            info: {
-              ...c.info,
-              coverFileUrl: this.awsService.getS3SignedUrl(c.info.coverFileUri),
-            },
-          },
-        };
-      }),
+          return {
+            ...v,
+            creation: await this.getExtendedExplore(c),
+          };
+        })
+      ),
       paginate: { limit, offset, count },
     };
   }

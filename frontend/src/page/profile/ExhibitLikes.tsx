@@ -56,6 +56,9 @@ const ExhibitLikes = ({ countPerPage }: Props) => {
           >
             <Cover url={v.creation.info.coverFileUrl} size={150} />
             <div className="font-bold">{v.creation.info.name}</div>
+            <div className="text-sm text-grey">{`${
+              v.creation.user.length > 0 ? v.creation.user[0].username : ''
+            }${v.creation.user.length > 1 ? ` & ${v.creation.user.length - 1} others` : ''}`}</div>
           </div>
         ))}
       </div>

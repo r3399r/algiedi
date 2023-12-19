@@ -65,6 +65,9 @@ const Explore = () => {
             >
               <Cover url={v.info.coverFileUrl} size={150} />
               <div className="font-bold">{v.info.name}</div>
+              <div className="text-sm text-grey">{`${v.user.length > 0 ? v.user[0].username : ''}${
+                v.user.length > 1 ? ` & ${v.user.length - 1} others` : ''
+              }`}</div>
             </div>
           ))}
         </div>

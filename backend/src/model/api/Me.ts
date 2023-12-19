@@ -25,8 +25,9 @@ export type PutMeResponse = User & { avatarUrl: string | null };
 
 export type GetMeExhibitsPublishedParams = PaginationParams;
 
-export type GetMeExhibitsPublishedResponse = (Omit<Project, 'info'> & {
+export type GetMeExhibitsPublishedResponse = (Omit<Project, 'info' | 'user'> & {
   info: Info & { coverFileUrl: string | null };
+  user: (User & { avatarUrl: string | null })[];
 })[];
 
 export type GetMeExhibitsOriginalPramas = PaginationParams & {
@@ -56,8 +57,9 @@ export type GetMeExhibitsLikeParams = PaginationParams & {
 };
 
 export type GetMeExhibitsLikeResponse = (Like & {
-  creation: Omit<ViewCreationExplore, 'info'> & {
+  creation: Omit<ViewCreationExplore, 'info' | 'user'> & {
     info: Info & { coverFileUrl: string | null };
+    user: (User & { avatarUrl: string | null })[];
   };
 })[];
 

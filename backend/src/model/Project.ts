@@ -21,8 +21,9 @@ export type DetailedCreation = Omit<ViewCreation, 'info'> & {
   info: Info & { coverFileUrl: string | null };
 };
 
-export type ExtendedCreation = ViewCreationExplore & {
+export type ExtendedCreation = Omit<ViewCreationExplore, 'user'> & {
   fileUrl: string | null;
   tabFileUrl: string | null;
   coverFileUrl: string | null;
+  user: (User & { avatarUrl: string | null })[];
 };

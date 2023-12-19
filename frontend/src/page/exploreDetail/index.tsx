@@ -208,11 +208,14 @@ const ExploreDetail = () => {
             {creation.inspired.map((v) => (
               <div
                 key={v.id}
-                className="w-fit cursor-pointer text-center"
+                className="flex w-fit cursor-pointer flex-col items-center"
                 onClick={() => navigate(`${Page.Explore}/${v.id}`)}
               >
                 <Cover url={v.coverFileUrl} />
                 <div className="mt-2 font-bold">{v.info.name}</div>
+                <div className="text-sm text-grey">{`${
+                  v.user.length > 0 ? v.user[0].username : ''
+                }${v.user.length > 1 ? ` & ${v.user.length - 1} others` : ''}`}</div>
               </div>
             ))}
           </div>
@@ -224,11 +227,14 @@ const ExploreDetail = () => {
             {creation.inspiration.map((v) => (
               <div
                 key={v.id}
-                className="w-fit cursor-pointer text-center"
+                className="flex w-fit cursor-pointer flex-col items-center"
                 onClick={() => navigate(`${Page.Explore}/${v.id}`)}
               >
                 <Cover url={v.coverFileUrl} />
                 <div className="mt-2 font-bold">{v.info.name}</div>
+                <div className="text-sm text-grey">{`${
+                  v.user.length > 0 ? v.user[0].username : ''
+                }${v.user.length > 1 ? ` & ${v.user.length - 1} others` : ''}`}</div>
               </div>
             ))}
           </div>

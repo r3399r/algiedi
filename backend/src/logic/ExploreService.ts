@@ -38,6 +38,7 @@ import { ProjectUser } from 'src/model/entity/ProjectUserEntity';
 import { ViewCreationExplore } from 'src/model/entity/ViewCreationExploreEntity';
 import { BadRequestError } from 'src/model/error';
 import { Pagination } from 'src/model/Pagination';
+import { ExtendedCreation } from 'src/model/Project';
 import { cognitoSymbol } from 'src/util/LambdaSetup';
 import { AwsService } from './AwsService';
 
@@ -208,6 +209,12 @@ export class ExploreService {
       order: { countLike: 'desc' },
       take: 12,
     });
+    const pu = await this.projectUserAccess.find({
+      where: {
+        projectId: In(featuredSong.map((v) => v.id)),
+        role: Not(Role.Rejected),
+      },
+    });
     const featuredLyrics = await this.lyricsAccess.find({
       where: { createdAt: MoreThan(subWeeks(new Date(), 8).toISOString()) },
       order: { countLike: 'desc' },
@@ -224,6 +231,12 @@ export class ExploreService {
           ...v.info,
           coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
         },
+        user: pu
+          .filter((o) => o.projectId === v.id)
+          .map((o) => ({
+            ...o.user,
+            avatarUrl: this.awsService.getS3SignedUrl(o.user.avatar),
+          })),
       })),
       lyrics: {
         thisWeek: featuredLyrics
@@ -343,6 +356,41 @@ export class ExploreService {
     }));
   };
 
+  private async getExtendedExplore(
+    creation: ViewCreationExplore
+  ): Promise<ExtendedCreation> {
+    if (creation.type !== Type.Song && creation.user !== null)
+      return {
+        ...creation,
+        fileUrl: this.awsService.getS3SignedUrl(creation.fileUri),
+        tabFileUrl: this.awsService.getS3SignedUrl(creation.tabFileUri),
+        coverFileUrl: this.awsService.getS3SignedUrl(
+          creation.info.coverFileUri
+        ),
+        user: [
+          {
+            ...creation.user,
+            avatarUrl: this.awsService.getS3SignedUrl(creation.user.avatar),
+          },
+        ],
+      };
+
+    const pu = await this.projectUserAccess.find({
+      where: { projectId: creation.id, role: Not(Role.Rejected) },
+    });
+
+    return {
+      ...creation,
+      fileUrl: this.awsService.getS3SignedUrl(creation.fileUri),
+      tabFileUrl: this.awsService.getS3SignedUrl(creation.tabFileUri),
+      coverFileUrl: this.awsService.getS3SignedUrl(creation.info.coverFileUri),
+      user: pu.map((o) => ({
+        ...o.user,
+        avatarUrl: this.awsService.getS3SignedUrl(o.user.avatar),
+      })),
+    };
+  }
+
   public async getExploreById(id: string): Promise<GetExploreIdResponse> {
     const creation = await this.viewCreationExploreAccess.findOneByIdOrFail(id);
     const fileUrl = this.awsService.getS3SignedUrl(creation.fileUri);
@@ -429,18 +477,12 @@ export class ExploreService {
       tabFileUrl,
       user,
       info: { ...creation.info, coverFileUrl },
-      inspired: inspired.map((v) => ({
-        ...v,
-        fileUrl: this.awsService.getS3SignedUrl(v.fileUri),
-        tabFileUrl: this.awsService.getS3SignedUrl(v.tabFileUri),
-        coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
-      })),
-      inspiration: inspiration.map((v) => ({
-        ...v,
-        fileUrl: this.awsService.getS3SignedUrl(v.fileUri),
-        tabFileUrl: this.awsService.getS3SignedUrl(v.tabFileUri),
-        coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
-      })),
+      inspired: await Promise.all(
+        inspired.map((v) => this.getExtendedExplore(v))
+      ),
+      inspiration: await Promise.all(
+        inspiration.map((v) => this.getExtendedExplore(v))
+      ),
       like: likes.find((o) => o.userId === this.cognitoUserId) !== undefined,
       likeCount: likes.length,
       comments: comments.map((v) => ({
