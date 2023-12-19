@@ -48,12 +48,10 @@ const ExhibitLikes = ({ countPerPage }: Props) => {
       <div className="flex flex-wrap gap-6">
         {likeList.map((v) => (
           <CoverInfo
+            creation={v.creation}
             size={150}
             key={v.id}
             navigateTo={`${Page.Explore}/${v.id}`}
-            coverFileUrl={v.creation.info.coverFileUrl}
-            name={v.creation.info.name}
-            author={v.creation.user}
           />
         ))}
       </div>

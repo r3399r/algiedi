@@ -108,7 +108,7 @@ export class MeService {
     });
 
     const vc = await this.viewCreationExploreAccess.find({
-      where: { id: In(myPu.map((o) => o.id)) },
+      where: { id: In(myPu.map((o) => o.projectId)) },
     });
 
     return {
@@ -120,7 +120,7 @@ export class MeService {
 
           return {
             ...v,
-            fileUrl: null,
+            fileUrl: this.awsService.getS3SignedUrl(v.fileUri),
             tabFileUrl: null,
             info: {
               ...v.info,
@@ -160,9 +160,16 @@ export class MeService {
           ...v.info,
           coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
         },
-        fileUrl: null,
+        fileUrl: this.awsService.getS3SignedUrl(v.fileUri),
         tabFileUrl: null,
-        user: [],
+        user: v.user
+          ? [
+              {
+                ...v.user,
+                avatarUrl: this.awsService.getS3SignedUrl(v.user.avatar),
+              },
+            ]
+          : [],
       })),
       paginate: { limit, offset, count },
     };
@@ -191,9 +198,16 @@ export class MeService {
           ...v.info,
           coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
         },
-        fileUrl: null,
+        fileUrl: this.awsService.getS3SignedUrl(v.fileUri),
         tabFileUrl: null,
-        user: [],
+        user: v.user
+          ? [
+              {
+                ...v.user,
+                avatarUrl: this.awsService.getS3SignedUrl(v.user.avatar),
+              },
+            ]
+          : [],
       })),
       paginate: { limit, offset, count },
     };
@@ -215,7 +229,7 @@ export class MeService {
             avatarUrl: this.awsService.getS3SignedUrl(creation.user.avatar),
           },
         ],
-        fileUrl: null,
+        fileUrl: this.awsService.getS3SignedUrl(creation.fileUri),
         tabFileUrl: null,
       };
 
@@ -235,7 +249,7 @@ export class MeService {
         ...o.user,
         avatarUrl: this.awsService.getS3SignedUrl(o.user.avatar),
       })),
-      fileUrl: null,
+      fileUrl: this.awsService.getS3SignedUrl(creation.fileUri),
       tabFileUrl: null,
     };
   }

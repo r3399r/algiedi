@@ -1,3 +1,4 @@
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { MouseEvent, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -8,6 +9,7 @@ import ExploreSearch from 'src/component/ExploreSearch';
 import NotificationWidget from 'src/component/NotificationWidget';
 import Tabs from 'src/component/Tabs';
 import { Page } from 'src/constant/Page';
+import usePlayer from 'src/hook/usePlayer';
 import { GetExploreFeaturedResponse } from 'src/model/backend/api/Explore';
 import { RootState } from 'src/redux/store';
 import { getExploreFeatured } from 'src/service/ExploreService';
@@ -20,6 +22,7 @@ const Explore = () => {
   const [tracks, setTracks] = useState<GetExploreFeaturedResponse['track']>();
   const [lyrics, setLyrics] = useState<GetExploreFeaturedResponse['lyrics']>();
   const [songs, setSongs] = useState<GetExploreFeaturedResponse['song']>();
+  const onPlay = usePlayer();
 
   const tabDataMusic = useMemo(() => {
     if (!tracks) return;
@@ -61,13 +64,7 @@ const Explore = () => {
         <div className="mb-6 flex gap-4">
           {songs?.map((v) => (
             <div className="w-[150px] shrink-0" key={v.id}>
-              <CoverInfo
-                size={150}
-                navigateTo={v.id}
-                coverFileUrl={v.info.coverFileUrl}
-                name={v.info.name}
-                author={v.user}
-              />
+              <CoverInfo creation={v} size={150} navigateTo={v.id} />
             </div>
           ))}
         </div>
@@ -92,7 +89,18 @@ const Explore = () => {
                 className="flex cursor-pointer rounded-lg bg-white p-4"
                 onClick={() => navigate(v.id)}
               >
-                <Cover url={v.info.coverFileUrl} size={120} />
+                <div
+                  className="relative"
+                  onClick={(e: MouseEvent<HTMLDivElement>) => {
+                    e.stopPropagation();
+                    onPlay({ id: v.id, info: v.info, fileUrl: v.fileUrl, owner: v.user[0] });
+                  }}
+                >
+                  <Cover url={v.info.coverFileUrl} size={120} />
+                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <PlayArrowIcon className="text-white" fontSize="large" />
+                  </div>
+                </div>
                 <div className="m-4 flex flex-col justify-center">
                   <div className="font-bold">{v.info.name}</div>
                   <div

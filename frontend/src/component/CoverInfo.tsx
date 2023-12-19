@@ -1,21 +1,19 @@
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { MouseEvent, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import usePlayer from 'src/hook/usePlayer';
-import { User } from 'src/model/backend/entity/UserEntity';
-import { Playlist } from 'src/model/Playlist';
+import { Type } from 'src/model/backend/constant/Creation';
+import { ExploreCreation } from 'src/model/backend/Explore';
 import Cover from './Cover';
 import UserMenu from './UserMenu';
 
 type Props = {
+  creation: ExploreCreation;
   size?: number;
   navigateTo?: string;
-  coverFileUrl: string | null;
-  name: string | null;
-  author?: (User & { avatarUrl: string | null })[];
-  play?: Playlist;
 };
 
-const CoverInfo = ({ size, navigateTo, coverFileUrl, name, author, play }: Props) => {
+const CoverInfo = ({ creation, size, navigateTo }: Props) => {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -29,17 +27,28 @@ const CoverInfo = ({ size, navigateTo, coverFileUrl, name, author, play }: Props
       }}
     >
       <div
+        className="relative"
         onClick={(e: MouseEvent<HTMLDivElement>) => {
-          if (play) {
+          if (creation.type !== Type.Lyrics && creation.user.length > 0) {
             e.stopPropagation();
-            onPlay(play);
+            onPlay({
+              id: creation.id,
+              info: creation.info,
+              fileUrl: creation.fileUrl,
+              owner: creation.user[0],
+            });
           }
         }}
       >
-        <Cover url={coverFileUrl} size={size} />
+        <Cover url={creation.info.coverFileUrl} size={size} />
+        {creation.type !== Type.Lyrics && (
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+            <PlayArrowIcon className="text-white" fontSize="large" />
+          </div>
+        )}
       </div>
-      <div className="font-bold">{name}</div>
-      {author && (
+      <div className="font-bold">{creation.info.name}</div>
+      {creation.user && (
         <div
           className="text-sm text-grey hover:text-blue"
           onClick={(e: MouseEvent<HTMLDivElement>) => {
@@ -47,16 +56,16 @@ const CoverInfo = ({ size, navigateTo, coverFileUrl, name, author, play }: Props
             setMenuOpen(!menuOpen);
           }}
           ref={ref}
-        >{`${author.length > 0 ? author[0].username : ''}${
-          author.length > 1 ? ` & ${author.length - 1} others` : ''
+        >{`${creation.user.length > 0 ? creation.user[0].username : ''}${
+          creation.user.length > 1 ? ` & ${creation.user.length - 1} others` : ''
         }`}</div>
       )}
-      {author && (
+      {creation.user && (
         <UserMenu
           open={menuOpen}
           anchorEl={ref.current}
           onClose={() => setMenuOpen(false)}
-          author={author}
+          author={creation.user}
         />
       )}
     </div>

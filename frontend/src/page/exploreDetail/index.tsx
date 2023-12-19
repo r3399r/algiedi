@@ -206,13 +206,7 @@ const ExploreDetail = () => {
           <div className="mb-4 text-xl font-bold">Inspired By</div>
           <div className="flex flex-wrap gap-4">
             {creation.inspired.map((v) => (
-              <CoverInfo
-                key={v.id}
-                navigateTo={`${Page.Explore}/${v.id}`}
-                coverFileUrl={v.coverFileUrl}
-                name={v.info.name}
-                author={v.user}
-              />
+              <CoverInfo key={v.id} creation={v} navigateTo={`${Page.Explore}/${v.id}`} />
             ))}
           </div>
           {creation.inspired.length === 0 && <div>This is an original</div>}
@@ -221,13 +215,7 @@ const ExploreDetail = () => {
           <div className="mb-4 text-xl font-bold">Inspired</div>
           <div className="flex flex-wrap gap-4">
             {creation.inspiration.map((v) => (
-              <CoverInfo
-                key={v.id}
-                navigateTo={`${Page.Explore}/${v.id}`}
-                coverFileUrl={v.coverFileUrl}
-                name={v.info.name}
-                author={v.user}
-              />
+              <CoverInfo key={v.id} creation={v} navigateTo={`${Page.Explore}/${v.id}`} />
             ))}
           </div>
           {creation.inspiration.length === 0 && <div>Be Ready to Inspire More Uploads!</div>}

@@ -37,8 +37,8 @@ import { Role, Status } from 'src/model/constant/Project';
 import { ProjectUser } from 'src/model/entity/ProjectUserEntity';
 import { ViewCreationExplore } from 'src/model/entity/ViewCreationExploreEntity';
 import { BadRequestError } from 'src/model/error';
+import { ExploreCreation } from 'src/model/Explore';
 import { Pagination } from 'src/model/Pagination';
-import { ExtendedCreation } from 'src/model/Project';
 import { cognitoSymbol } from 'src/util/LambdaSetup';
 import { AwsService } from './AwsService';
 
@@ -432,15 +432,18 @@ export class ExploreService {
 
   private async getExtendedExplore(
     creation: ViewCreationExplore
-  ): Promise<ExtendedCreation> {
+  ): Promise<ExploreCreation> {
     if (creation.type !== Type.Song && creation.user !== null)
       return {
         ...creation,
         fileUrl: this.awsService.getS3SignedUrl(creation.fileUri),
         tabFileUrl: this.awsService.getS3SignedUrl(creation.tabFileUri),
-        coverFileUrl: this.awsService.getS3SignedUrl(
-          creation.info.coverFileUri
-        ),
+        info: {
+          ...creation.info,
+          coverFileUrl: this.awsService.getS3SignedUrl(
+            creation.info.coverFileUri
+          ),
+        },
         user: [
           {
             ...creation.user,
@@ -457,7 +460,12 @@ export class ExploreService {
       ...creation,
       fileUrl: this.awsService.getS3SignedUrl(creation.fileUri),
       tabFileUrl: this.awsService.getS3SignedUrl(creation.tabFileUri),
-      coverFileUrl: this.awsService.getS3SignedUrl(creation.info.coverFileUri),
+      info: {
+        ...creation.info,
+        coverFileUrl: this.awsService.getS3SignedUrl(
+          creation.info.coverFileUri
+        ),
+      },
       user: pu.map((o) => ({
         ...o.user,
         avatarUrl: this.awsService.getS3SignedUrl(o.user.avatar),

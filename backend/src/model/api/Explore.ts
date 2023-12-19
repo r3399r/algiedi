@@ -5,7 +5,6 @@ import { User } from 'src/model/entity/UserEntity';
 import { ViewCreationExplore } from 'src/model/entity/ViewCreationExploreEntity';
 import { ExploreCreation, ExploreUser } from 'src/model/Explore';
 import { PaginationParams } from 'src/model/Pagination';
-import { ExtendedCreation } from 'src/model/Project';
 
 export type GetExploreSearchParams = {
   type?: string;
@@ -48,8 +47,8 @@ export type GetExploreFeaturedResponse = {
 export type GetExploreIdResponse = Omit<ExploreCreation, 'user'> & {
   user: (User & { following: boolean | null; avatarUrl: string | null })[];
   like: boolean;
-  inspired: ExtendedCreation[];
-  inspiration: ExtendedCreation[];
+  inspired: ExploreCreation[];
+  inspiration: ExploreCreation[];
   likeCount: number;
   comments: {
     user: (User & { avatarUrl: string | null }) | null;

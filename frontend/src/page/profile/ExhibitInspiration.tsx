@@ -46,13 +46,7 @@ const ExhibitInspiration = ({ countPerPage }: Props) => {
       </div>
       <div className="flex flex-wrap gap-6">
         {inspiration.map((v) => (
-          <CoverInfo
-            size={150}
-            key={v.id}
-            navigateTo={`${Page.Explore}/${v.id}`}
-            coverFileUrl={v.info.coverFileUrl}
-            name={v.info.name}
-          />
+          <CoverInfo creation={v} size={150} key={v.id} navigateTo={`${Page.Explore}/${v.id}`} />
         ))}
       </div>
       <div className="my-4 flex justify-center">
