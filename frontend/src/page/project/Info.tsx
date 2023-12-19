@@ -80,7 +80,18 @@ const Info = ({ project, doRefresh, isOwner }: Props) => {
             )}
             {isEdit && (
               <div className="flex gap-2">
-                <Button size="s" color="purple" onClick={() => setEditMode(false)}>
+                <Button
+                  size="s"
+                  color="purple"
+                  onClick={() => {
+                    setEditMode(false);
+                    setName(project.info.name ?? '');
+                    setDescription(project.info.description ?? '');
+                    setTheme(project.info.theme ?? '');
+                    setGenre(project.info.genre ?? '');
+                    setLanguage(project.info.language ?? '');
+                  }}
+                >
                   Cancel
                 </Button>
                 <Button
