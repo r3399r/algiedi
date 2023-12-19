@@ -204,29 +204,34 @@ export class ExploreService {
   }
 
   public async getFeaturedExplore(): Promise<GetExploreFeaturedResponse> {
-    const featuredSong = await this.projectAccess.find({
-      where: { status: Status.Published },
+    const vs = await this.viewCreationExploreAccess.find({
+      where: {
+        type: Type.Song,
+        project: { status: Status.Published },
+      },
       order: { countLike: 'desc' },
       take: 12,
     });
     const pu = await this.projectUserAccess.find({
       where: {
-        projectId: In(featuredSong.map((v) => v.id)),
+        projectId: In(vs.map((v) => v.id)),
         role: Not(Role.Rejected),
       },
     });
-    const featuredLyrics = await this.lyricsAccess.find({
-      where: { createdAt: MoreThan(subWeeks(new Date(), 8).toISOString()) },
+    const vl = await this.viewCreationExploreAccess.find({
+      where: { type: Type.Lyrics },
       order: { countLike: 'desc' },
     });
-    const featuredTrack = await this.trackAccess.find({
-      where: { createdAt: MoreThan(subWeeks(new Date(), 8).toISOString()) },
+    const vt = await this.viewCreationExploreAccess.find({
+      where: { type: Type.Track },
       order: { countLike: 'desc' },
     });
 
     return {
-      song: featuredSong.map((v) => ({
+      song: vs.map((v) => ({
         ...v,
+        fileUrl: this.awsService.getS3SignedUrl(v.fileUri),
+        tabFileUrl: this.awsService.getS3SignedUrl(v.tabFileUri),
         info: {
           ...v.info,
           coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
@@ -239,7 +244,7 @@ export class ExploreService {
           })),
       })),
       lyrics: {
-        thisWeek: featuredLyrics
+        thisWeek: vl
           .filter((v) => new Date(v.createdAt ?? '') >= subWeeks(new Date(), 1))
           .slice(0, 6)
           .map((v) => ({
@@ -248,8 +253,20 @@ export class ExploreService {
               ...v.info,
               coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
             },
+            fileUrl: this.awsService.getS3SignedUrl(v.fileUri),
+            tabFileUrl: this.awsService.getS3SignedUrl(v.tabFileUri),
+            user: v.user
+              ? [
+                  {
+                    ...v.user,
+                    avatarUrl: v.user
+                      ? this.awsService.getS3SignedUrl(v.user.avatar)
+                      : null,
+                  },
+                ]
+              : [],
           })),
-        thisMonth: featuredLyrics
+        thisMonth: vl
           .filter((v) => new Date(v.createdAt ?? '') >= subWeeks(new Date(), 4))
           .slice(0, 6)
           .map((v) => ({
@@ -258,20 +275,41 @@ export class ExploreService {
               ...v.info,
               coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
             },
+            fileUrl: this.awsService.getS3SignedUrl(v.fileUri),
+            tabFileUrl: this.awsService.getS3SignedUrl(v.tabFileUri),
+            user: v.user
+              ? [
+                  {
+                    ...v.user,
+                    avatarUrl: v.user
+                      ? this.awsService.getS3SignedUrl(v.user.avatar)
+                      : null,
+                  },
+                ]
+              : [],
           })),
-        lastMonth: featuredLyrics
-          .filter((v) => new Date(v.createdAt ?? '') <= subWeeks(new Date(), 4))
-          .slice(0, 6)
-          .map((v) => ({
-            ...v,
-            info: {
-              ...v.info,
-              coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
-            },
-          })),
+        lastMonth: vl.slice(0, 6).map((v) => ({
+          ...v,
+          info: {
+            ...v.info,
+            coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
+          },
+          fileUrl: this.awsService.getS3SignedUrl(v.fileUri),
+          tabFileUrl: this.awsService.getS3SignedUrl(v.tabFileUri),
+          user: v.user
+            ? [
+                {
+                  ...v.user,
+                  avatarUrl: v.user
+                    ? this.awsService.getS3SignedUrl(v.user.avatar)
+                    : null,
+                },
+              ]
+            : [],
+        })),
       },
       track: {
-        thisWeek: featuredTrack
+        thisWeek: vt
           .filter((v) => new Date(v.createdAt ?? '') >= subWeeks(new Date(), 1))
           .slice(0, 6)
           .map((v) => ({
@@ -280,8 +318,20 @@ export class ExploreService {
               ...v.info,
               coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
             },
+            fileUrl: this.awsService.getS3SignedUrl(v.fileUri),
+            tabFileUrl: this.awsService.getS3SignedUrl(v.tabFileUri),
+            user: v.user
+              ? [
+                  {
+                    ...v.user,
+                    avatarUrl: v.user
+                      ? this.awsService.getS3SignedUrl(v.user.avatar)
+                      : null,
+                  },
+                ]
+              : [],
           })),
-        thisMonth: featuredTrack
+        thisMonth: vt
           .filter((v) => new Date(v.createdAt ?? '') >= subWeeks(new Date(), 4))
           .slice(0, 6)
           .map((v) => ({
@@ -290,8 +340,20 @@ export class ExploreService {
               ...v.info,
               coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
             },
+            fileUrl: this.awsService.getS3SignedUrl(v.fileUri),
+            tabFileUrl: this.awsService.getS3SignedUrl(v.tabFileUri),
+            user: v.user
+              ? [
+                  {
+                    ...v.user,
+                    avatarUrl: v.user
+                      ? this.awsService.getS3SignedUrl(v.user.avatar)
+                      : null,
+                  },
+                ]
+              : [],
           })),
-        lastMonth: featuredTrack
+        lastMonth: vt
           .filter((v) => new Date(v.createdAt ?? '') <= subWeeks(new Date(), 4))
           .slice(0, 6)
           .map((v) => ({
@@ -300,6 +362,18 @@ export class ExploreService {
               ...v.info,
               coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
             },
+            fileUrl: this.awsService.getS3SignedUrl(v.fileUri),
+            tabFileUrl: this.awsService.getS3SignedUrl(v.tabFileUri),
+            user: v.user
+              ? [
+                  {
+                    ...v.user,
+                    avatarUrl: v.user
+                      ? this.awsService.getS3SignedUrl(v.user.avatar)
+                      : null,
+                  },
+                ]
+              : [],
           })),
       },
     };

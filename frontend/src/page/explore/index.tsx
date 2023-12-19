@@ -99,10 +99,10 @@ const Explore = () => {
                     className="text-grey hover:text-blue"
                     onClick={(e: MouseEvent<HTMLDivElement>) => {
                       e.stopPropagation();
-                      navigate(`${Page.Explore}/user/${v.user.id}`);
+                      navigate(`${Page.Explore}/user/${v.user[0].id}`);
                     }}
                   >
-                    {v.user.username}
+                    {v.user[0].username}
                   </div>
                 </div>
               </div>
@@ -135,10 +135,10 @@ const Explore = () => {
                     className="text-grey hover:text-blue"
                     onClick={(e: MouseEvent<HTMLDivElement>) => {
                       e.stopPropagation();
-                      navigate(`${Page.Explore}/user/${v.user.id}`);
+                      navigate(`${Page.Explore}/user/${v.user[0].id}`);
                     }}
                   >
-                    {v.user.username}
+                    {v.user[0].username}
                   </div>
                 </div>
               </div>

@@ -1,9 +1,7 @@
 import { Follow } from 'src/model/entity/FollowEntity';
-import { Info } from 'src/model/entity/InfoEntity';
 import { Like } from 'src/model/entity/LikeEntity';
-import { Project } from 'src/model/entity/ProjectEntity';
 import { User } from 'src/model/entity/UserEntity';
-import { ViewCreationExplore } from 'src/model/entity/ViewCreationExploreEntity';
+import { ExploreCreation, ExploreUser } from 'src/model/Explore';
 import { PaginationParams } from 'src/model/Pagination';
 
 export type GetMeResponse = User & { avatarUrl: string | null };
@@ -25,42 +23,26 @@ export type PutMeResponse = User & { avatarUrl: string | null };
 
 export type GetMeExhibitsPublishedParams = PaginationParams;
 
-export type GetMeExhibitsPublishedResponse = (Omit<Project, 'info' | 'user'> & {
-  info: Info & { coverFileUrl: string | null };
-  user: (User & { avatarUrl: string | null })[];
-})[];
+export type GetMeExhibitsPublishedResponse = ExploreCreation[];
 
 export type GetMeExhibitsOriginalPramas = PaginationParams & {
   type?: string;
 };
 
-export type GetMeExhibitsOriginalResponse = (Omit<
-  ViewCreationExplore,
-  'info'
-> & {
-  info: Info & { coverFileUrl: string | null };
-})[];
+export type GetMeExhibitsOriginalResponse = ExploreCreation[];
 
 export type GetMeExhibitsInspirationPramas = PaginationParams & {
   type?: string;
 };
 
-export type GetMeExhibitsInspirationResponse = (Omit<
-  ViewCreationExplore,
-  'info'
-> & {
-  info: Info & { coverFileUrl: string | null };
-})[];
+export type GetMeExhibitsInspirationResponse = ExploreCreation[];
 
 export type GetMeExhibitsLikeParams = PaginationParams & {
   type?: string;
 };
 
 export type GetMeExhibitsLikeResponse = (Like & {
-  creation: Omit<ViewCreationExplore, 'info' | 'user'> & {
-    info: Info & { coverFileUrl: string | null };
-    user: (User & { avatarUrl: string | null })[];
-  };
+  creation: ExploreCreation;
 })[];
 
 export type GetMeExhibitsFollowParams = PaginationParams & {
@@ -68,5 +50,5 @@ export type GetMeExhibitsFollowParams = PaginationParams & {
 };
 
 export type GetMeExhibitsFollowResponse = (Omit<Follow, 'followee'> & {
-  followee: User & { avatarUrl: string | null };
+  followee: ExploreUser;
 })[];

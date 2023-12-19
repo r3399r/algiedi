@@ -97,7 +97,7 @@ export class MeService {
     const limit = params?.limit ? Number(params.limit) : 20;
     const offset = params?.offset ? Number(params.offset) : 0;
 
-    const [pu, count] = await this.projectUserAccess.findAndCount({
+    const [myPu, count] = await this.projectUserAccess.findAndCount({
       where: {
         userId: this.cognitoUserId,
         project: { status: Status.Published },
@@ -107,22 +107,26 @@ export class MeService {
       skip: offset,
     });
 
+    const vc = await this.viewCreationExploreAccess.find({
+      where: { id: In(myPu.map((o) => o.id)) },
+    });
+
     return {
       data: await Promise.all(
-        pu.map(async (v) => {
-          const pu2 = await this.projectUserAccess.find({
-            where: { projectId: v.projectId, role: Not(Role.Rejected) },
+        vc.map(async (v) => {
+          const pu = await this.projectUserAccess.find({
+            where: { projectId: v.id, role: Not(Role.Rejected) },
           });
 
           return {
-            ...v.project,
+            ...v,
+            fileUrl: null,
+            tabFileUrl: null,
             info: {
-              ...v.project.info,
-              coverFileUrl: this.awsService.getS3SignedUrl(
-                v.project.info.coverFileUri
-              ),
+              ...v.info,
+              coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
             },
-            user: pu2.map((o) => ({
+            user: pu.map((o) => ({
               ...o.user,
               avatarUrl: this.awsService.getS3SignedUrl(o.user.avatar),
             })),
@@ -156,6 +160,9 @@ export class MeService {
           ...v.info,
           coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
         },
+        fileUrl: null,
+        tabFileUrl: null,
+        user: [],
       })),
       paginate: { limit, offset, count },
     };
@@ -184,6 +191,9 @@ export class MeService {
           ...v.info,
           coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
         },
+        fileUrl: null,
+        tabFileUrl: null,
+        user: [],
       })),
       paginate: { limit, offset, count },
     };
@@ -205,6 +215,8 @@ export class MeService {
             avatarUrl: this.awsService.getS3SignedUrl(creation.user.avatar),
           },
         ],
+        fileUrl: null,
+        tabFileUrl: null,
       };
 
     const pu = await this.projectUserAccess.find({
@@ -223,6 +235,8 @@ export class MeService {
         ...o.user,
         avatarUrl: this.awsService.getS3SignedUrl(o.user.avatar),
       })),
+      fileUrl: null,
+      tabFileUrl: null,
     };
   }
 
