@@ -1,5 +1,6 @@
 import exploreEndpoint from 'src/api/exploreEndpoint';
 import uploadEndpoint from 'src/api/uploadEndpoint';
+import { ExploreCreation } from 'src/model/backend/Explore';
 import { dispatch } from 'src/redux/store';
 import { finishWaiting, startWaiting } from 'src/redux/uiSlice';
 import { file2Base64 } from 'src/util/fileConverter';
@@ -66,4 +67,10 @@ export const getExplore = async () => {
   } finally {
     dispatch(finishWaiting());
   }
+};
+
+export const getExploreSearch = async (keyword: string, type?: string) => {
+  const res = await exploreEndpoint.getExploreSearch({ keyword, type });
+
+  return res.data as unknown as ExploreCreation[];
 };

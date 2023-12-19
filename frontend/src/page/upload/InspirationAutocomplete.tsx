@@ -1,11 +1,16 @@
+import HistoryEduIcon from '@mui/icons-material/HistoryEdu';
+import MusicNoteIcon from '@mui/icons-material/MusicNote';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
 import { Popper } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Cover from 'src/component/Cover';
 import Input from 'src/component/Input';
 import ListItem from 'src/component/ListItem';
+import { Type } from 'src/model/backend/constant/Creation';
+import { ExploreCreation } from 'src/model/backend/Explore';
 import { openFailSnackbar } from 'src/redux/uiSlice';
-import { getExploreSearch } from 'src/service/ExploreService';
+import { getExploreSearch } from 'src/service/UploadService';
 
 type Props = {
   defaultKeyword?: string | null;
@@ -16,7 +21,7 @@ const InspirationAntocomplete = ({ defaultKeyword, onClick }: Props) => {
   const [open, setOpen] = useState<boolean>(false);
   const [keyword, setKeyword] = useState<string>(defaultKeyword ?? '');
   const [loading, setLoading] = useState<boolean>(false);
-  const [items, setItems] = useState<{ id: string; url: string | null; name: string | null }[]>();
+  const [items, setItems] = useState<ExploreCreation[]>();
   const dispatch = useDispatch();
   const ref = useRef<HTMLDivElement>(null);
 
@@ -32,13 +37,7 @@ const InspirationAntocomplete = ({ defaultKeyword, onClick }: Props) => {
     const timer = setTimeout(() => {
       getExploreSearch(keyword)
         .then((res) => {
-          if (!unamounted)
-            setItems(
-              res.data.map((v) => {
-                if ('avatarUrl' in v) return { id: v.id, url: v.avatarUrl, name: v.username };
-                else return { id: v.id, url: v.info.coverFileUrl, name: v.info.name };
-              }),
-            );
+          if (!unamounted) setItems(res);
         })
         .catch((e) => dispatch(openFailSnackbar(e)))
         .finally(() => setLoading(false));
@@ -65,7 +64,7 @@ const InspirationAntocomplete = ({ defaultKeyword, onClick }: Props) => {
         />
       </div>
       <Popper open={open} anchorEl={ref.current}>
-        <div className="rounded bg-[#fafafa] shadow-lg">
+        <div className="max-h-[400px] overflow-scroll rounded bg-[#fafafa] shadow-lg">
           {loading && <ListItem>Loading...</ListItem>}
           {items && items.length === 0 && <ListItem>(No creation found)</ListItem>}
           {items &&
@@ -75,12 +74,18 @@ const InspirationAntocomplete = ({ defaultKeyword, onClick }: Props) => {
                 key={v.id}
                 className="flex items-center gap-2"
                 onClick={() => {
-                  setKeyword(v.name ?? '');
+                  setKeyword(v.info.name ?? '');
                   onClick(v.id);
                 }}
               >
-                <Cover url={v.url} size={40} />
-                <div>{v.name}</div>
+                <Cover url={v.info.coverFileUrl} size={40} />
+                <div className="font-bold">{v.info.name}</div>
+                {v.type === Type.Track && <HistoryEduIcon className="text-red" fontSize="small" />}
+                {v.type === Type.Lyrics && <MusicNoteIcon className="text-blue" fontSize="small" />}
+                {v.type === Type.Song && <StarBorderIcon fontSize="small" />}
+                <div>{`(${v.user.length > 0 ? v.user[0].username : ''}${
+                  v.user.length > 1 ? ` & ${v.user.length - 1} others` : ''
+                })`}</div>
               </ListItem>
             ))}
         </div>

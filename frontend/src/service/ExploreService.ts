@@ -230,5 +230,8 @@ export const unfollowByUserId = async (id: string) => {
   }
 };
 
-export const getExploreSearch = async (keyword: string, type?: string) =>
-  await exploreEndpoint.getExploreSearch({ keyword, type });
+export const getExploreSearch = async (keyword: string, type?: string) => {
+  const res = await exploreEndpoint.getExploreSearch({ keyword, type });
+
+  return res.data;
+};

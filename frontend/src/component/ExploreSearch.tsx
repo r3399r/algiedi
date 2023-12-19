@@ -41,7 +41,7 @@ const ExploreSearch = ({ className }: Props) => {
         .then((res) => {
           if (!unamounted)
             setItems(
-              res.data.map((v) => {
+              res.map((v) => {
                 if ('avatarUrl' in v) return { id: v.id, url: v.avatarUrl, name: v.username };
                 else return { id: v.id, url: v.info.coverFileUrl, name: v.info.name };
               }),

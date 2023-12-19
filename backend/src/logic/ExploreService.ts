@@ -379,57 +379,6 @@ export class ExploreService {
     };
   }
 
-  public getExploresByKeyword = async (
-    params: GetExploreSearchParams | null
-  ): Promise<GetExploreSearchResponse> => {
-    if (params === null || !params.keyword)
-      throw new BadRequestError('missing keyword');
-
-    if (params.type === 'user') {
-      const user = await this.userAccess.find({
-        where: { username: Like(`%${params.keyword}%`) },
-        take: 20,
-      });
-
-      return user.map((v) => ({
-        ...v,
-        avatarUrl: this.awsService.getS3SignedUrl(v.avatar),
-      }));
-    }
-
-    // if params.type is undefined, return song,track,lyrics
-    const whereOption: FindOptionsWhere<ViewCreationExplore>[] = [];
-    if (params.type === undefined || params.type === 'track')
-      whereOption.push({
-        type: Type.Track,
-        info: { name: Like(`%${params.keyword}%`) },
-      });
-    if (params.type === undefined || params.type === 'lyrics')
-      whereOption.push({
-        type: Type.Lyrics,
-        info: { name: Like(`%${params.keyword}%`) },
-      });
-    if (params.type === undefined || params.type === 'song')
-      whereOption.push({
-        type: Type.Song,
-        project: { status: Status.Published },
-        info: { name: Like(`%${params.keyword}%`) },
-      });
-    const creation = await this.viewCreationExploreAccess.find({
-      order: { countLike: 'desc' },
-      where: whereOption,
-      take: 20,
-    });
-
-    return creation.map((v) => ({
-      ...v,
-      info: {
-        ...v.info,
-        coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
-      },
-    }));
-  };
-
   private async getExtendedExplore(
     creation: ViewCreationExplore
   ): Promise<ExploreCreation> {
@@ -472,6 +421,51 @@ export class ExploreService {
       })),
     };
   }
+
+  public getExploresByKeyword = async (
+    params: GetExploreSearchParams | null
+  ): Promise<GetExploreSearchResponse> => {
+    if (params === null || !params.keyword)
+      throw new BadRequestError('missing keyword');
+
+    if (params.type === 'user') {
+      const user = await this.userAccess.find({
+        where: { username: Like(`%${params.keyword}%`) },
+        take: 20,
+      });
+
+      return user.map((v) => ({
+        ...v,
+        avatarUrl: this.awsService.getS3SignedUrl(v.avatar),
+      }));
+    }
+
+    // if params.type is undefined, return song,track,lyrics
+    const whereOption: FindOptionsWhere<ViewCreationExplore>[] = [];
+    if (params.type === undefined || params.type === 'track')
+      whereOption.push({
+        type: Type.Track,
+        info: { name: Like(`%${params.keyword}%`) },
+      });
+    if (params.type === undefined || params.type === 'lyrics')
+      whereOption.push({
+        type: Type.Lyrics,
+        info: { name: Like(`%${params.keyword}%`) },
+      });
+    if (params.type === undefined || params.type === 'song')
+      whereOption.push({
+        type: Type.Song,
+        project: { status: Status.Published },
+        info: { name: Like(`%${params.keyword}%`) },
+      });
+    const creation = await this.viewCreationExploreAccess.find({
+      order: { countLike: 'desc' },
+      where: whereOption,
+      take: 20,
+    });
+
+    return await Promise.all(creation.map((v) => this.getExtendedExplore(v)));
+  };
 
   public async getExploreById(id: string): Promise<GetExploreIdResponse> {
     const creation = await this.viewCreationExploreAccess.findOneByIdOrFail(id);

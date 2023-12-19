@@ -2,7 +2,6 @@ import { Status } from 'src/model/constant/Project';
 import { Info } from 'src/model/entity/InfoEntity';
 import { Project } from 'src/model/entity/ProjectEntity';
 import { User } from 'src/model/entity/UserEntity';
-import { ViewCreationExplore } from 'src/model/entity/ViewCreationExploreEntity';
 import { ExploreCreation, ExploreUser } from 'src/model/Explore';
 import { PaginationParams } from 'src/model/Pagination';
 
@@ -11,11 +10,7 @@ export type GetExploreSearchParams = {
   keyword?: string;
 };
 
-export type GetExploreSearchResponse =
-  | (Omit<ViewCreationExplore, 'info'> & {
-      info: Info & { coverFileUrl: string | null };
-    })[]
-  | ExploreUser[];
+export type GetExploreSearchResponse = ExploreCreation[] | ExploreUser[];
 
 // params: type is string of lyrics, track or song divided by comma
 export type GetExploreParams = PaginationParams & {
