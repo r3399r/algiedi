@@ -240,7 +240,7 @@ const ExploreIdea = () => {
                   text={`${window.location.origin}${Page.Explore}/${v.id}`}
                   onCopy={() => dispatch(openSuccessSnackbar('Shared link is Copied.'))}
                 >
-                  <ShareIcon className="cursor-pointer" />
+                  <ShareIcon className="cursor-pointer hover:text-blue" />
                 </CopyToClipboard>
               </div>
             </div>

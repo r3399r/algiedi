@@ -124,7 +124,7 @@ const ExploreDetail = () => {
           text={location.href}
           onCopy={() => dispatch(openSuccessSnackbar('Shared link is Copied.'))}
         >
-          <ShareIcon className="cursor-pointer" />
+          <ShareIcon className="cursor-pointer hover:text-blue" />
         </CopyToClipboard>
       </div>
       {(creation.tabFileUrl || creation.lyricsText) && (
