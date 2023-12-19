@@ -1,6 +1,7 @@
+import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
 import FastForwardIcon from '@mui/icons-material/FastForward';
 import FastRewindIcon from '@mui/icons-material/FastRewind';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCurrent } from 'src/redux/playlistSlice';
 import { RootState } from 'src/redux/store';
@@ -9,6 +10,7 @@ import Cover from './Cover';
 const AudioBox = () => {
   const { playlist, current } = useSelector((rootState: RootState) => rootState.playlist);
   const dispatch = useDispatch();
+  const [isMinimize, setIsMinimize] = useState<boolean>(false);
 
   const creation = useMemo(() => {
     if (playlist === null || current === null || current < 0) return null;
@@ -27,14 +29,25 @@ const AudioBox = () => {
     dispatch(setCurrent(current - 1));
   };
 
+  if (isMinimize)
+    return (
+      <div className="fixed bottom-0 right-0 z-50 flex items-center gap-2 rounded-md border border-solid border-black bg-white">
+        <CloseFullscreenIcon
+          fontSize="small"
+          className="cursor-pointer"
+          onClick={() => setIsMinimize(false)}
+        />
+      </div>
+    );
+
   return (
-    <div className="fixed bottom-0 right-0 z-50 flex items-center gap-2 rounded-xl border border-solid border-black bg-white p-2">
-      <div className="flex flex-col items-center">
+    <div className="fixed bottom-0 right-0 z-50 flex items-center gap-2 rounded-xl border border-solid border-black bg-white">
+      <div className="flex flex-col items-center py-2 pl-2">
         <Cover url={creation?.info.coverFileUrl ?? null} size={70} />
         <div>{creation?.owner.username ?? 'Author'}</div>
       </div>
-      <div>
-        <div className="mx-4 mb-2 flex items-center justify-between">
+      <div className="relative py-2 pr-2">
+        <div className="mb-2 ml-4 mr-8 flex items-center justify-between">
           <div>{creation?.info.name ?? 'Title'}</div>
           <div className="flex gap-1">
             <div
@@ -52,6 +65,9 @@ const AudioBox = () => {
           </div>
         </div>
         <audio src={creation?.fileUrl ?? ''} controls autoPlay controlsList="nodownload" />
+        <div className="absolute right-1 top-0 cursor-pointer" onClick={() => setIsMinimize(true)}>
+          <CloseFullscreenIcon fontSize="small" />
+        </div>
       </div>
     </div>
   );
