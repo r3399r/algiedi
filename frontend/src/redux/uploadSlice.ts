@@ -28,6 +28,17 @@ export const uploadSlice = createSlice({
   name: 'upload',
   initialState,
   reducers: {
+    reset: (state: UploadState) => {
+      state.name = '';
+      state.description = '';
+      state.lyrics = '';
+      state.theme = null;
+      state.genre = null;
+      state.language = null;
+      state.errorTheme = false;
+      state.errorGenre = false;
+      state.errorLanguage = false;
+    },
     setInfo: (state: UploadState, action: PayloadAction<Partial<UploadState>>) => {
       if (action.payload.name) state.name = action.payload.name;
       if (action.payload.description) state.description = action.payload.description;
@@ -42,6 +53,6 @@ export const uploadSlice = createSlice({
   },
 });
 
-export const { setInfo } = uploadSlice.actions;
+export const { reset, setInfo } = uploadSlice.actions;
 
 export default uploadSlice.reducer;

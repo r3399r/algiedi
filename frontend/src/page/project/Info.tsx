@@ -35,13 +35,14 @@ const Info = ({ project, doRefresh, isOwner }: Props) => {
   };
 
   const onSave = () => {
-    if (theme === undefined || genre === undefined || language === undefined) {
+    if (theme.length === 0 || genre.length === 0 || language.length === 0) {
       setErrorTheme(!theme);
       setErrorGenre(!genre);
       setErrorLanguage(!language);
 
       return;
     }
+    setEditMode(false);
     updateProject(project.id, {
       name,
       description,
@@ -94,14 +95,7 @@ const Info = ({ project, doRefresh, isOwner }: Props) => {
                 >
                   Cancel
                 </Button>
-                <Button
-                  size="s"
-                  color="purple"
-                  onClick={() => {
-                    setEditMode(false);
-                    onSave();
-                  }}
-                >
+                <Button size="s" color="purple" onClick={onSave}>
                   Save
                 </Button>
               </div>
@@ -122,7 +116,11 @@ const Info = ({ project, doRefresh, isOwner }: Props) => {
         <div className="flex items-center gap-1">
           <div className="w-[90px] font-bold">Theme</div>
           {isEdit ? (
-            <MultiSelect defaultValue={theme} onChange={(v) => setTheme(v)} error={errorTheme}>
+            <MultiSelect
+              defaultValue={theme ?? undefined}
+              onChange={(v) => setTheme(v)}
+              error={errorTheme}
+            >
               {Theme.map((v, i) => (
                 <MultiSelectOption key={i} value={v.name}>
                   {v.name}
