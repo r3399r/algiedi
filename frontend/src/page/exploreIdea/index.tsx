@@ -2,6 +2,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import HistoryEduIcon from '@mui/icons-material/HistoryEdu';
 import MusicNoteIcon from '@mui/icons-material/MusicNote';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import ShareIcon from '@mui/icons-material/Share';
 import { Pagination } from '@mui/material';
 import classNames from 'classnames';
@@ -17,6 +18,7 @@ import SelectOption from 'src/component/SelectOption';
 import Tabs from 'src/component/Tabs';
 import { Page } from 'src/constant/Page';
 import { Genre, Theme } from 'src/constant/Property';
+import usePlayer from 'src/hook/usePlayer';
 import useQuery from 'src/hook/useQuery';
 import { GetExploreResponse } from 'src/model/backend/api/Explore';
 import { Type } from 'src/model/backend/constant/Creation';
@@ -48,6 +50,7 @@ const ExploreIdea = () => {
   const [page, setPage] = useState<number>(1);
   const [offset, setOffset] = useState<number>(0);
   const [count, setCount] = useState<number>(0);
+  const onPlay = usePlayer();
 
   const type = useMemo(() => {
     setOffset(0);
@@ -152,7 +155,23 @@ const ExploreIdea = () => {
             onClick={() => navigate(`${Page.Explore}/${v.id}`)}
           >
             <div className="flex w-1/3 flex-col items-center">
-              <Cover url={v.info.coverFileUrl} size={50} />
+              <div
+                className="relative"
+                onClick={(e: MouseEvent<HTMLDivElement>) => {
+                  if (v.type === Type.Track) {
+                    e.stopPropagation();
+                    onPlay({ id: v.id, info: v.info, fileUrl: v.fileUrl, owner: v.user[0] });
+                  }
+                }}
+              >
+                <Cover url={v.info.coverFileUrl} size={50} />
+                {v.type === Type.Track && (
+                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <PlayArrowIcon className="text-white" />
+                  </div>
+                )}
+              </div>
+              {/* <Cover url={v.info.coverFileUrl} size={50} /> */}
               <div className="flex">
                 {v.type === Type.Track ? (
                   <MusicNoteIcon
@@ -168,7 +187,7 @@ const ExploreIdea = () => {
                   />
                 )}
                 <div
-                  className="text-sm text-grey hover:underline"
+                  className="text-sm text-grey hover:text-blue"
                   onClick={(e: MouseEvent<HTMLDivElement>) => {
                     e.stopPropagation();
                     v.user.length > 0 && navigate(`${Page.Explore}/user/${v.user[0].id}`);

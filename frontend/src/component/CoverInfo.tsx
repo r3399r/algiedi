@@ -1,6 +1,8 @@
 import { MouseEvent, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import usePlayer from 'src/hook/usePlayer';
 import { User } from 'src/model/backend/entity/UserEntity';
+import { Playlist } from 'src/model/Playlist';
 import Cover from './Cover';
 import UserMenu from './UserMenu';
 
@@ -10,12 +12,14 @@ type Props = {
   coverFileUrl: string | null;
   name: string | null;
   author?: (User & { avatarUrl: string | null })[];
+  play?: Playlist;
 };
 
-const CoverInfo = ({ size, navigateTo, coverFileUrl, name, author }: Props) => {
+const CoverInfo = ({ size, navigateTo, coverFileUrl, name, author, play }: Props) => {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const ref = useRef<HTMLDivElement>(null);
+  const onPlay = usePlayer();
 
   return (
     <div
@@ -24,11 +28,20 @@ const CoverInfo = ({ size, navigateTo, coverFileUrl, name, author }: Props) => {
         if (navigateTo) navigate(navigateTo);
       }}
     >
-      <Cover url={coverFileUrl} size={size} />
+      <div
+        onClick={(e: MouseEvent<HTMLDivElement>) => {
+          if (play) {
+            e.stopPropagation();
+            onPlay(play);
+          }
+        }}
+      >
+        <Cover url={coverFileUrl} size={size} />
+      </div>
       <div className="font-bold">{name}</div>
       {author && (
         <div
-          className="text-sm text-grey"
+          className="text-sm text-grey hover:text-blue"
           onClick={(e: MouseEvent<HTMLDivElement>) => {
             e.stopPropagation();
             setMenuOpen(!menuOpen);

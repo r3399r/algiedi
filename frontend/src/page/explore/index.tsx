@@ -96,7 +96,7 @@ const Explore = () => {
                 <div className="m-4 flex flex-col justify-center">
                   <div className="font-bold">{v.info.name}</div>
                   <div
-                    className="text-grey hover:underline"
+                    className="text-grey hover:text-blue"
                     onClick={(e: MouseEvent<HTMLDivElement>) => {
                       e.stopPropagation();
                       navigate(`${Page.Explore}/user/${v.user.id}`);
@@ -132,7 +132,7 @@ const Explore = () => {
                 <div className="m-4 flex flex-col justify-center">
                   <div className="font-bold">{v.info.name}</div>
                   <div
-                    className="text-grey hover:underline"
+                    className="text-grey hover:text-blue"
                     onClick={(e: MouseEvent<HTMLDivElement>) => {
                       e.stopPropagation();
                       navigate(`${Page.Explore}/user/${v.user.id}`);
