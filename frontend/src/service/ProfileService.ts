@@ -117,7 +117,7 @@ export const getFollows = async (role: string, limit: string, offset: string) =>
     dispatch(startWaiting());
 
     const res = await meEndpoint.getMeExhibitsFollows({
-      role: role === 'All' ? undefined : role,
+      role: role === '' ? undefined : role,
       limit,
       offset,
     });

@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { FindManyOptions, FindOneOptions } from 'typeorm';
+import { FindManyOptions, FindOneOptions, In } from 'typeorm';
 import { Follow, FollowEntity } from 'src/model/entity/FollowEntity';
 import { Database } from 'src/util/Database';
 
@@ -20,13 +20,28 @@ export class FollowAccess {
     });
   }
 
-  public async findAndCount(options: FindManyOptions<Follow>) {
+  public async findAndCount(
+    followerId: string,
+    take: number,
+    skip: number,
+    role?: string[]
+  ): Promise<[Follow[], number]> {
     const qr = await this.database.getQueryRunner();
 
-    return await qr.manager.findAndCount<Follow>(FollowEntity.name, {
-      relations: { followee: true, follower: true },
-      ...options,
-    });
+    const queryBuilder = qr.manager
+      .createQueryBuilder(FollowEntity.name, 'f')
+      .select('f.id')
+      .innerJoin('user', 'u', 'f.followee_id = u.id')
+      .where('f.followerId = :followerId', { followerId });
+
+    if (role)
+      for (const r of role) queryBuilder.andWhere(`u.role LIKE "%${r}%"`);
+
+    queryBuilder.take(take).skip(skip);
+
+    const [id, count] = await queryBuilder.getManyAndCount();
+
+    return [await this.find({ where: { id: In(id.map((v) => v.id)) } }), count];
   }
 
   public async findOneOrFail(options: FindOneOptions<Follow>) {

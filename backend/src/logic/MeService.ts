@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { In, IsNull, Not } from 'typeorm';
+import { In, IsNull, Like, Not } from 'typeorm';
 import { DbAccess } from 'src/access/DbAccess';
 import { FollowAccess } from 'src/access/FollowAccess';
 import { LikeAccess } from 'src/access/LikeAccess';
@@ -221,14 +221,12 @@ export class MeService {
     const limit = params?.limit ? Number(params.limit) : 20;
     const offset = params?.offset ? Number(params.offset) : 0;
 
-    const [follow, count] = await this.followAccess.findAndCount({
-      where: {
-        followerId: this.cognitoUserId,
-        followee: { role: params?.role },
-      },
-      take: limit,
-      skip: offset,
-    });
+    const [follow, count] = await this.followAccess.findAndCount(
+      this.cognitoUserId,
+      limit,
+      offset,
+      params?.role?.split(',')
+    );
 
     return {
       data: follow.map((v) => ({
