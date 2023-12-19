@@ -9,15 +9,17 @@ const Question = ({ question, answer }: Props) => {
 
   return (
     <div className="border-t-2 border-t-black">
-      <div className="flex h-[60px] items-center justify-between">
+      <div
+        className="flex h-[60px] cursor-pointer items-center justify-between"
+        onClick={() => setExpanded(!expanded)}
+      >
         <div>{question}</div>
         <div className="w-[35px]">
           <img
             src={IcPlus}
-            className={classNames('cursor-pointer transition-all duration-500', {
+            className={classNames('transition-all duration-500', {
               'rotate-180': expanded,
             })}
-            onClick={() => setExpanded(!expanded)}
           />
         </div>
       </div>
