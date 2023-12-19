@@ -167,7 +167,15 @@ const ExploreIdea = () => {
                     fontSize="small"
                   />
                 )}
-                <div className="text-sm text-grey">{v.user.map((o) => o.username).join()}</div>
+                <div
+                  className="text-sm text-grey hover:underline"
+                  onClick={(e: MouseEvent<HTMLDivElement>) => {
+                    e.stopPropagation();
+                    v.user.length > 0 && navigate(`${Page.Explore}/user/${v.user[0].id}`);
+                  }}
+                >
+                  {v.user.map((o) => o.username).join()}
+                </div>
               </div>
             </div>
             <div className="w-1/2">

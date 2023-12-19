@@ -6,7 +6,6 @@ import { ChangeEvent, MouseEvent, useEffect, useState } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import Cover from 'src/component/Cover';
 import ExploreSearch from 'src/component/ExploreSearch';
 import NotificationWidget from 'src/component/NotificationWidget';
 import Select from 'src/component/Select';
@@ -19,6 +18,7 @@ import { GetExploreResponse } from 'src/model/backend/api/Explore';
 import { RootState } from 'src/redux/store';
 import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
 import { getExploreSong, likeById, unlikeById } from 'src/service/ExploreService';
+import MainInfo from './MainInfo';
 
 const DEFAULT_LIMIT = '10';
 
@@ -111,13 +111,7 @@ const ExploreSong = () => {
             onClick={() => navigate(`${Page.Explore}/${v.id}`)}
           >
             <div className="flex w-2/5 items-center gap-2">
-              <Cover url={v.info.coverFileUrl} size={50} />
-              <div>
-                <div className="font-bold">{v.info.name}</div>
-                <div className="text-sm text-grey">{`${
-                  v.user.length > 0 ? v.user[0].username : ''
-                }${v.user.length > 1 ? ` & ${v.user.length - 1} others` : ''}`}</div>
-              </div>
+              <MainInfo coverFileUrl={v.info.coverFileUrl} name={v.info.name} author={v.user} />
             </div>
             <div className="w-1/5">{v.info.genre}</div>
             <div className="w-1/5">{v.info.theme}</div>

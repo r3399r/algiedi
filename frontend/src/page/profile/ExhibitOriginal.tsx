@@ -1,7 +1,6 @@
 import { Pagination } from '@mui/material';
 import { ChangeEvent, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Cover from 'src/component/Cover';
+import CoverInfo from 'src/component/CoverInfo';
 import Select from 'src/component/Select';
 import SelectOption from 'src/component/SelectOption';
 import { Page } from 'src/constant/Page';
@@ -14,7 +13,6 @@ type Props = {
 };
 
 const ExhibitOriginal = ({ countPerPage }: Props) => {
-  const navigate = useNavigate();
   const [original, setOriginal] = useState<GetMeExhibitsOriginalResponse>();
   const [filter, setFilter] = useState<string>('All');
   const [page, setPage] = useState<number>(1);
@@ -48,14 +46,13 @@ const ExhibitOriginal = ({ countPerPage }: Props) => {
       </div>
       <div className="flex flex-wrap gap-6">
         {original.map((v) => (
-          <div
+          <CoverInfo
+            size={150}
             key={v.id}
-            className="flex cursor-pointer flex-col items-center"
-            onClick={() => navigate(`${Page.Explore}/${v.id}`)}
-          >
-            <Cover url={v.info.coverFileUrl} size={150} />
-            <div className="font-bold">{v.info.name}</div>
-          </div>
+            navigateTo={`${Page.Explore}/${v.id}`}
+            coverFileUrl={v.info.coverFileUrl}
+            name={v.info.name}
+          />
         ))}
       </div>
       <div className="my-4 flex justify-center">

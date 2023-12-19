@@ -1,11 +1,13 @@
-import { useEffect, useMemo, useState } from 'react';
+import { MouseEvent, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Button from 'src/component/Button';
 import Cover from 'src/component/Cover';
+import CoverInfo from 'src/component/CoverInfo';
 import ExploreSearch from 'src/component/ExploreSearch';
 import NotificationWidget from 'src/component/NotificationWidget';
 import Tabs from 'src/component/Tabs';
+import { Page } from 'src/constant/Page';
 import { GetExploreFeaturedResponse } from 'src/model/backend/api/Explore';
 import { RootState } from 'src/redux/store';
 import { getExploreFeatured } from 'src/service/ExploreService';
@@ -58,16 +60,14 @@ const Explore = () => {
       <div className="w-full overflow-x-auto">
         <div className="mb-6 flex gap-4">
           {songs?.map((v) => (
-            <div
-              key={v.id}
-              className="flex w-[150px] shrink-0 cursor-pointer flex-col items-center gap-2 text-center"
-              onClick={() => navigate(v.id)}
-            >
-              <Cover url={v.info.coverFileUrl} size={150} />
-              <div className="font-bold">{v.info.name}</div>
-              <div className="text-sm text-grey">{`${v.user.length > 0 ? v.user[0].username : ''}${
-                v.user.length > 1 ? ` & ${v.user.length - 1} others` : ''
-              }`}</div>
+            <div className="w-[150px] shrink-0" key={v.id}>
+              <CoverInfo
+                size={150}
+                navigateTo={v.id}
+                coverFileUrl={v.info.coverFileUrl}
+                name={v.info.name}
+                author={v.user}
+              />
             </div>
           ))}
         </div>
@@ -95,7 +95,15 @@ const Explore = () => {
                 <Cover url={v.info.coverFileUrl} size={120} />
                 <div className="m-4 flex flex-col justify-center">
                   <div className="font-bold">{v.info.name}</div>
-                  <div className="text-grey">by {v.user.username}</div>
+                  <div
+                    className="text-grey hover:underline"
+                    onClick={(e: MouseEvent<HTMLDivElement>) => {
+                      e.stopPropagation();
+                      navigate(`${Page.Explore}/user/${v.user.id}`);
+                    }}
+                  >
+                    {v.user.username}
+                  </div>
                 </div>
               </div>
             ))}
@@ -123,7 +131,15 @@ const Explore = () => {
                 <Cover url={v.info.coverFileUrl} size={120} />
                 <div className="m-4 flex flex-col justify-center">
                   <div className="font-bold">{v.info.name}</div>
-                  <div className="text-grey">by {v.user.username}</div>
+                  <div
+                    className="text-grey hover:underline"
+                    onClick={(e: MouseEvent<HTMLDivElement>) => {
+                      e.stopPropagation();
+                      navigate(`${Page.Explore}/user/${v.user.id}`);
+                    }}
+                  >
+                    {v.user.username}
+                  </div>
                 </div>
               </div>
             ))}

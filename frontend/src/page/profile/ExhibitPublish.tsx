@@ -1,7 +1,6 @@
 import { Pagination } from '@mui/material';
 import { ChangeEvent, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Cover from 'src/component/Cover';
+import CoverInfo from 'src/component/CoverInfo';
 import { Page } from 'src/constant/Page';
 import { GetMeExhibitsPublishedResponse } from 'src/model/backend/api/Me';
 import { getPublished } from 'src/service/ProfileService';
@@ -11,7 +10,6 @@ type Props = {
 };
 
 const ExhibitPublish = ({ countPerPage }: Props) => {
-  const navigate = useNavigate();
   const [published, setPublished] = useState<GetMeExhibitsPublishedResponse>();
   const [page, setPage] = useState<number>(1);
   const [offset, setOffset] = useState<number>(0);
@@ -36,17 +34,14 @@ const ExhibitPublish = ({ countPerPage }: Props) => {
     <div>
       <div className="flex flex-wrap gap-6">
         {published.map((v) => (
-          <div
+          <CoverInfo
+            size={150}
             key={v.id}
-            className="flex cursor-pointer flex-col items-center"
-            onClick={() => navigate(`${Page.Explore}/${v.id}`)}
-          >
-            <Cover url={v.info.coverFileUrl} size={150} />
-            <div className="font-bold">{v.info.name}</div>
-            <div className="text-sm text-grey">{`${v.user.length > 0 ? v.user[0].username : ''}${
-              v.user.length > 1 ? ` & ${v.user.length - 1} others` : ''
-            }`}</div>
-          </div>
+            navigateTo={`${Page.Explore}/${v.id}`}
+            coverFileUrl={v.info.coverFileUrl}
+            name={v.info.name}
+            author={v.user}
+          />
         ))}
       </div>
       <div className="my-4 flex justify-center">

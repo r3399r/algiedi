@@ -12,7 +12,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import AudioPlayer from 'src/component/AudioPlayer';
 import Avatar from 'src/component/Avatar';
 import Button from 'src/component/Button';
-import Cover from 'src/component/Cover';
+import CoverInfo from 'src/component/CoverInfo';
 import Divider from 'src/component/Divider';
 import ExploreSearch from 'src/component/ExploreSearch';
 import FollowButton from 'src/component/FollowButton';
@@ -206,17 +206,13 @@ const ExploreDetail = () => {
           <div className="mb-4 text-xl font-bold">Inspired By</div>
           <div className="flex flex-wrap gap-4">
             {creation.inspired.map((v) => (
-              <div
+              <CoverInfo
                 key={v.id}
-                className="flex w-fit cursor-pointer flex-col items-center"
-                onClick={() => navigate(`${Page.Explore}/${v.id}`)}
-              >
-                <Cover url={v.coverFileUrl} />
-                <div className="mt-2 font-bold">{v.info.name}</div>
-                <div className="text-sm text-grey">{`${
-                  v.user.length > 0 ? v.user[0].username : ''
-                }${v.user.length > 1 ? ` & ${v.user.length - 1} others` : ''}`}</div>
-              </div>
+                navigateTo={`${Page.Explore}/${v.id}`}
+                coverFileUrl={v.coverFileUrl}
+                name={v.info.name}
+                author={v.user}
+              />
             ))}
           </div>
           {creation.inspired.length === 0 && <div>This is an original</div>}
@@ -225,17 +221,13 @@ const ExploreDetail = () => {
           <div className="mb-4 text-xl font-bold">Inspired</div>
           <div className="flex flex-wrap gap-4">
             {creation.inspiration.map((v) => (
-              <div
+              <CoverInfo
                 key={v.id}
-                className="flex w-fit cursor-pointer flex-col items-center"
-                onClick={() => navigate(`${Page.Explore}/${v.id}`)}
-              >
-                <Cover url={v.coverFileUrl} />
-                <div className="mt-2 font-bold">{v.info.name}</div>
-                <div className="text-sm text-grey">{`${
-                  v.user.length > 0 ? v.user[0].username : ''
-                }${v.user.length > 1 ? ` & ${v.user.length - 1} others` : ''}`}</div>
-              </div>
+                navigateTo={`${Page.Explore}/${v.id}`}
+                coverFileUrl={v.coverFileUrl}
+                name={v.info.name}
+                author={v.user}
+              />
             ))}
           </div>
           {creation.inspiration.length === 0 && <div>Be Ready to Inspire More Uploads!</div>}

@@ -1,7 +1,6 @@
 import { Pagination } from '@mui/material';
 import { ChangeEvent, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Cover from 'src/component/Cover';
+import CoverInfo from 'src/component/CoverInfo';
 import Select from 'src/component/Select';
 import SelectOption from 'src/component/SelectOption';
 import { Page } from 'src/constant/Page';
@@ -14,7 +13,6 @@ type Props = {
 };
 
 const ExhibitLikes = ({ countPerPage }: Props) => {
-  const navigate = useNavigate();
   const [likeList, setLikeList] = useState<GetMeExhibitsLikeResponse>();
   const [filter, setFilter] = useState<string>('All');
   const [page, setPage] = useState<number>(1);
@@ -49,17 +47,14 @@ const ExhibitLikes = ({ countPerPage }: Props) => {
       </div>
       <div className="flex flex-wrap gap-6">
         {likeList.map((v) => (
-          <div
+          <CoverInfo
+            size={150}
             key={v.id}
-            className="flex cursor-pointer flex-col items-center"
-            onClick={() => navigate(`${Page.Explore}/${v.id}`)}
-          >
-            <Cover url={v.creation.info.coverFileUrl} size={150} />
-            <div className="font-bold">{v.creation.info.name}</div>
-            <div className="text-sm text-grey">{`${
-              v.creation.user.length > 0 ? v.creation.user[0].username : ''
-            }${v.creation.user.length > 1 ? ` & ${v.creation.user.length - 1} others` : ''}`}</div>
-          </div>
+            navigateTo={`${Page.Explore}/${v.id}`}
+            coverFileUrl={v.creation.info.coverFileUrl}
+            name={v.creation.info.name}
+            author={v.creation.user}
+          />
         ))}
       </div>
       <div className="my-4 flex justify-center">
