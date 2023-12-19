@@ -1,4 +1,7 @@
+import HistoryEduIcon from '@mui/icons-material/HistoryEdu';
+import MusicNoteIcon from '@mui/icons-material/MusicNote';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
 import { MouseEvent, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import usePlayer from 'src/hook/usePlayer';
@@ -47,7 +50,12 @@ const CoverInfo = ({ creation, size, navigateTo }: Props) => {
           </div>
         )}
       </div>
-      <div className="font-bold">{creation.info.name}</div>
+      <div className="flex items-center">
+        {creation.type === Type.Track && <HistoryEduIcon className="text-red" fontSize="small" />}
+        {creation.type === Type.Lyrics && <MusicNoteIcon className="text-blue" fontSize="small" />}
+        {creation.type === Type.Song && <StarBorderIcon fontSize="small" />}
+        <div className="font-bold">{creation.info.name}</div>
+      </div>
       {creation.user && (
         <div
           className="text-sm text-grey hover:text-blue"

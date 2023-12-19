@@ -171,7 +171,6 @@ const ExploreIdea = () => {
                   </div>
                 )}
               </div>
-              {/* <Cover url={v.info.coverFileUrl} size={50} /> */}
               <div className="flex">
                 {v.type === Type.Track ? (
                   <MusicNoteIcon

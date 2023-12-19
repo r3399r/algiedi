@@ -51,7 +51,7 @@ const ExhibitLikes = ({ countPerPage }: Props) => {
             creation={v.creation}
             size={150}
             key={v.id}
-            navigateTo={`${Page.Explore}/${v.id}`}
+            navigateTo={`${Page.Explore}/${v.creation.id}`}
           />
         ))}
       </div>
