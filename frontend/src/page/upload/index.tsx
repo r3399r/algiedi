@@ -47,7 +47,6 @@ const Upload = () => {
             <Input
               label="Name"
               placeholder="Name of your creation"
-              required
               asterisked
               value={info.name}
               onChange={(e) => dispatch(setInfo({ name: e.target.value }))}
@@ -56,7 +55,6 @@ const Upload = () => {
               className="h-[240px]"
               label="Description"
               placeholder="Please describe your creation here"
-              required
               asterisked
               value={info.description}
               onChange={(e) => dispatch(setInfo({ description: e.target.value }))}
@@ -66,7 +64,6 @@ const Upload = () => {
                 placeholder="Your lyrics"
                 className="h-[140px]"
                 label="Lyrics"
-                required
                 asterisked
                 value={info.lyrics}
                 onChange={(e) => dispatch(setInfo({ lyrics: e.target.value }))}

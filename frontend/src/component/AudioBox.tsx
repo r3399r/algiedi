@@ -37,6 +37,13 @@ const AudioBox = () => {
           className="cursor-pointer"
           onClick={() => setIsMinimize(false)}
         />
+        <audio
+          src={creation?.fileUrl ?? ''}
+          controls
+          autoPlay
+          controlsList="nodownload"
+          className="hidden"
+        />
       </div>
     );
 
@@ -44,7 +51,7 @@ const AudioBox = () => {
     <div className="fixed bottom-0 right-0 z-50 flex items-center gap-2 rounded-xl border border-solid border-black bg-white">
       <div className="flex flex-col items-center py-2 pl-2">
         <Cover url={creation?.info.coverFileUrl ?? null} size={70} />
-        <div>{creation?.owner.username ?? 'Author'}</div>
+        <div>{creation?.username ?? 'Author'}</div>
       </div>
       <div className="relative py-2 pr-2">
         <div className="mb-2 ml-4 mr-8 flex items-center justify-between">

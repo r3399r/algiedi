@@ -110,7 +110,7 @@ const ExploreDetail = () => {
         {creation.type !== Type.Lyrics && (
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
             {creation.fileUrl && (
-              <AudioPlayer creation={{ ...creation, owner: creation.user[0] }} />
+              <AudioPlayer creation={{ ...creation, username: creation.user[0].username }} />
             )}
           </div>
         )}

@@ -160,7 +160,12 @@ const ExploreIdea = () => {
                 onClick={(e: MouseEvent<HTMLDivElement>) => {
                   if (v.type === Type.Track) {
                     e.stopPropagation();
-                    onPlay({ id: v.id, info: v.info, fileUrl: v.fileUrl, owner: v.user[0] });
+                    onPlay({
+                      id: v.id,
+                      info: v.info,
+                      fileUrl: v.fileUrl,
+                      username: v.user[0].username,
+                    });
                   }
                 }}
               >

@@ -1,4 +1,4 @@
-import { ChangeEvent, useRef, useState } from 'react';
+import { ChangeEvent, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Button from 'src/component/Button';
@@ -8,7 +8,7 @@ import { Page } from 'src/constant/Page';
 import { GetExploreIdResponse } from 'src/model/backend/api/Explore';
 import { RootState } from 'src/redux/store';
 import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
-import { reset, setInfo } from 'src/redux/uploadSlice';
+import { reset } from 'src/redux/uploadSlice';
 import { uploadLyrics } from 'src/service/UploadService';
 import InspirationAntocomplete from './InspirationAutocomplete';
 
@@ -26,22 +26,26 @@ const Lyrics = ({ inspiration }: Props) => {
   const [coverFile, setCoverFile] = useState<File>();
   const [inspiredId, setInspiredId] = useState<string>(inspiration?.id ?? '');
 
-  const onSubmit = () => {
-    if (!info.theme || !info.genre || !info.language) {
-      dispatch(setInfo({ errorTheme: true }));
-      dispatch(setInfo({ errorGenre: true }));
-      dispatch(setInfo({ errorLanguage: true }));
+  const subimttable = useMemo(
+    () =>
+      info.name.length > 0 &&
+      info.description.length > 0 &&
+      info.lyrics.length > 0 &&
+      info.theme &&
+      info.genre &&
+      info.language,
+    [info],
+  );
 
-      return;
-    }
+  const onSubmit = () => {
     uploadLyrics(
       {
         name: info.name,
         description: info.description,
         lyrics: info.lyrics,
-        theme: info.theme,
-        genre: info.genre,
-        language: info.language,
+        theme: info.theme ?? '',
+        genre: info.genre ?? '',
+        language: info.language ?? '',
       },
       coverFile ?? null,
       checkInspiration ? inspiredId : null,
@@ -97,7 +101,7 @@ const Lyrics = ({ inspiration }: Props) => {
           </div>
         </div>
         <div className="mt-10 text-right">
-          <Button type="button" onClick={onSubmit}>
+          <Button type="button" onClick={onSubmit} disabled={!subimttable}>
             Submit
           </Button>
         </div>

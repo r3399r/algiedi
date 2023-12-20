@@ -40,15 +40,16 @@ export const uploadSlice = createSlice({
       state.errorLanguage = false;
     },
     setInfo: (state: UploadState, action: PayloadAction<Partial<UploadState>>) => {
-      if (action.payload.name) state.name = action.payload.name;
-      if (action.payload.description) state.description = action.payload.description;
-      if (action.payload.lyrics) state.lyrics = action.payload.lyrics;
-      if (action.payload.theme) state.theme = action.payload.theme;
-      if (action.payload.genre) state.genre = action.payload.genre;
-      if (action.payload.language) state.language = action.payload.language;
-      if (action.payload.errorTheme) state.errorTheme = action.payload.errorTheme;
-      if (action.payload.errorGenre) state.errorGenre = action.payload.errorGenre;
-      if (action.payload.errorLanguage) state.errorLanguage = action.payload.errorLanguage;
+      if (action.payload.name !== undefined) state.name = action.payload.name;
+      if (action.payload.description !== undefined) state.description = action.payload.description;
+      if (action.payload.lyrics !== undefined) state.lyrics = action.payload.lyrics;
+      if (action.payload.theme !== undefined) state.theme = action.payload.theme;
+      if (action.payload.genre !== undefined) state.genre = action.payload.genre;
+      if (action.payload.language !== undefined) state.language = action.payload.language;
+      if (action.payload.errorTheme !== undefined) state.errorTheme = action.payload.errorTheme;
+      if (action.payload.errorGenre !== undefined) state.errorGenre = action.payload.errorGenre;
+      if (action.payload.errorLanguage !== undefined)
+        state.errorLanguage = action.payload.errorLanguage;
     },
   },
 });

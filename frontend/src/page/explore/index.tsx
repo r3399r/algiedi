@@ -93,7 +93,12 @@ const Explore = () => {
                   className="relative"
                   onClick={(e: MouseEvent<HTMLDivElement>) => {
                     e.stopPropagation();
-                    onPlay({ id: v.id, info: v.info, fileUrl: v.fileUrl, owner: v.user[0] });
+                    onPlay({
+                      id: v.id,
+                      info: v.info,
+                      fileUrl: v.fileUrl,
+                      username: v.user[0].username,
+                    });
                   }}
                 >
                   <Cover url={v.info.coverFileUrl} size={120} />

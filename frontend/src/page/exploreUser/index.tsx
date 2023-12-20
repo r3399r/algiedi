@@ -6,8 +6,6 @@ import ExploreSearch from 'src/component/ExploreSearch';
 import FollowButton from 'src/component/FollowButton';
 import MultiSelect from 'src/component/MultiSelect';
 import MultiSelectOption from 'src/component/MultiSelectOption';
-import Select from 'src/component/Select';
-import SelectOption from 'src/component/SelectOption';
 import { Page } from 'src/constant/Page';
 import { Role } from 'src/constant/Property';
 import useQuery from 'src/hook/useQuery';

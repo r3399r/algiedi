@@ -1,4 +1,4 @@
-import { ChangeEvent, useRef, useState } from 'react';
+import { ChangeEvent, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Button from 'src/component/Button';
@@ -8,7 +8,7 @@ import { Page } from 'src/constant/Page';
 import { GetExploreIdResponse } from 'src/model/backend/api/Explore';
 import { RootState } from 'src/redux/store';
 import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
-import { reset, setInfo } from 'src/redux/uploadSlice';
+import { reset } from 'src/redux/uploadSlice';
 import { uploadTrack } from 'src/service/UploadService';
 import InspirationAntocomplete from './InspirationAutocomplete';
 
@@ -31,22 +31,26 @@ const Track = ({ inspiration }: Props) => {
   const [inspiredId, setInspiredId] = useState<string>(inspiration?.id ?? '');
   const [errorTrackFile, setErrorTrackFile] = useState<boolean>(false);
 
-  const onSubmit = () => {
-    if (trackFile === undefined || !info.theme || !info.genre || !info.language) {
-      setErrorTrackFile(!trackFile);
-      dispatch(setInfo({ errorTheme: true }));
-      dispatch(setInfo({ errorGenre: true }));
-      dispatch(setInfo({ errorLanguage: true }));
+  const subimttable = useMemo(
+    () =>
+      info.name.length > 0 &&
+      info.description.length > 0 &&
+      info.theme &&
+      info.genre &&
+      info.language &&
+      trackFile !== undefined,
+    [info, trackFile],
+  );
 
-      return;
-    }
+  const onSubmit = () => {
+    if (trackFile === undefined) return;
     uploadTrack(
       {
         name: info.name,
         description: info.description,
-        theme: info.theme,
-        genre: info.genre,
-        language: info.language,
+        theme: info.theme ?? '',
+        genre: info.genre ?? '',
+        language: info.language ?? '',
       },
       { track: trackFile, tab: tabFile ?? null, cover: coverFile ?? null },
       checkInspiration ? inspiredId : null,
@@ -129,7 +133,7 @@ const Track = ({ inspiration }: Props) => {
           </div>
         </div>
         <div className="mt-10 text-right">
-          <Button type="button" onClick={onSubmit}>
+          <Button type="button" onClick={onSubmit} disabled={!subimttable}>
             Submit
           </Button>
         </div>
