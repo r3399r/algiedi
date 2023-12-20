@@ -36,7 +36,7 @@ const ExhibitFollow = ({ countPerPage }: Props) => {
   return (
     <div className="mb-10">
       <div className="mb-4 flex items-center gap-1">
-        <div className="text-lg font-bold">Filter:</div>
+        <div className="text-lg font-bold">Role</div>
         <MultiSelect onChange={(v) => setFilter(v)}>
           {Role.map((v) => v.name).map((v, i) => (
             <MultiSelectOption key={i} value={v}>

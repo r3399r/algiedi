@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS lyrics (
 	project_id VARCHAR(36) NULL,
 	inspired_id VARCHAR(36) NULL,
 	count_like INT NOT NULL,
+	count_view INT NOT NULL,
 	created_at TIMESTAMP NULL,
 	updated_at TIMESTAMP NULL,
 	PRIMARY KEY (id ASC),

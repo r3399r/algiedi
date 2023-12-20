@@ -42,11 +42,7 @@ const Partners = ({ project, doRefresh }: Props) => {
             <Avatar url={v.user.avatarUrl} size={80} />
             <div>{v.user.username}</div>
             <div>
-              {v.isReady ? (
-                <CheckCircleIcon color="primary" classes={{ colorPrimary: '!text-green' }} />
-              ) : (
-                <CheckCircleOutlineIcon />
-              )}
+              {v.isReady ? <CheckCircleIcon className="text-green" /> : <CheckCircleOutlineIcon />}
             </div>
           </div>
         ))}

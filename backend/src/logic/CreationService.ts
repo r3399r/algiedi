@@ -106,17 +106,22 @@ export class CreationService {
     await this.likeAccess.hardDeleteById(oldLike.id);
 
     const creation = await this.viewCreationExploreAccess.findOneByIdOrFail(id);
+    const count = await this.likeAccess.count({
+      where: {
+        creationId: id,
+      },
+    });
     if (creation.type === Type.Lyrics) {
       const lyrics = await this.lyricsAccess.findOneOrFailById(id);
-      lyrics.countLike = bn(lyrics.countLike).minus(1).toString();
+      lyrics.countLike = String(count);
       await this.lyricsAccess.save(lyrics);
     } else if (creation.type === Type.Track) {
       const track = await this.trackAccess.findOneOrFailById(id);
-      track.countLike = bn(track.countLike).minus(1).toString();
+      track.countLike = String(count);
       await this.trackAccess.save(track);
     } else if (creation.type === Type.Song) {
       const project = await this.projectAccess.findOneOrFailById(id);
-      project.countLike = bn(project.countLike).minus(1).toString();
+      project.countLike = String(count);
       await this.projectAccess.save(project);
     }
   }

@@ -2,6 +2,7 @@ import { subMonths, subWeeks, subYears } from 'date-fns';
 import creationEndpoint from 'src/api/creationEndpoint';
 import exploreEndpoint from 'src/api/exploreEndpoint';
 import userEndpoint from 'src/api/userEndpoint';
+import viewEndpoint from 'src/api/viewEndpoint';
 import {
   GetExploreParams,
   GetExploreResponse,
@@ -141,7 +142,7 @@ export const getExploreUser = async (params: {
       keyword: params.keyword,
       limit: params.limit,
       offset: params.offset,
-      role: params.role === 'All' ? undefined : params.role,
+      role: params.role === '' ? undefined : params.role,
     };
     const res = isLogin
       ? await exploreEndpoint.getExploreUserAuth(exploreParams)
@@ -165,6 +166,7 @@ export const getExploreById = async (id: string) => {
     return res.data;
   } finally {
     dispatch(finishWaiting());
+    viewEndpoint.patchViewId(id);
   }
 };
 

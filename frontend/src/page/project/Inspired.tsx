@@ -60,7 +60,7 @@ const Inspired = ({ project, doRefresh }: Props) => {
           <div className="text-right">
             <button onClick={onApprove(v.user.id)} disabled={ownerCreation?.user.id !== userId}>
               {v.isAccepted ? (
-                <CheckCircleIcon color="primary" classes={{ colorPrimary: '!text-green' }} />
+                <CheckCircleIcon className="text-green" />
               ) : (
                 <CheckCircleOutlineIcon />
               )}

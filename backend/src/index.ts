@@ -18,6 +18,7 @@ import project from './routes/project';
 import sns from './routes/sns';
 import upload from './routes/upload';
 import user from './routes/user';
+import view from './routes/view';
 import { errorOutput, successOutput } from './util/lambdaHelper';
 import { LambdaSetup } from './util/LambdaSetup';
 
@@ -54,6 +55,9 @@ export const api = async (event: LambdaEvent, _context?: LambdaContext) => {
         break;
       case 'notification':
         res = await notification(event);
+        break;
+      case 'view':
+        res = await view(event);
         break;
     }
 

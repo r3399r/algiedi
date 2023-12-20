@@ -7,6 +7,7 @@ select p.id,
     p.created_at,
     p.updated_at,
 	p.count_like,
+    p.count_view,
     latest_project.track_file_uri,
     latest_project.tab_file_uri,
     latest_project.lyrics_text

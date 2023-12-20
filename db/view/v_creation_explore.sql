@@ -9,6 +9,7 @@ select l.id,
     null as tab_file_uri,
     l.lyrics_text,
 	l.count_like,
+    l.count_view,
     l.created_at,
     l.updated_at
 from v_lyrics_explore l
@@ -23,6 +24,7 @@ select t.id,
     t.tab_file_uri,
     null as lyrics_text,
 	t.count_like,
+    t.count_view,
     t.created_at,
     t.updated_at
 from v_track_explore t
@@ -37,6 +39,7 @@ select s.id,
     s.tab_file_uri,
     s.lyrics_text,
 	s.count_like,
+    s.count_view,
     s.created_at,
     s.updated_at
 from v_song_explore s;

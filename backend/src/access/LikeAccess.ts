@@ -20,6 +20,15 @@ export class LikeAccess {
     });
   }
 
+  public async findOne(options: FindOneOptions<Like>) {
+    const qr = await this.database.getQueryRunner();
+
+    return await qr.manager.findOne<Like>(LikeEntity.name, {
+      relations: { user: true },
+      ...options,
+    });
+  }
+
   public async findOneOrFail(options: FindOneOptions<Like>) {
     const qr = await this.database.getQueryRunner();
 
@@ -33,6 +42,15 @@ export class LikeAccess {
     const qr = await this.database.getQueryRunner();
 
     return await qr.manager.findAndCount<Like>(LikeEntity.name, {
+      relations: { user: true },
+      ...options,
+    });
+  }
+
+  public async count(options: FindManyOptions<Like>) {
+    const qr = await this.database.getQueryRunner();
+
+    return await qr.manager.count<Like>(LikeEntity.name, {
       relations: { user: true },
       ...options,
     });

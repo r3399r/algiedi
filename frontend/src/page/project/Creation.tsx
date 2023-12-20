@@ -55,11 +55,7 @@ const Creation = ({
           </div>
           {isParticipant && (
             <div className="mb-2 flex items-center gap-1">
-              <MusicNoteIcon
-                color="primary"
-                classes={{ colorPrimary: '!text-blue' }}
-                fontSize="small"
-              />
+              <MusicNoteIcon className="text-blue" fontSize="small" />
               <div>{track.info.name}</div>
             </div>
           )}
@@ -90,11 +86,7 @@ const Creation = ({
           <Accordion disableGutters defaultExpanded sx={{ border: 0 }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <div className="flex items-center gap-1">
-                <HistoryEduIcon
-                  color="primary"
-                  classes={{ colorPrimary: '!text-red' }}
-                  fontSize="small"
-                />
+                <HistoryEduIcon className="text-red" fontSize="small" />
                 {isParticipant ? lyrics.info.name : 'Lyrics'}
               </div>
             </AccordionSummary>

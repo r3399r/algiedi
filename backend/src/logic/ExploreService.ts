@@ -537,9 +537,9 @@ export class ExploreService {
         )
       );
 
-    const [likes, comments] = await Promise.all([
-      this.likeAccess.find({
-        where: { creationId: id },
+    const [like, comments] = await Promise.all([
+      this.likeAccess.findOne({
+        where: { creationId: id, userId: this.cognitoUserId },
       }),
       this.commentAccess.find({
         where: { creationId: id },
@@ -559,8 +559,7 @@ export class ExploreService {
       inspiration: await Promise.all(
         inspiration.map((v) => this.getExtendedExplore(v))
       ),
-      like: likes.find((o) => o.userId === this.cognitoUserId) !== undefined,
-      likeCount: likes.length,
+      like: like !== null,
       comments: comments.map((v) => ({
         user: {
           ...v.user,
@@ -582,10 +581,8 @@ export class ExploreService {
     const offset = params?.offset ? Number(params.offset) : 0;
 
     const [user, count] = await this.userAccess.findAndCount({
-      where: {
-        username: Like(`%${params.keyword}%`),
-        role: params.role ? Like(`%${params.role}%`) : undefined,
-      },
+      keyword: params.keyword ?? '',
+      role: params?.role?.split(','),
       take: limit,
       skip: offset,
     });

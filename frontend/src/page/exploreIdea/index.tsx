@@ -173,17 +173,9 @@ const ExploreIdea = () => {
               </div>
               <div className="flex">
                 {v.type === Type.Track ? (
-                  <MusicNoteIcon
-                    color="primary"
-                    classes={{ colorPrimary: '!text-blue' }}
-                    fontSize="small"
-                  />
+                  <MusicNoteIcon className="text-blue" fontSize="small" />
                 ) : (
-                  <HistoryEduIcon
-                    color="primary"
-                    classes={{ colorPrimary: '!text-red' }}
-                    fontSize="small"
-                  />
+                  <HistoryEduIcon className="text-red" fontSize="small" />
                 )}
                 <div
                   className="text-sm text-grey hover:text-blue"
@@ -219,12 +211,7 @@ const ExploreIdea = () => {
               <div>
                 {isLogin ? (
                   v.like ? (
-                    <FavoriteIcon
-                      onClick={onUnlike(v.id)}
-                      className="cursor-pointer"
-                      color="primary"
-                      classes={{ colorPrimary: '!text-red' }}
-                    />
+                    <FavoriteIcon onClick={onUnlike(v.id)} className="cursor-pointer text-red" />
                   ) : (
                     <FavoriteBorderIcon
                       onClick={onLike(v.id)}
@@ -232,7 +219,7 @@ const ExploreIdea = () => {
                     />
                   )
                 ) : (
-                  <FavoriteBorderIcon color="primary" classes={{ colorPrimary: '!text-grey' }} />
+                  <FavoriteBorderIcon className="text-grey" />
                 )}
               </div>
               <div onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}>

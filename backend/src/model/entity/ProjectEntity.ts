@@ -16,6 +16,7 @@ export type Project = {
   infoId: string;
   info: Info;
   countLike: string;
+  countView: string;
   startedAt: string | null;
   publishedAt: string | null;
   createdAt: string | null;
@@ -40,6 +41,9 @@ export class ProjectEntity implements Project {
 
   @Column({ type: 'int', name: 'count_like' })
   countLike = '0';
+
+  @Column({ type: 'int', name: 'count_view' })
+  countView = '0';
 
   @Column({ type: 'timestamp', name: 'started_at', default: null })
   startedAt!: string;

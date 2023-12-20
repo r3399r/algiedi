@@ -20,24 +20,25 @@ export class FollowAccess {
     });
   }
 
-  public async findAndCount(
-    followerId: string,
-    take: number,
-    skip: number,
-    role?: string[]
-  ): Promise<[Follow[], number]> {
+  public async findAndCount(options: {
+    followerId: string;
+    take: number;
+    skip: number;
+    role?: string[];
+  }): Promise<[Follow[], number]> {
     const qr = await this.database.getQueryRunner();
 
     const queryBuilder = qr.manager
       .createQueryBuilder(FollowEntity.name, 'f')
       .select('f.id')
       .innerJoin('user', 'u', 'f.followee_id = u.id')
-      .where('f.followerId = :followerId', { followerId });
+      .where('f.followerId = :followerId', { followerId: options.followerId });
 
-    if (role)
-      for (const r of role) queryBuilder.andWhere(`u.role LIKE "%${r}%"`);
+    if (options.role)
+      for (const r of options.role)
+        queryBuilder.andWhere(`u.role LIKE "%${r}%"`);
 
-    queryBuilder.take(take).skip(skip);
+    queryBuilder.take(options.take).skip(options.skip);
 
     const [id, count] = await queryBuilder.getManyAndCount();
 

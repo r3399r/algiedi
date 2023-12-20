@@ -2,6 +2,7 @@ import AudioFileIcon from '@mui/icons-material/AudioFile';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import ShareIcon from '@mui/icons-material/Share';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { format, formatDistanceToNow } from 'date-fns';
@@ -23,6 +24,7 @@ import { Type } from 'src/model/backend/constant/Creation';
 import { RootState } from 'src/redux/store';
 import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
 import { commentById, getExploreById, likeById, unlikeById } from 'src/service/ExploreService';
+import { bn } from 'src/util/bignumber';
 
 const ExploreDetail = () => {
   const navigate = useNavigate();
@@ -79,8 +81,14 @@ const ExploreDetail = () => {
         }}
       >
         <div className="ml-10 w-fit rounded-md bg-dark/30 p-4 text-white">
-          <div>{creation.info.name}</div>
-          <div>{creation.info.genre}</div>
+          <div className="text-lg font-bold">{creation.info.name}</div>
+          <br />
+          <div>
+            {creation.info.genre
+              ?.split(',')
+              .map((v) => `#${v}`)
+              .join(' ')}
+          </div>
           <div>
             Publish Date:{' '}
             {format(
@@ -92,9 +100,11 @@ const ExploreDetail = () => {
               'yyyy.MM.dd',
             )}
           </div>
-          <div className="flex gap-2">
-            <FavoriteIcon color="primary" classes={{ colorPrimary: '!text-red' }} />
-            <div>{creation.likeCount}</div>
+          <div className="flex items-center gap-2">
+            <FavoriteIcon className="text-red" />
+            <div>{bn(creation.countLike).toFormat()}</div>
+            <PlayArrowIcon className="text-white" />
+            <div>{bn(creation.countView).toFormat()}</div>
           </div>
         </div>
         {creation.type !== Type.Lyrics && (
@@ -108,17 +118,12 @@ const ExploreDetail = () => {
       <div className="mr-10 mt-4 flex justify-end gap-4">
         {isLogin ? (
           creation.like ? (
-            <FavoriteIcon
-              onClick={onUnlike}
-              className="cursor-pointer"
-              color="primary"
-              classes={{ colorPrimary: '!text-red' }}
-            />
+            <FavoriteIcon onClick={onUnlike} className="cursor-pointer text-red" />
           ) : (
             <FavoriteBorderIcon onClick={onLike} className="cursor-pointer hover:text-red" />
           )
         ) : (
-          <FavoriteBorderIcon color="primary" classes={{ colorPrimary: '!text-grey' }} />
+          <FavoriteBorderIcon className="text-grey" />
         )}
         <CopyToClipboard
           text={location.href}

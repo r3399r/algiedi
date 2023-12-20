@@ -33,6 +33,7 @@ import { ProjectService } from './logic/ProjectService';
 import { SnsService } from './logic/SnsService';
 import { UploadService } from './logic/UploadService';
 import { UserService } from './logic/UserService';
+import { ViewService } from './logic/ViewService';
 import { WsService } from './logic/WsService';
 import { ChatEntity } from './model/entity/ChatEntity';
 import { CommentEntity } from './model/entity/CommentEntity';
@@ -107,6 +108,7 @@ container.bind<MeService>(MeService).toSelf();
 container.bind<CreationService>(CreationService).toSelf();
 container.bind<WsService>(WsService).toSelf();
 container.bind<NotificationService>(NotificationService).toSelf();
+container.bind<ViewService>(ViewService).toSelf();
 
 // AWS
 container.bind<SNS>(SNS).toDynamicValue(() => new SNS());

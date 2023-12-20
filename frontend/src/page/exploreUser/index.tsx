@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import Cover from 'src/component/Cover';
 import ExploreSearch from 'src/component/ExploreSearch';
 import FollowButton from 'src/component/FollowButton';
+import MultiSelect from 'src/component/MultiSelect';
+import MultiSelectOption from 'src/component/MultiSelectOption';
 import Select from 'src/component/Select';
 import SelectOption from 'src/component/SelectOption';
 import { Page } from 'src/constant/Page';
@@ -22,7 +24,7 @@ const ExploreUser = () => {
   const navigate = useNavigate();
   const query = useQuery<{ tab?: string; keyword?: string }>();
   const [user, setUser] = useState<GetExploreUserResponse>();
-  const [role, setRole] = useState<string>('All');
+  const [role, setRole] = useState<string>('');
   const [refresh, setRefresh] = useState<boolean>();
   const [page, setPage] = useState<number>(1);
   const [offset, setOffset] = useState<number>(0);
@@ -51,13 +53,13 @@ const ExploreUser = () => {
       <div className="mb-4 text-xl font-bold">EXPLORE USER</div>
       <div className="mb-4 flex items-center gap-2">
         <div className="text-lg font-bold">Role</div>
-        <Select value={role} onChange={(v) => setRole(v)}>
-          {[{ name: 'All' }, ...Role].map((v, i) => (
-            <SelectOption key={i} value={v.name}>
-              {v.name}
-            </SelectOption>
+        <MultiSelect onChange={(v) => setRole(v)}>
+          {Role.map((v) => v.name).map((v, i) => (
+            <MultiSelectOption key={i} value={v}>
+              {v}
+            </MultiSelectOption>
           ))}
-        </Select>
+        </MultiSelect>
       </div>
       <div className="mt-4 flex flex-wrap gap-6">
         {user?.map((v) => (

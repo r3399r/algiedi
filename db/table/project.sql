@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS project (
 	status VARCHAR(255) NOT NULL,
 	info_id VARCHAR(36) NOT NULL,
 	count_like INT NOT NULL,
+	count_view INT NOT NULL,
 	started_at TIMESTAMP NULL,
 	published_at TIMESTAMP NULL,
 	created_at TIMESTAMP NULL,

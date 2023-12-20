@@ -1,3 +1,4 @@
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import HistoryEduIcon from '@mui/icons-material/HistoryEdu';
 import MusicNoteIcon from '@mui/icons-material/MusicNote';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
@@ -7,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import usePlayer from 'src/hook/usePlayer';
 import { Type } from 'src/model/backend/constant/Creation';
 import { ExploreCreation } from 'src/model/backend/Explore';
+import { bn } from 'src/util/bignumber';
 import Cover from './Cover';
 import UserMenu from './UserMenu';
 
@@ -14,9 +16,10 @@ type Props = {
   creation: ExploreCreation;
   size?: number;
   navigateTo?: string;
+  showCount?: boolean;
 };
 
-const CoverInfo = ({ creation, size, navigateTo }: Props) => {
+const CoverInfo = ({ creation, size, navigateTo, showCount = false }: Props) => {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -67,6 +70,14 @@ const CoverInfo = ({ creation, size, navigateTo }: Props) => {
         >{`${creation.user.length > 0 ? creation.user[0].username : ''}${
           creation.user.length > 1 ? ` & ${creation.user.length - 1} others` : ''
         }`}</div>
+      )}
+      {showCount && (
+        <div className="flex items-center gap-2">
+          <PlayArrowIcon />
+          <div>{bn(creation.countView).toFormat()}</div>
+          <FavoriteIcon className="text-red" />
+          <div>{bn(creation.countLike).toFormat()}</div>
+        </div>
       )}
       {creation.user && (
         <UserMenu

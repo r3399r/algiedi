@@ -44,7 +44,6 @@ export type GetExploreIdResponse = Omit<ExploreCreation, 'user'> & {
   like: boolean;
   inspired: ExploreCreation[];
   inspiration: ExploreCreation[];
-  likeCount: number;
   comments: {
     user: (User & { avatarUrl: string | null }) | null;
     comment: string;

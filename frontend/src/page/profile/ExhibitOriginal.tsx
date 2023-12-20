@@ -46,7 +46,13 @@ const ExhibitOriginal = ({ countPerPage }: Props) => {
       </div>
       <div className="flex flex-wrap gap-6">
         {original.map((v) => (
-          <CoverInfo creation={v} size={150} key={v.id} navigateTo={`${Page.Explore}/${v.id}`} />
+          <CoverInfo
+            creation={v}
+            size={150}
+            key={v.id}
+            navigateTo={`${Page.Explore}/${v.id}`}
+            showCount
+          />
         ))}
       </div>
       <div className="my-4 flex justify-center">

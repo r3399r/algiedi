@@ -15,6 +15,7 @@ select l.id,
     l.project_id,
     l.inspired_id,
 	l.count_like,
+    l.count_view,
     l.created_at,
     l.updated_at,
     latest_lyrics.lyrics_text

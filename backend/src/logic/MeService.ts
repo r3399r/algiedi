@@ -295,12 +295,12 @@ export class MeService {
     const limit = params?.limit ? Number(params.limit) : 20;
     const offset = params?.offset ? Number(params.offset) : 0;
 
-    const [follow, count] = await this.followAccess.findAndCount(
-      this.cognitoUserId,
-      limit,
-      offset,
-      params?.role?.split(',')
-    );
+    const [follow, count] = await this.followAccess.findAndCount({
+      followerId: this.cognitoUserId,
+      take: limit,
+      skip: offset,
+      role: params?.role?.split(','),
+    });
 
     return {
       data: follow.map((v) => ({

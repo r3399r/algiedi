@@ -119,12 +119,7 @@ const ExploreSong = () => {
               <div>
                 {isLogin ? (
                   v.like ? (
-                    <FavoriteIcon
-                      onClick={onUnlike(v.id)}
-                      className="cursor-pointer"
-                      color="primary"
-                      classes={{ colorPrimary: '!text-red' }}
-                    />
+                    <FavoriteIcon onClick={onUnlike(v.id)} className="cursor-pointer text-red" />
                   ) : (
                     <FavoriteBorderIcon
                       onClick={onLike(v.id)}
@@ -132,7 +127,7 @@ const ExploreSong = () => {
                     />
                   )
                 ) : (
-                  <FavoriteBorderIcon color="primary" classes={{ colorPrimary: '!text-grey' }} />
+                  <FavoriteBorderIcon className="text-grey" />
                 )}
               </div>
               <div onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}>
