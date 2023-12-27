@@ -164,7 +164,7 @@ const ExploreIdea = () => {
                 <Cover url={v.info.coverFileUrl} size={50} />
                 {v.type === Type.Track && isHoverId === v.id && (
                   <div
-                    className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-red"
+                    className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-red/70 hover:bg-red"
                     onClick={(e: MouseEvent<HTMLDivElement>) => {
                       e.stopPropagation();
                       onPlay({

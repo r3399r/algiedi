@@ -12,7 +12,7 @@ const AudioPlayer = ({ creation }: Props) => {
 
   return (
     <div
-      className="cursor-pointer rounded-full bg-red px-1 pb-1 pt-0.5"
+      className="cursor-pointer rounded-full bg-red/70 px-1 pb-1 pt-0.5 hover:bg-red"
       onClick={(e: MouseEvent<HTMLDivElement>) => {
         e.stopPropagation();
         onPlay(creation);

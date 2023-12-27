@@ -31,7 +31,7 @@ const MainInfo = ({ creation }: Props) => {
         <Cover url={creation.info.coverFileUrl} size={50} />
         {isHover && (
           <div
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-red"
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-red/70 hover:bg-red"
             onClick={(e: MouseEvent<HTMLDivElement>) => {
               e.stopPropagation();
               onPlay({

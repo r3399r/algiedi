@@ -42,7 +42,7 @@ const CoverInfo = ({ creation, size, navigateTo, showCount = false }: Props) => 
         <Cover url={creation.info.coverFileUrl} size={size} />
         {creation.type !== Type.Lyrics && isHover && (
           <div
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-red"
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-red/70 hover:bg-red"
             onClick={(e: MouseEvent<HTMLDivElement>) => {
               if (creation.user.length > 0) {
                 e.stopPropagation();
