@@ -3,8 +3,10 @@ import HistoryEduIcon from '@mui/icons-material/HistoryEdu';
 import MusicNoteIcon from '@mui/icons-material/MusicNote';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import { MouseEvent, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Page } from 'src/constant/Page';
 import usePlayer from 'src/hook/usePlayer';
 import { Type } from 'src/model/backend/constant/Creation';
 import { ExploreCreation } from 'src/model/backend/Explore';
@@ -62,9 +64,20 @@ const CoverInfo = ({ creation, size, navigateTo, showCount = false }: Props) => 
         {creation.type === Type.Track && <MusicNoteIcon className="text-blue" fontSize="small" />}
         {creation.type === Type.Lyrics && <HistoryEduIcon className="text-red" fontSize="small" />}
         {creation.type === Type.Song && <StarBorderIcon fontSize="small" />}
-        <div className="font-bold">{creation.info.name}</div>
+        <div className="font-bold hover:text-blue">{creation.info.name}</div>
       </div>
-      {creation.user && (
+      {creation.user && creation.user.length === 1 && (
+        <div
+          className="text-sm text-grey hover:text-blue"
+          onClick={(e: MouseEvent<HTMLDivElement>) => {
+            e.stopPropagation();
+            navigate(`${Page.Explore}/user/${creation.user[0].id}`);
+          }}
+        >
+          {creation.user[0].username}
+        </div>
+      )}
+      {creation.user && creation.user.length > 1 && (
         <div
           className="text-sm text-grey hover:text-blue"
           onClick={(e: MouseEvent<HTMLDivElement>) => {
@@ -72,13 +85,11 @@ const CoverInfo = ({ creation, size, navigateTo, showCount = false }: Props) => 
             setMenuOpen(!menuOpen);
           }}
           ref={ref}
-        >{`${creation.user.length > 0 ? creation.user[0].username : ''}${
-          creation.user.length > 1 ? ` & ${creation.user.length - 1} others` : ''
-        }`}</div>
+        >{`${creation.user[0].username} & ${creation.user.length - 1} others`}</div>
       )}
       {showCount && (
         <div className="flex items-center gap-2">
-          <PlayArrowIcon />
+          {creation.type === Type.Lyrics ? <VisibilityIcon /> : <PlayArrowIcon />}
           <div>{bn(creation.countView).toFormat()}</div>
           <FavoriteIcon className="text-red" />
           <div>{bn(creation.countLike).toFormat()}</div>

@@ -111,7 +111,7 @@ const ExploreSong = () => {
             onClick={() => navigate(`${Page.Explore}/${v.id}`)}
           >
             <div className="flex w-2/5 items-center gap-2">
-              <MainInfo creation={v} name={v.info.name} author={v.user} />
+              <MainInfo creation={v} />
             </div>
             <div className="w-1/5">{v.info.genre}</div>
             <div className="w-1/5">{v.info.theme}</div>

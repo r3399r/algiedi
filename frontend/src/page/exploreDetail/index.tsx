@@ -209,10 +209,10 @@ const ExploreDetail = () => {
         </Button>
       </div>
       <Divider />
-      <div className="my-4 flex px-10">
+      <div className="flex gap-2 px-10">
         <div className="w-1/2">
-          <div className="mb-4 text-xl font-bold">Inspired By</div>
-          <div className="flex flex-wrap gap-4">
+          <div className="my-4 text-xl font-bold">Inspired By</div>
+          <div className="flex w-full gap-4 overflow-x-auto pb-4">
             {creation.inspired.map((v) => (
               <CoverInfo key={v.id} creation={v} navigateTo={`${Page.Explore}/${v.id}`} />
             ))}
@@ -220,8 +220,8 @@ const ExploreDetail = () => {
           {creation.inspired.length === 0 && <div>This is an original</div>}
         </div>
         <div className="w-1/2">
-          <div className="mb-4 text-xl font-bold">Inspired</div>
-          <div className="flex flex-wrap gap-4">
+          <div className="py-4 text-xl font-bold">Inspired</div>
+          <div className="flex w-full gap-4 overflow-x-auto pb-4">
             {creation.inspiration.map((v) => (
               <CoverInfo key={v.id} creation={v} navigateTo={`${Page.Explore}/${v.id}`} />
             ))}

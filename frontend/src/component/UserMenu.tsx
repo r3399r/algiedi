@@ -1,4 +1,5 @@
 import { Popper } from '@mui/material';
+import { MouseEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Page } from 'src/constant/Page';
 import { User } from 'src/model/backend/entity/UserEntity';
@@ -20,7 +21,8 @@ const UserMenu = ({ open, onClose, anchorEl, author }: Props) => {
         {author.map((v) => (
           <ListItem
             key={v.id}
-            onClick={() => {
+            onClick={(e: MouseEvent<HTMLDivElement>) => {
+              e.stopPropagation();
               navigate(`${Page.Explore}/user/${v.id}`);
               onClose();
             }}

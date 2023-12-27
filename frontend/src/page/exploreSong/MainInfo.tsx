@@ -1,18 +1,24 @@
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { MouseEvent, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Cover from 'src/component/Cover';
 import UserMenu from 'src/component/UserMenu';
+import { Page } from 'src/constant/Page';
 import usePlayer from 'src/hook/usePlayer';
 import { GetExploreResponse } from 'src/model/backend/api/Explore';
-import { User } from 'src/model/backend/entity/UserEntity';
 
-type Props = { creation: GetExploreResponse[0]; name: string | null; author: User[] };
+type Props = { creation: GetExploreResponse[0] };
 
-const MainInfo = ({ creation, name, author }: Props) => {
+const MainInfo = ({ creation }: Props) => {
   const ref = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const onPlay = usePlayer();
   const [isHover, setIsHover] = useState<boolean>(false);
+  const {
+    info: { name },
+    user: author,
+  } = creation;
+  const navigate = useNavigate();
 
   return (
     <>
@@ -41,16 +47,27 @@ const MainInfo = ({ creation, name, author }: Props) => {
       </div>
       <div>
         <div className="font-bold">{name}</div>
-        <div
-          className="text-sm text-grey hover:text-blue"
-          onClick={(e: MouseEvent<HTMLDivElement>) => {
-            e.stopPropagation();
-            setMenuOpen(!menuOpen);
-          }}
-          ref={ref}
-        >{`${author.length > 0 ? author[0].username : ''}${
-          author.length > 1 ? ` & ${author.length - 1} others` : ''
-        }`}</div>
+        {author.length === 1 && (
+          <div
+            className="text-sm text-grey hover:text-blue"
+            onClick={(e: MouseEvent<HTMLDivElement>) => {
+              e.stopPropagation();
+              navigate(`${Page.Explore}/user/${author[0].id}`);
+            }}
+          >
+            {author[0].username}
+          </div>
+        )}
+        {author.length > 1 && (
+          <div
+            className="text-sm text-grey hover:text-blue"
+            onClick={(e: MouseEvent<HTMLDivElement>) => {
+              e.stopPropagation();
+              setMenuOpen(!menuOpen);
+            }}
+            ref={ref}
+          >{`${author[0].username} & ${author.length - 1} others`}</div>
+        )}
         {author && (
           <UserMenu
             open={menuOpen}
