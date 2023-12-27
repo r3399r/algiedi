@@ -24,6 +24,7 @@ const CoverInfo = ({ creation, size, navigateTo, showCount = false }: Props) => 
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const ref = useRef<HTMLDivElement>(null);
   const onPlay = usePlayer();
+  const [isHover, setIsHover] = useState<boolean>(false);
 
   return (
     <div
@@ -34,28 +35,32 @@ const CoverInfo = ({ creation, size, navigateTo, showCount = false }: Props) => 
     >
       <div
         className="relative"
-        onClick={(e: MouseEvent<HTMLDivElement>) => {
-          if (creation.type !== Type.Lyrics && creation.user.length > 0) {
-            e.stopPropagation();
-            onPlay({
-              id: creation.id,
-              info: creation.info,
-              fileUrl: creation.fileUrl,
-              username: creation.user[0].username,
-            });
-          }
-        }}
+        onMouseEnter={() => setIsHover(true)}
+        onMouseLeave={() => setIsHover(false)}
       >
         <Cover url={creation.info.coverFileUrl} size={size} />
-        {creation.type !== Type.Lyrics && (
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-            <PlayArrowIcon className="text-white" fontSize="large" />
+        {creation.type !== Type.Lyrics && isHover && (
+          <div
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-red"
+            onClick={(e: MouseEvent<HTMLDivElement>) => {
+              if (creation.user.length > 0) {
+                e.stopPropagation();
+                onPlay({
+                  id: creation.id,
+                  info: creation.info,
+                  fileUrl: creation.fileUrl,
+                  username: creation.user[0].username,
+                });
+              }
+            }}
+          >
+            <PlayArrowIcon className="text-white" />
           </div>
         )}
       </div>
       <div className="flex items-center">
-        {creation.type === Type.Track && <HistoryEduIcon className="text-red" fontSize="small" />}
-        {creation.type === Type.Lyrics && <MusicNoteIcon className="text-blue" fontSize="small" />}
+        {creation.type === Type.Track && <MusicNoteIcon className="text-blue" fontSize="small" />}
+        {creation.type === Type.Lyrics && <HistoryEduIcon className="text-red" fontSize="small" />}
         {creation.type === Type.Song && <StarBorderIcon fontSize="small" />}
         <div className="font-bold">{creation.info.name}</div>
       </div>

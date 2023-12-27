@@ -23,6 +23,7 @@ const Explore = () => {
   const [lyrics, setLyrics] = useState<GetExploreFeaturedResponse['lyrics']>();
   const [songs, setSongs] = useState<GetExploreFeaturedResponse['song']>();
   const onPlay = usePlayer();
+  const [isHoverId, setIsHoverId] = useState<string>();
 
   const tabDataMusic = useMemo(() => {
     if (!tracks) return;
@@ -91,20 +92,26 @@ const Explore = () => {
               >
                 <div
                   className="relative"
-                  onClick={(e: MouseEvent<HTMLDivElement>) => {
-                    e.stopPropagation();
-                    onPlay({
-                      id: v.id,
-                      info: v.info,
-                      fileUrl: v.fileUrl,
-                      username: v.user[0].username,
-                    });
-                  }}
+                  onMouseEnter={() => setIsHoverId(v.id)}
+                  onMouseLeave={() => setIsHoverId(undefined)}
                 >
                   <Cover url={v.info.coverFileUrl} size={120} />
-                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-                    <PlayArrowIcon className="text-white" fontSize="large" />
-                  </div>
+                  {isHoverId === v.id && (
+                    <div
+                      className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-red"
+                      onClick={(e: MouseEvent<HTMLDivElement>) => {
+                        e.stopPropagation();
+                        onPlay({
+                          id: v.id,
+                          info: v.info,
+                          fileUrl: v.fileUrl,
+                          username: v.user[0].username,
+                        });
+                      }}
+                    >
+                      <PlayArrowIcon className="text-white" />
+                    </div>
+                  )}
                 </div>
                 <div className="m-4 flex flex-col justify-center">
                   <div className="font-bold">{v.info.name}</div>

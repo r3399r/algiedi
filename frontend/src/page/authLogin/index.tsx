@@ -17,7 +17,7 @@ const AuthLogin = () => {
   const navigate = useNavigate();
   const methods = useForm<LoginForm>();
   const location = useLocation();
-  const redirect = location.state as { from: string; state: any } | undefined;
+  const redirect = location.state as { from: string; state: unknown } | undefined;
 
   const onSubmit = (data: LoginForm) => {
     login(data.email, data.password)

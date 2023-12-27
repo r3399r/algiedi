@@ -12,25 +12,32 @@ const MainInfo = ({ creation, name, author }: Props) => {
   const ref = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const onPlay = usePlayer();
+  const [isHover, setIsHover] = useState<boolean>(false);
 
   return (
     <>
       <div
         className="relative"
-        onClick={(e: MouseEvent<HTMLDivElement>) => {
-          e.stopPropagation();
-          onPlay({
-            id: creation.id,
-            info: creation.info,
-            fileUrl: creation.fileUrl,
-            username: creation.user[0].username,
-          });
-        }}
+        onMouseEnter={() => setIsHover(true)}
+        onMouseLeave={() => setIsHover(false)}
       >
         <Cover url={creation.info.coverFileUrl} size={50} />
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-          <PlayArrowIcon className="text-white" />
-        </div>
+        {isHover && (
+          <div
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-red"
+            onClick={(e: MouseEvent<HTMLDivElement>) => {
+              e.stopPropagation();
+              onPlay({
+                id: creation.id,
+                info: creation.info,
+                fileUrl: creation.fileUrl,
+                username: creation.user[0].username,
+              });
+            }}
+          >
+            <PlayArrowIcon className="text-white" />
+          </div>
+        )}
       </div>
       <div>
         <div className="font-bold">{name}</div>

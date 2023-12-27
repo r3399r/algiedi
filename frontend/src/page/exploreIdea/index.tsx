@@ -51,6 +51,7 @@ const ExploreIdea = () => {
   const [offset, setOffset] = useState<number>(0);
   const [count, setCount] = useState<number>(0);
   const onPlay = usePlayer();
+  const [isHoverId, setIsHoverId] = useState<string>();
 
   const type = useMemo(() => {
     setOffset(0);
@@ -157,21 +158,23 @@ const ExploreIdea = () => {
             <div className="flex w-1/3 flex-col items-center">
               <div
                 className="relative"
-                onClick={(e: MouseEvent<HTMLDivElement>) => {
-                  if (v.type === Type.Track) {
-                    e.stopPropagation();
-                    onPlay({
-                      id: v.id,
-                      info: v.info,
-                      fileUrl: v.fileUrl,
-                      username: v.user[0].username,
-                    });
-                  }
-                }}
+                onMouseEnter={() => setIsHoverId(v.id)}
+                onMouseLeave={() => setIsHoverId(undefined)}
               >
                 <Cover url={v.info.coverFileUrl} size={50} />
-                {v.type === Type.Track && (
-                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                {v.type === Type.Track && isHoverId === v.id && (
+                  <div
+                    className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-red"
+                    onClick={(e: MouseEvent<HTMLDivElement>) => {
+                      e.stopPropagation();
+                      onPlay({
+                        id: v.id,
+                        info: v.info,
+                        fileUrl: v.fileUrl,
+                        username: v.user[0].username,
+                      });
+                    }}
+                  >
                     <PlayArrowIcon className="text-white" />
                   </div>
                 )}
