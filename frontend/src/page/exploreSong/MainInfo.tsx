@@ -1,3 +1,4 @@
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { MouseEvent, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -46,7 +47,7 @@ const MainInfo = ({ creation }: Props) => {
         )}
       </div>
       <div>
-        <div className="font-bold">{name}</div>
+        <div className="font-bold hover:text-blue">{name}</div>
         {author.length === 1 && (
           <div
             className="text-sm text-grey hover:text-blue"
@@ -59,14 +60,20 @@ const MainInfo = ({ creation }: Props) => {
           </div>
         )}
         {author.length > 1 && (
-          <div
-            className="text-sm text-grey hover:text-blue"
-            onClick={(e: MouseEvent<HTMLDivElement>) => {
-              e.stopPropagation();
-              setMenuOpen(!menuOpen);
-            }}
-            ref={ref}
-          >{`${author[0].username} & ${author.length - 1} others`}</div>
+          <div className="flex items-center gap-2">
+            <div className="text-sm text-grey">{`${author[0].username} & ${
+              author.length - 1
+            } others`}</div>
+            <div
+              onClick={(e: MouseEvent<HTMLDivElement>) => {
+                e.stopPropagation();
+                setMenuOpen(!menuOpen);
+              }}
+              ref={ref}
+            >
+              <InfoOutlinedIcon fontSize="small" className="text-grey hover:text-blue" />
+            </div>
+          </div>
         )}
         {author && (
           <UserMenu

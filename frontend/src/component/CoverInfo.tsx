@@ -1,5 +1,6 @@
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import HistoryEduIcon from '@mui/icons-material/HistoryEdu';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import MusicNoteIcon from '@mui/icons-material/MusicNote';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
@@ -29,16 +30,14 @@ const CoverInfo = ({ creation, size, navigateTo, showCount = false }: Props) => 
   const [isHover, setIsHover] = useState<boolean>(false);
 
   return (
-    <div
-      className="flex cursor-pointer flex-col items-center text-center"
-      onClick={() => {
-        if (navigateTo) navigate(navigateTo);
-      }}
-    >
+    <div className="flex flex-col items-center text-center">
       <div
-        className="relative"
+        className="relative cursor-pointer"
         onMouseEnter={() => setIsHover(true)}
         onMouseLeave={() => setIsHover(false)}
+        onClick={() => {
+          if (navigateTo) navigate(navigateTo);
+        }}
       >
         <Cover url={creation.info.coverFileUrl} size={size} />
         {creation.type !== Type.Lyrics && isHover && (
@@ -60,7 +59,12 @@ const CoverInfo = ({ creation, size, navigateTo, showCount = false }: Props) => 
           </div>
         )}
       </div>
-      <div className="flex items-center">
+      <div
+        className="flex cursor-pointer items-center"
+        onClick={() => {
+          if (navigateTo) navigate(navigateTo);
+        }}
+      >
         {creation.type === Type.Track && <MusicNoteIcon className="text-blue" fontSize="small" />}
         {creation.type === Type.Lyrics && <HistoryEduIcon className="text-red" fontSize="small" />}
         {creation.type === Type.Song && <StarBorderIcon fontSize="small" />}
@@ -68,24 +72,21 @@ const CoverInfo = ({ creation, size, navigateTo, showCount = false }: Props) => 
       </div>
       {creation.user && creation.user.length === 1 && (
         <div
-          className="text-sm text-grey hover:text-blue"
-          onClick={(e: MouseEvent<HTMLDivElement>) => {
-            e.stopPropagation();
-            navigate(`${Page.Explore}/user/${creation.user[0].id}`);
-          }}
+          className="cursor-pointer text-sm text-grey hover:text-blue"
+          onClick={() => navigate(`${Page.Explore}/user/${creation.user[0].id}`)}
         >
           {creation.user[0].username}
         </div>
       )}
       {creation.user && creation.user.length > 1 && (
-        <div
-          className="text-sm text-grey hover:text-blue"
-          onClick={(e: MouseEvent<HTMLDivElement>) => {
-            e.stopPropagation();
-            setMenuOpen(!menuOpen);
-          }}
-          ref={ref}
-        >{`${creation.user[0].username} & ${creation.user.length - 1} others`}</div>
+        <div className="flex items-center gap-2">
+          <div className="text-sm text-grey">{`${creation.user[0].username} & ${
+            creation.user.length - 1
+          } others`}</div>
+          <div className="cursor-pointer" onClick={() => setMenuOpen(!menuOpen)} ref={ref}>
+            <InfoOutlinedIcon fontSize="small" className="text-grey hover:text-blue" />
+          </div>
+        </div>
       )}
       {showCount && (
         <div className="flex items-center gap-2">
