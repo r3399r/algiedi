@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import Button from 'src/component/Button';
 import Form from 'src/component/Form';
 import FormInput from 'src/component/FormInput';
+import NotificationWidget from 'src/component/NotificationWidget';
 import Tooltip from 'src/component/Tooltip';
 import { Page } from 'src/constant/Page';
 import { GetProjectIdChatResponse } from 'src/model/backend/api/Project';
@@ -79,7 +80,10 @@ const Collaborate = ({ project, doRefresh }: Props) => {
 
   return (
     <>
-      <div className="mb-10 text-[20px]">Latest Project</div>
+      <div className="mb-10 flex items-end justify-between">
+        <div className="text-[20px] font-bold">Latest Project</div>
+        <NotificationWidget />
+      </div>
       <div className="rounded-xl bg-[#f2f2f2] p-5">
         <div className="flex gap-4">
           <div className="w-1/2">

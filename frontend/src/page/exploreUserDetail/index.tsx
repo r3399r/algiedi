@@ -1,19 +1,22 @@
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import Cover from 'src/component/Cover';
 import ExploreSearch from 'src/component/ExploreSearch';
+import NotificationWidget from 'src/component/NotificationWidget';
 import { Page } from 'src/constant/Page';
 import IcFacebook from 'src/image/ic-facebook.svg';
 import IcInstagram from 'src/image/ic-instagram.svg';
 import IcSoundcloud from 'src/image/ic-soundcloud.svg';
 import IcYoutube from 'src/image/ic-youtube.svg';
 import { GetExploreUserIdResponse } from 'src/model/backend/api/Explore';
+import { RootState } from 'src/redux/store';
 import { openFailSnackbar } from 'src/redux/uiSlice';
 import { getUserById } from 'src/service/ExploreService';
 
 const ExploreUserDetail = () => {
   const navigate = useNavigate();
+  const { isLogin } = useSelector((rootState: RootState) => rootState.ui);
   const dispatch = useDispatch();
   const { id } = useParams();
   const [user, setUser] = useState<GetExploreUserIdResponse>();
@@ -28,8 +31,11 @@ const ExploreUserDetail = () => {
   if (!user) return <>loading...</>;
 
   return (
-    <div className="px-10">
-      <ExploreSearch />
+    <div className="px-4">
+      <div className="flex items-end justify-between">
+        <ExploreSearch />
+        {isLogin && <NotificationWidget />}
+      </div>
       <div onClick={() => navigate(-1)} className="my-4 cursor-pointer">
         {'<Back'}
       </div>

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from 'src/component/Button';
+import NotificationWidget from 'src/component/NotificationWidget';
 import Tooltip from 'src/component/Tooltip';
 import { Role } from 'src/model/backend/constant/Project';
 import { DetailedProject } from 'src/model/backend/Project';
@@ -41,7 +42,10 @@ const Prepare = ({ project, doRefresh }: Props) => {
 
   return (
     <>
-      <div className="mb-10 text-[20px]">Latest Project</div>
+      <div className="mb-10 flex items-end justify-between">
+        <div className="text-[20px] font-bold">Latest Project</div>
+        <NotificationWidget />
+      </div>
       <div className="rounded-xl bg-[#f2f2f2] p-5">
         <div className="flex gap-4">
           <div className="w-1/2">

@@ -6,6 +6,7 @@ import Footer from 'src/component/Footer';
 import Input from 'src/component/Input';
 import MultiSelect from 'src/component/MultiSelect';
 import MultiSelectOption from 'src/component/MultiSelectOption';
+import NotificationWidget from 'src/component/NotificationWidget';
 import Textarea from 'src/component/Textarea';
 import { Genre, Language, Theme } from 'src/constant/Property';
 import { GetExploreIdResponse } from 'src/model/backend/api/Explore';
@@ -29,7 +30,10 @@ const Upload = () => {
 
   return (
     <>
-      <div className="mb-10 text-[20px]">Upload</div>
+      <div className="mb-10 flex items-end justify-between">
+        <div className="text-[20px] font-bold">Upload</div>
+        <NotificationWidget />
+      </div>
       <div className="w-full rounded-xl bg-white p-8">
         <div className="mb-6 flex gap-4">
           <div

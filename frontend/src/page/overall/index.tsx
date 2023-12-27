@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import AudioPlayer from 'src/component/AudioPlayer';
+import NotificationWidget from 'src/component/NotificationWidget';
 import { Page } from 'src/constant/Page';
 import { Role, Status } from 'src/model/backend/constant/Project';
 import { DetailedProject } from 'src/model/backend/Project';
@@ -41,7 +42,10 @@ const Overall = () => {
 
   return (
     <>
-      <div className="text-[20px]">Overview</div>
+      <div className="flex items-end justify-between">
+        <div className="text-[20px] font-bold">Overview</div>
+        <NotificationWidget />
+      </div>
       <div className="text-grey">{projects?.length} pieces</div>
       <div className="mt-10 text-[20px] font-bold">Open</div>
       <div className="mb-2 text-grey">

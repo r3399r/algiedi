@@ -1,11 +1,13 @@
 import { Pagination } from '@mui/material';
 import { ChangeEvent, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Cover from 'src/component/Cover';
 import ExploreSearch from 'src/component/ExploreSearch';
 import FollowButton from 'src/component/FollowButton';
 import MultiSelect from 'src/component/MultiSelect';
 import MultiSelectOption from 'src/component/MultiSelectOption';
+import NotificationWidget from 'src/component/NotificationWidget';
 import { Page } from 'src/constant/Page';
 import { Role } from 'src/constant/Property';
 import useQuery from 'src/hook/useQuery';
@@ -14,12 +16,14 @@ import IcInstagram from 'src/image/ic-instagram.svg';
 import IcSoundcloud from 'src/image/ic-soundcloud.svg';
 import IcYoutube from 'src/image/ic-youtube.svg';
 import { GetExploreUserResponse } from 'src/model/backend/api/Explore';
+import { RootState } from 'src/redux/store';
 import { getExploreUser } from 'src/service/ExploreService';
 
 const DEFAULT_LIMIT = '10';
 
 const ExploreUser = () => {
   const navigate = useNavigate();
+  const { isLogin } = useSelector((rootState: RootState) => rootState.ui);
   const query = useQuery<{ tab?: string; keyword?: string }>();
   const [user, setUser] = useState<GetExploreUserResponse>();
   const [role, setRole] = useState<string>('');
@@ -47,7 +51,10 @@ const ExploreUser = () => {
 
   return (
     <div className="bg-[#fafafa] px-4">
-      <ExploreSearch />
+      <div className="flex items-end justify-between">
+        <ExploreSearch />
+        {isLogin && <NotificationWidget />}
+      </div>
       <div className="mb-4 text-xl font-bold">EXPLORE USER</div>
       <div className="mb-4 flex items-center gap-2">
         <div className="text-lg font-bold">Role</div>
