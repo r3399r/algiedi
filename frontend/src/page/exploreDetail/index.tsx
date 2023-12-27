@@ -9,7 +9,7 @@ import { format, formatDistanceToNow } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import AudioPlayer from 'src/component/AudioPlayer';
 import Avatar from 'src/component/Avatar';
 import Button from 'src/component/Button';
@@ -29,6 +29,7 @@ import { bn } from 'src/util/bignumber';
 const ExploreDetail = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
   const { isLogin } = useSelector((rootState: RootState) => rootState.ui);
   const { id } = useParams();
   const [creation, setCreation] = useState<GetExploreIdResponse>();
@@ -62,6 +63,8 @@ const ExploreDetail = () => {
       .then(() => setRefresh(!refresh))
       .catch((err) => dispatch(openFailSnackbar(err)));
   };
+
+  const onLoginToComment = () => navigate(Page.Login, { state: { from: location.pathname } });
 
   if (!creation) return <>loading...</>;
 
@@ -126,7 +129,7 @@ const ExploreDetail = () => {
           <FavoriteBorderIcon className="text-grey" />
         )}
         <CopyToClipboard
-          text={location.href}
+          text={window.location.href}
           onCopy={() => dispatch(openSuccessSnackbar('Shared link is Copied.'))}
         >
           <ShareIcon className="cursor-pointer hover:text-blue" />
@@ -254,9 +257,16 @@ const ExploreDetail = () => {
               disabled={!isLogin}
             />
             <div className="text-right">
-              <Button size="s" color="transparent" onClick={onComment} disabled={!isLogin}>
-                Send
-              </Button>
+              {isLogin && (
+                <Button size="s" color="transparent" onClick={onComment}>
+                  Send
+                </Button>
+              )}
+              {!isLogin && (
+                <Button size="s" color="transparent" onClick={onLoginToComment}>
+                  Login to comment
+                </Button>
+              )}
             </div>
           </div>
         </div>

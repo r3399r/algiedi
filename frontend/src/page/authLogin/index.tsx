@@ -17,7 +17,7 @@ const AuthLogin = () => {
   const navigate = useNavigate();
   const methods = useForm<LoginForm>();
   const location = useLocation();
-  const redirectPath = location.state as { from: string } | undefined;
+  const redirect = location.state as { from: string; state: any } | undefined;
 
   const onSubmit = (data: LoginForm) => {
     login(data.email, data.password)
@@ -25,8 +25,8 @@ const AuthLogin = () => {
         dispatch(openSuccessSnackbar('Login Successfully'));
         if (res !== 'ready') navigate(Page.Questionnaire);
         else {
-          if (redirectPath) {
-            navigate(redirectPath.from);
+          if (redirect) {
+            navigate(redirect.from, { state: redirect.state });
 
             return;
           }

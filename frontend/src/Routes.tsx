@@ -51,7 +51,12 @@ const AppRoutes = () => {
           <Route path={Page.ForgetReset} element={<AuthForgetReset />} />
           <Route
             path="*"
-            element={<Navigate to={Page.Login} state={{ from: location.pathname }} />}
+            element={
+              <Navigate
+                to={Page.Login}
+                state={{ from: location.pathname, state: location.state }}
+              />
+            }
           />
         </>
       )}
