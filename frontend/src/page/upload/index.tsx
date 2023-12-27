@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import Footer from 'src/component/Footer';
@@ -10,7 +10,7 @@ import Textarea from 'src/component/Textarea';
 import { Genre, Language, Theme } from 'src/constant/Property';
 import { GetExploreIdResponse } from 'src/model/backend/api/Explore';
 import { RootState } from 'src/redux/store';
-import { setInfo } from 'src/redux/uploadSlice';
+import { reset, setInfo } from 'src/redux/uploadSlice';
 import Lyrics from './Lyrics';
 import Track from './Track';
 
@@ -19,6 +19,13 @@ const Upload = () => {
   const dispatch = useDispatch();
   const [tab, setTab] = useState<'track' | 'lyrics'>('track');
   const state = useLocation().state as { inspiration: GetExploreIdResponse } | null;
+
+  useEffect(
+    () => () => {
+      dispatch(reset());
+    },
+    [],
+  );
 
   return (
     <>
