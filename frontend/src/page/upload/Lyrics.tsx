@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Button from 'src/component/Button';
 import Checkbox from 'src/component/Checkbox';
 import Input from 'src/component/Input';
+import Tooltip from 'src/component/Tooltip';
 import { Page } from 'src/constant/Page';
 import { GetExploreIdResponse } from 'src/model/backend/api/Explore';
 import { RootState } from 'src/redux/store';
@@ -75,23 +76,29 @@ const Lyrics = ({ inspiration }: Props) => {
             </Button>
           </div>
           <div className="w-2/5">
-            <Checkbox
-              label="Originals"
-              checked={checkOriginal}
-              onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                setCheckOriginal(event.target.checked);
-                setCheckInspiration(!event.target.checked);
-                setInspiredId('');
-              }}
-            />
-            <Checkbox
-              label="Inspiration"
-              checked={checkInspiration}
-              onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                setCheckOriginal(!event.target.checked);
-                setCheckInspiration(event.target.checked);
-              }}
-            />
+            <div className="flex items-center gap-2">
+              <Checkbox
+                label="Originals"
+                checked={checkOriginal}
+                onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                  setCheckOriginal(event.target.checked);
+                  setCheckInspiration(!event.target.checked);
+                  setInspiredId('');
+                }}
+              />
+              <Tooltip title="Original is from your own creativity" />
+            </div>
+            <div className="flex items-center gap-2">
+              <Checkbox
+                label="Inspiration"
+                checked={checkInspiration}
+                onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                  setCheckOriginal(!event.target.checked);
+                  setCheckInspiration(event.target.checked);
+                }}
+              />
+              <Tooltip title="Inspiration is referenced from another creation" />
+            </div>
             {checkInspiration && (
               <InspirationAntocomplete
                 defaultKeyword={inspiration?.info.name}

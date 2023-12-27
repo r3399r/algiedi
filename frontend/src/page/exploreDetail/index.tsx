@@ -4,6 +4,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import ShareIcon from '@mui/icons-material/Share';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { format, formatDistanceToNow } from 'date-fns';
 import { useEffect, useState } from 'react';
@@ -106,7 +107,11 @@ const ExploreDetail = () => {
           <div className="flex items-center gap-2">
             <FavoriteIcon className="text-red" />
             <div>{bn(creation.countLike).toFormat()}</div>
-            <PlayArrowIcon className="text-white" />
+            {creation.type === Type.Lyrics ? (
+              <VisibilityIcon className="text-white" />
+            ) : (
+              <PlayArrowIcon className="text-white" />
+            )}
             <div>{bn(creation.countView).toFormat()}</div>
           </div>
         </div>
@@ -217,7 +222,7 @@ const ExploreDetail = () => {
               <CoverInfo key={v.id} creation={v} navigateTo={`${Page.Explore}/${v.id}`} />
             ))}
           </div>
-          {creation.inspired.length === 0 && <div>This is an original</div>}
+          {creation.inspired.length === 0 && <div className="mb-4">This is an original</div>}
         </div>
         <div className="w-1/2">
           <div className="py-4 text-xl font-bold">Inspired</div>
@@ -226,7 +231,9 @@ const ExploreDetail = () => {
               <CoverInfo key={v.id} creation={v} navigateTo={`${Page.Explore}/${v.id}`} />
             ))}
           </div>
-          {creation.inspiration.length === 0 && <div>Be Ready to Inspire More Uploads!</div>}
+          {creation.inspiration.length === 0 && (
+            <div className="mb-4">Be Ready to Inspire More Uploads!</div>
+          )}
         </div>
       </div>
       <Divider />

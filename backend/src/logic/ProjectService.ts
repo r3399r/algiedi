@@ -92,6 +92,9 @@ export class ProjectService {
         project: { status: Not(Status.Published) },
         role: Not(Role.Rejected),
       },
+      order: {
+        project: { info: { createdAt: 'desc' } },
+      },
     });
     const myProjectIds = myProjectUser.map((v) => v.projectId);
     const allCreations = await this.viewCreationAccess.find({
