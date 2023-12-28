@@ -7,6 +7,7 @@ import UserMenu from 'src/component/UserMenu';
 import { Page } from 'src/constant/Page';
 import usePlayer from 'src/hook/usePlayer';
 import { GetExploreResponse } from 'src/model/backend/api/Explore';
+import { Role } from 'src/model/backend/constant/Project';
 
 type Props = { creation: GetExploreResponse[0] };
 
@@ -61,9 +62,9 @@ const MainInfo = ({ creation }: Props) => {
         )}
         {author.length > 1 && (
           <div className="flex items-center gap-2">
-            <div className="text-sm text-grey">{`${author[0].username} & ${
-              author.length - 1
-            } others`}</div>
+            <div className="text-sm text-grey">{`${
+              author.find((v) => v.projectRole === Role.Owner)?.username
+            } & ${author.length - 1} others`}</div>
             <div
               onClick={(e: MouseEvent<HTMLDivElement>) => {
                 e.stopPropagation();

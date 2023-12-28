@@ -8,6 +8,7 @@ import Cover from 'src/component/Cover';
 import Input from 'src/component/Input';
 import ListItem from 'src/component/ListItem';
 import { Type } from 'src/model/backend/constant/Creation';
+import { Role } from 'src/model/backend/constant/Project';
 import { ExploreCreation } from 'src/model/backend/Explore';
 import { openFailSnackbar } from 'src/redux/uiSlice';
 import { getExploreSearch } from 'src/service/UploadService';
@@ -83,9 +84,12 @@ const InspirationAntocomplete = ({ defaultKeyword, onClick }: Props) => {
                 {v.type === Type.Track && <HistoryEduIcon className="text-red" fontSize="small" />}
                 {v.type === Type.Lyrics && <MusicNoteIcon className="text-blue" fontSize="small" />}
                 {v.type === Type.Song && <StarBorderIcon fontSize="small" />}
-                <div>{`(${v.user.length > 0 ? v.user[0].username : ''}${
-                  v.user.length > 1 ? ` & ${v.user.length - 1} others` : ''
-                })`}</div>
+                {v.user.length === 1 && <div>{`(${v.user[0].username})`}</div>}
+                {v.user.length > 1 && (
+                  <div>{`(${v.user.find((o) => o.projectRole === Role.Owner)?.username} & ${
+                    v.user.length - 1
+                  } others)`}</div>
+                )}
               </ListItem>
             ))}
         </div>

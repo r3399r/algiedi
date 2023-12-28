@@ -23,11 +23,11 @@ import {
 } from 'src/model/api/Me';
 import { Type } from 'src/model/constant/Creation';
 import { Role, Status } from 'src/model/constant/Project';
-import { ViewCreationExplore } from 'src/model/entity/ViewCreationExploreEntity';
 import { InternalServerError } from 'src/model/error';
 import { Pagination } from 'src/model/Pagination';
 import { cognitoSymbol } from 'src/util/LambdaSetup';
 import { AwsService } from './AwsService';
+import { ExploreService } from './ExploreService';
 
 /**
  * Service class for Me
@@ -36,6 +36,9 @@ import { AwsService } from './AwsService';
 export class MeService {
   @inject(cognitoSymbol)
   private readonly cognitoUserId!: string;
+
+  @inject(ExploreService)
+  private readonly exploreService!: ExploreService;
 
   @inject(DbAccess)
   private readonly dbAccess!: DbAccess;
@@ -113,25 +116,7 @@ export class MeService {
 
     return {
       data: await Promise.all(
-        vc.map(async (v) => {
-          const pu = await this.projectUserAccess.find({
-            where: { projectId: v.id, role: Not(Role.Rejected) },
-          });
-
-          return {
-            ...v,
-            fileUrl: this.awsService.getS3SignedUrl(v.fileUri),
-            tabFileUrl: null,
-            info: {
-              ...v.info,
-              coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
-            },
-            user: pu.map((o) => ({
-              ...o.user,
-              avatarUrl: this.awsService.getS3SignedUrl(o.user.avatar),
-            })),
-          };
-        })
+        vc.map((v) => this.exploreService.getExtendedExplore(v))
       ),
       paginate: { limit, offset, count },
     };
@@ -154,23 +139,9 @@ export class MeService {
     });
 
     return {
-      data: vc.map((v) => ({
-        ...v,
-        info: {
-          ...v.info,
-          coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
-        },
-        fileUrl: this.awsService.getS3SignedUrl(v.fileUri),
-        tabFileUrl: null,
-        user: v.user
-          ? [
-              {
-                ...v.user,
-                avatarUrl: this.awsService.getS3SignedUrl(v.user.avatar),
-              },
-            ]
-          : [],
-      })),
+      data: await Promise.all(
+        vc.map((v) => this.exploreService.getExtendedExplore(v))
+      ),
       paginate: { limit, offset, count },
     };
   }
@@ -192,65 +163,10 @@ export class MeService {
     });
 
     return {
-      data: vc.map((v) => ({
-        ...v,
-        info: {
-          ...v.info,
-          coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
-        },
-        fileUrl: this.awsService.getS3SignedUrl(v.fileUri),
-        tabFileUrl: null,
-        user: v.user
-          ? [
-              {
-                ...v.user,
-                avatarUrl: this.awsService.getS3SignedUrl(v.user.avatar),
-              },
-            ]
-          : [],
-      })),
+      data: await Promise.all(
+        vc.map((v) => this.exploreService.getExtendedExplore(v))
+      ),
       paginate: { limit, offset, count },
-    };
-  }
-
-  private async getExtendedExplore(creation: ViewCreationExplore) {
-    if (creation.type !== Type.Song && creation.user !== null)
-      return {
-        ...creation,
-        info: {
-          ...creation.info,
-          coverFileUrl: this.awsService.getS3SignedUrl(
-            creation.info.coverFileUri
-          ),
-        },
-        user: [
-          {
-            ...creation.user,
-            avatarUrl: this.awsService.getS3SignedUrl(creation.user.avatar),
-          },
-        ],
-        fileUrl: this.awsService.getS3SignedUrl(creation.fileUri),
-        tabFileUrl: null,
-      };
-
-    const pu = await this.projectUserAccess.find({
-      where: { projectId: creation.id, role: Not(Role.Rejected) },
-    });
-
-    return {
-      ...creation,
-      info: {
-        ...creation.info,
-        coverFileUrl: this.awsService.getS3SignedUrl(
-          creation.info.coverFileUri
-        ),
-      },
-      user: pu.map((o) => ({
-        ...o.user,
-        avatarUrl: this.awsService.getS3SignedUrl(o.user.avatar),
-      })),
-      fileUrl: this.awsService.getS3SignedUrl(creation.fileUri),
-      tabFileUrl: null,
     };
   }
 
@@ -281,7 +197,7 @@ export class MeService {
 
           return {
             ...v,
-            creation: await this.getExtendedExplore(c),
+            creation: await this.exploreService.getExtendedExplore(c),
           };
         })
       ),

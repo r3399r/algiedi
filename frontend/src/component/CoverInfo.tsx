@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { Page } from 'src/constant/Page';
 import usePlayer from 'src/hook/usePlayer';
 import { Type } from 'src/model/backend/constant/Creation';
+import { Role } from 'src/model/backend/constant/Project';
 import { ExploreCreation } from 'src/model/backend/Explore';
 import { bn } from 'src/util/bignumber';
 import Cover from './Cover';
@@ -80,9 +81,9 @@ const CoverInfo = ({ creation, size, navigateTo, showCount = false }: Props) => 
       )}
       {creation.user && creation.user.length > 1 && (
         <div className="flex items-center gap-2">
-          <div className="text-sm text-grey">{`${creation.user[0].username} & ${
-            creation.user.length - 1
-          } others`}</div>
+          <div className="text-sm text-grey">{`${
+            creation.user.find((v) => v.projectRole === Role.Owner)?.username
+          } & ${creation.user.length - 1} others`}</div>
           <div className="cursor-pointer" onClick={() => setMenuOpen(!menuOpen)} ref={ref}>
             <InfoOutlinedIcon fontSize="small" className="text-grey hover:text-blue" />
           </div>

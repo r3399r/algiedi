@@ -19,7 +19,7 @@ const OpenProject = ({ project, className }: Props) => {
   return (
     <div
       className={classNames(
-        'relative box-border cursor-pointer rounded-md bg-blue/70 bg-center p-4 shadow-md',
+        'relative box-border cursor-pointer rounded-md bg-blue/70 bg-contain bg-center p-4 shadow-md',
         className,
       )}
       style={{

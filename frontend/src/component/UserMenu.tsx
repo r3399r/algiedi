@@ -1,4 +1,4 @@
-import { Popper } from '@mui/material';
+import { Popover } from '@mui/material';
 import { MouseEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Page } from 'src/constant/Page';
@@ -16,7 +16,7 @@ const UserMenu = ({ open, onClose, anchorEl, author }: Props) => {
   const navigate = useNavigate();
 
   return (
-    <Popper open={open} anchorEl={anchorEl}>
+    <Popover open={open} anchorEl={anchorEl} onBlur={onClose}>
       <div className="rounded bg-[#fafafa] shadow-lg">
         {author.map((v) => (
           <ListItem
@@ -31,7 +31,7 @@ const UserMenu = ({ open, onClose, anchorEl, author }: Props) => {
           </ListItem>
         ))}
       </div>
-    </Popper>
+    </Popover>
   );
 };
 

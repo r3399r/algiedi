@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import Cover from 'src/component/Cover';
+import CoverInfo from 'src/component/CoverInfo';
 import ExploreSearch from 'src/component/ExploreSearch';
 import NotificationWidget from 'src/component/NotificationWidget';
-import { Page } from 'src/constant/Page';
 import IcFacebook from 'src/image/ic-facebook.svg';
 import IcInstagram from 'src/image/ic-instagram.svg';
 import IcSoundcloud from 'src/image/ic-soundcloud.svg';
@@ -109,14 +109,7 @@ const ExploreUserDetail = () => {
       {user.song.length > 0 && (
         <div className="flex flex-wrap gap-10">
           {user.song.map((v) => (
-            <div
-              key={v.id}
-              className="flex cursor-pointer flex-col items-center"
-              onClick={() => navigate(`${Page.Explore}/${v.id}`)}
-            >
-              <Cover url={v.info.coverFileUrl} />
-              <div>{v.info.name}</div>
-            </div>
+            <CoverInfo key={v.id} creation={v} />
           ))}
         </div>
       )}

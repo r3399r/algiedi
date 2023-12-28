@@ -1,6 +1,4 @@
 import { Status } from 'src/model/constant/Project';
-import { Info } from 'src/model/entity/InfoEntity';
-import { Project } from 'src/model/entity/ProjectEntity';
 import { User } from 'src/model/entity/UserEntity';
 import { ExploreCreation, ExploreUser } from 'src/model/Explore';
 import { PaginationParams } from 'src/model/Pagination';
@@ -61,7 +59,5 @@ export type GetExploreUserResponse = (ExploreUser & {
 })[];
 
 export type GetExploreUserIdResponse = ExploreUser & {
-  song: (Omit<Project, 'info'> & {
-    info: Info & { coverFileUrl: string | null };
-  })[];
+  song: ExploreCreation[];
 };

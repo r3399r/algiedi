@@ -179,6 +179,7 @@ export class ExploreService {
         user = [
           {
             ...v.user,
+            projectRole: Role.Owner,
             avatarUrl: this.awsService.getS3SignedUrl(v.user.avatar),
           },
         ];
@@ -187,6 +188,7 @@ export class ExploreService {
           .filter((o) => o.projectId === v.projectId)
           .map((o) => ({
             ...o.user,
+            projectRole: o.role,
             avatarUrl: this.awsService.getS3SignedUrl(o.user.avatar),
           }));
 
@@ -212,12 +214,6 @@ export class ExploreService {
       order: { countLike: 'desc' },
       take: 12,
     });
-    const pu = await this.projectUserAccess.find({
-      where: {
-        projectId: In(vs.map((v) => v.id)),
-        role: Not(Role.Rejected),
-      },
-    });
     const vl = await this.viewCreationExploreAccess.find({
       where: { type: Type.Lyrics },
       order: { countLike: 'desc' },
@@ -228,161 +224,61 @@ export class ExploreService {
     });
 
     return {
-      song: vs.map((v) => ({
-        ...v,
-        fileUrl: this.awsService.getS3SignedUrl(v.fileUri),
-        tabFileUrl: this.awsService.getS3SignedUrl(v.tabFileUri),
-        info: {
-          ...v.info,
-          coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
-        },
-        user: pu
-          .filter((o) => o.projectId === v.id)
-          .map((o) => ({
-            ...o.user,
-            avatarUrl: this.awsService.getS3SignedUrl(o.user.avatar),
-          })),
-      })),
+      song: await Promise.all(vs.map((v) => this.getExtendedExplore(v))),
       lyrics: {
-        thisWeek: vl
-          .filter((v) => new Date(v.createdAt ?? '') >= subWeeks(new Date(), 1))
-          .slice(0, 6)
-          .map((v) => ({
-            ...v,
-            info: {
-              ...v.info,
-              coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
-            },
-            fileUrl: this.awsService.getS3SignedUrl(v.fileUri),
-            tabFileUrl: this.awsService.getS3SignedUrl(v.tabFileUri),
-            user: v.user
-              ? [
-                  {
-                    ...v.user,
-                    avatarUrl: v.user
-                      ? this.awsService.getS3SignedUrl(v.user.avatar)
-                      : null,
-                  },
-                ]
-              : [],
-          })),
-        thisMonth: vl
-          .filter((v) => new Date(v.createdAt ?? '') >= subWeeks(new Date(), 4))
-          .slice(0, 6)
-          .map((v) => ({
-            ...v,
-            info: {
-              ...v.info,
-              coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
-            },
-            fileUrl: this.awsService.getS3SignedUrl(v.fileUri),
-            tabFileUrl: this.awsService.getS3SignedUrl(v.tabFileUri),
-            user: v.user
-              ? [
-                  {
-                    ...v.user,
-                    avatarUrl: v.user
-                      ? this.awsService.getS3SignedUrl(v.user.avatar)
-                      : null,
-                  },
-                ]
-              : [],
-          })),
-        lastMonth: vl.slice(0, 6).map((v) => ({
-          ...v,
-          info: {
-            ...v.info,
-            coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
-          },
-          fileUrl: this.awsService.getS3SignedUrl(v.fileUri),
-          tabFileUrl: this.awsService.getS3SignedUrl(v.tabFileUri),
-          user: v.user
-            ? [
-                {
-                  ...v.user,
-                  avatarUrl: v.user
-                    ? this.awsService.getS3SignedUrl(v.user.avatar)
-                    : null,
-                },
-              ]
-            : [],
-        })),
+        thisWeek: await Promise.all(
+          vl
+            .filter(
+              (v) => new Date(v.createdAt ?? '') >= subWeeks(new Date(), 1)
+            )
+            .slice(0, 6)
+            .map(async (v) => await this.getExtendedExplore(v))
+        ),
+        thisMonth: await Promise.all(
+          vl
+            .filter(
+              (v) => new Date(v.createdAt ?? '') >= subWeeks(new Date(), 4)
+            )
+            .slice(0, 6)
+            .map((v) => this.getExtendedExplore(v))
+        ),
+        lastMonth: await Promise.all(
+          vl.slice(0, 6).map((v) => this.getExtendedExplore(v))
+        ),
       },
       track: {
-        thisWeek: vt
-          .filter((v) => new Date(v.createdAt ?? '') >= subWeeks(new Date(), 1))
-          .slice(0, 6)
-          .map((v) => ({
-            ...v,
-            info: {
-              ...v.info,
-              coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
-            },
-            fileUrl: this.awsService.getS3SignedUrl(v.fileUri),
-            tabFileUrl: this.awsService.getS3SignedUrl(v.tabFileUri),
-            user: v.user
-              ? [
-                  {
-                    ...v.user,
-                    avatarUrl: v.user
-                      ? this.awsService.getS3SignedUrl(v.user.avatar)
-                      : null,
-                  },
-                ]
-              : [],
-          })),
-        thisMonth: vt
-          .filter((v) => new Date(v.createdAt ?? '') >= subWeeks(new Date(), 4))
-          .slice(0, 6)
-          .map((v) => ({
-            ...v,
-            info: {
-              ...v.info,
-              coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
-            },
-            fileUrl: this.awsService.getS3SignedUrl(v.fileUri),
-            tabFileUrl: this.awsService.getS3SignedUrl(v.tabFileUri),
-            user: v.user
-              ? [
-                  {
-                    ...v.user,
-                    avatarUrl: v.user
-                      ? this.awsService.getS3SignedUrl(v.user.avatar)
-                      : null,
-                  },
-                ]
-              : [],
-          })),
-        lastMonth: vt
-          .filter((v) => new Date(v.createdAt ?? '') <= subWeeks(new Date(), 4))
-          .slice(0, 6)
-          .map((v) => ({
-            ...v,
-            info: {
-              ...v.info,
-              coverFileUrl: this.awsService.getS3SignedUrl(v.info.coverFileUri),
-            },
-            fileUrl: this.awsService.getS3SignedUrl(v.fileUri),
-            tabFileUrl: this.awsService.getS3SignedUrl(v.tabFileUri),
-            user: v.user
-              ? [
-                  {
-                    ...v.user,
-                    avatarUrl: v.user
-                      ? this.awsService.getS3SignedUrl(v.user.avatar)
-                      : null,
-                  },
-                ]
-              : [],
-          })),
+        thisWeek: await Promise.all(
+          vt
+            .filter(
+              (v) => new Date(v.createdAt ?? '') >= subWeeks(new Date(), 1)
+            )
+            .slice(0, 6)
+            .map((v) => this.getExtendedExplore(v))
+        ),
+        thisMonth: await Promise.all(
+          vt
+            .filter(
+              (v) => new Date(v.createdAt ?? '') >= subWeeks(new Date(), 4)
+            )
+            .slice(0, 6)
+            .map((v) => this.getExtendedExplore(v))
+        ),
+        lastMonth: await Promise.all(
+          vt
+            .filter(
+              (v) => new Date(v.createdAt ?? '') <= subWeeks(new Date(), 4)
+            )
+            .slice(0, 6)
+            .map((v) => this.getExtendedExplore(v))
+        ),
       },
     };
   }
 
-  private async getExtendedExplore(
+  public async getExtendedExplore(
     creation: ViewCreationExplore
   ): Promise<ExploreCreation> {
-    if (creation.type !== Type.Song && creation.user !== null)
+    if (creation.type !== Type.Song)
       return {
         ...creation,
         fileUrl: this.awsService.getS3SignedUrl(creation.fileUri),
@@ -393,12 +289,15 @@ export class ExploreService {
             creation.info.coverFileUri
           ),
         },
-        user: [
-          {
-            ...creation.user,
-            avatarUrl: this.awsService.getS3SignedUrl(creation.user.avatar),
-          },
-        ],
+        user: creation.user
+          ? [
+              {
+                ...creation.user,
+                projectRole: Role.Owner,
+                avatarUrl: this.awsService.getS3SignedUrl(creation.user.avatar),
+              },
+            ]
+          : [],
       };
 
     const pu = await this.projectUserAccess.find({
@@ -417,6 +316,7 @@ export class ExploreService {
       },
       user: pu.map((o) => ({
         ...o.user,
+        projectRole: o.role,
         avatarUrl: this.awsService.getS3SignedUrl(o.user.avatar),
       })),
     };
@@ -607,24 +507,20 @@ export class ExploreService {
   public async getUserById(id: string): Promise<GetExploreUserIdResponse> {
     const user = await this.userAccess.findOneByIdOrFail(id);
 
-    const projectUser = await this.projectUserAccess.find({
+    const pu = await this.projectUserAccess.find({
       where: { project: { status: Status.Published }, userId: id },
       order: { project: { publishedAt: 'desc' } },
       take: 6,
     });
 
+    const vc = await this.viewCreationExploreAccess.find({
+      where: { id: In(pu.map((o) => o.projectId)) },
+    });
+
     return {
       ...user,
       avatarUrl: this.awsService.getS3SignedUrl(user.avatar),
-      song: projectUser.map((v) => ({
-        ...v.project,
-        info: {
-          ...v.project.info,
-          coverFileUrl: this.awsService.getS3SignedUrl(
-            v.project.info.coverFileUri
-          ),
-        },
-      })),
+      song: await Promise.all(vc.map((v) => this.getExtendedExplore(v))),
     };
   }
 }
