@@ -1,7 +1,6 @@
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Button from 'src/component/Button';
-import Footer from 'src/component/Footer';
 import { Page } from 'src/constant/Page';
 import IcArrow from 'src/image/ic-arrow-r.svg';
 import IcFeature1 from 'src/image/ic-feature-1.svg';
@@ -165,9 +164,6 @@ const Home = () => {
       <div className="mb-14 flex">
         <img className="w-1/2" src={PicHero3} />
         <img className="w-1/2" src={PicHero4} />
-      </div>
-      <div className="mx-auto mb-16 max-w-[630px]">
-        <Footer />
       </div>
     </div>
   );

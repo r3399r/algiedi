@@ -1,7 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import Button from 'src/component/Button';
-import Footer from 'src/component/Footer';
 import Form from 'src/component/Form';
 import FormInput from 'src/component/FormInput';
 import FormTextarea from 'src/component/FormTextarea';
@@ -80,9 +79,6 @@ const ContactUs = () => {
           <div className="sm:w-1/2">
             <img src={PicLocation} />
           </div>
-        </div>
-        <div className="mx-auto max-w-[630px] py-16">
-          <Footer />
         </div>
       </div>
     </div>

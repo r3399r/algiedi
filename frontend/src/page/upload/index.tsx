@@ -2,7 +2,6 @@ import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
-import Footer from 'src/component/Footer';
 import Input from 'src/component/Input';
 import MultiSelect from 'src/component/MultiSelect';
 import MultiSelectOption from 'src/component/MultiSelectOption';
@@ -127,9 +126,6 @@ const Upload = () => {
           {tab === 'track' && <Track inspiration={state?.inspiration} />}
           {tab === 'lyrics' && <Lyrics inspiration={state?.inspiration} />}
         </div>
-      </div>
-      <div className="mx-auto max-w-[630px] py-16">
-        <Footer />
       </div>
     </>
   );

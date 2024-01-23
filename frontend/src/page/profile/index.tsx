@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
+import Footer from 'src/component/Footer';
 import NotificationWidget from 'src/component/NotificationWidget';
 import Tabs from 'src/component/Tabs';
 import { RootState } from 'src/redux/store';
@@ -26,6 +27,9 @@ const Profile = () => {
       </div>
       {tab === 0 && <BasicInfo />}
       {tab === 1 && <Exhibits />}
+      <div className="mx-auto max-w-[630px] py-16">
+        <Footer />
+      </div>
     </div>
   );
 };

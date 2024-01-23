@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import Button from 'src/component/Button';
-import Footer from 'src/component/Footer';
 import Form from 'src/component/Form';
 import FormInput from 'src/component/FormInput';
 import { ForgetPasswordForm } from 'src/model/Form';
@@ -37,9 +36,6 @@ const AuthForget = () => {
             <Button type="submit">Send</Button>
           </div>
         </Form>
-        <div className="mx-auto max-w-[630px] py-16">
-          <Footer />
-        </div>
       </div>
     );
 
@@ -52,9 +48,6 @@ const AuthForget = () => {
           <span className="text-[#00c3ff]">{methods.getValues('email')}</span> for security
           consideration
         </div>
-      </div>
-      <div className="mx-auto max-w-[630px] py-16">
-        <Footer />
       </div>
     </div>
   );

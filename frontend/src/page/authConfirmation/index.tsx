@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
-import Footer from 'src/component/Footer';
 import { RegistrationForm } from 'src/model/Form';
 import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
 import { resendConfirmationEmail } from 'src/service/AuthService';
@@ -37,9 +36,6 @@ const AuthConfirmation = () => {
             Resend
           </div>
         </div>
-      </div>
-      <div className="mx-auto max-w-[630px] py-16">
-        <Footer />
       </div>
     </div>
   );

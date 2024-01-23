@@ -1,5 +1,4 @@
 import Button from 'src/component/Button';
-import Footer from 'src/component/Footer';
 import PicFaqBg from 'src/image/pic-faq-bg.png';
 import Question from './Question';
 
@@ -53,9 +52,6 @@ const Faq = () => (
         </div>
         <Button className="mt-2">Join Us</Button>
       </div>
-    </div>
-    <div className="mx-auto max-w-[630px] py-16">
-      <Footer />
     </div>
   </div>
 );
