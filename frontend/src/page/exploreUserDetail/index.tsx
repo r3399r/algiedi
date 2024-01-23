@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Cover from 'src/component/Cover';
 import CoverInfo from 'src/component/CoverInfo';
 import ExploreSearch from 'src/component/ExploreSearch';
+import FollowButton from 'src/component/FollowButton';
 import NotificationWidget from 'src/component/NotificationWidget';
 import IcFacebook from 'src/image/ic-facebook.svg';
 import IcInstagram from 'src/image/ic-instagram.svg';
@@ -20,13 +21,14 @@ const ExploreUserDetail = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
   const [user, setUser] = useState<GetExploreUserIdResponse>();
+  const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     if (id === undefined) return;
     getUserById(id)
       .then((res) => setUser(res))
       .catch((err) => dispatch(openFailSnackbar(err)));
-  }, [id]);
+  }, [id, refresh]);
 
   if (!user) return <>loading...</>;
 
@@ -46,7 +48,12 @@ const ExploreUserDetail = () => {
         </div>
         <div className="w-3/12">
           <div className="text-2xl font-bold">{user.username}</div>
-          <div>{user.role?.split(',').join('/')}</div>
+          <div className="mb-4">{user.role?.split(',').join('/')}</div>
+          <FollowButton
+            id={user.id}
+            following={user.following}
+            doRefresh={() => setRefresh(!refresh)}
+          />
         </div>
         <div className="flex w-7/12 flex-col gap-2">
           <div className="flex gap-2">

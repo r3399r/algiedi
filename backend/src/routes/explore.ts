@@ -34,6 +34,8 @@ export default async (lambdaEvent: LambdaEvent) => {
       return await findExplore();
     case '/api/explore/user/{id}':
       return await findUser();
+    case '/api/explore/user/{id}/auth':
+      return await findUser();
   }
 
   throw new BadRequestError('unexpected resource');

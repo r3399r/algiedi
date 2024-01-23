@@ -517,10 +517,19 @@ export class ExploreService {
       where: { id: In(pu.map((o) => o.projectId)) },
     });
 
+    let myFolloweeId: Set<string> | null = null;
+    if (this.cognitoUserId !== '') {
+      const myFollowees = await this.followAccess.find({
+        where: { followerId: this.cognitoUserId },
+      });
+      myFolloweeId = new Set(myFollowees.map((v) => v.followeeId));
+    }
+
     return {
       ...user,
       avatarUrl: this.awsService.getS3SignedUrl(user.avatar),
       song: await Promise.all(vc.map((v) => this.getExtendedExplore(v))),
+      following: myFolloweeId === null ? null : myFolloweeId.has(user.id),
     };
   }
 }

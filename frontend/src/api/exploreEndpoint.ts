@@ -38,6 +38,9 @@ const getExploreIdAuth = async (id: string) =>
 const getExploreUserId = async (id: string) =>
   await http.get<GetExploreUserIdResponse>(`explore/user/${id}`);
 
+const getExploreUserIdAuth = async (id: string) =>
+  await http.authGet<GetExploreUserIdResponse>(`explore/user/${id}/auth`);
+
 export default {
   getExplore,
   getExploreAuth,
@@ -48,4 +51,5 @@ export default {
   getExploreId,
   getExploreIdAuth,
   getExploreUserId,
+  getExploreUserIdAuth,
 };

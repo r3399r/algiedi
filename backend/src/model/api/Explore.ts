@@ -60,4 +60,5 @@ export type GetExploreUserResponse = (ExploreUser & {
 
 export type GetExploreUserIdResponse = ExploreUser & {
   song: ExploreCreation[];
+  following: boolean | null;
 };

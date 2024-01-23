@@ -172,9 +172,12 @@ export const getExploreById = async (id: string) => {
 
 export const getUserById = async (id: string) => {
   try {
+    const { isLogin } = getState().ui;
     dispatch(startWaiting());
 
-    const res = await exploreEndpoint.getExploreUserId(id);
+    const res = isLogin
+      ? await exploreEndpoint.getExploreUserIdAuth(id)
+      : await exploreEndpoint.getExploreUserId(id);
 
     return res.data;
   } finally {
