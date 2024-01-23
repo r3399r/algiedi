@@ -14,7 +14,7 @@ const Notification = () => {
   const { notifications } = useSelector((root: RootState) => root.api);
 
   useEffect(() => {
-    if (!notifications) loadNotification();
+    loadNotification();
   }, []);
 
   return (

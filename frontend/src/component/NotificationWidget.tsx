@@ -30,7 +30,7 @@ const NotificationWidget = ({ className }: Props) => {
   }, []);
 
   const handleClick = (event: MouseEvent<HTMLDivElement>) => {
-    if (unreadNotifications.length > 0) setAnchorEl(event.currentTarget);
+    setAnchorEl(event.currentTarget);
   };
 
   const handleClose = () => {
@@ -70,18 +70,22 @@ const NotificationWidget = ({ className }: Props) => {
         }}
       >
         <div className="flex flex-col gap-2">
-          {unreadNotifications.map((v) => (
-            <div key={v.id} className="m-2 flex items-center gap-2 rounded p-3">
-              <Cover
-                url={v.fromUser.avatarUrl}
-                size={40}
-                clickable
-                onClick={() => navigate(`${Page.Explore}/user/${v.fromUserId}`)}
-                type="user"
-              />
-              <NotificationMessage data={v} />
-            </div>
-          ))}
+          {unreadNotifications.length > 0 ? (
+            unreadNotifications.map((v) => (
+              <div key={v.id} className="m-2 flex items-center gap-2 rounded p-3">
+                <Cover
+                  url={v.fromUser.avatarUrl}
+                  size={40}
+                  clickable
+                  onClick={() => navigate(`${Page.Explore}/user/${v.fromUserId}`)}
+                  type="user"
+                />
+                <NotificationMessage data={v} />
+              </div>
+            ))
+          ) : (
+            <div className="m-2 p-3">You do not have unread message</div>
+          )}
         </div>
       </Popover>
     </>
