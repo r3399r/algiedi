@@ -1,4 +1,5 @@
 import { inject, injectable } from 'inversify';
+import { FollowAccess } from 'src/access/FollowAccess';
 import { InfoAccess } from 'src/access/InfoAccess';
 import { LyricsAccess } from 'src/access/LyricsAccess';
 import { LyricsHistoryAccess } from 'src/access/LyricsHistoryAccess';
@@ -81,6 +82,9 @@ export class UploadService {
 
   @inject(InfoAccess)
   private readonly infoAccess!: InfoAccess;
+
+  @inject(FollowAccess)
+  private readonly followAccess!: FollowAccess;
 
   @inject(ViewCreationAccess)
   private readonly viewCreationAccess!: ViewCreationAccess;
@@ -253,7 +257,7 @@ export class UploadService {
       user.lastProjectId = projectId;
       await this.userAccess.save(user);
 
-      // notify
+      // notify project owner if inspired
       const ownerPu = await this.projectUserAccess.findOneOrFail({
         where: { projectId, role: Role.Owner },
       });
@@ -262,6 +266,21 @@ export class UploadService {
         await this.notificationService.notify(
           NotificationType.NewParticipant,
           owner,
+          projectId
+        );
+    }
+
+    // notify follower
+    if (projectId) {
+      const followers = await this.followAccess.find({
+        where: {
+          followeeId: this.cognitoUserId,
+        },
+      });
+      for (const f of followers)
+        await this.notificationService.notify(
+          NotificationType.FolloweeUploaded,
+          f.follower,
           projectId
         );
     }

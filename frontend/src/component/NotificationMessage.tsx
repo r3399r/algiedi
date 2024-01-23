@@ -143,6 +143,12 @@ const NotificationMessage = ({ data }: Props) => {
           Your creation <TargetButton /> has been commented by <UserButton />
         </div>
       );
+    case NotificationType.FolloweeUploaded:
+      return (
+        <div>
+          A new creation <TargetButton /> was just uploaded by <UserButton />
+        </div>
+      );
   }
 };
 

@@ -13,4 +13,5 @@ export enum NotificationType {
   Follow = 'follow',
   Like = 'like',
   Comment = 'comment',
+  FolloweeUploaded = 'followee-uploaded',
 }
