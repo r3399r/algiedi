@@ -7,7 +7,7 @@ import NotificationMessage from 'src/component/NotificationMessage';
 import NotificationWidget from 'src/component/NotificationWidget';
 import { Page } from 'src/constant/Page';
 import { RootState } from 'src/redux/store';
-import { loadNotification } from 'src/service/NotificationService';
+import { loadNotification, readNotification } from 'src/service/NotificationService';
 
 const Notification = () => {
   const navigate = useNavigate();
@@ -27,7 +27,10 @@ const Notification = () => {
         {(notifications ?? []).map((v) => (
           <div key={v.id} className="relative flex items-center rounded bg-white p-4">
             {!v.isRead && (
-              <div className="absolute right-5 top-5 h-[5px] w-[5px] rounded-full bg-blue" />
+              <div
+                className="absolute right-5 top-5 h-[5px] w-[5px] cursor-pointer rounded-full bg-blue"
+                onClick={() => readNotification(v.id)}
+              />
             )}
             <Cover
               url={v.fromUser.avatarUrl}
