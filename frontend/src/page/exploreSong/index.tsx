@@ -7,6 +7,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import ExploreSearch from 'src/component/ExploreSearch';
+import FooterDetail from 'src/component/FooterDetail';
 import NotificationWidget from 'src/component/NotificationWidget';
 import Select from 'src/component/Select';
 import SelectOption from 'src/component/SelectOption';
@@ -148,6 +149,9 @@ const ExploreSong = () => {
           page={page}
           onChange={handlePaginationChange}
         />
+      </div>
+      <div className="py-16">
+        <FooterDetail />
       </div>
     </div>
   );

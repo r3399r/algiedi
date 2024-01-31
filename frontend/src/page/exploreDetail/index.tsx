@@ -18,6 +18,7 @@ import CoverInfo from 'src/component/CoverInfo';
 import Divider from 'src/component/Divider';
 import ExploreSearch from 'src/component/ExploreSearch';
 import FollowButton from 'src/component/FollowButton';
+import FooterDetail from 'src/component/FooterDetail';
 import NotificationWidget from 'src/component/NotificationWidget';
 import { Page } from 'src/constant/Page';
 import { GetExploreIdResponse } from 'src/model/backend/api/Explore';
@@ -277,6 +278,9 @@ const ExploreDetail = () => {
             </div>
           </div>
         </div>
+      </div>
+      <div className="py-16">
+        <FooterDetail />
       </div>
     </>
   );

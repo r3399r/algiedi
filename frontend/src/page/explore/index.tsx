@@ -6,6 +6,7 @@ import Button from 'src/component/Button';
 import Cover from 'src/component/Cover';
 import CoverInfo from 'src/component/CoverInfo';
 import ExploreSearch from 'src/component/ExploreSearch';
+import FooterDetail from 'src/component/FooterDetail';
 import NotificationWidget from 'src/component/NotificationWidget';
 import Tabs from 'src/component/Tabs';
 import { Page } from 'src/constant/Page';
@@ -165,6 +166,9 @@ const Explore = () => {
             ))}
           </div>
         </div>
+      </div>
+      <div className="py-16">
+        <FooterDetail />
       </div>
     </div>
   );

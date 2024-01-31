@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AudioBox from './component/AudioBox';
-import Footer from './component/Footer';
 import Navbar from './component/Navbar';
 import SideMenu from './component/SideMenu';
 import { DashboardPage, Page } from './constant/Page';
@@ -46,9 +45,6 @@ const App = () => {
         <>
           <Navbar />
           <AppRoutes />
-          <div className="mx-auto max-w-[630px] py-16">
-            <Footer />
-          </div>
         </>
       )}
     </>

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Button from 'src/component/Button';
+import Footer from 'src/component/Footer';
 import Input from 'src/component/Input';
 import MultiSelect from 'src/component/MultiSelect';
 import MultiSelectOption from 'src/component/MultiSelectOption';
@@ -115,6 +116,9 @@ const AuthQuestionnaire = () => {
             )}
           </>
         )}
+      </div>
+      <div className="mx-auto max-w-[630px] py-16">
+        <Footer />
       </div>
     </div>
   );

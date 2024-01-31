@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import Cover from 'src/component/Cover';
 import ExploreSearch from 'src/component/ExploreSearch';
 import FollowButton from 'src/component/FollowButton';
+import FooterDetail from 'src/component/FooterDetail';
 import MultiSelect from 'src/component/MultiSelect';
 import MultiSelectOption from 'src/component/MultiSelectOption';
 import NotificationWidget from 'src/component/NotificationWidget';
@@ -112,6 +113,9 @@ const ExploreUser = () => {
           page={page}
           onChange={handlePaginationChange}
         />
+      </div>
+      <div className="py-16">
+        <FooterDetail />
       </div>
     </div>
   );

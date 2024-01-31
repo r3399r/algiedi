@@ -1,6 +1,7 @@
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Button from 'src/component/Button';
+import Footer from 'src/component/Footer';
 import { Page } from 'src/constant/Page';
 import PicAbout1 from 'src/image/pic-about-1.png';
 import PicAbout2 from 'src/image/pic-about-2.png';
@@ -55,6 +56,9 @@ const AboutUs = () => {
             <Button onClick={() => navigate(isLogin ? Page.Profile : Page.Login)}>Join Us</Button>
           </div>
         </div>
+      </div>
+      <div className="mx-auto max-w-[630px] py-16">
+        <Footer />
       </div>
     </div>
   );

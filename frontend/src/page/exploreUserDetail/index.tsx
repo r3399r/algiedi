@@ -5,6 +5,7 @@ import Cover from 'src/component/Cover';
 import CoverInfo from 'src/component/CoverInfo';
 import ExploreSearch from 'src/component/ExploreSearch';
 import FollowButton from 'src/component/FollowButton';
+import FooterDetail from 'src/component/FooterDetail';
 import NotificationWidget from 'src/component/NotificationWidget';
 import IcFacebook from 'src/image/ic-facebook.svg';
 import IcInstagram from 'src/image/ic-instagram.svg';
@@ -120,6 +121,9 @@ const ExploreUserDetail = () => {
           ))}
         </div>
       )}
+      <div className="py-16">
+        <FooterDetail />
+      </div>
     </div>
   );
 };

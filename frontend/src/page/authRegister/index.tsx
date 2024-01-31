@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Button from 'src/component/Button';
+import Footer from 'src/component/Footer';
 import Form from 'src/component/Form';
 import FormInput from 'src/component/FormInput';
 import { Page } from 'src/constant/Page';
@@ -82,6 +83,9 @@ const AuthRegister = () => {
             </div>
           </div>
         </Form>
+      </div>
+      <div className="mx-auto max-w-[630px] py-16">
+        <Footer />
       </div>
     </div>
   );
