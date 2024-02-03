@@ -9,6 +9,7 @@ import { DetailedProject } from 'src/model/backend/Project';
 import { RootState } from 'src/redux/store';
 import { getMyProjects } from 'src/service/OverallService';
 import OpenProject from './OpenProject';
+import Progress from './Progress';
 
 const Overall = () => {
   const navigate = useNavigate();
@@ -71,7 +72,7 @@ const Overall = () => {
         {inProgressProject.map((v) => (
           <div
             key={v.id}
-            className="relative flex h-[100px] cursor-pointer items-center rounded-md bg-white bg-center shadow-md"
+            className="relative flex h-[100px] cursor-pointer items-center gap-4 rounded-md bg-white bg-center shadow-md"
             onClick={() => navigate(Page.Project, { state: { id: v.id } })}
           >
             <div
@@ -80,10 +81,11 @@ const Overall = () => {
                 backgroundImage: v.info.coverFileUrl ? `url(${v.info.coverFileUrl})` : '',
               }}
             />
-            <div className="m-4 w-fit rounded-lg bg-grey/70 p-2">{v.info.name}</div>
+            <div className="my-4 w-fit rounded-lg bg-grey/70 p-2">{v.info.name}</div>
             <div>Owner: {v.collaborators.find((o) => o.role === Role.Owner)?.user.username}</div>
             {v.fileUrl && (
-              <div className="absolute right-4 top-1/2 -translate-y-1/2">
+              <div className="absolute right-4 top-1/2 flex -translate-y-1/2 items-center gap-8">
+                <Progress project={v} />
                 <AudioPlayer
                   creation={{
                     id: v.id,

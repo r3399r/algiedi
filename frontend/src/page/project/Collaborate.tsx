@@ -22,6 +22,7 @@ import CollaborateMaster from './CollaborateMaster';
 import Info from './Info';
 import ModalPublish from './ModalPublish';
 import Partners from './Partners';
+import Progress from './Progress';
 
 type Props = {
   project: DetailedProject;
@@ -87,6 +88,7 @@ const Collaborate = ({ project, doRefresh }: Props) => {
       <div className="rounded-xl bg-[#f2f2f2] p-5">
         <div className="flex gap-4">
           <div className="w-1/2">
+            <Progress project={project} />
             <Info project={project} doRefresh={doRefresh} isOwner={owner.id === userId} />
             <CollaborateMaster project={project} doRefresh={doRefresh} />
             <Form

@@ -12,6 +12,7 @@ import Info from './Info';
 import Initiator from './Initiator';
 import Inspired from './Inspired';
 import ModalStart from './ModalStart';
+import Progress from './Progress';
 
 type Props = {
   project: DetailedProject;
@@ -49,6 +50,7 @@ const Prepare = ({ project, doRefresh }: Props) => {
       <div className="rounded-xl bg-[#f2f2f2] p-5">
         <div className="flex gap-4">
           <div className="w-1/2">
+            <Progress project={project} />
             <Info
               project={project}
               doRefresh={doRefresh}
