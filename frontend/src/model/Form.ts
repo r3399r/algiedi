@@ -5,6 +5,10 @@ export type ContactForm = {
   message: string;
 };
 
+export type SubscribeForm = {
+  email: string;
+};
+
 export type LoginForm = {
   email: string;
   password: string;

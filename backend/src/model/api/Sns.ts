@@ -1,6 +1,6 @@
 export type PostSnsRequest = {
-  firstName: string;
-  surname: string;
+  firstName?: string;
+  surname?: string;
   email: string;
-  message: string;
+  message?: string;
 };
