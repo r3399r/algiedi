@@ -429,27 +429,18 @@ export class ProjectService {
 
     // notify
     const projectUser = await this.projectUserAccess.findByProjectId(id);
-    const followerMap = new Map<string, User>();
+    const targetMap = new Map<string, User>();
     for (const pu of projectUser) {
-      const user = await this.userAccess.findOneByIdOrFail(pu.userId);
-      if (pu.role === Role.Owner) continue;
-      await this.notificationService.notify(
-        NotificationType.ProjectPublish,
-        user,
-        pu.projectId
-      );
-      if (!followerMap.has(pu.userId)) followerMap.set(pu.userId, pu.user);
-      const myFollower = await this.followAccess.find({
+      if (pu.role !== Role.Owner) targetMap.set(pu.userId, pu.user);
+      const followerOfUser = await this.followAccess.find({
         where: { followeeId: pu.userId },
       });
-      for (const f of myFollower)
-        if (!followerMap.has(f.followerId))
-          followerMap.set(f.followerId, f.follower);
+      for (const f of followerOfUser) targetMap.set(f.followerId, f.follower);
     }
-    for (const follower of followerMap.values())
+    for (const target of targetMap.values())
       await this.notificationService.notify(
         NotificationType.ProjectPublish,
-        follower,
+        target,
         id
       );
   }
