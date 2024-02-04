@@ -1,12 +1,14 @@
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import UploadIcon from '@mui/icons-material/Upload';
 import { Popover } from '@mui/material';
 import classNames from 'classnames';
+import { formatDistanceToNow } from 'date-fns';
 import { MouseEvent, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Page } from 'src/constant/Page';
 import { RootState } from 'src/redux/store';
-import { loadNotification } from 'src/service/NotificationService';
+import { deleteNotification, loadNotification } from 'src/service/NotificationService';
 import Cover from './Cover';
 import NotificationMessage from './NotificationMessage';
 
@@ -75,12 +77,22 @@ const NotificationWidget = ({ className }: Props) => {
               <div key={v.id} className="m-2 flex items-center gap-2 rounded p-3">
                 <Cover
                   url={v.fromUser.avatarUrl}
-                  size={40}
+                  size={50}
                   clickable
                   onClick={() => navigate(`${Page.Explore}/user/${v.fromUserId}`)}
                   type="user"
                 />
-                <NotificationMessage data={v} />
+                <div>
+                  <NotificationMessage data={v} />
+                  <div className="flex items-center justify-end gap-2">
+                    <div className="text-right text-sm text-grey">
+                      {v.createdAt ? formatDistanceToNow(new Date(v.createdAt)) : ''}
+                    </div>
+                    <div className="cursor-pointer" onClick={() => deleteNotification(v.id)}>
+                      <RemoveCircleOutlineIcon />
+                    </div>
+                  </div>
+                </div>
               </div>
             ))
           ) : (

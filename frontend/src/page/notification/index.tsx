@@ -1,3 +1,4 @@
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import { formatDistanceToNow } from 'date-fns';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
@@ -7,7 +8,11 @@ import NotificationMessage from 'src/component/NotificationMessage';
 import NotificationWidget from 'src/component/NotificationWidget';
 import { Page } from 'src/constant/Page';
 import { RootState } from 'src/redux/store';
-import { loadNotification, readNotification } from 'src/service/NotificationService';
+import {
+  deleteNotification,
+  loadNotification,
+  readNotification,
+} from 'src/service/NotificationService';
 
 const Notification = () => {
   const navigate = useNavigate();
@@ -28,7 +33,7 @@ const Notification = () => {
           <div key={v.id} className="relative flex items-center rounded bg-white p-4">
             {!v.isRead && (
               <div
-                className="absolute right-5 top-5 h-[5px] w-[5px] cursor-pointer rounded-full bg-blue"
+                className="absolute left-3 top-3 h-[15px] w-[15px] cursor-pointer rounded-full bg-blue"
                 onClick={() => readNotification(v.id)}
               />
             )}
@@ -41,6 +46,12 @@ const Notification = () => {
             />
             <div className="pl-5">
               <NotificationMessage data={v} />
+            </div>
+            <div
+              className="absolute right-5 top-5 cursor-pointer"
+              onClick={() => deleteNotification(v.id)}
+            >
+              <RemoveCircleOutlineIcon />
             </div>
             <div className="absolute bottom-5 right-5 text-right text-sm text-grey">
               {v.createdAt ? formatDistanceToNow(new Date(v.createdAt)) : ''}

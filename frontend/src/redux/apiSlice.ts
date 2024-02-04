@@ -42,6 +42,9 @@ export const apiSlice = createSlice({
         v.id === action.payload.id ? action.payload : v,
       );
     },
+    filterNotification: (state: ApiState, action: PayloadAction<string>) => {
+      state.notifications = state.notifications?.filter((v) => v.id !== action.payload);
+    },
   },
 });
 
@@ -53,6 +56,7 @@ export const {
   setNotifications,
   setLastNotification,
   replaceNotification,
+  filterNotification,
 } = apiSlice.actions;
 
 export default apiSlice.reducer;

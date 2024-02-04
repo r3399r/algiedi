@@ -55,4 +55,10 @@ export class NotificationAccess {
 
     return await qr.manager.save(entity);
   }
+
+  public async hardDeleteById(id: string) {
+    const qr = await this.database.getQueryRunner();
+
+    await qr.manager.delete(NotificationEntity.name, { id });
+  }
 }

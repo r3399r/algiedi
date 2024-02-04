@@ -13,6 +13,8 @@ export default async (lambdaEvent: LambdaEvent) => {
   switch (event.resource) {
     case '/api/notification':
       return await listNotifications();
+    case '/api/notification/{id}':
+      return await deleteNotification();
     case '/api/notification/{id}/read':
       return await readNotification();
   }
@@ -24,6 +26,16 @@ const listNotifications = () => {
   switch (event.httpMethod) {
     case 'GET':
       return service.getNotifications();
+  }
+  throw new Error('unexpected httpMethod');
+};
+
+const deleteNotification = () => {
+  if (event.pathParameters === null)
+    throw new BadRequestError('pathParameters should not be empty');
+  switch (event.httpMethod) {
+    case 'DELETE':
+      return service.deleteNotification(event.pathParameters.id);
   }
   throw new Error('unexpected httpMethod');
 };

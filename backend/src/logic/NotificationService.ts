@@ -85,6 +85,10 @@ export class NotificationService {
     };
   }
 
+  public async deleteNotification(id: string): Promise<void> {
+    await this.notificationAccess.hardDeleteById(id);
+  }
+
   public async notify(type: NotificationType, user: User, targetId?: string) {
     if (this.cognitoUserId === '') return;
 
