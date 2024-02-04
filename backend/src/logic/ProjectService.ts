@@ -1,6 +1,7 @@
 import { inject, injectable } from 'inversify';
 import { In, Not } from 'typeorm';
 import { ChatAccess } from 'src/access/ChatAccess';
+import { FollowAccess } from 'src/access/FollowAccess';
 import { InfoAccess } from 'src/access/InfoAccess';
 import { LyricsAccess } from 'src/access/LyricsAccess';
 import { LyricsHistoryAccess } from 'src/access/LyricsHistoryAccess';
@@ -27,6 +28,7 @@ import { LyricsHistoryEntity } from 'src/model/entity/LyricsHistoryEntity';
 import { NotificationEntity } from 'src/model/entity/NotificationEntity';
 import { TrackEntity } from 'src/model/entity/TrackEntity';
 import { TrackHistoryEntity } from 'src/model/entity/TrackHistoryEntity';
+import { User } from 'src/model/entity/UserEntity';
 import {
   BadRequestError,
   InternalServerError,
@@ -84,6 +86,9 @@ export class ProjectService {
 
   @inject(ChatAccess)
   private readonly chatAccess!: ChatAccess;
+
+  @inject(FollowAccess)
+  private readonly followAccess!: FollowAccess;
 
   public async getMyProjects(): Promise<GetProjectResponse> {
     const myProjectUser = await this.projectUserAccess.find({
@@ -424,6 +429,7 @@ export class ProjectService {
 
     // notify
     const projectUser = await this.projectUserAccess.findByProjectId(id);
+    const followerMap = new Map<string, User>();
     for (const pu of projectUser) {
       const user = await this.userAccess.findOneByIdOrFail(pu.userId);
       if (pu.role === Role.Owner) continue;
@@ -432,7 +438,20 @@ export class ProjectService {
         user,
         pu.projectId
       );
+      if (!followerMap.has(pu.userId)) followerMap.set(pu.userId, pu.user);
+      const myFollower = await this.followAccess.find({
+        where: { followeeId: pu.userId },
+      });
+      for (const f of myFollower)
+        if (!followerMap.has(f.followerId))
+          followerMap.set(f.followerId, f.follower);
     }
+    for (const follower of followerMap.values())
+      await this.notificationService.notify(
+        NotificationType.ProjectPublish,
+        follower,
+        id
+      );
   }
 
   public async updateProjectCover(id: string, data: PutProjectIdCoverRequest) {
