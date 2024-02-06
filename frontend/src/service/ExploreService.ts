@@ -1,6 +1,7 @@
 import { subMonths, subWeeks, subYears } from 'date-fns';
 import creationEndpoint from 'src/api/creationEndpoint';
 import exploreEndpoint from 'src/api/exploreEndpoint';
+import snsEndpoint from 'src/api/snsEndpoint';
 import userEndpoint from 'src/api/userEndpoint';
 import viewEndpoint from 'src/api/viewEndpoint';
 import {
@@ -8,6 +9,7 @@ import {
   GetExploreResponse,
   GetExploreUserParams,
 } from 'src/model/backend/api/Explore';
+import { PostSnsSubscribeRequest } from 'src/model/backend/api/Sns';
 import { Type } from 'src/model/backend/constant/Creation';
 import { Status } from 'src/model/backend/constant/Project';
 import { setExplores } from 'src/redux/apiSlice';
@@ -239,4 +241,13 @@ export const getExploreSearch = async (keyword: string, type?: string) => {
   const res = await exploreEndpoint.getExploreSearch({ keyword, type });
 
   return res.data;
+};
+
+export const sendSubscribeNewsletter = async (data: PostSnsSubscribeRequest) => {
+  try {
+    dispatch(startWaiting());
+    await snsEndpoint.postSnsSubscribe(data);
+  } finally {
+    dispatch(finishWaiting());
+  }
 };

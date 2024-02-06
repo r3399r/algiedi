@@ -1,6 +1,9 @@
 import { SNS } from 'aws-sdk';
 import { inject, injectable } from 'inversify';
-import { PostSnsRequest } from 'src/model/api/Sns';
+import {
+  PostSnsContactRequest,
+  PostSnsSubscribeRequest,
+} from 'src/model/api/Sns';
 
 /**
  * Service class for Sns
@@ -10,10 +13,10 @@ export class SnsService {
   @inject(SNS)
   private readonly sns!: SNS;
 
-  public async sendSns(data: PostSnsRequest) {
+  public async sendContactUs(data: PostSnsContactRequest) {
     return await this.sns
       .publish({
-        TopicArn: process.env.SNS_TOPIC_ARN,
+        TopicArn: process.env.SNS_CONTACT_TOPIC_ARN,
         Subject: 'GoTron Music General Enquiry',
         Message: [
           `First name: ${data.firstName}`,
@@ -22,6 +25,16 @@ export class SnsService {
           'Message:',
           data.message,
         ].join('\n'),
+      })
+      .promise();
+  }
+
+  public async sendSubscribeNewsletter(data: PostSnsSubscribeRequest) {
+    return await this.sns
+      .publish({
+        TopicArn: process.env.SNS_SUBSCRIBE_TOPIC_ARN,
+        Subject: 'GoTron Music Subscribe Newsletter',
+        Message: `Subscribe Email: ${data.email}`,
       })
       .promise();
   }

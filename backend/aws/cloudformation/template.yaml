@@ -1357,13 +1357,60 @@ Resources:
                 }
               }
             },
-            "/api/sns": {
+            "/api/sns/contact": {
               "post": {
                 "requestBody": {
                   "content": {
                     "application/json": {
                       "schema": {
-                        "$ref": "#/components/schemas/postSns"
+                        "$ref": "#/components/schemas/postSnsContact"
+                      }
+                    }
+                  },
+                  "required": true
+                },
+                "responses": {
+                  "200": {
+                    "description": "200 response",
+                    "headers": {
+                      "Access-Control-Allow-Origin": {
+                        "schema": {"type": "string"}
+                      }
+                    },
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/Empty"
+                        }
+                      }
+                    }
+                  }
+                },
+                "x-amazon-apigateway-request-validator" : "Validate body, query string parameters, and headers",
+                "x-amazon-apigateway-integration": {
+                  "type": "aws_proxy",
+                  "httpMethod": "POST",
+                  "uri": !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${Project}-${TargetEnvr}-lambda/invocations",
+                  "responses": {
+                    "default": {
+                      "statusCode": "200",
+                      "responseParameters": {
+                        "method.response.header.Access-Control-Allow-Origin": "'*'"
+                      }
+                    }
+                  },
+                  "passthroughBehavior": "when_no_match",
+                  "contentHandling": "CONVERT_TO_TEXT"
+                }
+              }
+            },
+            "/api/sns/subscribe": {
+              "post": {
+                "requestBody": {
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/postSnsSubscribe"
                       }
                     }
                   },
@@ -1836,13 +1883,20 @@ Resources:
               "type": "object",
               "title": "Empty Schema"
             },
-            "postSns": {
+            "postSnsContact": {
               "type": "object",
               "properties": {
                 "firstName": {"type": "string"},
                 "surname": {"type": "string"},
                 "email":{"type": "string"},
                 "message":{"type": "string"}
+              },
+              "required": ["firstName","surname","email","message"]
+            },
+            "postSnsSubscribe": {
+              "type": "object",
+              "properties": {
+                "email":{"type": "string"},
               },
               "required": ["email"]
             },
@@ -1953,7 +2007,8 @@ Resources:
         Variables:
           PROJECT: !Sub ${Project}
           ENVR: !Sub ${TargetEnvr}
-          SNS_TOPIC_ARN: !Ref ContactUsSNSTopic
+          SNS_CONTACT_TOPIC_ARN: !Ref ContactUsSNSTopic
+          SNS_SUBSCRIBE_TOPIC_ARN: !Ref SubscribeNewsletterSNSTopic
           USER_POOL_ID:
             Fn::ImportValue: !Sub ${Project}-${TargetEnvr}-cognito-user-pool-id
           WS_ENDPOINT: !Sub ${WebsocketApi}.execute-api.${AWS::Region}.amazonaws.com/socket
@@ -2252,3 +2307,11 @@ Resources:
         - Endpoint: gotronmusic@gmail.com
           Protocol: email
       TopicName: !Sub ${Project}-${TargetEnvr}-contact-us-topic
+  SubscribeNewsletterSNSTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: !Sub ${Project}-${TargetEnvr}-subscribe-newsletter-topic
+      Subscription:
+        - Endpoint: gotronmusic@gmail.com
+          Protocol: email
+      TopicName: !Sub ${Project}-${TargetEnvr}-ubscribe-newsletter-topic

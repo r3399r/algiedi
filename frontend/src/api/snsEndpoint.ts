@@ -1,9 +1,13 @@
-import { PostSnsRequest } from 'src/model/backend/api/Sns';
+import { PostSnsContactRequest, PostSnsSubscribeRequest } from 'src/model/backend/api/Sns';
 import http from 'src/util/http';
 
-const postSns = async (data: PostSnsRequest) =>
-  await http.post<void, PostSnsRequest>('sns', { data });
+const postSnsContact = async (data: PostSnsContactRequest) =>
+  await http.post<void, PostSnsContactRequest>('sns/contact', { data });
+
+const postSnsSubscribe = async (data: PostSnsSubscribeRequest) =>
+  await http.post<void, PostSnsSubscribeRequest>('sns/subscribe', { data });
 
 export default {
-  postSns,
+  postSnsContact,
+  postSnsSubscribe,
 };

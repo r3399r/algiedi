@@ -5,7 +5,7 @@ import IcLinkedIn from 'src/image/ic-linkedin.svg';
 import IcTwitter from 'src/image/ic-twitter.svg';
 import { SubscribeForm } from 'src/model/Form';
 import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
-import { sendMessage } from 'src/service/ContactUsService';
+import { sendSubscribeNewsletter } from 'src/service/ExploreService';
 import Button from './Button';
 import Form from './Form';
 import FormInput from './FormInput';
@@ -15,7 +15,7 @@ const FooterDetail = () => {
   const methods = useForm<SubscribeForm>();
 
   const onSubmit = (data: SubscribeForm) => {
-    sendMessage(data)
+    sendSubscribeNewsletter(data)
       .then(() => {
         dispatch(openSuccessSnackbar('Sent successfully'));
         methods.reset();

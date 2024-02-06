@@ -1,6 +1,9 @@
 import { bindings } from 'src/bindings';
 import { SnsService } from 'src/logic/SnsService';
-import { PostSnsRequest } from 'src/model/api/Sns';
+import {
+  PostSnsContactRequest,
+  PostSnsSubscribeRequest,
+} from 'src/model/api/Sns';
 import { BadRequestError } from 'src/model/error';
 import { LambdaEvent } from 'src/model/Lambda';
 
@@ -12,14 +15,16 @@ export default async (lambdaEvent: LambdaEvent) => {
   service = bindings.get(SnsService);
 
   switch (event.resource) {
-    case '/api/sns':
-      return await snsDefault();
+    case '/api/sns/contact':
+      return await snsContact();
+    case '/api/sns/subscribe':
+      return await snsSubscribe();
   }
 
   throw new BadRequestError('unexpected resource');
 };
 
-const snsDefault = async () => {
+const snsContact = async () => {
   if (event.headers === null)
     throw new BadRequestError('headers should not be empty');
   switch (event.httpMethod) {
@@ -27,7 +32,24 @@ const snsDefault = async () => {
       if (event.body === null)
         throw new BadRequestError('body should not be empty');
 
-      return service.sendSns(JSON.parse(event.body) as PostSnsRequest);
+      return service.sendContactUs(
+        JSON.parse(event.body) as PostSnsContactRequest
+      );
+  }
+  throw new Error('unexpected httpMethod');
+};
+
+const snsSubscribe = async () => {
+  if (event.headers === null)
+    throw new BadRequestError('headers should not be empty');
+  switch (event.httpMethod) {
+    case 'POST':
+      if (event.body === null)
+        throw new BadRequestError('body should not be empty');
+
+      return service.sendSubscribeNewsletter(
+        JSON.parse(event.body) as PostSnsSubscribeRequest
+      );
   }
   throw new Error('unexpected httpMethod');
 };

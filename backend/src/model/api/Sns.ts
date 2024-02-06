@@ -1,6 +1,10 @@
-export type PostSnsRequest = {
-  firstName?: string;
-  surname?: string;
+export type PostSnsContactRequest = {
+  firstName: string;
+  surname: string;
   email: string;
-  message?: string;
+  message: string;
+};
+
+export type PostSnsSubscribeRequest = {
+  email: string;
 };
