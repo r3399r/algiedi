@@ -8,6 +8,8 @@ export type UiState = {
   snackbarType: 'success' | 'fail';
   snackbarMessage: string | undefined;
   isProjectInfoEdit: boolean;
+  profileTab: number;
+  profileExhibitTab: number;
 };
 
 const initialState: UiState = {
@@ -18,6 +20,8 @@ const initialState: UiState = {
   snackbarType: 'success',
   snackbarMessage: undefined,
   isProjectInfoEdit: false,
+  profileTab: 0,
+  profileExhibitTab: 0,
 };
 
 export const uiSlice = createSlice({
@@ -52,6 +56,12 @@ export const uiSlice = createSlice({
     setProjectInfoIsEdit: (state: UiState, action: PayloadAction<boolean>) => {
       state.isProjectInfoEdit = action.payload;
     },
+    setProfileTab: (state: UiState, action: PayloadAction<number>) => {
+      state.profileTab = action.payload;
+    },
+    setProfileExhibitTab: (state: UiState, action: PayloadAction<number>) => {
+      state.profileExhibitTab = action.payload;
+    },
   },
 });
 
@@ -64,6 +74,8 @@ export const {
   openFailSnackbar,
   closeSnackbar,
   setProjectInfoIsEdit,
+  setProfileTab,
+  setProfileExhibitTab,
 } = uiSlice.actions;
 
 export default uiSlice.reducer;
