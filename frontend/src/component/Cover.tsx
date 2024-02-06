@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import { MouseEvent } from 'react';
 import IcCover from 'src/image/ic-default-cover.svg';
 import IcGreyPeople from 'src/image/ic-grey-people.jpg';
 
@@ -15,8 +16,11 @@ const Cover = ({ size = 100, url, clickable = false, onClick, type = 'creation' 
     className={classNames({
       'cursor-pointer': clickable,
     })}
-    onClick={() => {
-      if (clickable && onClick) onClick();
+    onClick={(e: MouseEvent<HTMLDivElement>) => {
+      if (clickable && onClick) {
+        e.stopPropagation();
+        onClick();
+      }
     }}
   >
     <img

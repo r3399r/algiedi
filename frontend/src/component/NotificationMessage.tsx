@@ -1,66 +1,12 @@
-import { useNavigate } from 'react-router-dom';
-import { Page } from 'src/constant/Page';
 import { DetailedNotification } from 'src/model/backend/api/Notification';
 import { NotificationType } from 'src/model/backend/constant/Notification';
-import { Status } from 'src/model/backend/constant/Project';
-import { readNotification } from 'src/service/NotificationService';
 
 type Props = { data: DetailedNotification };
 
 const NotificationMessage = ({ data }: Props) => {
-  const navigate = useNavigate();
+  const TargetButton = () => <span className="font-bold text-blue">{data.target?.info.name}</span>;
 
-  const onClickCreation = () => {
-    if (data.type === NotificationType.ProjectPublish) navigate(`${Page.Explore}/${data.targetId}`);
-    else if (
-      [
-        NotificationType.ProjectStart,
-        NotificationType.ProjectUpdated,
-        NotificationType.CreationUpdated,
-        NotificationType.CreationUploaded,
-        NotificationType.NewParticipant,
-        NotificationType.InspiredApproved,
-        NotificationType.InspiredUnapproved,
-        NotificationType.PartnerReady,
-        NotificationType.PartnerNotReady,
-      ].includes(data.type)
-    )
-      if (data.target?.project?.status === Status.Published)
-        navigate(`${Page.Explore}/${data.targetId}`);
-      else navigate(Page.Project, { state: { id: data.targetId } });
-    else if (
-      [NotificationType.Like, NotificationType.Comment, NotificationType.FolloweeUploaded].includes(
-        data.type,
-      )
-    )
-      navigate(`${Page.Explore}/${data.targetId}`);
-    else if (data.type === NotificationType.Follow)
-      navigate(`${Page.Explore}/user/${data.fromUserId}`);
-  };
-
-  const TargetButton = () => (
-    <span
-      className="cursor-pointer font-bold text-blue hover:underline"
-      onClick={() => {
-        if (!data.isRead) readNotification(data.id);
-        onClickCreation();
-      }}
-    >
-      {data.target?.info.name}
-    </span>
-  );
-
-  const UserButton = () => (
-    <span
-      className="cursor-pointer font-bold text-blue hover:underline"
-      onClick={() => {
-        if (!data.isRead) readNotification(data.id);
-        navigate(`${Page.Explore}/user/${data.fromUserId}`);
-      }}
-    >
-      {data.fromUser.username}
-    </span>
-  );
+  const UserButton = () => <span className="font-bold text-blue">{data.fromUser.username}</span>;
 
   switch (data.type) {
     case NotificationType.ProjectStart:
