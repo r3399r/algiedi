@@ -82,7 +82,7 @@ const NotificationWidget = ({ className }: Props) => {
                   onClick={() => navigate(`${Page.Explore}/user/${v.fromUserId}`)}
                   type="user"
                 />
-                <div>
+                <div className="flex-1">
                   <NotificationMessage data={v} />
                   <div className="flex items-center justify-end gap-2">
                     <div className="text-right text-sm text-grey">
