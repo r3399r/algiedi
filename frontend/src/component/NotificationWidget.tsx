@@ -99,10 +99,9 @@ const NotificationWidget = ({ className }: Props) => {
                   type="user"
                 />
                 <div className="flex-1">
-                  <NotificationMessage data={v} />
-                  <div className="flex items-center justify-end gap-2">
-                    <div className="text-right text-sm text-grey">
-                      {v.createdAt ? formatDistanceToNow(new Date(v.createdAt)) : ''}
+                  <div className="flex gap-2">
+                    <div className="flex-1">
+                      <NotificationMessage data={v} />
                     </div>
                     <div
                       className="cursor-pointer"
@@ -113,6 +112,9 @@ const NotificationWidget = ({ className }: Props) => {
                     >
                       <RemoveCircleOutlineIcon />
                     </div>
+                  </div>
+                  <div className="text-right text-sm text-grey">
+                    {v.createdAt ? formatDistanceToNow(new Date(v.createdAt)) : ''}
                   </div>
                 </div>
               </div>
