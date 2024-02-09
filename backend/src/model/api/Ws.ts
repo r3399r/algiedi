@@ -4,6 +4,7 @@ import { User } from 'src/model/entity/UserEntity';
 export enum WsType {
   Chat = 'chat',
   Channel = 'channel',
+  Ping = 'ping',
 }
 
 export type Chat = {

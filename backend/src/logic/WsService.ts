@@ -84,6 +84,17 @@ export class WsService {
     return { a: WsType.Channel, d: {} };
   }
 
+  public async receivePing(connectionId: string) {
+    console.log('ping', connectionId);
+    const message: WebsocketMessage<string> = {
+      a: WsType.Ping,
+      d: 'pong',
+    };
+    await this.awsService.sendWsMessage(connectionId, message);
+
+    return { a: WsType.Ping, d: { data: 'pong' } };
+  }
+
   public async receiveDefault() {
     // TODO
     return { a: WsType.Channel, d: {} };

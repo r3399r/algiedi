@@ -102,6 +102,9 @@ export async function ws(
       case 'chat':
         res = await service.receiveChat(JSON.parse(event.body));
         break;
+      case 'ping':
+        res = await service.receivePing(connectionId);
+        break;
       default:
         throw new Error(`Unknown routeKey: ${routeKey}`);
     }

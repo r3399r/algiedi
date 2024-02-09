@@ -2130,6 +2130,13 @@ Resources:
       ApiId: !Ref WebsocketApi
       RouteKey: chat
       Target: !Sub integrations/${WebsocketIntegration}
+  RoutePing:
+    Type: AWS::ApiGatewayV2::Route
+    DependsOn: [WebsocketIntegration]
+    Properties:
+      ApiId: !Ref WebsocketApi
+      RouteKey: ping
+      Target: !Sub integrations/${WebsocketIntegration}
   WebsocketIntegration:
     Type: AWS::ApiGatewayV2::Integration
     Properties:
@@ -2138,7 +2145,7 @@ Resources:
       IntegrationUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${Project}-${TargetEnvr}-ws/invocations"
   WebsocketDeployment:
     Type: AWS::ApiGatewayV2::Deployment
-    DependsOn: [RouteConnect, RouteDisconnect, RouteDefault, RouteChat]
+    DependsOn: [RouteConnect, RouteDisconnect, RouteDefault, RouteChat, RoutePing]
     Properties:
       ApiId: !Ref WebsocketApi
   WebsocketStage:

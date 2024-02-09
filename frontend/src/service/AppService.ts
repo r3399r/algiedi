@@ -4,7 +4,7 @@ import { setLastNotification } from 'src/redux/apiSlice';
 import { dispatch, getState } from 'src/redux/store';
 import { openSuccessSnackbar } from 'src/redux/uiSlice';
 import { setLastChat } from 'src/redux/wsSlice';
-import { wsStart } from 'src/util/wsTick';
+import { wsSend, wsStart } from 'src/util/wsTick';
 
 export const wsInit = () => {
   const { id: userId } = getState().me;
@@ -25,4 +25,10 @@ export const wsInit = () => {
     () => console.log('ws error'),
     () => console.log('ws open'),
   );
+
+  setInterval(() => {
+    wsSend({
+      action: 'ping',
+    });
+  }, 30000);
 };
