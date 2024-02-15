@@ -80,7 +80,8 @@ export class WsService {
 
     await Promise.all(
       users.map(async (u) => {
-        if (!u.connectionId)
+        if (u.id === userId) return;
+        else if (!u.connectionId)
           await this.ses
             .sendEmail({
               Destination: {
@@ -90,15 +91,15 @@ export class WsService {
                 Body: {
                   Text: {
                     Charset: 'UTF-8',
-                    Data: `You've recevied a message from ${sender?.username}`,
+                    Data: `Hello ${u.username}, ${sender?.username} left you a message in regards to the project.`,
                   },
                 },
                 Subject: {
                   Charset: 'UTF-8',
-                  Data: 'Test email',
+                  Data: `You've recevied a message from ${sender?.username}`,
                 },
               },
-              Source: 'lamplighter.planet@gmail.com',
+              Source: 'GoTron@gotronmusic.com',
             })
             .promise();
         else await this.awsService.sendWsMessage(u.connectionId, message);
