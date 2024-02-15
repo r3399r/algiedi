@@ -39,6 +39,7 @@ Resources:
         - arn:aws:iam::aws:policy/AWSLambda_FullAccess
         - arn:aws:iam::aws:policy/AmazonCognitoPowerUser
         - arn:aws:iam::aws:policy/AmazonAPIGatewayInvokeFullAccess
+        - arn:aws:iam::aws:policy/AmazonSESFullAccess
   ##############################################
   ##### RESTful API and associated Lambdas #####
   ##############################################

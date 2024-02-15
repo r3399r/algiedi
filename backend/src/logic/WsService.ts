@@ -1,3 +1,4 @@
+import { SES } from 'aws-sdk';
 import { inject, injectable } from 'inversify';
 import { In } from 'typeorm';
 import { ChatAccess } from 'src/access/ChatAccess';
@@ -13,6 +14,9 @@ import { AwsService } from './AwsService';
  */
 @injectable()
 export class WsService {
+  @inject(SES)
+  private readonly ses!: SES;
+
   @inject(DbAccess)
   private readonly dbAccess!: DbAccess;
 
@@ -76,8 +80,28 @@ export class WsService {
 
     await Promise.all(
       users.map(async (u) => {
-        if (!u.connectionId) return;
-        await this.awsService.sendWsMessage(u.connectionId, message);
+        if (!u.connectionId)
+          await this.ses
+            .sendEmail({
+              Destination: {
+                ToAddresses: [u.email],
+              },
+              Message: {
+                Body: {
+                  Text: {
+                    Charset: 'UTF-8',
+                    Data: `You've recevied a message from ${sender?.username}`,
+                  },
+                },
+                Subject: {
+                  Charset: 'UTF-8',
+                  Data: 'Test email',
+                },
+              },
+              Source: 'lamplighter.planet@gmail.com',
+            })
+            .promise();
+        else await this.awsService.sendWsMessage(u.connectionId, message);
       })
     );
 
@@ -85,7 +109,6 @@ export class WsService {
   }
 
   public async receivePing(connectionId: string) {
-    console.log('ping', connectionId);
     const message: WebsocketMessage<string> = {
       a: WsType.Ping,
       d: 'pong',

@@ -3,6 +3,7 @@ import {
   ApiGatewayManagementApi,
   CognitoIdentityServiceProvider,
   S3,
+  SES,
   SNS,
 } from 'aws-sdk';
 import { Container } from 'inversify';
@@ -112,6 +113,7 @@ container.bind<ViewService>(ViewService).toSelf();
 
 // AWS
 container.bind<SNS>(SNS).toDynamicValue(() => new SNS());
+container.bind<SES>(SES).toDynamicValue(() => new SES());
 container.bind<S3>(S3).toDynamicValue(() => new S3());
 container.bind<ApiGatewayManagementApi>(ApiGatewayManagementApi).toDynamicValue(
   () =>

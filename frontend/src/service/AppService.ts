@@ -1,5 +1,6 @@
 import { DetailedNotification } from 'src/model/backend/api/Notification';
 import { Chat, WebsocketMessage } from 'src/model/backend/api/Ws';
+import { NotificationType } from 'src/model/backend/constant/Notification';
 import { setLastNotification } from 'src/redux/apiSlice';
 import { dispatch, getState } from 'src/redux/store';
 import { openSuccessSnackbar } from 'src/redux/uiSlice';
@@ -13,14 +14,15 @@ export const wsInit = () => {
     userId,
     (data) => {
       const res: WebsocketMessage = JSON.parse(data);
-      if (res.a === 'channel') return;
+      if (res.a === 'channel' || res.a === 'ping') return;
       if (res.a === 'chat') {
         dispatch(setLastChat((res as WebsocketMessage<Chat>).d));
         if (res.d.user.id !== userId)
           dispatch(
             openSuccessSnackbar(`You've just received a message from ${res.d.user.username}`),
           );
-      } else dispatch(setLastNotification((res as WebsocketMessage<DetailedNotification>).d));
+      } else if (Object.values(NotificationType).includes(res.a))
+        dispatch(setLastNotification((res as WebsocketMessage<DetailedNotification>).d));
     },
     () => console.log('ws error'),
     () => console.log('ws open'),
@@ -30,5 +32,5 @@ export const wsInit = () => {
     wsSend({
       action: 'ping',
     });
-  }, 30000);
+  }, 10 * 60 * 1000);
 };
