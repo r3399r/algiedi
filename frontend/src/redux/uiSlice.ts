@@ -7,6 +7,8 @@ export type UiState = {
   showSnackbar: boolean;
   snackbarType: 'success' | 'fail';
   snackbarMessage: string | undefined;
+  showSnackbarChat: boolean;
+  snackbarChatMessage: string | undefined;
   isProjectInfoEdit: boolean;
   profileTab: number;
   profileExhibitTab: number;
@@ -19,6 +21,8 @@ const initialState: UiState = {
   showSnackbar: false,
   snackbarType: 'success',
   snackbarMessage: undefined,
+  showSnackbarChat: false,
+  snackbarChatMessage: undefined,
   isProjectInfoEdit: false,
   profileTab: 0,
   profileExhibitTab: 0,
@@ -53,6 +57,13 @@ export const uiSlice = createSlice({
     closeSnackbar: (state: UiState) => {
       state.showSnackbar = false;
     },
+    openSnackbarChat: (state: UiState, action: PayloadAction<string>) => {
+      state.showSnackbarChat = true;
+      state.snackbarChatMessage = action.payload;
+    },
+    closeSnackbarChat: (state: UiState) => {
+      state.showSnackbarChat = false;
+    },
     setProjectInfoIsEdit: (state: UiState, action: PayloadAction<boolean>) => {
       state.isProjectInfoEdit = action.payload;
     },
@@ -73,6 +84,8 @@ export const {
   openSuccessSnackbar,
   openFailSnackbar,
   closeSnackbar,
+  openSnackbarChat,
+  closeSnackbarChat,
   setProjectInfoIsEdit,
   setProfileTab,
   setProfileExhibitTab,

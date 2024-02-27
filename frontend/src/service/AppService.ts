@@ -3,7 +3,7 @@ import { Chat, WebsocketMessage } from 'src/model/backend/api/Ws';
 import { NotificationType } from 'src/model/backend/constant/Notification';
 import { setLastNotification } from 'src/redux/apiSlice';
 import { dispatch, getState } from 'src/redux/store';
-import { openSuccessSnackbar } from 'src/redux/uiSlice';
+import { openSnackbarChat } from 'src/redux/uiSlice';
 import { setLastChat } from 'src/redux/wsSlice';
 import { wsSend, wsStart } from 'src/util/wsTick';
 
@@ -18,9 +18,7 @@ export const wsInit = () => {
       if (res.a === 'chat') {
         dispatch(setLastChat((res as WebsocketMessage<Chat>).d));
         if (res.d.user.id !== userId)
-          dispatch(
-            openSuccessSnackbar(`You've just received a message from ${res.d.user.username}`),
-          );
+          dispatch(openSnackbarChat(`You've just received a message from ${res.d.user.username}`));
       } else if (Object.values(NotificationType).includes(res.a))
         dispatch(setLastNotification((res as WebsocketMessage<DetailedNotification>).d));
     },

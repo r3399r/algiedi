@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import Loader from './component/Loader';
 import Snackbar from './component/Snackbar';
+import SnackbarChat from './component/SnackbarChat';
 import { configStore } from './redux/store';
 import reportWebVitals from './reportWebVitals';
 import './index.css';
@@ -18,6 +19,7 @@ root.render(
       <App />
       <Loader />
       <Snackbar />
+      <SnackbarChat />
     </BrowserRouter>
   </Provider>,
 );
