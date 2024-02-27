@@ -80,29 +80,38 @@ export class WsService {
 
     await Promise.all(
       users.map(async (u) => {
-        if (u.id === userId) return;
-        else if (!u.connectionId)
-          await this.ses
-            .sendEmail({
-              Destination: {
-                ToAddresses: [u.email],
-              },
-              Message: {
-                Body: {
-                  Text: {
+        if (!u.connectionId) {
+          if (
+            u.lastSentAt === null ||
+            new Date().getTime() - new Date(u.lastSentAt).getTime() >
+              30 * 60 * 1000
+          ) {
+            await this.ses
+              .sendEmail({
+                Destination: {
+                  ToAddresses: [u.email],
+                },
+                Message: {
+                  Body: {
+                    Text: {
+                      Charset: 'UTF-8',
+                      Data: `Hello ${u.username}, ${sender?.username} left you a message in regards to the project.`,
+                    },
+                  },
+                  Subject: {
                     Charset: 'UTF-8',
-                    Data: `Hello ${u.username}, ${sender?.username} left you a message in regards to the project.`,
+                    Data: `You've recevied a message from ${sender?.username}`,
                   },
                 },
-                Subject: {
-                  Charset: 'UTF-8',
-                  Data: `You've recevied a message from ${sender?.username}`,
-                },
-              },
-              Source: 'GoTron@gotronmusic.com',
-            })
-            .promise();
-        else await this.awsService.sendWsMessage(u.connectionId, message);
+                Source: 'GoTron@gotronmusic.com',
+              })
+              .promise();
+            await this.userAccess.save({
+              ...u,
+              lastSentAt: new Date().toISOString(),
+            });
+          }
+        } else await this.awsService.sendWsMessage(u.connectionId, message);
       })
     );
 

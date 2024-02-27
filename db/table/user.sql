@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS user (
 	avatar VARCHAR(255) NULL,
 	last_project_id VARCHAR(36) NULL,
 	connection_id VARCHAR(255) NULL,
+	last_sent_at TIMESTAMP NULL,
 	created_at TIMESTAMP NULL,
 	updated_at TIMESTAMP NULL,
 	PRIMARY KEY (id ASC),

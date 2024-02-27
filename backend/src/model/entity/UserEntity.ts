@@ -17,6 +17,7 @@ export type User = {
   avatar: string | null;
   lastProjectId: string | null;
   connectionId: string | null;
+  lastSentAt: string | null;
   createdAt: string | null;
   updatedAt: string | null;
 };
@@ -70,6 +71,9 @@ export class UserEntity implements User {
 
   @Column({ type: 'varchar', name: 'connection_id', default: null })
   connectionId: string | null = null;
+
+  @Column({ type: 'timestamp', name: 'last_sent_at', default: null })
+  lastSentAt: string | null = null;
 
   @Column({ type: 'timestamp', name: 'created_at', default: null })
   createdAt!: string;
