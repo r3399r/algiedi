@@ -84,7 +84,7 @@ export class WsService {
           if (
             u.lastSentAt === null ||
             new Date().getTime() - new Date(u.lastSentAt).getTime() >
-              30 * 60 * 1000
+              15 * 60 * 1000
           ) {
             await this.ses
               .sendEmail({
