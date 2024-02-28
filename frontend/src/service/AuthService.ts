@@ -16,6 +16,7 @@ import {
   signUp,
 } from 'src/util/cognito';
 import { sleep } from 'src/util/sleep';
+import { wsStop } from 'src/util/wsTick';
 
 export const login = async (email: string, password: string) => {
   try {
@@ -131,6 +132,7 @@ export const logout = async () => {
     dispatch(startWaiting());
     const cognitoUser = await getCurrentUser();
     cognitoUser.signOut();
+    wsStop();
     localStorage.removeItem('token');
     localStorage.removeItem('expiration');
     dispatch(setIsLogin(false));

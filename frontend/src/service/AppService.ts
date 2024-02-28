@@ -17,8 +17,8 @@ export const wsInit = () => {
       if (res.a === 'channel' || res.a === 'ping') return;
       if (res.a === 'chat') {
         dispatch(setLastChat((res as WebsocketMessage<Chat>).d));
-        if (res.d.user.id !== userId)
-          dispatch(openSnackbarChat(`You've just received a message from ${res.d.user.username}`));
+        if (res.d.user?.id !== userId)
+          dispatch(openSnackbarChat((res as WebsocketMessage<Chat>).d));
       } else if (Object.values(NotificationType).includes(res.a))
         dispatch(setLastNotification((res as WebsocketMessage<DetailedNotification>).d));
     },

@@ -2,7 +2,7 @@ import Slide, { SlideProps } from '@mui/material/Slide';
 import MuiSnackbar from '@mui/material/Snackbar';
 import { SyntheticEvent, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Page } from 'src/constant/Page';
 import { RootState } from 'src/redux/store';
 import { closeSnackbarChat } from 'src/redux/uiSlice';
@@ -11,15 +11,21 @@ const Transition = (props: SlideProps) => <Slide {...props} direction="up" />;
 
 const SnackbarChat = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
-  const { showSnackbarChat, snackbarChatMessage } = useSelector(
-    (rootState: RootState) => rootState.ui,
-  );
+  const {
+    ui: { showSnackbarChat, snackbarChatMessage },
+    me: { lastProjectId },
+  } = useSelector((rootState: RootState) => rootState);
 
   useEffect(() => {
     if (showSnackbarChat === false) setOpen(false);
-    else if (location.pathname === Page.Project) dispatch(closeSnackbarChat());
+    else if (
+      location.pathname === Page.Project &&
+      lastProjectId === snackbarChatMessage?.project?.id
+    )
+      dispatch(closeSnackbarChat());
     else setOpen(true);
   }, [showSnackbarChat]);
 
@@ -37,7 +43,10 @@ const SnackbarChat = () => {
       onClose={onClose}
       autoHideDuration={5000}
     >
-      <div className="bg-green p-4 text-center text-white">{snackbarChatMessage}</div>
+      <div
+        className="cursor-pointer bg-green p-4 text-center text-white"
+        onClick={() => navigate(Page.Project, { state: { id: snackbarChatMessage?.project?.id } })}
+      >{`[${snackbarChatMessage?.project?.info.name}] ${snackbarChatMessage?.user?.username}: ${snackbarChatMessage?.content}`}</div>
     </MuiSnackbar>
   );
 };

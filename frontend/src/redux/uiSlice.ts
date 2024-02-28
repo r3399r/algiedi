@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Chat } from 'src/model/backend/api/Ws';
 
 export type UiState = {
   workload: number;
@@ -8,7 +9,7 @@ export type UiState = {
   snackbarType: 'success' | 'fail';
   snackbarMessage: string | undefined;
   showSnackbarChat: boolean;
-  snackbarChatMessage: string | undefined;
+  snackbarChatMessage: Chat | undefined;
   isProjectInfoEdit: boolean;
   profileTab: number;
   profileExhibitTab: number;
@@ -57,7 +58,7 @@ export const uiSlice = createSlice({
     closeSnackbar: (state: UiState) => {
       state.showSnackbar = false;
     },
-    openSnackbarChat: (state: UiState, action: PayloadAction<string>) => {
+    openSnackbarChat: (state: UiState, action: PayloadAction<Chat>) => {
       state.showSnackbarChat = true;
       state.snackbarChatMessage = action.payload;
     },

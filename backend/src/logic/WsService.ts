@@ -69,10 +69,12 @@ export class WsService {
       where: { id: In(pu.map((p) => p.userId)) },
     });
     const sender = users.find((v) => v.id === userId);
+    const project = pu.length > 0 ? pu[0].project : undefined;
     const message: WebsocketMessage<Chat> = {
       a: WsType.Chat,
       d: {
         user: sender,
+        project,
         content,
         createdAt: newChat.createdAt,
       },
@@ -95,7 +97,7 @@ export class WsService {
                   Body: {
                     Text: {
                       Charset: 'UTF-8',
-                      Data: `Hello ${u.username}, ${sender?.username} left you a message in regards to the project.`,
+                      Data: `Hello ${u.username}, ${sender?.username} left you a message in regards to the project.\nProject: ${project?.info.name}\nhttps://dev.gotronmusic.com/project?id=${project?.id}`,
                     },
                   },
                   Subject: {

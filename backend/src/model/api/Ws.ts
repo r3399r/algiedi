@@ -1,4 +1,5 @@
 import { NotificationType } from 'src/model/constant/Notification';
+import { Project } from 'src/model/entity/ProjectEntity';
 import { User } from 'src/model/entity/UserEntity';
 
 export enum WsType {
@@ -9,6 +10,7 @@ export enum WsType {
 
 export type Chat = {
   user?: User;
+  project?: Project;
   content: string;
   createdAt: string;
 };
