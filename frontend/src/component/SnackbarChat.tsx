@@ -3,6 +3,7 @@ import MuiSnackbar from '@mui/material/Snackbar';
 import { SyntheticEvent, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
+import AudioNotification from 'src/audio/notification.mp3';
 import { Page } from 'src/constant/Page';
 import { RootState } from 'src/redux/store';
 import { closeSnackbarChat } from 'src/redux/uiSlice';
@@ -26,7 +27,10 @@ const SnackbarChat = () => {
       lastProjectId === snackbarChatMessage?.project?.id
     )
       dispatch(closeSnackbarChat());
-    else setOpen(true);
+    else {
+      setOpen(true);
+      new Audio(AudioNotification).play();
+    }
   }, [showSnackbarChat]);
 
   const onClose = (event: SyntheticEvent | Event, reason?: string) => {
