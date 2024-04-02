@@ -20,7 +20,8 @@
     "build:lambda": "npm install && ttsc",
     "pre:commit": "run-s lint test:coverage build:*",
     "pre:dev": "run-s fix test:coverage",
-    "pre:deploy": "run-s clean build:*"
+    "pre:deploy": "run-s clean build:*",
+    "docker:fix": "docker-compose -f docker-compose.builder.yml run --rm fix"
   },
   "license": "ISC",
   "dependencies": {

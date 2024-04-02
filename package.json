@@ -5,17 +5,9 @@
   "license": "ISC",
   "scripts": {
     "check:frontend": "npm --prefix ./frontend/ run pre:commit",
-    "check:backend": "npm --prefix ./backend/ run pre:commit",
-    "fix:frontend": "npm --prefix ./frontend/ run fix",
-    "fix:backend": "npm --prefix ./backend/ run fix",
+    "check:backend": "cd backend && docker-compose -f docker-compose.builder.yml run --rm pre-commit",
     "pre:commit": "run-p check:*",
-    "fix": "run-p fix:*",
-    "prepare": "husky install",
-    "install:frontend": "cd frontend && npm install && cd ..",
-    "install:backend": "cd backend && npm install && cd ..",
-    "postinstall": "run-s install:*",
-    "pre:deploy:frontend": "npm --prefix ./frontend/ run pre:deploy",
-    "pre:deploy:backend": "npm --prefix ./backend/ run pre:deploy"
+    "prepare": "husky install"
   },
   "devDependencies": {
     "husky": "^7.0.0",

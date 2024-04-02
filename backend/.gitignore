@@ -11,3 +11,4 @@ coverage
 
 # aws
 packaged.yaml
+.env
