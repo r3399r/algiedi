@@ -21,7 +21,9 @@
     "pre:commit": "run-s lint test:coverage build:*",
     "pre:dev": "run-s fix test:coverage",
     "pre:deploy": "run-s clean build:*",
-    "docker:fix": "docker-compose -f docker-compose.builder.yml run --rm fix"
+    "docker:install": "docker-compose -f docker-compose.builder.yml run -T --rm install",
+    "docker:fix": "docker-compose -f docker-compose.builder.yml run -T --rm fix",
+    "docker:pre:commit": "docker-compose -f docker-compose.builder.yml run -T --rm pre-commit"
   },
   "license": "ISC",
   "dependencies": {

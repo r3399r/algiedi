@@ -5,10 +5,10 @@
   "license": "ISC",
   "scripts": {
     "check:frontend": "npm --prefix ./frontend/ run pre:commit",
-    "check:backend": "cd backend && docker-compose -f docker-compose.builder.yml run --rm pre-commit",
+    "check:backend": "npm --prefix ./backend/ run docker:pre:commit",
     "pre:commit": "run-p check:*",
     "fix:frontend": "npm --prefix ./frontend/ run fix",
-    "fix:backend": "cd backend && docker-compose -f docker-compose.builder.yml run --rm fix",
+    "fix:backend": "npm --prefix ./backend/ run docker:fix",
     "fix": "run-p fix:*",
     "prepare": "husky install"
   },

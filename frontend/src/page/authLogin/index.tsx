@@ -1,3 +1,5 @@
+import FacebookLogin from '@greatsumini/react-facebook-login';
+import { useGoogleLogin } from '@react-oauth/google';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -40,19 +42,40 @@ const AuthLogin = () => {
       });
   };
 
+  const googleLogin = useGoogleLogin({
+    onSuccess: (tokenResponse) => console.log(tokenResponse),
+    onError: (error) => console.log(error),
+  });
+
   return (
     <div className="mt-16">
       <div className="mx-auto flex max-w-[1000px]">
         <div className="w-[600px] rounded-l-[30px] bg-[#eaeaea] p-12">
           <Form methods={methods} onSubmit={onSubmit} className="mx-auto w-[400px]">
             <div className="text-center text-[40px] font-bold text-[#7ba0ff]">Login</div>
-            <div className="mt-6 flex items-center justify-around gap-4">
-              <div className="flex cursor-pointer items-center gap-2 rounded-[30px] bg-white p-2 text-xs font-bold">
-                <img src={IcLoginFacebook} />
-                <div>Sign in with Facebook</div>
-              </div>
+            <div className="mt-6 flex items-center justify-around gap-2">
+              <FacebookLogin
+                appId={process.env.REACT_APP_FACEBOOK_CLIENT_ID ?? ''}
+                onSuccess={(response) => {
+                  console.log('Login Success!', response);
+                }}
+                onFail={(error) => {
+                  console.log('Login Failed!', error);
+                }}
+                onProfileSuccess={(response) => {
+                  console.log('Get Profile Success!', response);
+                }}
+              >
+                <div className="flex cursor-pointer items-center gap-2 rounded-[30px] bg-white p-2 text-xs font-bold">
+                  <img src={IcLoginFacebook} />
+                  <div>Sign in with Facebook</div>
+                </div>
+              </FacebookLogin>
               <div>OR</div>
-              <div className="flex cursor-pointer items-center gap-2 rounded-[30px] bg-[#4c81e4] p-2 text-xs font-bold text-white">
+              <div
+                className="flex cursor-pointer items-center gap-2 rounded-[30px] bg-[#4c81e4] p-2 text-xs font-bold text-white"
+                onClick={() => googleLogin()}
+              >
                 <img src={IcLoginGoogle} />
                 <div>Sign in with Google</div>
               </div>
