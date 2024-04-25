@@ -13,3 +13,6 @@ go to the folder you want to work in docker container and run
 docker run -dit -v .:/usr/src/app --name algiedi sleavely/node-awscli:18.x
 ```
 then you can use vs-code extenstion, Remote Development, to attach to the container and work in it.
+
+## husky
+if you don't want to commit without checking. add `--no-verify`
