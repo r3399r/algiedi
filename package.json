@@ -5,12 +5,17 @@
   "license": "ISC",
   "scripts": {
     "check:frontend": "npm --prefix ./frontend/ run pre:commit",
-    "check:backend": "npm --prefix ./backend/ run docker:pre:commit",
-    "pre:commit": "run-p check:*",
+    "check:backend": "npm --prefix ./backend/ run pre:commit",
     "fix:frontend": "npm --prefix ./frontend/ run fix",
-    "fix:backend": "npm --prefix ./backend/ run docker:fix",
+    "fix:backend": "npm --prefix ./backend/ run fix",
+    "pre:commit": "run-p check:*",
     "fix": "run-p fix:*",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "install:frontend": "npm --prefix ./frontend/ install",
+    "install:backend": "npm --prefix ./backend/ install",
+    "postinstall": "run-s install:*",
+    "pre:deploy:frontend": "npm --prefix ./frontend/ run pre:deploy",
+    "pre:deploy:backend": "npm --prefix ./backend/ run pre:deploy"
   },
   "devDependencies": {
     "husky": "^7.0.0",
