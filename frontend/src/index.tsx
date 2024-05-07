@@ -1,4 +1,3 @@
-import { GoogleOAuthProvider } from '@react-oauth/google';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
@@ -15,16 +14,14 @@ const store = configStore();
 const root = createRoot(document.getElementById('root') as Element);
 
 root.render(
-  <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID ?? ''}>
-    <Provider store={store}>
-      <BrowserRouter>
-        <App />
-        <Loader />
-        <Snackbar />
-        <SnackbarChat />
-      </BrowserRouter>
-    </Provider>
-  </GoogleOAuthProvider>,
+  <Provider store={store}>
+    <BrowserRouter>
+      <App />
+      <Loader />
+      <Snackbar />
+      <SnackbarChat />
+    </BrowserRouter>
+  </Provider>,
 );
 
 // If you want to start measuring performance in your app, pass a function

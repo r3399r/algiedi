@@ -49,16 +49,28 @@ const AuthRegister = () => {
         >
           <div className="mx-auto w-[400px]">
             <div className="text-center text-[40px] font-bold text-[#7ba0ff]">Create account</div>
-            <div className="mt-6 flex items-center justify-around gap-4">
-              <div className="flex cursor-pointer items-center gap-2 rounded-[30px] bg-white p-2 text-xs font-bold">
-                <img src={IcLoginFacebook} />
-                <div>Sign in with Facebook</div>
-              </div>
+            <div className="mt-6 flex items-center justify-around gap-2">
+              <a
+                href={`${process.env.REACT_APP_COGNITO_DOMAIN}/oauth2/authorize?response_type=code&client_id=33i739in06rkqhtdn8kbitgbmi&redirect_uri=https://dev.gotronmusic.com/api/explore&state=12345&identity_provider=Facebook`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <div className="flex cursor-pointer items-center gap-2 rounded-[30px] bg-white p-2 text-xs font-bold">
+                  <img src={IcLoginFacebook} />
+                  <div>Sign in with Facebook</div>
+                </div>
+              </a>
               <div>OR</div>
-              <div className="flex cursor-pointer items-center gap-2 rounded-[30px] bg-[#4c81e4] p-2 text-xs font-bold text-white">
-                <img src={IcLoginGoogle} />
-                <div>Sign in with Google</div>
-              </div>
+              <a
+                href={`${process.env.REACT_APP_COGNITO_DOMAIN}/oauth2/authorize?response_type=code&client_id=33i739in06rkqhtdn8kbitgbmi&redirect_uri=https://dev.gotronmusic.com/api/explore&state=12345&identity_provider=Google`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <div className="flex cursor-pointer items-center gap-2 rounded-[30px] bg-[#4c81e4] p-2 text-xs font-bold text-white">
+                  <img src={IcLoginGoogle} />
+                  <div>Sign in with Google</div>
+                </div>
+              </a>
             </div>
             <div className="mt-5">
               <FormInput name="email" label="Email" required type="email" />
