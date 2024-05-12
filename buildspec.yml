@@ -7,6 +7,8 @@ phases:
       - sudo apt-get dist-upgrade -y
       - sudo apt-get install -y mysql-client
       - npm install
+      - npm run install:frontend
+      - npm run install:backend
   build:
     commands:
       - mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PWD --database=$PROJECT < db/script/deploy.sql
