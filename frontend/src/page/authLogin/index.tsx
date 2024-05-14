@@ -1,3 +1,5 @@
+import { Buffer } from 'buffer';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -6,6 +8,7 @@ import Footer from 'src/component/Footer';
 import Form from 'src/component/Form';
 import FormInput from 'src/component/FormInput';
 import { Page } from 'src/constant/Page';
+import useQuery from 'src/hook/useQuery';
 import IcLoginFacebook from 'src/image/ic-login-facebook.svg';
 import IcLoginGoogle from 'src/image/ic-login-google.svg';
 import { LoginForm } from 'src/model/Form';
@@ -15,9 +18,29 @@ import { login } from 'src/service/AuthService';
 const AuthLogin = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { code, state } = useQuery();
   const methods = useForm<LoginForm>();
   const location = useLocation();
   const redirect = location.state as { from: string; state: unknown } | undefined;
+
+  useEffect(() => {
+    if (code && state)
+      fetch(`${process.env.REACT_APP_COGNITO_DOMAIN}/oauth2/token`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          Authorization: `Basic ${Buffer.from(
+            `${process.env.REACT_APP_FEDERATED_CLIENT_ID}:${process.env.REACT_APP_FEDERATED_SECRET}`,
+          ).toString('base64')}`,
+        },
+        body: new URLSearchParams({
+          grant_type: 'authorization_code',
+          client_id: process.env.REACT_APP_FEDERATED_CLIENT_ID as string,
+          code,
+          redirect_uri: `${window.location.origin}/auth/login`,
+        }),
+      }).then(async (res) => console.log(await res.json()));
+  }, [code, state]);
 
   const onSubmit = (data: LoginForm) => {
     login(data.email, data.password)
@@ -48,8 +71,8 @@ const AuthLogin = () => {
             <div className="text-center text-[40px] font-bold text-[#7ba0ff]">Login</div>
             <div className="mt-6 flex items-center justify-around gap-2">
               <a
-                href={`${process.env.REACT_APP_COGNITO_DOMAIN}/oauth2/authorize?response_type=code&client_id=33i739in06rkqhtdn8kbitgbmi&redirect_uri=https://dev.gotronmusic.com/api/explore&state=12345&identity_provider=Facebook`}
-                target="_blank"
+                href={`${process.env.REACT_APP_COGNITO_DOMAIN}/oauth2/authorize?response_type=code&client_id=${process.env.REACT_APP_FEDERATED_CLIENT_ID}&redirect_uri=${window.location.origin}/auth/login&state=12345&identity_provider=Facebook`}
+                target="_self"
                 rel="noreferrer"
               >
                 <div className="flex cursor-pointer items-center gap-2 rounded-[30px] bg-white p-2 text-xs font-bold">
@@ -59,8 +82,8 @@ const AuthLogin = () => {
               </a>
               <div>OR</div>
               <a
-                href={`${process.env.REACT_APP_COGNITO_DOMAIN}/oauth2/authorize?response_type=code&client_id=33i739in06rkqhtdn8kbitgbmi&redirect_uri=https://dev.gotronmusic.com/api/explore&state=12345&identity_provider=Google`}
-                target="_blank"
+                href={`${process.env.REACT_APP_COGNITO_DOMAIN}/oauth2/authorize?response_type=code&client_id=${process.env.REACT_APP_FEDERATED_CLIENT_ID}&redirect_uri=${window.location.origin}/auth/login&state=12345&identity_provider=Google`}
+                target="_self"
                 rel="noreferrer"
               >
                 <div className="flex cursor-pointer items-center gap-2 rounded-[30px] bg-[#4c81e4] p-2 text-xs font-bold text-white">
