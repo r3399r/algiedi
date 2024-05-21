@@ -22,12 +22,11 @@ echo ===========================================================================
 
 echo deploy backend AWS...
 cd ../backend
-docker-compose -f docker-compose.builder.yml run --rm install
-docker-compose -f docker-compose.builder.yml run --rm pre-deploy
+npm i
+npm run pre:deploy
+aws cloudformation package --template-file aws/cloudformation/template.yaml --output-template-file packaged.yaml --s3-bucket gotron-cf-midway-ap-southeast-1
 aws cloudformation deploy --template-file packaged.yaml --stack-name $project-$env-stack --parameter-overrides TargetEnvr=$env Project=$project Domain=$domain --no-fail-on-empty-changeset --s3-bucket gotron-cf-midway-ap-southeast-1 --capabilities CAPABILITY_NAMED_IAM
-docker-compose -f docker-compose.builder.yml run --rm compile
-rm -rf ../frontend/src/model/backend
-cp -R lib/src/model ../frontend/src/model/backend
+npm run copy
 echo ====================================================================================
 
 # echo deploy frontend to S3...
