@@ -7,6 +7,7 @@ export type UploadState = {
   theme: string | null;
   genre: string | null;
   language: string | null;
+  caption: string;
   errorTheme: boolean;
   errorGenre: boolean;
   errorLanguage: boolean;
@@ -19,6 +20,7 @@ const initialState: UploadState = {
   theme: null,
   genre: null,
   language: null,
+  caption: '',
   errorTheme: false,
   errorGenre: false,
   errorLanguage: false,
@@ -46,6 +48,7 @@ export const uploadSlice = createSlice({
       if (action.payload.theme !== undefined) state.theme = action.payload.theme;
       if (action.payload.genre !== undefined) state.genre = action.payload.genre;
       if (action.payload.language !== undefined) state.language = action.payload.language;
+      if (action.payload.caption !== undefined) state.caption = action.payload.caption;
       if (action.payload.errorTheme !== undefined) state.errorTheme = action.payload.errorTheme;
       if (action.payload.errorGenre !== undefined) state.errorGenre = action.payload.errorGenre;
       if (action.payload.errorLanguage !== undefined)

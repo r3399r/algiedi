@@ -47,6 +47,7 @@ const Lyrics = ({ inspiration }: Props) => {
         theme: info.theme ?? '',
         genre: info.genre ?? '',
         language: info.language ?? '',
+        caption: info.caption,
       },
       coverFile ?? null,
       checkInspiration ? inspiredId : null,

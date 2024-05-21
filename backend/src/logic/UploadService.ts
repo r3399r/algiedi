@@ -1,4 +1,5 @@
 import { inject, injectable } from 'inversify';
+import { CaptionAccess } from 'src/access/CaptionAccess';
 import { FollowAccess } from 'src/access/FollowAccess';
 import { InfoAccess } from 'src/access/InfoAccess';
 import { LyricsAccess } from 'src/access/LyricsAccess';
@@ -19,6 +20,7 @@ import {
 } from 'src/model/api/Upload';
 import { NotificationType } from 'src/model/constant/Notification';
 import { Role, Status } from 'src/model/constant/Project';
+import { CaptionEntity } from 'src/model/entity/CaptionEntity';
 import { InfoEntity } from 'src/model/entity/InfoEntity';
 import { Lyrics, LyricsEntity } from 'src/model/entity/LyricsEntity';
 import { LyricsHistoryEntity } from 'src/model/entity/LyricsHistoryEntity';
@@ -80,6 +82,9 @@ export class UploadService {
   @inject(UserAccess)
   private readonly userAccess!: UserAccess;
 
+  @inject(CaptionAccess)
+  private readonly captionAccess!: CaptionAccess;
+
   @inject(InfoAccess)
   private readonly infoAccess!: InfoAccess;
 
@@ -96,9 +101,8 @@ export class UploadService {
     info.theme = data.theme;
     info.genre = data.genre;
     info.language = data.language;
-    info.caption = data.caption;
-
     let newInfo = await this.infoAccess.save(info);
+
     if (data.coverFile) {
       const key = await this.awsService.s3Upload(
         data.coverFile,
@@ -107,6 +111,19 @@ export class UploadService {
       newInfo.coverFileUri = key;
       newInfo = await this.infoAccess.save(newInfo);
     }
+
+    if (data.caption)
+      for (const c of data.caption) {
+        const oldCaption = await this.captionAccess.findOne({
+          where: { name: c, infoId: newInfo.id },
+        });
+        if (oldCaption === null) {
+          const caption = new CaptionEntity();
+          caption.name = c;
+          caption.infoId = newInfo.id;
+          await this.captionAccess.save(caption);
+        }
+      }
 
     return newInfo;
   }

@@ -1,5 +1,6 @@
 import { inject, injectable } from 'inversify';
 import { In, Not } from 'typeorm';
+import { CaptionAccess } from 'src/access/CaptionAccess';
 import { ChatAccess } from 'src/access/ChatAccess';
 import { FollowAccess } from 'src/access/FollowAccess';
 import { InfoAccess } from 'src/access/InfoAccess';
@@ -22,6 +23,7 @@ import {
 import { Type } from 'src/model/constant/Creation';
 import { NotificationType } from 'src/model/constant/Notification';
 import { Role, Status } from 'src/model/constant/Project';
+import { CaptionEntity } from 'src/model/entity/CaptionEntity';
 import { InfoEntity } from 'src/model/entity/InfoEntity';
 import { LyricsEntity } from 'src/model/entity/LyricsEntity';
 import { LyricsHistoryEntity } from 'src/model/entity/LyricsHistoryEntity';
@@ -77,6 +79,9 @@ export class ProjectService {
 
   @inject(UserAccess)
   private readonly userAccess!: UserAccess;
+
+  @inject(CaptionAccess)
+  private readonly captionAccess!: CaptionAccess;
 
   @inject(InfoAccess)
   private readonly infoAccess!: InfoAccess;
@@ -177,8 +182,31 @@ export class ProjectService {
     info.theme = data.theme ?? info.theme;
     info.genre = data.genre ?? info.genre;
     info.language = data.language ?? info.language;
-    info.caption = data.caption ?? info.caption;
-    await this.infoAccess.save(info);
+    const newInfo = await this.infoAccess.save(info);
+
+    if (data.caption) {
+      const existingCaptions = await this.captionAccess.find({
+        where: { infoId: newInfo.id },
+      });
+
+      await Promise.all(
+        existingCaptions
+          .filter((v) => !data.caption?.includes(v.name))
+          .map((v) => this.captionAccess.hardDeleteById(v.id))
+      );
+
+      await Promise.all(
+        data.caption
+          .filter((v) => !existingCaptions.map((o) => o.name).includes(v))
+          .map((v) => {
+            const caption = new CaptionEntity();
+            caption.name = v;
+            caption.infoId = newInfo.id;
+
+            return this.captionAccess.save(caption);
+          })
+      );
+    }
 
     // notify
     for (const v of pu) {

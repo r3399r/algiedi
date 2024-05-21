@@ -11,17 +11,22 @@ export class InfoAccess {
   @inject(Database)
   private readonly database!: Database;
 
-  public async find(options: FindManyOptions<Info>) {
+  public async find(options?: FindManyOptions<Info>) {
     const qr = await this.database.getQueryRunner();
 
-    return await qr.manager.find<Info>(InfoEntity.name, options);
+    return await qr.manager.find<Info>(InfoEntity.name, {
+      relations: { caption: true },
+      ...options,
+    });
   }
 
-  public async findOneOrFailById(id: string) {
+  public async findOneOrFailById(id: string, options?: FindManyOptions<Info>) {
     const qr = await this.database.getQueryRunner();
 
     return await qr.manager.findOneOrFail<Info>(InfoEntity.name, {
       where: { id },
+      relations: { caption: true },
+      ...options,
     });
   }
 

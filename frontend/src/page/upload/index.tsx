@@ -120,6 +120,12 @@ const Upload = () => {
                 </MultiSelectOption>
               ))}
             </MultiSelect>
+            <Input
+              label="Caption"
+              placeholder="#some #caption"
+              value={info.caption}
+              onChange={(e) => dispatch(setInfo({ caption: e.target.value }))}
+            />
           </div>
         </div>
         <div>

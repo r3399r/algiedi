@@ -7,7 +7,14 @@ import { file2Base64 } from 'src/util/fileConverter';
 import { loadProjects } from './OverallService';
 
 export const uploadTrack = async (
-  data: { name: string; description: string; theme: string; genre: string; language: string },
+  data: {
+    name: string;
+    description: string;
+    theme: string;
+    genre: string;
+    language: string;
+    caption: string;
+  },
   files: { track: File; tab: File | null; cover: File | null },
   inspiredId: string | null,
 ) => {
@@ -19,8 +26,12 @@ export const uploadTrack = async (
       tabFile: files.tab ? await file2Base64(files.tab) : null,
       coverFile: files.cover ? await file2Base64(files.cover) : null,
       inspiredId,
-      caption: '',
-      ...data,
+      name: data.name,
+      description: data.description,
+      theme: data.theme,
+      genre: data.genre,
+      language: data.language,
+      caption: data.caption.match(/#[\p{L}0-9]+/giu) ?? undefined,
     });
 
     await loadProjects();
@@ -37,6 +48,7 @@ export const uploadLyrics = async (
     theme: string;
     genre: string;
     language: string;
+    caption: string;
   },
   coverFile: File | null,
   inspiredId: string | null,
@@ -47,8 +59,13 @@ export const uploadLyrics = async (
       type: 'lyrics',
       coverFile: coverFile ? await file2Base64(coverFile) : null,
       inspiredId,
-      caption: '',
-      ...data,
+      name: data.name,
+      description: data.description,
+      theme: data.theme,
+      genre: data.genre,
+      language: data.language,
+      caption: data.caption.match(/#[\p{L}0-9]+/giu) ?? undefined,
+      lyrics: data.lyrics,
     });
 
     await loadProjects();

@@ -15,7 +15,7 @@ export class TrackAccess {
     const qr = await this.database.getQueryRunner();
 
     return await qr.manager.find<Track>(TrackEntity.name, {
-      relations: { user: true, info: true },
+      relations: { user: true, info: { caption: true } },
       ...options,
     });
   }
@@ -24,7 +24,7 @@ export class TrackAccess {
     const qr = await this.database.getQueryRunner();
 
     return await qr.manager.findOne<Track>(TrackEntity.name, {
-      relations: { user: true, info: true },
+      relations: { user: true, info: { caption: true } },
       ...options,
     });
   }
@@ -33,7 +33,7 @@ export class TrackAccess {
     const qr = await this.database.getQueryRunner();
 
     return await qr.manager.findOneOrFail<Track>(TrackEntity.name, {
-      relations: { user: true, info: true },
+      relations: { user: true, info: { caption: true } },
       ...options,
     });
   }

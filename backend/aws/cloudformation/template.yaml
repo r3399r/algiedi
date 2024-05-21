@@ -1915,6 +1915,10 @@ Resources:
                 "theme":{"type": "string"},
                 "genre":{"type": "string"},
                 "language":{"type": "string"},
+                "caption":{
+                  "type": "array",
+                  "items": {"type": "string"}
+                }
               }
             },
             "postProjectIdOriginal": {
@@ -1933,6 +1937,10 @@ Resources:
                 "theme":{"type": "string"},
                 "genre":{"type": "string"},
                 "language":{"type": "string"},
+                "caption":{
+                  "type": "array",
+                  "items": {"type": "string"}
+                }
               },
               "required": ["type","name","description","theme","genre","language"]
             },

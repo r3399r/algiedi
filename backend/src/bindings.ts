@@ -7,6 +7,7 @@ import {
   SNS,
 } from 'aws-sdk';
 import { Container } from 'inversify';
+import { CaptionAccess } from './access/CaptionAccess';
 import { ChatAccess } from './access/ChatAccess';
 import { CommentAccess } from './access/CommentAccess';
 import { DbAccess } from './access/DbAccess';
@@ -36,6 +37,7 @@ import { UploadService } from './logic/UploadService';
 import { UserService } from './logic/UserService';
 import { ViewService } from './logic/ViewService';
 import { WsService } from './logic/WsService';
+import { CaptionEntity } from './model/entity/CaptionEntity';
 import { ChatEntity } from './model/entity/ChatEntity';
 import { CommentEntity } from './model/entity/CommentEntity';
 import { FollowEntity } from './model/entity/FollowEntity';
@@ -59,6 +61,7 @@ const container: Container = new Container();
 container.bind<Database>(Database).toSelf().inSingletonScope();
 
 // bind repeatedly for db entities
+container.bind<Function>(dbEntitiesBindingId).toFunction(CaptionEntity);
 container.bind<Function>(dbEntitiesBindingId).toFunction(ChatEntity);
 container.bind<Function>(dbEntitiesBindingId).toFunction(InfoEntity);
 container.bind<Function>(dbEntitiesBindingId).toFunction(LyricsEntity);
@@ -80,6 +83,7 @@ container
 
 // db access for tables
 container.bind<DbAccess>(DbAccess).toSelf();
+container.bind<CaptionAccess>(CaptionAccess).toSelf();
 container.bind<ChatAccess>(ChatAccess).toSelf();
 container.bind<InfoAccess>(InfoAccess).toSelf();
 container.bind<LyricsAccess>(LyricsAccess).toSelf();

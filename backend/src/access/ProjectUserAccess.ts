@@ -19,10 +19,10 @@ export class ProjectUserAccess {
 
     return await qr.manager.find<ProjectUser>(ProjectUserEntity.name, {
       relations: {
-        project: { info: true },
+        project: { info: { caption: true } },
         user: true,
-        lyrics: { info: true },
-        track: { info: true },
+        lyrics: { info: { caption: true } },
+        track: { info: { caption: true } },
       },
       ...options,
     });
@@ -33,10 +33,10 @@ export class ProjectUserAccess {
 
     return await qr.manager.findAndCount<ProjectUser>(ProjectUserEntity.name, {
       relations: {
-        project: { info: true },
+        project: { info: { caption: true } },
         user: true,
-        lyrics: { info: true },
-        track: { info: true },
+        lyrics: { info: { caption: true } },
+        track: { info: { caption: true } },
       },
       ...options,
     });
@@ -61,10 +61,10 @@ export class ProjectUserAccess {
 
     return await qr.manager.findOne<ProjectUser>(ProjectUserEntity.name, {
       relations: {
-        project: { info: true },
+        project: { info: { caption: true } },
         user: true,
-        lyrics: { info: true },
-        track: { info: true },
+        lyrics: { info: { caption: true } },
+        track: { info: { caption: true } },
       },
       ...options,
     });
@@ -77,8 +77,8 @@ export class ProjectUserAccess {
       relations: {
         project: { info: true },
         user: true,
-        lyrics: { info: true },
-        track: { info: true },
+        lyrics: { info: { caption: true } },
+        track: { info: { caption: true } },
       },
       ...options,
     });

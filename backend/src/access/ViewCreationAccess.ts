@@ -18,7 +18,7 @@ export class ViewCreationAccess {
     const qr = await this.database.getQueryRunner();
 
     return await qr.manager.find<ViewCreation>(ViewCreationEntity.name, {
-      relations: { info: true, project: true, user: true },
+      relations: { info: { caption: true }, project: true, user: true },
       ...options,
     });
   }
@@ -27,7 +27,7 @@ export class ViewCreationAccess {
     const qr = await this.database.getQueryRunner();
 
     return await qr.manager.findOne<ViewCreation>(ViewCreationEntity.name, {
-      relations: { info: true, project: true, user: true },
+      relations: { info: { caption: true }, project: true, user: true },
       ...options,
     });
   }
@@ -38,7 +38,7 @@ export class ViewCreationAccess {
     return await qr.manager.findOneOrFail<ViewCreation>(
       ViewCreationEntity.name,
       {
-        relations: { info: true, project: true, user: true },
+        relations: { info: { caption: true }, project: true, user: true },
         ...options,
       }
     );

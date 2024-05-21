@@ -52,6 +52,7 @@ const Track = ({ inspiration }: Props) => {
         theme: info.theme ?? '',
         genre: info.genre ?? '',
         language: info.language ?? '',
+        caption: info.caption,
       },
       { track: trackFile, tab: tabFile ?? null, cover: coverFile ?? null },
       checkInspiration ? inspiredId : null,

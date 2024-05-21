@@ -4,7 +4,7 @@ export type UploadCommon = {
   theme: string;
   genre: string;
   language: string;
-  caption: string;
+  caption?: string[];
   coverFile: string | null;
   inspiredId: string | null;
 };

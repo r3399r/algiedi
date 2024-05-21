@@ -5,7 +5,6 @@ CREATE TABLE IF NOT EXISTS info (
 	theme VARCHAR(255) NULL,
 	genre VARCHAR(255) NULL,
 	language VARCHAR(255) NULL,
-	caption VARCHAR(255) NULL,
 	cover_file_uri VARCHAR(255) NULL,
 	created_at TIMESTAMP NULL,
 	updated_at TIMESTAMP NULL,

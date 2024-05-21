@@ -9,7 +9,7 @@ export type PutProjectRequest = {
   theme?: string;
   genre?: string;
   language?: string;
-  caption?: string;
+  caption?: string[];
 };
 
 export type PostProjectIdOriginalRequest =

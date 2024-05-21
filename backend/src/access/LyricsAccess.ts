@@ -15,7 +15,7 @@ export class LyricsAccess {
     const qr = await this.database.getQueryRunner();
 
     return await qr.manager.find<Lyrics>(LyricsEntity.name, {
-      relations: { user: true, info: true },
+      relations: { user: true, info: { caption: true } },
       ...options,
     });
   }
@@ -24,7 +24,7 @@ export class LyricsAccess {
     const qr = await this.database.getQueryRunner();
 
     return await qr.manager.findOne<Lyrics>(LyricsEntity.name, {
-      relations: { user: true, info: true },
+      relations: { user: true, info: { caption: true } },
       ...options,
     });
   }
@@ -33,7 +33,7 @@ export class LyricsAccess {
     const qr = await this.database.getQueryRunner();
 
     return await qr.manager.findOneOrFail<Lyrics>(LyricsEntity.name, {
-      relations: { user: true, info: true },
+      relations: { user: true, info: { caption: true } },
       ...options,
     });
   }

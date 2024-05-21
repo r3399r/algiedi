@@ -1,4 +1,12 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity, Generated } from 'typeorm';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  Generated,
+  OneToMany,
+} from 'typeorm';
+import { Caption, CaptionEntity } from './CaptionEntity';
 
 export type Info = {
   id: string;
@@ -7,7 +15,7 @@ export type Info = {
   theme: string | null;
   genre: string | null;
   language: string | null;
-  caption: string | null;
+  caption: Caption[];
   coverFileUri: string | null;
   createdAt: string | null;
   updatedAt: string | null;
@@ -34,8 +42,8 @@ export class InfoEntity implements Info {
   @Column({ type: 'varchar', default: null })
   language: string | null = null;
 
-  @Column({ type: 'varchar', default: null })
-  caption: string | null = null;
+  @OneToMany(() => CaptionEntity, (caption) => caption.info)
+  caption!: Caption[];
 
   @Column({ type: 'varchar', name: 'cover_file_uri', default: null })
   coverFileUri: string | null = null;
