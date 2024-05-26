@@ -20,7 +20,7 @@ export class ViewCreationExploreAccess {
     return await qr.manager.find<ViewCreationExplore>(
       ViewCreationExploreEntity.name,
       {
-        relations: { info: true, project: true, user: true },
+        relations: { info: { caption: true }, project: true, user: true },
         ...options,
       }
     );
@@ -32,7 +32,7 @@ export class ViewCreationExploreAccess {
     return await qr.manager.findAndCount<ViewCreationExplore>(
       ViewCreationExploreEntity.name,
       {
-        relations: { info: true, project: true, user: true },
+        relations: { info: { caption: true }, project: true, user: true },
         ...options,
       }
     );
@@ -44,7 +44,7 @@ export class ViewCreationExploreAccess {
     return await qr.manager.findOneOrFail<ViewCreationExplore>(
       ViewCreationExploreEntity.name,
       {
-        relations: { info: true, project: true, user: true },
+        relations: { info: { caption: true }, project: true, user: true },
         ...options,
       }
     );

@@ -7,7 +7,7 @@ import ShareIcon from '@mui/icons-material/Share';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { format, formatDistanceToNow } from 'date-fns';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
@@ -37,6 +37,14 @@ const ExploreDetail = () => {
   const [creation, setCreation] = useState<GetExploreIdResponse>();
   const [myComment, setMyComment] = useState<string>('');
   const [refresh, setRefresh] = useState(false);
+  const hashtags = useMemo(() => {
+    if (!creation) return [];
+    const detail = `${creation.info.genre},${creation.info.theme},${creation.info.language}`
+      ?.split(',')
+      .map((v) => `#${v}`);
+
+    return [...detail, ...creation.info.caption.map((v) => v.name)].join(' ');
+  }, [creation]);
 
   useEffect(() => {
     if (id === undefined) return;
@@ -88,12 +96,7 @@ const ExploreDetail = () => {
         <div className="ml-10 w-fit rounded-md bg-dark/30 p-4 text-white">
           <div className="text-lg font-bold">{creation.info.name}</div>
           <br />
-          <div>
-            {creation.info.genre
-              ?.split(',')
-              .map((v) => `#${v}`)
-              .join(' ')}
-          </div>
+          <div>{hashtags}</div>
           <div>
             Publish Date:{' '}
             {format(
