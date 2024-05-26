@@ -31,7 +31,7 @@ export const uploadTrack = async (
       theme: data.theme,
       genre: data.genre,
       language: data.language,
-      caption: data.caption.match(/#[\p{L}0-9]+/giu) ?? undefined,
+      caption: data.caption.match(/#[\p{L}0-9]+/giu)?.map((v) => v.split('#')[1]) ?? undefined,
     });
 
     await loadProjects();
@@ -64,7 +64,7 @@ export const uploadLyrics = async (
       theme: data.theme,
       genre: data.genre,
       language: data.language,
-      caption: data.caption.match(/#[\p{L}0-9]+/giu) ?? undefined,
+      caption: data.caption.match(/#[\p{L}0-9]+/giu)?.map((v) => v.split('#')[1]) ?? undefined,
       lyrics: data.lyrics,
     });
 

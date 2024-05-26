@@ -39,11 +39,13 @@ const ExploreDetail = () => {
   const [refresh, setRefresh] = useState(false);
   const hashtags = useMemo(() => {
     if (!creation) return [];
-    const detail = `${creation.info.genre},${creation.info.theme},${creation.info.language}`
-      ?.split(',')
-      .map((v) => `#${v}`);
 
-    return [...detail, ...creation.info.caption.map((v) => v.name)].join(' ');
+    return [
+      ...`${creation.info.genre},${creation.info.theme},${creation.info.language}`.split(','),
+      ...creation.info.caption.map((v) => v.name),
+    ]
+      .map((v) => `#${v}`)
+      .join(' ');
   }, [creation]);
 
   useEffect(() => {

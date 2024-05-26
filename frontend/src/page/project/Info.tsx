@@ -25,7 +25,9 @@ const Info = ({ project, doRefresh, isOwner }: Props) => {
   const [theme, setTheme] = useState<string>(project.info.theme ?? '');
   const [genre, setGenre] = useState<string>(project.info.genre ?? '');
   const [language, setLanguage] = useState<string>(project.info.language ?? '');
-  const [caption, setCaption] = useState<string>(project.info.caption.map((v) => v.name).join(' '));
+  const [caption, setCaption] = useState<string>(
+    project.info.caption.map((v) => `#${v.name}`).join(' '),
+  );
   const [errorTheme, setErrorTheme] = useState<boolean>(false);
   const [errorGenre, setErrorGenre] = useState<boolean>(false);
   const [errorLanguage, setErrorLanguage] = useState<boolean>(false);
@@ -50,7 +52,7 @@ const Info = ({ project, doRefresh, isOwner }: Props) => {
       theme,
       genre,
       language,
-      caption: caption.match(/#[\p{L}0-9]+/giu) ?? undefined,
+      caption: caption.match(/#[\p{L}0-9]+/giu)?.map((v) => v.split('#')[1]) ?? undefined,
     })
       .then(doRefresh)
       .catch((err) => dispatch(openFailSnackbar(err)));

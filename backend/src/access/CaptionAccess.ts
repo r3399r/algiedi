@@ -17,7 +17,7 @@ export class CaptionAccess {
     return await qr.manager.findOne<Caption>(CaptionEntity.name, options);
   }
 
-  public async find(options: FindManyOptions<Caption>) {
+  public async find(options?: FindManyOptions<Caption>) {
     const qr = await this.database.getQueryRunner();
 
     return await qr.manager.find<Caption>(CaptionEntity.name, options);

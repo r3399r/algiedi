@@ -15,10 +15,7 @@ import { CommentAccess } from 'src/access/CommentAccess';
 import { DbAccess } from 'src/access/DbAccess';
 import { FollowAccess } from 'src/access/FollowAccess';
 import { LikeAccess } from 'src/access/LikeAccess';
-import { LyricsAccess } from 'src/access/LyricsAccess';
-import { ProjectAccess } from 'src/access/ProjectAccess';
 import { ProjectUserAccess } from 'src/access/ProjectUserAccess';
-import { TrackAccess } from 'src/access/TrackAccess';
 import { UserAccess } from 'src/access/UserAccess';
 import { ViewCreationExploreAccess } from 'src/access/ViewCreationExploreAccess';
 import {
@@ -70,15 +67,6 @@ export class ExploreService {
 
   @inject(FollowAccess)
   private readonly followAccess!: FollowAccess;
-
-  @inject(LyricsAccess)
-  private readonly lyricsAccess!: LyricsAccess;
-
-  @inject(TrackAccess)
-  private readonly trackAccess!: TrackAccess;
-
-  @inject(ProjectAccess)
-  private readonly projectAccess!: ProjectAccess;
 
   @inject(UserAccess)
   private readonly userAccess!: UserAccess;
@@ -345,18 +333,36 @@ export class ExploreService {
     if (params.type === undefined || params.type === 'track')
       whereOption.push({
         type: Type.Track,
-        info: { name: Like(`%${params.keyword}%`) },
+        info: [
+          { name: Like(`%${params.keyword}%`) },
+          { theme: Like(`%${params.keyword}%`) },
+          { genre: Like(`%${params.keyword}%`) },
+          { language: Like(`%${params.keyword}%`) },
+          { caption: { name: Like(`%${params.keyword}%`) } },
+        ],
       });
     if (params.type === undefined || params.type === 'lyrics')
       whereOption.push({
         type: Type.Lyrics,
-        info: { name: Like(`%${params.keyword}%`) },
+        info: [
+          { name: Like(`%${params.keyword}%`) },
+          { theme: Like(`%${params.keyword}%`) },
+          { genre: Like(`%${params.keyword}%`) },
+          { language: Like(`%${params.keyword}%`) },
+          { caption: { name: Like(`%${params.keyword}%`) } },
+        ],
       });
     if (params.type === undefined || params.type === 'song')
       whereOption.push({
         type: Type.Song,
         project: { status: Status.Published },
-        info: { name: Like(`%${params.keyword}%`) },
+        info: [
+          { name: Like(`%${params.keyword}%`) },
+          { theme: Like(`%${params.keyword}%`) },
+          { genre: Like(`%${params.keyword}%`) },
+          { language: Like(`%${params.keyword}%`) },
+          { caption: { name: Like(`%${params.keyword}%`) } },
+        ],
       });
     const creation = await this.viewCreationExploreAccess.find({
       order: { countLike: 'desc' },
