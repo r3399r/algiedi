@@ -8,6 +8,7 @@ import { dispatch, getState } from 'src/redux/store';
 import { finishWaiting, startWaiting } from 'src/redux/uiSlice';
 import { file2Base64 } from 'src/util/fileConverter';
 import { loadProjects } from './OverallService';
+import { matchHashtag as match } from './UploadService';
 
 export const getChatsById = async (projectId: string) => {
   const res = await projectEndpoint.getProjectIdChat(projectId);
@@ -208,3 +209,5 @@ export const publishProject = async (id: string) => {
     dispatch(finishWaiting());
   }
 };
+
+export const matchHashtag = (input: string) => match(input);

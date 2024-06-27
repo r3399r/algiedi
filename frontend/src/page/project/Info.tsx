@@ -8,7 +8,7 @@ import MultiSelectOption from 'src/component/MultiSelectOption';
 import { Genre, Language, Theme } from 'src/constant/Property';
 import { DetailedProject } from 'src/model/backend/Project';
 import { openFailSnackbar, setProjectInfoIsEdit } from 'src/redux/uiSlice';
-import { updateCover, updateProject } from 'src/service/ProjectService';
+import { matchHashtag, updateCover, updateProject } from 'src/service/ProjectService';
 
 type Props = {
   project: DetailedProject;
@@ -52,7 +52,7 @@ const Info = ({ project, doRefresh, isOwner }: Props) => {
       theme,
       genre,
       language,
-      caption: caption.match(/#[\p{L}0-9]+/giu)?.map((v) => v.split('#')[1]) ?? undefined,
+      caption: matchHashtag(caption),
     })
       .then(doRefresh)
       .catch((err) => dispatch(openFailSnackbar(err)));

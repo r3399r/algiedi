@@ -6,6 +6,9 @@ import { finishWaiting, startWaiting } from 'src/redux/uiSlice';
 import { file2Base64 } from 'src/util/fileConverter';
 import { loadProjects } from './OverallService';
 
+export const matchHashtag = (input: string) =>
+  input.match(/#[a-zA-Z0-9_]+/giu)?.map((v) => v.split('#')[1]);
+
 export const uploadTrack = async (
   data: {
     name: string;
@@ -31,7 +34,7 @@ export const uploadTrack = async (
       theme: data.theme,
       genre: data.genre,
       language: data.language,
-      caption: data.caption.match(/#[\p{L}0-9]+/giu)?.map((v) => v.split('#')[1]) ?? undefined,
+      caption: matchHashtag(data.caption),
     });
 
     await loadProjects();
@@ -64,7 +67,7 @@ export const uploadLyrics = async (
       theme: data.theme,
       genre: data.genre,
       language: data.language,
-      caption: data.caption.match(/#[\p{L}0-9]+/giu)?.map((v) => v.split('#')[1]) ?? undefined,
+      caption: matchHashtag(data.caption),
       lyrics: data.lyrics,
     });
 
