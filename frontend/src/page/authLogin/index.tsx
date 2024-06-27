@@ -93,7 +93,7 @@ const AuthLogin = () => {
               </a>
             </div>
             <div className="mt-5">
-              <FormInput name="email" label="Email" required autoFocus />
+              <FormInput name="email" label="Email" required autoFocus type="email" />
             </div>
             <div className="mt-5">
               <FormInput name="password" label="Password" type="password" required />
