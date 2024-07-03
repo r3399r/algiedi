@@ -27,6 +27,7 @@ import { RootState } from 'src/redux/store';
 import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
 import { commentById, getExploreById, likeById, unlikeById } from 'src/service/ExploreService';
 import { bn } from 'src/util/bignumber';
+import ModalTree from './ModalTree';
 
 const ExploreDetail = () => {
   const navigate = useNavigate();
@@ -37,6 +38,7 @@ const ExploreDetail = () => {
   const [creation, setCreation] = useState<GetExploreIdResponse>();
   const [myComment, setMyComment] = useState<string>('');
   const [refresh, setRefresh] = useState(false);
+  const [open, setOpen] = useState(false);
   const hashtags = useMemo(() => {
     if (!creation) return [];
 
@@ -231,7 +233,12 @@ const ExploreDetail = () => {
           {creation.inspired.length === 0 && <div className="mb-4">This is an original</div>}
         </div>
         <div className="w-1/2">
-          <div className="py-4 text-xl font-bold">Inspired</div>
+          <div className="flex gap-4 py-4">
+            <div className="text-xl font-bold">Inspired</div>
+            <Button color="transparent" size="s" type="button" onClick={() => setOpen(true)}>
+              Tree
+            </Button>
+          </div>
           <div className="flex w-full gap-4 overflow-x-auto pb-4">
             {creation.inspiration.map((v) => (
               <CoverInfo key={v.id} creation={v} navigateTo={`${Page.Explore}/${v.id}`} />
@@ -287,6 +294,7 @@ const ExploreDetail = () => {
       <div className="py-16">
         <FooterDetail />
       </div>
+      <ModalTree open={open} handleClose={() => setOpen(false)} />
     </>
   );
 };

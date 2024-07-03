@@ -18,6 +18,7 @@ export type Track = {
   info: Info;
   projectId: string | null;
   inspiredId: string | null;
+  rootInspiredId: string | null;
   countLike: string;
   countView: string;
   createdAt: string | null;
@@ -49,6 +50,9 @@ export class TrackEntity implements Track {
 
   @Column({ type: 'uuid', name: 'inspired_id', default: null })
   inspiredId: string | null = null;
+
+  @Column({ type: 'uuid', name: 'root_inspired_id', default: null })
+  rootInspiredId: string | null = null;
 
   @Column({ type: 'int', name: 'count_like' })
   countLike = '0';

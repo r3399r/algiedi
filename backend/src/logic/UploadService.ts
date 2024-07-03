@@ -18,6 +18,7 @@ import {
   UploadLyrics,
   UploadTrack,
 } from 'src/model/api/Upload';
+import { Type } from 'src/model/constant/Creation';
 import { NotificationType } from 'src/model/constant/Notification';
 import { Role, Status } from 'src/model/constant/Project';
 import { CaptionEntity } from 'src/model/entity/CaptionEntity';
@@ -128,6 +129,15 @@ export class UploadService {
     return newInfo;
   }
 
+  private async getRootInspiredId(inspiredId: string) {
+    const creation = await this.viewCreationAccess.findOneByIdOrFail(
+      inspiredId
+    );
+    if (creation.type === Type.Song) return inspiredId;
+
+    return creation.rootInspiredId;
+  }
+
   private async uploadLyrics(
     data: UploadLyrics,
     projectId: string | null,
@@ -138,6 +148,9 @@ export class UploadService {
     lyrics.infoId = infoId;
     lyrics.projectId = projectId;
     lyrics.inspiredId = data.inspiredId;
+    lyrics.rootInspiredId = data.inspiredId
+      ? await this.getRootInspiredId(data.inspiredId)
+      : null;
 
     const newLyrics = await this.lyricsAccess.save(lyrics);
 
@@ -160,6 +173,9 @@ export class UploadService {
     track.infoId = infoId;
     track.projectId = projectId;
     track.inspiredId = data.inspiredId;
+    track.rootInspiredId = data.inspiredId
+      ? await this.getRootInspiredId(data.inspiredId)
+      : null;
 
     const newTrack = await this.trackAccess.save(track);
 

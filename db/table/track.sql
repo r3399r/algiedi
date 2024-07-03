@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS track (
 	info_id VARCHAR(36) NOT NULL,
 	project_id VARCHAR(36) NULL,
 	inspired_id VARCHAR(36) NULL,
+	root_inspired_id VARCHAR(36) NULL,
 	count_like INT NOT NULL,
 	count_view INT NOT NULL,
 	created_at TIMESTAMP NULL,

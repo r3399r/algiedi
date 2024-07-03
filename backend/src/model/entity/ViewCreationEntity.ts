@@ -20,6 +20,7 @@ export type ViewCreation = {
   projectId: string | null;
   project: Project | null;
   inspiredId: string | null;
+  rootInspiredId: string | null;
   fileUri: string | null;
   tabFileUri: string | null;
   lyricsText: string | null;
@@ -61,6 +62,9 @@ export class ViewCreationEntity implements ViewCreation {
 
   @ViewColumn({ name: 'inspired_id' })
   inspiredId: string | null = null;
+
+  @ViewColumn({ name: 'root_inspired_id' })
+  rootInspiredId: string | null = null;
 
   @ViewColumn({ name: 'file_uri' })
   fileUri: string | null = null;
