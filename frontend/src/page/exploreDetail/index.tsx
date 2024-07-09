@@ -294,7 +294,7 @@ const ExploreDetail = () => {
       <div className="py-16">
         <FooterDetail />
       </div>
-      <ModalTree open={open} handleClose={() => setOpen(false)} />
+      <ModalTree open={open} handleClose={() => setOpen(false)} tree={creation.tree} />
     </>
   );
 };

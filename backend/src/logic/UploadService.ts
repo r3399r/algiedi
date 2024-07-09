@@ -11,6 +11,7 @@ import { TrackAccess } from 'src/access/TrackAccess';
 import { TrackHistoryAccess } from 'src/access/TrackHistoryAccess';
 import { UserAccess } from 'src/access/UserAccess';
 import { ViewCreationAccess } from 'src/access/ViewCreationAccess';
+import { ViewCreationExploreAccess } from 'src/access/ViewCreationExploreAccess';
 import {
   PostUploadRequest,
   PutUploadIdRequest,
@@ -95,6 +96,9 @@ export class UploadService {
   @inject(ViewCreationAccess)
   private readonly viewCreationAccess!: ViewCreationAccess;
 
+  @inject(ViewCreationExploreAccess)
+  private readonly viewCreationExploreAccess!: ViewCreationExploreAccess;
+
   private async uploadInfo(data: UploadCommon) {
     const info = new InfoEntity();
     info.name = data.name;
@@ -130,7 +134,7 @@ export class UploadService {
   }
 
   private async getRootInspiredId(inspiredId: string) {
-    const creation = await this.viewCreationAccess.findOneByIdOrFail(
+    const creation = await this.viewCreationExploreAccess.findOneByIdOrFail(
       inspiredId
     );
     if (creation.type === Type.Song) return inspiredId;

@@ -37,6 +37,11 @@ export type GetExploreFeaturedResponse = {
   };
 };
 
+export type TreeData = {
+  creation: ExploreCreation;
+  children?: TreeData[];
+};
+
 export type GetExploreIdResponse = Omit<ExploreCreation, 'user'> & {
   user: (User & { following: boolean | null; avatarUrl: string | null })[];
   like: boolean;
@@ -47,6 +52,7 @@ export type GetExploreIdResponse = Omit<ExploreCreation, 'user'> & {
     comment: string;
     timestamp: string | null;
   }[];
+  tree: TreeData;
 };
 
 export type GetExploreUserParams = PaginationParams & {

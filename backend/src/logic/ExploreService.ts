@@ -28,6 +28,7 @@ import {
   GetExploreUserIdResponse,
   GetExploreUserParams,
   GetExploreUserResponse,
+  TreeData,
 } from 'src/model/api/Explore';
 import { Type } from 'src/model/constant/Creation';
 import { Role, Status } from 'src/model/constant/Project';
@@ -373,6 +374,34 @@ export class ExploreService {
     return await Promise.all(creation.map((v) => this.getExtendedExplore(v)));
   };
 
+  private getTreeData = async (rootInspiredId: string): Promise<TreeData> => {
+    const creations = await this.viewCreationExploreAccess.find({
+      where: [{ id: rootInspiredId }, { rootInspiredId }],
+      order: { createdAt: 'desc' },
+    });
+
+    const nodeMap: Record<string, TreeData> = {};
+    await Promise.all(
+      creations.map(
+        async (v) =>
+          (nodeMap[v.id] = { creation: await this.getExtendedExplore(v) })
+      )
+    );
+
+    const tree: TreeData[] = [];
+    creations.forEach((v) => {
+      const node = nodeMap[v.id];
+      if (v.inspiredId === null) tree.push(node);
+      else {
+        const parent = nodeMap[v.inspiredId];
+        if (!parent.children) parent.children = [];
+        parent.children.push(node);
+      }
+    });
+
+    return tree[0];
+  };
+
   public async getExploreById(id: string): Promise<GetExploreIdResponse> {
     const creation = await this.viewCreationExploreAccess.findOneByIdOrFail(id);
     const fileUrl = this.awsService.getS3SignedUrl(creation.fileUri);
@@ -474,6 +503,7 @@ export class ExploreService {
         comment: v.comment,
         timestamp: v.createdAt,
       })),
+      tree: await this.getTreeData(creation.rootInspiredId ?? creation.id),
     };
   }
 
