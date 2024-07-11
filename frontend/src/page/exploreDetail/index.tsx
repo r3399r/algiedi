@@ -36,6 +36,7 @@ const ExploreDetail = () => {
   const { isLogin } = useSelector((rootState: RootState) => rootState.ui);
   const { id } = useParams();
   const [creation, setCreation] = useState<GetExploreIdResponse>();
+  const [publishedSong, setPublishedSong] = useState<GetExploreIdResponse>();
   const [myComment, setMyComment] = useState<string>('');
   const [refresh, setRefresh] = useState(false);
   const [open, setOpen] = useState(false);
@@ -56,6 +57,19 @@ const ExploreDetail = () => {
       .then((res) => setCreation(res))
       .catch((err) => dispatch(openFailSnackbar(err)));
   }, [id, refresh]);
+
+  useEffect(() => {
+    if (
+      !creation ||
+      creation.tree.creation.projectId === null ||
+      creation.tree.creation.projectId === creation.tree.creation.id
+    )
+      setPublishedSong(undefined);
+    else
+      getExploreById(creation.tree.creation.projectId)
+        .then((res) => setPublishedSong(res))
+        .catch((err) => dispatch(openFailSnackbar(err)));
+  }, [creation]);
 
   const onLike = () => {
     if (id === undefined) return;
@@ -294,7 +308,12 @@ const ExploreDetail = () => {
       <div className="py-16">
         <FooterDetail />
       </div>
-      <ModalTree open={open} handleClose={() => setOpen(false)} tree={creation.tree} />
+      <ModalTree
+        open={open}
+        handleClose={() => setOpen(false)}
+        tree={creation.tree}
+        publishedTree={publishedSong?.tree ?? null}
+      />
     </>
   );
 };
