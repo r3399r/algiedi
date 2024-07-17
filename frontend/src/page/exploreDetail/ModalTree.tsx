@@ -1,6 +1,7 @@
 import HistoryEduIcon from '@mui/icons-material/HistoryEdu';
 import MusicNoteIcon from '@mui/icons-material/MusicNote';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
+import classNames from 'classnames';
 import Tree, { CustomNodeElementProps, RawNodeDatum } from 'react-d3-tree';
 import { useNavigate } from 'react-router-dom';
 import Modal from 'src/component/Modal';
@@ -85,9 +86,9 @@ const ModalTree = ({ open, handleClose, tree, publishedTree }: Props) => {
 
   return (
     <Modal open={open} handleClose={handleClose}>
-      <div className="h-[calc(100vh-188px)] w-full">
+      <div className="w-full">
         {publishedTree && (
-          <div className="">
+          <div className="h-[150px]">
             <Tree
               data={{
                 name: publishedTree.creation.info.name ?? '',
@@ -116,20 +117,27 @@ const ModalTree = ({ open, handleClose, tree, publishedTree }: Props) => {
             />
           </div>
         )}
-        <Tree
-          data={chart}
-          pathFunc="step"
-          orientation="vertical"
-          translate={{ x: 400, y: 100 }}
-          renderCustomNodeElement={renderNodeElement}
-          separation={{ siblings: 1.5 }}
-          depthFactor={200}
-          zoomable={false}
-          onNodeClick={(node) => {
-            handleClose();
-            navigate(`${Page.Explore}/${node.data.attributes?.id}`);
-          }}
-        />
+        <div
+          className={classNames({
+            'h-[calc(100vh-188px-150px)]': !!publishedTree,
+            'h-[calc(100vh-188px)]': !publishedTree,
+          })}
+        >
+          <Tree
+            data={chart}
+            pathFunc="step"
+            orientation="vertical"
+            translate={{ x: 400, y: 100 }}
+            renderCustomNodeElement={renderNodeElement}
+            separation={{ siblings: 1.5 }}
+            depthFactor={200}
+            zoomable={false}
+            onNodeClick={(node) => {
+              handleClose();
+              navigate(`${Page.Explore}/${node.data.attributes?.id}`);
+            }}
+          />
+        </div>
       </div>
     </Modal>
   );
