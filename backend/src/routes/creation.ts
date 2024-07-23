@@ -1,6 +1,9 @@
 import { bindings } from 'src/bindings';
 import { CreationService } from 'src/logic/CreationService';
-import { PostCreationIdCommentRequest } from 'src/model/api/Creation';
+import {
+  PostCreationIdCommentRequest,
+  PostCreationIdEditRequest,
+} from 'src/model/api/Creation';
 import { BadRequestError } from 'src/model/error';
 import { LambdaEvent } from 'src/model/Lambda';
 
@@ -12,6 +15,8 @@ export default async (lambdaEvent: LambdaEvent) => {
   service = bindings.get(CreationService);
 
   switch (event.resource) {
+    case '/api/creation/{id}/edit':
+      return await edit();
     case '/api/creation/{id}/like':
       return await like();
     case '/api/creation/{id}/unlike':
@@ -21,6 +26,22 @@ export default async (lambdaEvent: LambdaEvent) => {
   }
 
   throw new BadRequestError('unexpected resource');
+};
+
+const edit = async () => {
+  if (event.pathParameters === null)
+    throw new BadRequestError('pathParameters should not be empty');
+  if (event.body === null)
+    throw new BadRequestError('body should not be empty');
+  switch (event.httpMethod) {
+    case 'POST':
+      return await service.editCreation(
+        event.pathParameters.id,
+        JSON.parse(event.body) as PostCreationIdEditRequest
+      );
+  }
+
+  throw new Error('unexpected httpMethod');
 };
 
 const like = async () => {

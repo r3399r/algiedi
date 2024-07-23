@@ -1,11 +1,12 @@
 import AudioFileIcon from '@mui/icons-material/AudioFile';
+import EditIcon from '@mui/icons-material/Edit';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import ShareIcon from '@mui/icons-material/Share';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, setRef } from '@mui/material';
 import { format, formatDistanceToNow } from 'date-fns';
 import { useEffect, useMemo, useState } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
@@ -23,10 +24,12 @@ import NotificationWidget from 'src/component/NotificationWidget';
 import { Page } from 'src/constant/Page';
 import { GetExploreIdResponse } from 'src/model/backend/api/Explore';
 import { Type } from 'src/model/backend/constant/Creation';
+import { Role } from 'src/model/backend/constant/Project';
 import { RootState } from 'src/redux/store';
 import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
 import { commentById, getExploreById, likeById, unlikeById } from 'src/service/ExploreService';
 import { bn } from 'src/util/bignumber';
+import ModalEditor from './ModalEditor';
 import ModalTree from './ModalTree';
 
 const ExploreDetail = () => {
@@ -34,12 +37,23 @@ const ExploreDetail = () => {
   const dispatch = useDispatch();
   const location = useLocation();
   const { isLogin } = useSelector((rootState: RootState) => rootState.ui);
+  const me = useSelector((rootState: RootState) => rootState.me);
   const { id } = useParams();
   const [creation, setCreation] = useState<GetExploreIdResponse>();
   const [publishedSong, setPublishedSong] = useState<GetExploreIdResponse>();
   const [myComment, setMyComment] = useState<string>('');
   const [refresh, setRefresh] = useState(false);
   const [open, setOpen] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
+  const editable = useMemo(() => {
+    if (!creation) return false;
+
+    return (
+      (creation.type !== Type.Song && creation.userId === me.id) ||
+      (creation.type === Type.Song &&
+        creation.user.find((v) => v.id === me.id)?.projectRole === Role.Owner)
+    );
+  }, [creation, me]);
   const hashtags = useMemo(() => {
     if (!creation) return [];
 
@@ -113,7 +127,6 @@ const ExploreDetail = () => {
       >
         <div className="ml-10 w-fit rounded-md bg-dark/30 p-4 text-white">
           <div className="text-lg font-bold">{creation.info.name}</div>
-          <br />
           <div>{hashtags}</div>
           <div>
             Publish Date:{' '}
@@ -146,6 +159,7 @@ const ExploreDetail = () => {
         )}
       </div>
       <div className="mr-10 mt-4 flex justify-end gap-4">
+        {editable && <EditIcon className="cursor-pointer" onClick={() => setIsEdit(true)} />}
         {isLogin ? (
           creation.like ? (
             <FavoriteIcon onClick={onUnlike} className="cursor-pointer text-red" />
@@ -313,6 +327,12 @@ const ExploreDetail = () => {
         handleClose={() => setOpen(false)}
         tree={creation.tree}
         publishedTree={publishedSong?.tree ?? null}
+      />
+      <ModalEditor
+        open={isEdit}
+        handleClose={() => setIsEdit(false)}
+        doRefresh={() => setRefresh(!refresh)}
+        defaultInfo={creation.info}
       />
     </>
   );

@@ -158,10 +158,7 @@ export class ProjectService {
     });
   }
 
-  public async updateProject(
-    id: string,
-    data: PutProjectRequest
-  ): Promise<void> {
+  public async updateInfo(id: string, data: PutProjectRequest) {
     const pu = await this.projectUserAccess.findByProjectId(id);
 
     // valiate owner
@@ -173,6 +170,7 @@ export class ProjectService {
     const userCreation = await this.viewCreationAccess.findOne({
       where: { info: { name: data.name }, userId: this.cognitoUserId },
     });
+
     if (userCreation !== null && userCreation.projectId !== id)
       throw new BadRequestError('this name is already used');
 
@@ -207,6 +205,15 @@ export class ProjectService {
           })
       );
     }
+
+    return pu;
+  }
+
+  public async updateProject(
+    id: string,
+    data: PutProjectRequest
+  ): Promise<void> {
+    const pu = await this.updateInfo(id, data);
 
     // notify
     for (const v of pu) {

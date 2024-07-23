@@ -4,6 +4,7 @@ import exploreEndpoint from 'src/api/exploreEndpoint';
 import snsEndpoint from 'src/api/snsEndpoint';
 import userEndpoint from 'src/api/userEndpoint';
 import viewEndpoint from 'src/api/viewEndpoint';
+import { PostCreationIdEditRequest } from 'src/model/backend/api/Creation';
 import {
   GetExploreParams,
   GetExploreResponse,
@@ -212,6 +213,16 @@ export const commentById = async (id: string, comment: string) => {
     dispatch(startWaiting());
 
     await creationEndpoint.postCreationIdComment(id, { comment });
+  } finally {
+    dispatch(finishWaiting());
+  }
+};
+
+export const editById = async (id: string, data: PostCreationIdEditRequest) => {
+  try {
+    dispatch(startWaiting());
+
+    await creationEndpoint.postCreationIdEdit(id, data);
   } finally {
     dispatch(finishWaiting());
   }

@@ -1,4 +1,4 @@
-import { Status } from 'src/model/constant/Project';
+import { Role, Status } from 'src/model/constant/Project';
 import { User } from 'src/model/entity/UserEntity';
 import { ExploreCreation, ExploreUser } from 'src/model/Explore';
 import { PaginationParams } from 'src/model/Pagination';
@@ -43,7 +43,11 @@ export type TreeData = {
 };
 
 export type GetExploreIdResponse = Omit<ExploreCreation, 'user'> & {
-  user: (User & { following: boolean | null; avatarUrl: string | null })[];
+  user: (User & {
+    projectRole: Role | null;
+    following: boolean | null;
+    avatarUrl: string | null;
+  })[];
   like: boolean;
   inspired: ExploreCreation[];
   inspiration: ExploreCreation[];

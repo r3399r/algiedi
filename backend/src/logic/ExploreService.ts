@@ -423,6 +423,7 @@ export class ExploreService {
       user = [
         {
           ...creation.user,
+          projectRole: null,
           avatarUrl: this.awsService.getS3SignedUrl(creation.user.avatar),
           following:
             myFolloweeId === null ? null : myFolloweeId.has(creation.user.id),
@@ -448,6 +449,7 @@ export class ExploreService {
       }
       user = pu.map((o) => ({
         ...o.user,
+        projectRole: o.role,
         avatarUrl: this.awsService.getS3SignedUrl(o.user.avatar),
         following: myFolloweeId === null ? null : myFolloweeId.has(o.user.id),
       }));

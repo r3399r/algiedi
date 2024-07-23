@@ -1,22 +1,31 @@
 import { inject, injectable } from 'inversify';
+import { CaptionAccess } from 'src/access/CaptionAccess';
 import { CommentAccess } from 'src/access/CommentAccess';
 import { DbAccess } from 'src/access/DbAccess';
+import { InfoAccess } from 'src/access/InfoAccess';
 import { LikeAccess } from 'src/access/LikeAccess';
 import { LyricsAccess } from 'src/access/LyricsAccess';
 import { ProjectAccess } from 'src/access/ProjectAccess';
 import { ProjectUserAccess } from 'src/access/ProjectUserAccess';
 import { TrackAccess } from 'src/access/TrackAccess';
 import { UserAccess } from 'src/access/UserAccess';
+import { ViewCreationAccess } from 'src/access/ViewCreationAccess';
 import { ViewCreationExploreAccess } from 'src/access/ViewCreationExploreAccess';
-import { PostCreationIdCommentRequest } from 'src/model/api/Creation';
+import {
+  PostCreationIdCommentRequest,
+  PostCreationIdEditRequest,
+} from 'src/model/api/Creation';
 import { Type } from 'src/model/constant/Creation';
 import { NotificationType } from 'src/model/constant/Notification';
+import { CaptionEntity } from 'src/model/entity/CaptionEntity';
 import { CommentEntity } from 'src/model/entity/CommentEntity';
 import { LikeEntity } from 'src/model/entity/LikeEntity';
 import { User } from 'src/model/entity/UserEntity';
+import { BadRequestError, UnauthorizedError } from 'src/model/error';
 import { bn } from 'src/util/bignumber';
 import { cognitoSymbol } from 'src/util/LambdaSetup';
 import { NotificationService } from './NotificationService';
+import { ProjectService } from './ProjectService';
 
 /**
  * Service class for Creation
@@ -25,6 +34,9 @@ import { NotificationService } from './NotificationService';
 export class CreationService {
   @inject(cognitoSymbol)
   private readonly cognitoUserId!: string;
+
+  @inject(ProjectService)
+  private readonly projectService!: ProjectService;
 
   @inject(DbAccess)
   private readonly dbAccess!: DbAccess;
@@ -56,8 +68,67 @@ export class CreationService {
   @inject(ProjectUserAccess)
   private readonly projectUserAccess!: ProjectUserAccess;
 
+  @inject(ViewCreationAccess)
+  private readonly viewCreationAccess!: ViewCreationAccess;
+
+  @inject(InfoAccess)
+  private readonly infoAccess!: InfoAccess;
+
+  @inject(CaptionAccess)
+  private readonly captionAccess!: CaptionAccess;
+
   public async cleanup() {
     await this.dbAccess.cleanup();
+  }
+
+  public async editCreation(id: string, data: PostCreationIdEditRequest) {
+    const vc = await this.viewCreationExploreAccess.findOneByIdOrFail(id);
+
+    if (vc.type === Type.Song) await this.projectService.updateInfo(id, data);
+    else {
+      // validate owner
+      if (vc.userId !== this.cognitoUserId)
+        throw new UnauthorizedError('Unauthorized');
+
+      // check if name is duplicated
+      const userCreation = await this.viewCreationAccess.findOne({
+        where: { info: { name: data.name }, userId: this.cognitoUserId },
+      });
+      if (userCreation !== null && userCreation.id !== id)
+        throw new BadRequestError('this name is already used');
+
+      const info = vc.info;
+      info.name = data.name ?? info.name;
+      info.description = data.description ?? info.description;
+      info.theme = data.theme ?? info.theme;
+      info.genre = data.genre ?? info.genre;
+      info.language = data.language ?? info.language;
+      const newInfo = await this.infoAccess.save(info);
+
+      if (data.caption) {
+        const existingCaptions = await this.captionAccess.find({
+          where: { infoId: newInfo.id },
+        });
+
+        await Promise.all(
+          existingCaptions
+            .filter((v) => !data.caption?.includes(v.name))
+            .map((v) => this.captionAccess.hardDeleteById(v.id))
+        );
+
+        await Promise.all(
+          data.caption
+            .filter((v) => !existingCaptions.map((o) => o.name).includes(v))
+            .map((v) => {
+              const caption = new CaptionEntity();
+              caption.name = v;
+              caption.infoId = newInfo.id;
+
+              return this.captionAccess.save(caption);
+            })
+        );
+      }
+    }
   }
 
   public async likeCreation(id: string) {

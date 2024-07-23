@@ -117,7 +117,7 @@ const ExploreUserDetail = () => {
       {user.song.length > 0 && (
         <div className="flex flex-wrap gap-10">
           {user.song.map((v) => (
-            <CoverInfo key={v.id} creation={v} />
+            <CoverInfo key={v.id} creation={v} navigateTo={`/explore/${v.id}`} />
           ))}
         </div>
       )}
