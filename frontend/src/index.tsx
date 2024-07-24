@@ -1,13 +1,10 @@
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
-import App from './App';
-import Loader from './component/Loader';
-import Snackbar from './component/Snackbar';
-import SnackbarChat from './component/SnackbarChat';
 import { configStore } from './redux/store';
 import reportWebVitals from './reportWebVitals';
 import './index.css';
+import AppRoutes from './Routes';
 
 const store = configStore();
 
@@ -16,10 +13,7 @@ const root = createRoot(document.getElementById('root') as Element);
 root.render(
   <Provider store={store}>
     <BrowserRouter>
-      <App />
-      <Loader />
-      <Snackbar />
-      <SnackbarChat />
+      <AppRoutes />
     </BrowserRouter>
   </Provider>,
 );

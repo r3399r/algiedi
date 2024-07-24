@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/redux/store';
 import ModalConfirm from './ModalConfirm';
-import { unstable_useBlocker as useBlocker } from 'react-router-dom';
 
 type Props = {
   open: boolean;
@@ -12,12 +11,12 @@ type Props = {
 
 const ModalConfirmLeave = ({ open, onCancel, onComfirm }: Props) => {
   const { hasUnsavedChanges } = useSelector((rootState: RootState) => rootState.ui);
-//   let blocker = useBlocker(
-//     ({ currentLocation, nextLocation }) =>
-//         hasUnsavedChanges &&
-//       currentLocation.pathname !== nextLocation.pathname
-//   );
-// console.log(blocker)
+  //   let blocker = useBlocker(
+  //     ({ currentLocation, nextLocation }) =>
+  //         hasUnsavedChanges &&
+  //       currentLocation.pathname !== nextLocation.pathname
+  //   );
+  // console.log(blocker)
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
       if (hasUnsavedChanges) {
