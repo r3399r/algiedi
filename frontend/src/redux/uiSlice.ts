@@ -13,6 +13,7 @@ export type UiState = {
   isProjectInfoEdit: boolean;
   profileTab: number;
   profileExhibitTab: number;
+  hasUnsavedChanges: boolean;
 };
 
 const initialState: UiState = {
@@ -27,6 +28,7 @@ const initialState: UiState = {
   isProjectInfoEdit: false,
   profileTab: 0,
   profileExhibitTab: 0,
+  hasUnsavedChanges: false,
 };
 
 export const uiSlice = createSlice({
@@ -74,6 +76,9 @@ export const uiSlice = createSlice({
     setProfileExhibitTab: (state: UiState, action: PayloadAction<number>) => {
       state.profileExhibitTab = action.payload;
     },
+    setHasUnsavedChanges: (state: UiState, action: PayloadAction<boolean>) => {
+      state.hasUnsavedChanges = action.payload;
+    },
   },
 });
 
@@ -90,6 +95,7 @@ export const {
   setProjectInfoIsEdit,
   setProfileTab,
   setProfileExhibitTab,
+  setHasUnsavedChanges,
 } = uiSlice.actions;
 
 export default uiSlice.reducer;

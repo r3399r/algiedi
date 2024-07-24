@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Button from 'src/component/Button';
 import Modal from 'src/component/Modal';
-import ModalConfirm from 'src/component/ModalConfirm';
+import ModalConfirmLeave from 'src/component/ModalConfirmLeave';
 import { DetailedCreation } from 'src/model/backend/Project';
-import { openFailSnackbar } from 'src/redux/uiSlice';
+import { openFailSnackbar, setHasUnsavedChanges } from 'src/redux/uiSlice';
 import { updateLyrics, uploadLyrics } from 'src/service/ProjectService';
 
 type Props = {
@@ -19,6 +19,10 @@ const ModalLyrics = ({ open, handleClose, targetLyrics, targetProjectId, doRefre
   const dispatch = useDispatch();
   const [lyrics, setLyrics] = useState<string>();
   const [openConfirm, setOpenConfirm] = useState<boolean>(false);
+
+  useEffect(() => {
+    dispatch(setHasUnsavedChanges(!!lyrics));
+  }, [lyrics]);
 
   const onSuccess = () => {
     doRefresh();
@@ -61,8 +65,7 @@ const ModalLyrics = ({ open, handleClose, targetLyrics, targetProjectId, doRefre
           </div>
         </div>
       </Modal>
-      <ModalConfirm
-        text="You made some changes. Are you sure you want to close the modal?"
+      <ModalConfirmLeave
         open={openConfirm}
         onCancel={() => setOpenConfirm(false)}
         onComfirm={() => {
