@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import Input from 'src/component/Input';
+import ModalConfirmLeave from 'src/component/ModalConfirmLeave';
 import MultiSelect from 'src/component/MultiSelect';
 import MultiSelectOption from 'src/component/MultiSelectOption';
 import NotificationWidget from 'src/component/NotificationWidget';
@@ -10,6 +11,7 @@ import Textarea from 'src/component/Textarea';
 import { Genre, Language, Theme } from 'src/constant/Property';
 import { GetExploreIdResponse } from 'src/model/backend/api/Explore';
 import { RootState } from 'src/redux/store';
+import { setHasUnsavedChanges } from 'src/redux/uiSlice';
 import { reset, setInfo } from 'src/redux/uploadSlice';
 import Lyrics from './Lyrics';
 import Track from './Track';
@@ -26,6 +28,19 @@ const Upload = () => {
     },
     [],
   );
+
+  useEffect(() => {
+    if (
+      info.name !== '' ||
+      info.description !== '' ||
+      info.lyrics !== '' ||
+      info.theme !== null ||
+      info.genre !== null ||
+      info.language !== null ||
+      info.caption !== ''
+    )
+      dispatch(setHasUnsavedChanges(true));
+  }, [info]);
 
   return (
     <>
@@ -133,6 +148,11 @@ const Upload = () => {
           {tab === 'lyrics' && <Lyrics inspiration={state?.inspiration} />}
         </div>
       </div>
+      <ModalConfirmLeave
+        onConfirm={() => {
+          dispatch(reset);
+        }}
+      />
     </>
   );
 };

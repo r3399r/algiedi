@@ -1,22 +1,24 @@
 import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { unstable_useBlocker as useBlocker } from 'react-router-dom';
 import { RootState } from 'src/redux/store';
+import { setHasUnsavedChanges } from 'src/redux/uiSlice';
 import ModalConfirm from './ModalConfirm';
 
 type Props = {
-  open: boolean;
-  onCancel: () => void;
-  onComfirm: () => void;
+  open?: boolean;
+  onCancel?: () => void;
+  onConfirm?: () => void;
 };
 
-const ModalConfirmLeave = ({ open, onCancel, onComfirm }: Props) => {
+const ModalConfirmLeave = ({ open, onCancel, onConfirm }: Props) => {
+  const dispatch = useDispatch();
   const { hasUnsavedChanges } = useSelector((rootState: RootState) => rootState.ui);
-  //   let blocker = useBlocker(
-  //     ({ currentLocation, nextLocation }) =>
-  //         hasUnsavedChanges &&
-  //       currentLocation.pathname !== nextLocation.pathname
-  //   );
-  // console.log(blocker)
+  const blocker = useBlocker(
+    ({ currentLocation, nextLocation }) =>
+      hasUnsavedChanges && currentLocation.pathname !== nextLocation.pathname,
+  );
+
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
       if (hasUnsavedChanges) {
@@ -34,12 +36,23 @@ const ModalConfirmLeave = ({ open, onCancel, onComfirm }: Props) => {
     };
   }, [hasUnsavedChanges]);
 
+  const handleCancel = () => {
+    if (blocker.reset) blocker.reset();
+    if (onCancel) onCancel();
+  };
+
+  const handleConfirm = () => {
+    if (blocker.proceed) blocker.proceed();
+    if (onConfirm) onConfirm();
+    dispatch(setHasUnsavedChanges(false));
+  };
+
   return (
     <ModalConfirm
       text="You made some changes. Are you sure you want to leave?"
-      open={open}
-      onCancel={onCancel}
-      onComfirm={onComfirm}
+      open={open || blocker.state === 'blocked'}
+      onCancel={handleCancel}
+      onConfirm={handleConfirm}
     />
   );
 };

@@ -4,6 +4,7 @@ import Button from 'src/component/Button';
 import Checkbox from 'src/component/Checkbox';
 import Input from 'src/component/Input';
 import Modal from 'src/component/Modal';
+import ModalConfirmLeave from 'src/component/ModalConfirmLeave';
 import { DetailedCreation } from 'src/model/backend/Project';
 import { removePlaylistId } from 'src/redux/playlistSlice';
 import { openFailSnackbar } from 'src/redux/uiSlice';
@@ -26,6 +27,7 @@ const ModalTrack = ({ open, handleClose, targetTrack, targetProjectId, doRefresh
   const [errorTrackFile, setErrorTrackFile] = useState<boolean>(false);
   const [updateTrackFile, setUpdateTrackFile] = useState<boolean>(false);
   const [updateTabFile, setUpdateTabFile] = useState<boolean>(false);
+  const [openConfirm, setOpenConfirm] = useState<boolean>(false);
 
   const submittable = useMemo(() => {
     if (targetTrack === null && trackFile) return true;
@@ -35,11 +37,15 @@ const ModalTrack = ({ open, handleClose, targetTrack, targetProjectId, doRefresh
   }, [targetTrack, updateTrackFile, updateTabFile, trackFile]);
 
   const onClose = () => {
-    handleClose();
-    setUpdateTrackFile(false);
-    setUpdateTabFile(false);
-    setTrackFile(undefined);
-    setTabFile(undefined);
+    if (!openConfirm && (updateTrackFile || updateTabFile || trackFile || tabFile))
+      setOpenConfirm(true);
+    else {
+      handleClose();
+      setUpdateTrackFile(false);
+      setUpdateTabFile(false);
+      setTrackFile(undefined);
+      setTabFile(undefined);
+    }
   };
 
   const onSuccess = () => {
@@ -68,84 +74,94 @@ const ModalTrack = ({ open, handleClose, targetTrack, targetProjectId, doRefresh
   };
 
   return (
-    <Modal open={open} handleClose={onClose}>
-      <div>
-        <div className="text-2xl font-bold">Track</div>
-        <div className="my-4">
-          {targetTrack?.fileUrl && (
-            <Checkbox
-              label="update track file"
-              checked={updateTrackFile}
-              onChange={(e) => setUpdateTrackFile(e.target.checked)}
-            />
-          )}
-          {(!targetTrack?.fileUrl || updateTrackFile) && (
-            <div className="flex items-center gap-2">
-              <div className="flex-1">
-                <Input
-                  placeholder="*Select a file (mp3. or wav.)"
-                  value={trackFile?.name ?? ''}
-                  onClick={() => trackInputRef.current?.click()}
-                  error={errorTrackFile}
-                />
+    <>
+      <Modal open={open} handleClose={onClose}>
+        <div>
+          <div className="text-2xl font-bold">Track</div>
+          <div className="my-4">
+            {targetTrack?.fileUrl && (
+              <Checkbox
+                label="update track file"
+                checked={updateTrackFile}
+                onChange={(e) => setUpdateTrackFile(e.target.checked)}
+              />
+            )}
+            {(!targetTrack?.fileUrl || updateTrackFile) && (
+              <div className="flex items-center gap-2">
+                <div className="flex-1">
+                  <Input
+                    placeholder="*Select a file (mp3. or wav.)"
+                    value={trackFile?.name ?? ''}
+                    onClick={() => trackInputRef.current?.click()}
+                    error={errorTrackFile}
+                  />
+                </div>
+                <Button size="m" color="purple" onClick={() => trackInputRef.current?.click()}>
+                  Browse...
+                </Button>
               </div>
-              <Button size="m" color="purple" onClick={() => trackInputRef.current?.click()}>
-                Browse...
-              </Button>
-            </div>
-          )}
-        </div>
-        <div className="my-4">
-          {targetTrack?.fileUrl && (
-            <Checkbox
-              label="update tab file (remain empty to delete)"
-              checked={updateTabFile}
-              onChange={(e) => setUpdateTabFile(e.target.checked)}
-            />
-          )}
-          {(!targetTrack?.fileUrl || updateTabFile) && (
-            <div className="flex items-center gap-2">
-              <div className="flex-1">
-                <Input
-                  placeholder="Select a 30 sec. tab file (pdf.)"
-                  value={tabFile?.name ?? ''}
-                  onClick={() => tabInputRef.current?.click()}
-                />
+            )}
+          </div>
+          <div className="my-4">
+            {targetTrack?.fileUrl && (
+              <Checkbox
+                label="update tab file (remain empty to delete)"
+                checked={updateTabFile}
+                onChange={(e) => setUpdateTabFile(e.target.checked)}
+              />
+            )}
+            {(!targetTrack?.fileUrl || updateTabFile) && (
+              <div className="flex items-center gap-2">
+                <div className="flex-1">
+                  <Input
+                    placeholder="Select a 30 sec. tab file (pdf.)"
+                    value={tabFile?.name ?? ''}
+                    onClick={() => tabInputRef.current?.click()}
+                  />
+                </div>
+                <Button size="m" color="purple" onClick={() => tabInputRef.current?.click()}>
+                  Browse...
+                </Button>
               </div>
-              <Button size="m" color="purple" onClick={() => tabInputRef.current?.click()}>
-                Browse...
-              </Button>
-            </div>
-          )}
+            )}
+          </div>
+          <input
+            type="file"
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              if (e.target.files && e.target.files.length === 1) setTrackFile(e.target.files[0]);
+              setErrorTrackFile(false);
+            }}
+            ref={trackInputRef}
+            className="hidden"
+            accept="audio/vnd.wave,audio/mpeg"
+            multiple={false}
+          />
+          <input
+            type="file"
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              if (e.target.files && e.target.files.length === 1) setTabFile(e.target.files[0]);
+            }}
+            ref={tabInputRef}
+            className="hidden"
+            accept="application/pdf"
+            multiple={false}
+          />
+          <div className="text-right">
+            <Button onClick={onSubmit} disabled={!submittable}>
+              Submit
+            </Button>
+          </div>
         </div>
-        <input
-          type="file"
-          onChange={(e: ChangeEvent<HTMLInputElement>) => {
-            if (e.target.files && e.target.files.length === 1) setTrackFile(e.target.files[0]);
-            setErrorTrackFile(false);
-          }}
-          ref={trackInputRef}
-          className="hidden"
-          accept="audio/vnd.wave,audio/mpeg"
-          multiple={false}
-        />
-        <input
-          type="file"
-          onChange={(e: ChangeEvent<HTMLInputElement>) => {
-            if (e.target.files && e.target.files.length === 1) setTabFile(e.target.files[0]);
-          }}
-          ref={tabInputRef}
-          className="hidden"
-          accept="application/pdf"
-          multiple={false}
-        />
-        <div className="text-right">
-          <Button onClick={onSubmit} disabled={!submittable}>
-            Submit
-          </Button>
-        </div>
-      </div>
-    </Modal>
+      </Modal>
+      <ModalConfirmLeave
+        open={openConfirm}
+        onCancel={() => setOpenConfirm(false)}
+        onConfirm={() => {
+          setOpenConfirm(false);
+          onClose();
+        }}
+      />
+    </>
   );
 };
 

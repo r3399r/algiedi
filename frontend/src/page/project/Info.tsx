@@ -1,13 +1,14 @@
-import { ChangeEvent, useRef, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Button from 'src/component/Button';
 import Cover from 'src/component/Cover';
 import Input from 'src/component/Input';
+import ModalConfirmLeave from 'src/component/ModalConfirmLeave';
 import MultiSelect from 'src/component/MultiSelect';
 import MultiSelectOption from 'src/component/MultiSelectOption';
 import { Genre, Language, Theme } from 'src/constant/Property';
 import { DetailedProject } from 'src/model/backend/Project';
-import { openFailSnackbar, setProjectInfoIsEdit } from 'src/redux/uiSlice';
+import { openFailSnackbar, setHasUnsavedChanges, setProjectInfoIsEdit } from 'src/redux/uiSlice';
 import { matchHashtag, updateCover, updateProject } from 'src/service/ProjectService';
 
 type Props = {
@@ -37,6 +38,19 @@ const Info = ({ project, doRefresh, isOwner }: Props) => {
     dispatch(setProjectInfoIsEdit(editing));
   };
 
+  useEffect(() => {
+    if (
+      name !== project.info.name ||
+      description !== project.info.description ||
+      theme !== project.info.theme ||
+      genre !== project.info.genre ||
+      language !== project.info.language ||
+      caption !== project.info.caption.map((v) => `#${v.name}`).join(' ')
+    )
+      dispatch(setHasUnsavedChanges(true));
+    else dispatch(setHasUnsavedChanges(false));
+  }, [name, description, theme, genre, language, caption]);
+
   const onSave = () => {
     if (theme.length === 0 || genre.length === 0 || language.length === 0) {
       setErrorTheme(!theme);
@@ -54,7 +68,10 @@ const Info = ({ project, doRefresh, isOwner }: Props) => {
       language,
       caption: matchHashtag(caption),
     })
-      .then(doRefresh)
+      .then(() => {
+        doRefresh();
+        dispatch(setHasUnsavedChanges(false));
+      })
       .catch((err) => dispatch(openFailSnackbar(err)));
   };
 
@@ -188,6 +205,7 @@ const Info = ({ project, doRefresh, isOwner }: Props) => {
           multiple={false}
         />
       )}
+      <ModalConfirmLeave />
     </>
   );
 };

@@ -5,10 +5,10 @@ type Props = {
   text?: string;
   open: boolean;
   onCancel: () => void;
-  onComfirm: () => void;
+  onConfirm: () => void;
 };
 
-const ModalConfirm = ({ text, open, onCancel, onComfirm }: Props) => (
+const ModalConfirm = ({ text, open, onCancel, onConfirm }: Props) => (
   <Modal open={open} handleClose={onCancel}>
     <div>
       {text && <div className="mb-2">{text}</div>}
@@ -16,7 +16,7 @@ const ModalConfirm = ({ text, open, onCancel, onComfirm }: Props) => (
         <Button color="transparent" onClick={onCancel}>
           Cancel
         </Button>
-        <Button onClick={onComfirm}>Confirm</Button>
+        <Button onClick={onConfirm}>Confirm</Button>
       </div>
     </div>
   </Modal>

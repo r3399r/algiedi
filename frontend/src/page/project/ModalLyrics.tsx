@@ -68,7 +68,7 @@ const ModalLyrics = ({ open, handleClose, targetLyrics, targetProjectId, doRefre
       <ModalConfirmLeave
         open={openConfirm}
         onCancel={() => setOpenConfirm(false)}
-        onComfirm={() => {
+        onConfirm={() => {
           setOpenConfirm(false);
           handleClose();
           setLyrics(undefined);

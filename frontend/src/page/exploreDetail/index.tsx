@@ -20,13 +20,14 @@ import Divider from 'src/component/Divider';
 import ExploreSearch from 'src/component/ExploreSearch';
 import FollowButton from 'src/component/FollowButton';
 import FooterDetail from 'src/component/FooterDetail';
+import ModalConfirmLeave from 'src/component/ModalConfirmLeave';
 import NotificationWidget from 'src/component/NotificationWidget';
 import { Page } from 'src/constant/Page';
 import { GetExploreIdResponse } from 'src/model/backend/api/Explore';
 import { Type } from 'src/model/backend/constant/Creation';
 import { Role } from 'src/model/backend/constant/Project';
 import { RootState } from 'src/redux/store';
-import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
+import { openFailSnackbar, openSuccessSnackbar, setHasUnsavedChanges } from 'src/redux/uiSlice';
 import { commentById, getExploreById, likeById, unlikeById } from 'src/service/ExploreService';
 import { bn } from 'src/util/bignumber';
 import ModalEditor from './ModalEditor';
@@ -85,6 +86,11 @@ const ExploreDetail = () => {
         .catch((err) => dispatch(openFailSnackbar(err)));
   }, [creation]);
 
+  useEffect(() => {
+    if (myComment === '') dispatch(setHasUnsavedChanges(false));
+    else dispatch(setHasUnsavedChanges(true));
+  }, [myComment]);
+
   const onLike = () => {
     if (id === undefined) return;
     likeById(id)
@@ -102,7 +108,10 @@ const ExploreDetail = () => {
   const onComment = () => {
     if (id === undefined || myComment === '') return;
     commentById(id, myComment)
-      .then(() => setRefresh(!refresh))
+      .then(() => {
+        setRefresh(!refresh);
+        setMyComment('');
+      })
       .catch((err) => dispatch(openFailSnackbar(err)));
   };
 
@@ -334,6 +343,7 @@ const ExploreDetail = () => {
         doRefresh={() => setRefresh(!refresh)}
         defaultInfo={creation.info}
       />
+      <ModalConfirmLeave onConfirm={() => setMyComment('')} />
     </>
   );
 };
