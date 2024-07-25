@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux';
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
 import AppLayout from './AppLayout';
 import { Page } from './constant/Page';
 import AboutUs from './page/aboutUs';
@@ -28,54 +28,48 @@ import { RootState } from './redux/store';
 
 const AppRoutes = () => {
   const { isLogin } = useSelector((rootState: RootState) => rootState.ui);
-  const location = useLocation();
 
-  return (
-    <Routes>
-      <Route element={<AppLayout />}>
-        <Route path={Page.Home} element={<Home />} />
-        <Route path={Page.AboutUs} element={<AboutUs />} />
-        <Route path={Page.Faq} element={<Faq />} />
-        <Route path={Page.ContatUs} element={<ContactUs />} />
-        <Route path={Page.Explore} element={<Explore />} />
-        <Route path={`${Page.Explore}/song`} element={<ExploreSong />} />
-        <Route path={`${Page.Explore}/idea`} element={<ExploreIdea />} />
-        <Route path={`${Page.Explore}/user`} element={<ExploreUser />} />
-        <Route path={`${Page.Explore}/user/:id`} element={<ExploreUserDetail />} />
-        <Route path={`${Page.Explore}/:id`} element={<ExploreDetail />} />
-        <Route path={Page.Verify} element={<AuthVerify />} />
-        {!isLogin && (
-          <>
-            <Route path={Page.Login} element={<AuthLogin />} />
-            <Route path={Page.Register} element={<AuthRegister />} />
-            <Route path={Page.Confirmation} element={<AuthConfirmation />} />
-            <Route path={Page.Forget} element={<AuthForget />} />
-            <Route path={Page.ForgetReset} element={<AuthForgetReset />} />
-            <Route
-              path="*"
-              element={
-                <Navigate
-                  to={Page.Login}
-                  state={{ from: location.pathname, state: location.state }}
-                />
-              }
-            />
-          </>
-        )}
-        {isLogin && (
-          <>
-            <Route path={Page.Questionnaire} element={<AuthQuestionnaire />} />
-            <Route path={Page.Overall} element={<Overall />} />
-            <Route path={Page.Profile} element={<Profile />} />
-            <Route path={Page.Project} element={<Project />} />
-            <Route path={Page.Upload} element={<Upload />} />
-            <Route path={Page.Notification} element={<Notification />} />
-          </>
-        )}
-        <Route path="/*" element={<Navigate to={Page.Home} />} />
-      </Route>
-    </Routes>
-  );
+  const router = createBrowserRouter([
+    {
+      element: <AppLayout />,
+      children: [
+        { path: Page.Home, element: <Home /> },
+        { path: Page.AboutUs, element: <AboutUs /> },
+        { path: Page.Faq, element: <Faq /> },
+        { path: Page.ContatUs, element: <ContactUs /> },
+        { path: Page.Explore, element: <Explore /> },
+        { path: `${Page.Explore}/song`, element: <ExploreSong /> },
+        { path: `${Page.Explore}/idea`, element: <ExploreIdea /> },
+        { path: `${Page.Explore}/user`, element: <ExploreUser /> },
+        { path: `${Page.Explore}/user/:id`, element: <ExploreUserDetail /> },
+        { path: `${Page.Explore}/:id`, element: <ExploreDetail /> },
+        { path: Page.Verify, element: <AuthVerify /> },
+        ...(isLogin
+          ? [
+              { path: Page.Questionnaire, element: <AuthQuestionnaire /> },
+              { path: Page.Overall, element: <Overall /> },
+              { path: Page.Profile, element: <Profile /> },
+              { path: Page.Project, element: <Project /> },
+              { path: Page.Upload, element: <Upload /> },
+              { path: Page.Notification, element: <Notification /> },
+            ]
+          : [
+              { path: Page.Login, element: <AuthLogin /> },
+              { path: Page.Register, element: <AuthRegister /> },
+              { path: Page.Confirmation, element: <AuthConfirmation /> },
+              { path: Page.Forget, element: <AuthForget /> },
+              { path: Page.ForgetReset, element: <AuthForgetReset /> },
+              {
+                path: '*',
+                element: <Navigate to={Page.Login} state={{ from: window.location.pathname }} />,
+              },
+            ]),
+        { path: '/*', element: <Navigate to={Page.Home} /> },
+      ],
+    },
+  ]);
+
+  return <RouterProvider router={router} />;
 };
 
 export default AppRoutes;

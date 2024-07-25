@@ -21,7 +21,7 @@ const AuthLogin = () => {
   const { code, state } = useQuery();
   const methods = useForm<LoginForm>();
   const location = useLocation();
-  const redirect = location.state as { from: string; state: unknown } | undefined;
+  const redirect = location.state as { from: string } | undefined;
 
   useEffect(() => {
     if (code && state)
@@ -49,7 +49,7 @@ const AuthLogin = () => {
         if (res !== 'ready') navigate(Page.Questionnaire);
         else {
           if (redirect) {
-            navigate(redirect.from, { state: redirect.state });
+            navigate(redirect.from);
 
             return;
           }
