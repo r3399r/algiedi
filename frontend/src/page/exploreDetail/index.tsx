@@ -25,7 +25,7 @@ import NotificationWidget from 'src/component/NotificationWidget';
 import { Page } from 'src/constant/Page';
 import { GetExploreIdResponse } from 'src/model/backend/api/Explore';
 import { Type } from 'src/model/backend/constant/Creation';
-import { Role } from 'src/model/backend/constant/Project';
+import { Role, Status } from 'src/model/backend/constant/Project';
 import { RootState } from 'src/redux/store';
 import { openFailSnackbar, openSuccessSnackbar, setHasUnsavedChanges } from 'src/redux/uiSlice';
 import { commentById, getExploreById, likeById, unlikeById } from 'src/service/ExploreService';
@@ -69,7 +69,10 @@ const ExploreDetail = () => {
   useEffect(() => {
     if (id === undefined) return;
     getExploreById(id)
-      .then((res) => setCreation(res))
+      .then((res) => {
+        if (res.type === Type.Song && res.project?.status !== Status.Published) navigate(Page.Home);
+        else setCreation(res);
+      })
       .catch((err) => dispatch(openFailSnackbar(err)));
   }, [id, refresh]);
 
@@ -77,7 +80,8 @@ const ExploreDetail = () => {
     if (
       !creation ||
       creation.tree.creation.projectId === null ||
-      creation.tree.creation.projectId === creation.tree.creation.id
+      creation.tree.creation.projectId === creation.tree.creation.id ||
+      creation.tree.creation.project?.status !== Status.Published
     )
       setPublishedSong(undefined);
     else
