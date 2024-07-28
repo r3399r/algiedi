@@ -85,7 +85,8 @@ const ModalEditor = ({ open, handleClose, defaultInfo, doRefresh }: Props) => {
       caption: matchHashtag(form.caption ?? ''),
     })
       .then(() => {
-        onClose();
+        handleClose();
+        setForm({});
         doRefresh();
       })
       .catch((err) => dispatch(openFailSnackbar(err)));
