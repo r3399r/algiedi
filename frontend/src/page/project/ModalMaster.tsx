@@ -1,4 +1,4 @@
-import { ChangeEvent, useMemo, useRef, useState } from 'react';
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Button from 'src/component/Button';
 import Checkbox from 'src/component/Checkbox';
@@ -7,7 +7,7 @@ import Modal from 'src/component/Modal';
 import ModalConfirmLeave from 'src/component/ModalConfirmLeave';
 import { DetailedCreation } from 'src/model/backend/Project';
 import { removePlaylistId } from 'src/redux/playlistSlice';
-import { openFailSnackbar } from 'src/redux/uiSlice';
+import { openFailSnackbar, setHasUnsavedChanges } from 'src/redux/uiSlice';
 import { updateCreation } from 'src/service/ProjectService';
 
 type Props = {
@@ -21,7 +21,7 @@ const ModalMaster = ({ open, handleClose, targetCreation, doRefresh }: Props) =>
   const dispatch = useDispatch();
   const trackInputRef = useRef<HTMLInputElement>(null);
   const tabInputRef = useRef<HTMLInputElement>(null);
-  const [lyrics, setLyrics] = useState<string>(targetCreation?.lyricsText ?? '');
+  const [lyrics, setLyrics] = useState<string>();
   const [trackFile, setTrackFile] = useState<File>();
   const [tabFile, setTabFile] = useState<File>();
   const [errorTrackFile, setErrorTrackFile] = useState<boolean>(false);
@@ -32,21 +32,25 @@ const ModalMaster = ({ open, handleClose, targetCreation, doRefresh }: Props) =>
   const submittable = useMemo(() => {
     if (targetCreation?.fileUrl === null && trackFile) return true;
     if (updateTrackFile) if (trackFile) return true;
-    if (targetCreation?.fileUrl !== null && lyrics !== targetCreation?.lyricsText) return true;
+    if (targetCreation?.fileUrl !== null && !!lyrics) return true;
 
     return updateTabFile;
   }, [targetCreation, updateTrackFile, updateTabFile, trackFile, lyrics]);
+
+  useEffect(() => {
+    dispatch(setHasUnsavedChanges(!!lyrics));
+  }, [lyrics]);
 
   const reset = () => {
     setUpdateTrackFile(false);
     setUpdateTabFile(false);
     setTrackFile(undefined);
     setTabFile(undefined);
-    setLyrics(targetCreation?.lyricsText ?? '');
+    setLyrics(undefined);
   };
 
   const onClose = () => {
-    if (lyrics || trackFile || tabFile) setOpenConfirm(true);
+    if (lyrics) setOpenConfirm(true);
     else {
       handleClose();
       reset();
@@ -153,6 +157,7 @@ const ModalMaster = ({ open, handleClose, targetCreation, doRefresh }: Props) =>
           <textarea
             className="my-2 h-[200px] w-full rounded border border-black px-2"
             value={lyrics}
+            defaultValue={targetCreation?.lyricsText ?? ''}
             onChange={(e) => setLyrics(e.target.value)}
           />
           <div className="text-right">
