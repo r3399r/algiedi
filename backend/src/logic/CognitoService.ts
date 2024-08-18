@@ -23,6 +23,7 @@ export class CognitoService {
     user.id = id;
     user.email = email;
     user.username = username;
+    user.platform = 'cognito';
 
     await this.userAccess.save(user);
   }

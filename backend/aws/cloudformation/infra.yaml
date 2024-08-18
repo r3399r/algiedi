@@ -103,6 +103,10 @@ Outputs:
     Value: !GetAtt CognitoUserPool.Arn
     Export:
       Name: !Sub ${Project}-${TargetEnvr}-cognito-user-pool-arn
+  UserPoolClient:
+    Value: !Sub ${CognitoUserPoolClient}
+    Export:
+      Name: !Sub ${Project}-${TargetEnvr}-cognito-user-pool-client-id
   DbEndpoint:
     Value: !GetAtt RdsDatabase.Endpoint.Address
     Export:

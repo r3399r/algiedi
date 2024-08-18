@@ -25,6 +25,7 @@ import { TrackHistoryAccess } from './access/TrackHistoryAccess';
 import { UserAccess } from './access/UserAccess';
 import { ViewCreationAccess } from './access/ViewCreationAccess';
 import { ViewCreationExploreAccess } from './access/ViewCreationExploreAccess';
+import { AuthService } from './logic/AuthService';
 import { AwsService } from './logic/AwsService';
 import { CognitoService } from './logic/CognitoService';
 import { CreationService } from './logic/CreationService';
@@ -102,6 +103,7 @@ container.bind<FollowAccess>(FollowAccess).toSelf();
 container.bind<NotificationAccess>(NotificationAccess).toSelf();
 
 // service
+container.bind<AuthService>(AuthService).toSelf();
 container.bind<AwsService>(AwsService).toSelf();
 container.bind<CognitoService>(CognitoService).toSelf();
 container.bind<ExploreService>(ExploreService).toSelf();

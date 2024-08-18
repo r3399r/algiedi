@@ -1,4 +1,5 @@
 import { CognitoUserAttribute } from 'amazon-cognito-identity-js';
+import authEndpoint from 'src/api/authEndpoint';
 import userEndpoint from 'src/api/userEndpoint';
 import { PatchUserRequest } from 'src/model/backend/api/User';
 import { RegistrationForm } from 'src/model/Form';
@@ -18,14 +19,37 @@ import {
 import { sleep } from 'src/util/sleep';
 import { wsStop } from 'src/util/wsTick';
 
+export const setLoginState = async (token: string, expiration: string) => {
+  localStorage.setItem('token', token);
+  localStorage.setItem('expiration', expiration);
+  dispatch(setIsLogin(true));
+  await sleep(100);
+};
+
+export const login2 = async (code: string, redirectUrl: string) => {
+  try {
+    dispatch(startWaiting());
+    const res = await authEndpoint.postAuthLogin({
+      platform: 'google',
+      code,
+      redirectUrl,
+    });
+    console.log(res.data);
+
+    await setLoginState(res.data.idToken, (Date.now() / 1000 + res.data.expiresIn).toString());
+  } finally {
+    dispatch(finishWaiting());
+  }
+};
+
 export const login = async (email: string, password: string) => {
   try {
     dispatch(startWaiting());
     const result = await authenticateUser(email, password);
-    localStorage.setItem('token', result.getIdToken().getJwtToken());
-    localStorage.setItem('expiration', result.getIdToken().getExpiration().toString());
-    dispatch(setIsLogin(true));
-    await sleep(100);
+    await setLoginState(
+      result.getIdToken().getJwtToken(),
+      result.getIdToken().getExpiration().toString(),
+    );
     const attributes = await getUserAttributes();
 
     return attributes.find((v) => v.name === 'custom:status')?.value;

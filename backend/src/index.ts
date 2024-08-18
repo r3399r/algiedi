@@ -10,6 +10,7 @@ import { bindings } from './bindings';
 import { CognitoService } from './logic/CognitoService';
 import { WsService } from './logic/WsService';
 import { WebsocketMessage } from './model/api/Ws';
+import auth from './routes/auth';
 import creation from './routes/creation';
 import explore from './routes/explore';
 import me from './routes/me';
@@ -32,6 +33,9 @@ export const api = async (event: LambdaEvent, _context?: LambdaContext) => {
 
     const resource = event.resource.split('/')[2];
     switch (resource) {
+      case 'auth':
+        res = await auth(event);
+        break;
       case 'me':
         res = await me(event);
         break;

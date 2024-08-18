@@ -55,6 +55,53 @@ Resources:
             "title": !Sub "${Project}-${TargetEnvr}-api"
           },
           "paths": {
+            "/api/auth/login": {
+              "post": {
+                "requestBody": {
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/postAuthLogin"
+                      }
+                    }
+                  },
+                  "required": true
+                },
+                "responses": {
+                  "200": {
+                    "description": "200 response",
+                    "headers": {
+                      "Access-Control-Allow-Origin": {
+                        "schema": {"type": "string"}
+                      }
+                    },
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/Empty"
+                        }
+                      }
+                    }
+                  }
+                },
+                "x-amazon-apigateway-request-validator" : "Validate query string parameters and headers",
+                "x-amazon-apigateway-integration": {
+                  "type": "aws_proxy",
+                  "httpMethod": "POST",
+                  "uri": !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${Project}-${TargetEnvr}-lambda/invocations",
+                  "responses": {
+                    "default": {
+                      "statusCode": "200",
+                      "responseParameters": {
+                        "method.response.header.Access-Control-Allow-Origin": "'*'"
+                      }
+                    }
+                  },
+                  "passthroughBehavior": "when_no_match",
+                  "contentHandling": "CONVERT_TO_TEXT"
+                }
+              }
+            },
             "/api/me": {
               "get": {
                 "responses": {
@@ -1938,6 +1985,14 @@ Resources:
               "type": "object",
               "title": "Empty Schema"
             },
+            "postAuthLogin": {
+              "type": "object",
+              "properties": {
+                "code": {"type": "string"},
+                "redirectUrl": {"type": "string"}
+              },
+              "required": ["code", "redirectUrl"]
+            },
             "postSnsContact": {
               "type": "object",
               "properties": {
@@ -2088,6 +2143,8 @@ Resources:
           SNS_SUBSCRIBE_TOPIC_ARN: !Ref SubscribeNewsletterSNSTopic
           USER_POOL_ID:
             Fn::ImportValue: !Sub ${Project}-${TargetEnvr}-cognito-user-pool-id
+          USER_POOL_CLIENT_ID:
+            Fn::ImportValue: !Sub ${Project}-${TargetEnvr}-cognito-user-pool-client-id
           WS_ENDPOINT: !Sub ${WebsocketApi}.execute-api.${AWS::Region}.amazonaws.com/socket
           DB_ENDPOINT:
             Fn::ImportValue: !Sub ${Project}-${TargetEnvr}-db-endpoint
@@ -2096,6 +2153,9 @@ Resources:
           DB_USERNAME:
             Fn::ImportValue: !Sub ${Project}-${TargetEnvr}-db-username
           DB_PASSWORD: !Sub '{{resolve:ssm:${Project}-${TargetEnvr}-db-pwd}}'
+          GOOGLE_CLIENT_ID: !Sub '{{resolve:ssm:${Project}-${TargetEnvr}-google-client-id}}'
+          GOOGLE_CLIENT_SECRET: !Sub '{{resolve:ssm:${Project}-${TargetEnvr}-google-client-secret}}'
+          TEMP_PWD: !Sub '{{resolve:ssm:${Project}-${TargetEnvr}-temp-pwd}}'
   InvokePermissionLambdaApi:
     Type: AWS::Lambda::Permission
     DependsOn: [ServerlessApi, LambdaApiFunction]

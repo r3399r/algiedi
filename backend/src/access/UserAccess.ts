@@ -41,6 +41,12 @@ export class UserAccess {
     return [await this.find({ where: { id: In(id.map((v) => v.id)) } }), count];
   }
 
+  public async findOne(options: FindOneOptions<User>) {
+    const qr = await this.database.getQueryRunner();
+
+    return await qr.manager.findOne<User>(UserEntity.name, options);
+  }
+
   public async findOneOrFail(options: FindOneOptions<User>) {
     const qr = await this.database.getQueryRunner();
 

@@ -3,6 +3,7 @@ import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 import AppLayout from './AppLayout';
 import { Page } from './constant/Page';
 import AboutUs from './page/aboutUs';
+import AuthCallback from './page/authCallback';
 import AuthConfirmation from './page/authConfirmation';
 import AuthForget from './page/authForget';
 import AuthForgetReset from './page/authForgetReset';
@@ -56,6 +57,7 @@ const AppRoutes = () => {
           : [
               { path: Page.Login, element: <AuthLogin /> },
               { path: Page.Register, element: <AuthRegister /> },
+              { path: Page.AuthCallback, element: <AuthCallback /> },
               { path: Page.Confirmation, element: <AuthConfirmation /> },
               { path: Page.Forget, element: <AuthForget /> },
               { path: Page.ForgetReset, element: <AuthForgetReset /> },

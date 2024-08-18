@@ -6,6 +6,7 @@ export enum Page {
   Explore = '/explore',
   Login = '/auth/login',
   Register = '/auth/register',
+  AuthCallback = '/auth/callback',
   Confirmation = '/auth/confirmation',
   Verify = '/auth/verify',
   Questionnaire = '/auth/questionnaire',

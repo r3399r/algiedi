@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS user (
 	last_project_id VARCHAR(36) NULL,
 	connection_id VARCHAR(255) NULL,
 	last_sent_at TIMESTAMP NULL,
+	platform VARCHAR(255) NOT NULL,
 	created_at TIMESTAMP NULL,
 	updated_at TIMESTAMP NULL,
 	PRIMARY KEY (id ASC),
