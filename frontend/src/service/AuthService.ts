@@ -1,6 +1,7 @@
 import { CognitoUserAttribute } from 'amazon-cognito-identity-js';
 import authEndpoint from 'src/api/authEndpoint';
 import userEndpoint from 'src/api/userEndpoint';
+import { PostAuthLoginResponse } from 'src/model/backend/api/Auth';
 import { PatchUserRequest } from 'src/model/backend/api/User';
 import { RegistrationForm } from 'src/model/Form';
 import { reset as apiReset } from 'src/redux/apiSlice';
@@ -8,25 +9,24 @@ import { reset as meReset } from 'src/redux/meSlice';
 import { dispatch } from 'src/redux/store';
 import { finishWaiting, setIsLogin, startWaiting } from 'src/redux/uiSlice';
 import {
-  authenticateUser,
   confirmPassword,
   confirmRegistration,
   forgotPassword,
-  getCurrentUser,
   resendConfirmationCode,
   signUp,
 } from 'src/util/cognito';
 import { sleep } from 'src/util/sleep';
 import { wsStop } from 'src/util/wsTick';
 
-export const setLoginState = async (token: string, expiration: string) => {
-  localStorage.setItem('token', token);
-  localStorage.setItem('expiration', expiration);
+const setLoginState = async (data: PostAuthLoginResponse) => {
+  localStorage.setItem('token', data.idToken);
+  localStorage.setItem('expiration', (Date.now() + data.expiresIn).toString());
+  localStorage.setItem('refreshToken', data.refreshToken);
   dispatch(setIsLogin(true));
   await sleep(100);
 };
 
-export const login2 = async (code: string, redirectUrl: string) => {
+export const loginByGoogle = async (code: string, redirectUrl: string) => {
   try {
     dispatch(startWaiting());
     const res = await authEndpoint.postAuthLogin({
@@ -34,25 +34,25 @@ export const login2 = async (code: string, redirectUrl: string) => {
       code,
       redirectUrl,
     });
-    console.log(res.data);
+    await setLoginState(res.data);
 
-    await setLoginState(res.data.idToken, (Date.now() / 1000 + res.data.expiresIn).toString());
+    return res.data.questionnaireFilled;
   } finally {
     dispatch(finishWaiting());
   }
 };
 
-export const login = async (email: string, password: string) => {
+export const loginByCognito = async (email: string, password: string) => {
   try {
     dispatch(startWaiting());
-    const result = await authenticateUser(email, password);
-    await setLoginState(
-      result.getIdToken().getJwtToken(),
-      result.getIdToken().getExpiration().toString(),
-    );
-    const attributes = await getUserAttributes();
+    const res = await authEndpoint.postAuthLogin({
+      platform: 'cognito',
+      email,
+      password,
+    });
+    await setLoginState(res.data);
 
-    return attributes.find((v) => v.name === 'custom:status')?.value;
+    return res.data.questionnaireFilled;
   } catch (e) {
     throw (e as Error).message;
   } finally {
@@ -101,20 +101,6 @@ export const verifyAccount = async (email: string, code: string) => {
   }
 };
 
-export const getUserAttributes = async () => {
-  const cognitoUser = await getCurrentUser();
-  const userAttributes: CognitoUserAttribute[] | undefined = await new Promise(
-    (resolve, reject) => {
-      cognitoUser.getUserAttributes((err, res: CognitoUserAttribute[] | undefined) => {
-        if (err) reject(err);
-        else resolve(res);
-      });
-    },
-  );
-
-  return (userAttributes ?? []).map((v) => ({ name: v.Name, value: v.Value }));
-};
-
 export const saveQuestionnaire = async (data: PatchUserRequest) => {
   try {
     dispatch(startWaiting());
@@ -154,11 +140,10 @@ export const confirmForgot = async (email: string, newPassword: string, code: st
 export const logout = async () => {
   try {
     dispatch(startWaiting());
-    const cognitoUser = await getCurrentUser();
-    cognitoUser.signOut();
     wsStop();
     localStorage.removeItem('token');
     localStorage.removeItem('expiration');
+    localStorage.removeItem('refreshToken');
     dispatch(setIsLogin(false));
     dispatch(apiReset());
     dispatch(meReset());

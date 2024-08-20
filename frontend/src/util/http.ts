@@ -44,14 +44,14 @@ const privateRequestConfig = async <D = unknown, P = any>(
   url: string,
   options?: Options<D, P>,
 ) => {
-  let token = localStorage.getItem('token') ?? '';
+  const token = localStorage.getItem('token') ?? '';
   const expiration = Number(localStorage.getItem('expiration') ?? 0);
-  if (Date.now() > expiration * 1000) {
-    const result = await refreshUserSession();
-    localStorage.setItem('token', result.getIdToken().getJwtToken());
-    localStorage.setItem('expiration', result.getIdToken().getExpiration().toString());
-    token = result.getIdToken().getJwtToken();
-  }
+  // if (Date.now() > expiration) {
+  //   const result = await refreshUserSession();
+  //   localStorage.setItem('token', result.getIdToken().getJwtToken());
+  //   localStorage.setItem('expiration', result.getIdToken().getExpiration().toString());
+  //   token = result.getIdToken().getJwtToken();
+  // }
 
   return {
     ...defaultConfig,
@@ -101,6 +101,7 @@ const authRequest = async <T, D = unknown, P = any>(
     ) {
       localStorage.removeItem('token');
       localStorage.removeItem('expiration');
+      localStorage.removeItem('refreshToken');
       dispatch(setIsLogin(false));
       emitter.emit('auth-expired');
     }

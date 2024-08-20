@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS user (
 	connection_id VARCHAR(255) NULL,
 	last_sent_at TIMESTAMP NULL,
 	platform VARCHAR(255) NOT NULL,
+	questionnaire_filled BOOLEAN NOT NULL,
 	created_at TIMESTAMP NULL,
 	updated_at TIMESTAMP NULL,
 	PRIMARY KEY (id ASC),

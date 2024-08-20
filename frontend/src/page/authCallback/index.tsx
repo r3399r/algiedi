@@ -3,8 +3,8 @@ import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Page } from 'src/constant/Page';
 import useQuery from 'src/hook/useQuery';
-import { openFailSnackbar } from 'src/redux/uiSlice';
-import { login2 } from 'src/service/AuthService';
+import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
+import { loginByGoogle } from 'src/service/AuthService';
 
 const AuthCallback = () => {
   const dispatch = useDispatch();
@@ -14,9 +14,11 @@ const AuthCallback = () => {
   useEffect(() => {
     if (state !== sessionStorage.getItem('login-google-state')) navigate(Page.Login);
     else
-      login2(code, `${window.location.origin}/auth/callback`)
-        .then(() => {
-          navigate(Page.Profile);
+      loginByGoogle(code, `${window.location.origin}/auth/callback`)
+        .then((res) => {
+          dispatch(openSuccessSnackbar('Login Successfully'));
+          if (res === false) navigate(Page.Questionnaire);
+          else navigate(Page.Profile);
         })
         .catch((err) => {
           navigate(Page.Login);

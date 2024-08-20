@@ -110,6 +110,7 @@ export class AuthService {
           expiresIn: resAuth2.AuthenticationResult?.ExpiresIn ?? -1,
           refreshToken: resAuth2.AuthenticationResult?.RefreshToken ?? '',
           idToken: resAuth.AuthenticationResult?.IdToken ?? '',
+          questionnaireFilled: user.questionnaireFilled ?? false,
         };
       } else if (resAuth.ChallengeName !== undefined)
         throw new InternalServerError(
@@ -121,6 +122,30 @@ export class AuthService {
         expiresIn: resAuth.AuthenticationResult?.ExpiresIn ?? -1,
         refreshToken: resAuth.AuthenticationResult?.RefreshToken ?? '',
         idToken: resAuth.AuthenticationResult?.IdToken ?? '',
+        questionnaireFilled: user.questionnaireFilled ?? false,
+      };
+    } else if (data.platform === 'cognito') {
+      const resAuth = await this.cognitoProvider
+        .initiateAuth({
+          AuthFlow: 'USER_PASSWORD_AUTH',
+          ClientId: process.env.USER_POOL_CLIENT_ID ?? '',
+          AuthParameters: {
+            USERNAME: data.email,
+            PASSWORD: data.password,
+          },
+        })
+        .promise();
+
+      const user = await this.userAccess.findOneOrFail({
+        where: { email: data.email },
+      });
+
+      return {
+        accessToken: resAuth.AuthenticationResult?.AccessToken ?? '',
+        expiresIn: resAuth.AuthenticationResult?.ExpiresIn ?? -1,
+        refreshToken: resAuth.AuthenticationResult?.RefreshToken ?? '',
+        idToken: resAuth.AuthenticationResult?.IdToken ?? '',
+        questionnaireFilled: user.questionnaireFilled ?? false,
       };
     }
 
@@ -129,6 +154,7 @@ export class AuthService {
       expiresIn: -1,
       refreshToken: 'xxx',
       idToken: 'xxx',
+      questionnaireFilled: false,
     };
   }
 }

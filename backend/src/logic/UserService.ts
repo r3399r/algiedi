@@ -41,21 +41,6 @@ export class UserService {
   }
 
   public async initUser(data: PatchUserRequest) {
-    // update cognito
-    await this.cognitoProvider
-      .adminUpdateUserAttributes({
-        UserPoolId: process.env.USER_POOL_ID ?? 'xx',
-        Username: this.cognitoUserId,
-        UserAttributes: [
-          {
-            Name: 'custom:status',
-            Value: 'ready',
-          },
-        ],
-      })
-      .promise();
-
-    // init user
     const user = await this.userAccess.findOneByIdOrFail(this.cognitoUserId);
     user.age = Number(data.age);
     user.region = data.region;
@@ -63,6 +48,7 @@ export class UserService {
     user.language = data.language;
     user.bio = `I am good at playing the ${data.instrument}.`;
     user.tag = data.favoriate;
+    user.questionnaireFilled = true;
 
     await this.userAccess.save(user);
   }

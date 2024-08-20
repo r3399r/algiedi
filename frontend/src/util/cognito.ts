@@ -43,6 +43,7 @@ export const getCurrentUser = async () => {
   } catch (err) {
     localStorage.removeItem('token');
     localStorage.removeItem('expiration');
+    localStorage.removeItem('refreshToken');
     throw err;
   }
 };

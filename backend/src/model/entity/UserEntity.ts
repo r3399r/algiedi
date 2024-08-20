@@ -19,6 +19,7 @@ export type User = {
   connectionId: string | null;
   lastSentAt: string | null;
   platform: string;
+  questionnaireFilled: boolean;
   createdAt: string | null;
   updatedAt: string | null;
 };
@@ -78,6 +79,9 @@ export class UserEntity implements User {
 
   @Column({ type: 'varchar' })
   platform!: string;
+
+  @Column({ type: 'boolean', name: 'questionnaire_filled' })
+  questionnaireFilled!: boolean;
 
   @Column({ type: 'timestamp', name: 'created_at', default: null })
   createdAt!: string;

@@ -11,7 +11,7 @@ import IcLoginFacebook from 'src/image/ic-login-facebook.svg';
 import IcLoginGoogle from 'src/image/ic-login-google.svg';
 import { LoginForm } from 'src/model/Form';
 import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
-import { login } from 'src/service/AuthService';
+import { loginByCognito } from 'src/service/AuthService';
 
 const AuthLogin = () => {
   const dispatch = useDispatch();
@@ -22,10 +22,10 @@ const AuthLogin = () => {
   const endpoint = useLoginEndpoint();
 
   const onSubmit = (data: LoginForm) => {
-    login(data.email, data.password)
+    loginByCognito(data.email, data.password)
       .then((res) => {
         dispatch(openSuccessSnackbar('Login Successfully'));
-        if (res !== 'ready') navigate(Page.Questionnaire);
+        if (res === false) navigate(Page.Questionnaire);
         else {
           if (redirect) {
             navigate(redirect.from);
