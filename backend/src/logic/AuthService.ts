@@ -3,10 +3,15 @@ import axios from 'axios';
 import { inject, injectable } from 'inversify';
 import { UserAccess } from 'src/access/UserAccess';
 import {
+  PostAuthForgotConfirmRequest,
+  PostAuthForgotSendRequest,
   PostAuthLoginRequest,
   PostAuthLoginResponse,
   PostAuthRefreshTokenRequest,
   PostAuthRefreshTokenResponse,
+  PostAuthSignupConfirmRequest,
+  PostAuthSignupRequest,
+  PostAuthSignupResendRequest,
 } from 'src/model/api/Auth';
 import { UserEntity } from 'src/model/entity/UserEntity';
 import { BadRequestError, InternalServerError } from 'src/model/error';
@@ -33,6 +38,56 @@ export class AuthService {
           USERNAME: username,
           PASSWORD: process.env.TEMP_PWD ?? '',
         },
+      })
+      .promise();
+  }
+
+  public async forgotSend(data: PostAuthForgotSendRequest) {
+    await this.cognitoProvider
+      .forgotPassword({
+        ClientId: process.env.USER_POOL_CLIENT_ID ?? '',
+        Username: data.username,
+      })
+      .promise();
+  }
+
+  public async forgotConfirm(data: PostAuthForgotConfirmRequest) {
+    await this.cognitoProvider
+      .confirmForgotPassword({
+        ClientId: process.env.USER_POOL_CLIENT_ID ?? '',
+        Username: data.username,
+        Password: data.password,
+        ConfirmationCode: data.code,
+      })
+      .promise();
+  }
+
+  public async resend(data: PostAuthSignupResendRequest) {
+    await this.cognitoProvider
+      .resendConfirmationCode({
+        ClientId: process.env.USER_POOL_CLIENT_ID ?? '',
+        Username: data.username,
+      })
+      .promise();
+  }
+
+  public async confirmSignup(data: PostAuthSignupConfirmRequest) {
+    await this.cognitoProvider
+      .confirmSignUp({
+        ClientId: process.env.USER_POOL_CLIENT_ID ?? '',
+        Username: data.username,
+        ConfirmationCode: data.code,
+      })
+      .promise();
+  }
+
+  public async signup(data: PostAuthSignupRequest) {
+    await this.cognitoProvider
+      .signUp({
+        ClientId: process.env.USER_POOL_CLIENT_ID ?? '',
+        Username: data.email,
+        Password: data.password,
+        UserAttributes: [{ Name: 'custom:user_name', Value: data.username }],
       })
       .promise();
   }

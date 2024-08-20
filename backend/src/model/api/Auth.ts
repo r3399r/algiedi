@@ -29,3 +29,28 @@ export type PostAuthRefreshTokenResponse = {
   expiresIn: number;
   idToken: string;
 };
+
+export type PostAuthSignupRequest = {
+  email: string;
+  password: string;
+  username: string;
+};
+
+export type PostAuthSignupResendRequest = {
+  username: string;
+};
+
+export type PostAuthSignupConfirmRequest = {
+  username: string;
+  code: string;
+};
+
+export type PostAuthForgotSendRequest = {
+  username: string;
+};
+
+export type PostAuthForgotConfirmRequest = {
+  username: string;
+  password: string;
+  code: string;
+};

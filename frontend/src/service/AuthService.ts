@@ -1,4 +1,3 @@
-import { CognitoUserAttribute } from 'amazon-cognito-identity-js';
 import authEndpoint from 'src/api/authEndpoint';
 import userEndpoint from 'src/api/userEndpoint';
 import { PostAuthLoginResponse } from 'src/model/backend/api/Auth';
@@ -8,13 +7,6 @@ import { reset as apiReset } from 'src/redux/apiSlice';
 import { reset as meReset } from 'src/redux/meSlice';
 import { dispatch } from 'src/redux/store';
 import { finishWaiting, setIsLogin, startWaiting } from 'src/redux/uiSlice';
-import {
-  confirmPassword,
-  confirmRegistration,
-  forgotPassword,
-  resendConfirmationCode,
-  signUp,
-} from 'src/util/cognito';
 import { sleep } from 'src/util/sleep';
 import { wsStop } from 'src/util/wsTick';
 
@@ -53,8 +45,6 @@ export const loginByCognito = async (email: string, password: string) => {
     await setLoginState(res.data);
 
     return res.data.questionnaireFilled;
-  } catch (e) {
-    throw (e as Error).message;
   } finally {
     dispatch(finishWaiting());
   }
@@ -64,14 +54,11 @@ export const register = async (data: RegistrationForm) => {
   try {
     dispatch(startWaiting());
 
-    const userName = new CognitoUserAttribute({
-      Name: 'custom:user_name',
-      Value: data.userName,
+    await authEndpoint.postAuthSignup({
+      email: data.email,
+      password: data.password,
+      username: data.userName,
     });
-
-    await signUp(data.email, data.password, [userName]);
-  } catch (e) {
-    throw (e as Error).message;
   } finally {
     dispatch(finishWaiting());
   }
@@ -81,9 +68,7 @@ export const resendConfirmationEmail = async (email: string) => {
   try {
     dispatch(startWaiting());
 
-    await resendConfirmationCode(email);
-  } catch (e) {
-    throw (e as Error).message;
+    await authEndpoint.postAuthSignupResend({ username: email });
   } finally {
     dispatch(finishWaiting());
   }
@@ -93,9 +78,7 @@ export const verifyAccount = async (email: string, code: string) => {
   try {
     dispatch(startWaiting());
 
-    await confirmRegistration(email, code);
-  } catch (e) {
-    throw (e as Error).message;
+    await authEndpoint.postAuthSignupConfirm({ username: email, code });
   } finally {
     dispatch(finishWaiting());
   }
@@ -106,8 +89,6 @@ export const saveQuestionnaire = async (data: PatchUserRequest) => {
     dispatch(startWaiting());
 
     await userEndpoint.patchUser(data);
-  } catch (e) {
-    throw (e as Error).message;
   } finally {
     dispatch(finishWaiting());
   }
@@ -117,9 +98,7 @@ export const sendForgot = async (email: string) => {
   try {
     dispatch(startWaiting());
 
-    await forgotPassword(email);
-  } catch (e) {
-    throw (e as Error).message;
+    await authEndpoint.postAuthForgotSend({ username: email });
   } finally {
     dispatch(finishWaiting());
   }
@@ -129,9 +108,7 @@ export const confirmForgot = async (email: string, newPassword: string, code: st
   try {
     dispatch(startWaiting());
 
-    await confirmPassword(email, newPassword, code);
-  } catch (e) {
-    throw (e as Error).message;
+    await authEndpoint.postAuthForgotConfirm({ username: email, password: newPassword, code });
   } finally {
     dispatch(finishWaiting());
   }
@@ -147,8 +124,6 @@ export const logout = async () => {
     dispatch(setIsLogin(false));
     dispatch(apiReset());
     dispatch(meReset());
-  } catch (e) {
-    throw (e as Error).message;
   } finally {
     dispatch(finishWaiting());
   }
