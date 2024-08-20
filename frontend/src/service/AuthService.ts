@@ -20,7 +20,7 @@ import { wsStop } from 'src/util/wsTick';
 
 const setLoginState = async (data: PostAuthLoginResponse) => {
   localStorage.setItem('token', data.idToken);
-  localStorage.setItem('expiration', (Date.now() + data.expiresIn).toString());
+  localStorage.setItem('expiration', (Date.now() + data.expiresIn * 1000).toString());
   localStorage.setItem('refreshToken', data.refreshToken);
   dispatch(setIsLogin(true));
   await sleep(100);

@@ -5,6 +5,8 @@ import { UserAccess } from 'src/access/UserAccess';
 import {
   PostAuthLoginRequest,
   PostAuthLoginResponse,
+  PostAuthRefreshTokenRequest,
+  PostAuthRefreshTokenResponse,
 } from 'src/model/api/Auth';
 import { UserEntity } from 'src/model/entity/UserEntity';
 import { BadRequestError, InternalServerError } from 'src/model/error';
@@ -33,6 +35,30 @@ export class AuthService {
         },
       })
       .promise();
+  }
+
+  public async refreshToken(
+    data: PostAuthRefreshTokenRequest
+  ): Promise<PostAuthRefreshTokenResponse> {
+    const res = await this.cognitoProvider
+      .adminInitiateAuth({
+        UserPoolId: process.env.USER_POOL_ID ?? '',
+        ClientId: process.env.USER_POOL_CLIENT_ID ?? '',
+        AuthFlow: 'REFRESH_TOKEN_AUTH',
+        AuthParameters: {
+          REFRESH_TOKEN: data.refreshToken,
+        },
+      })
+      .promise();
+
+    if (!res.AuthenticationResult)
+      throw new BadRequestError('Invalid refresh token');
+
+    return {
+      accessToken: res.AuthenticationResult.AccessToken ?? '',
+      expiresIn: res.AuthenticationResult.ExpiresIn ?? 0,
+      idToken: res.AuthenticationResult.IdToken ?? '',
+    };
   }
 
   public async login(

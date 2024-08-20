@@ -19,3 +19,13 @@ export type PostAuthLoginResponse = {
   idToken: string;
   questionnaireFilled: boolean;
 };
+
+export type PostAuthRefreshTokenRequest = {
+  refreshToken: string;
+};
+
+export type PostAuthRefreshTokenResponse = {
+  accessToken: string;
+  expiresIn: number;
+  idToken: string;
+};

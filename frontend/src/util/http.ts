@@ -1,7 +1,7 @@
 import axios, { AxiosError, AxiosRequestConfig, RawAxiosRequestHeaders } from 'axios';
+import { PostAuthRefreshTokenResponse } from 'src/model/backend/api/Auth';
 import { dispatch } from 'src/redux/store';
 import { setIsLogin } from 'src/redux/uiSlice';
-import { refreshUserSession } from './cognito';
 import { emitter } from './eventBus';
 
 // eslint-disable-next-line
@@ -44,14 +44,18 @@ const privateRequestConfig = async <D = unknown, P = any>(
   url: string,
   options?: Options<D, P>,
 ) => {
-  const token = localStorage.getItem('token') ?? '';
+  let token = localStorage.getItem('token') ?? '';
   const expiration = Number(localStorage.getItem('expiration') ?? 0);
-  // if (Date.now() > expiration) {
-  //   const result = await refreshUserSession();
-  //   localStorage.setItem('token', result.getIdToken().getJwtToken());
-  //   localStorage.setItem('expiration', result.getIdToken().getExpiration().toString());
-  //   token = result.getIdToken().getJwtToken();
-  // }
+  if (Date.now() > expiration) {
+    const result = await axios.request<PostAuthRefreshTokenResponse>({
+      url: '/api/auth/refresh',
+      method: 'post',
+      data: { refreshToken: localStorage.getItem('refreshToken') },
+    });
+    localStorage.setItem('token', result.data.idToken);
+    localStorage.setItem('expiration', (Date.now() + result.data.expiresIn * 1000).toString());
+    token = result.data.idToken;
+  }
 
   return {
     ...defaultConfig,
