@@ -6,6 +6,7 @@ import Footer from 'src/component/Footer';
 import Form from 'src/component/Form';
 import FormInput from 'src/component/FormInput';
 import { Page } from 'src/constant/Page';
+import useLoginEndpoint from 'src/hook/useLoginEndpoint';
 import IcLoginFacebook from 'src/image/ic-login-facebook.svg';
 import IcLoginGoogle from 'src/image/ic-login-google.svg';
 import { RegistrationForm } from 'src/model/Form';
@@ -16,6 +17,7 @@ const AuthRegister = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const methods = useForm<RegistrationForm>();
+  const endpoint = useLoginEndpoint();
 
   const onSubmit = (data: RegistrationForm) => {
     if (data.password !== data.confirmPassword)
@@ -50,22 +52,12 @@ const AuthRegister = () => {
           <div className="mx-auto w-[400px]">
             <div className="text-center text-[40px] font-bold text-[#7ba0ff]">Create account</div>
             <div className="mt-6 flex items-center justify-around gap-2">
-              <a
-                href={`${process.env.REACT_APP_COGNITO_DOMAIN}/oauth2/authorize?response_type=code&client_id=33i739in06rkqhtdn8kbitgbmi&redirect_uri=https://dev.gotronmusic.com/api/explore&state=12345&identity_provider=Facebook`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <div className="flex cursor-pointer items-center gap-2 rounded-[30px] bg-white p-2 text-xs font-bold">
-                  <img src={IcLoginFacebook} />
-                  <div>Sign in with Facebook</div>
-                </div>
-              </a>
+              <div className="flex cursor-not-allowed items-center gap-2 rounded-[30px] bg-white p-2 text-xs font-bold">
+                <img src={IcLoginFacebook} />
+                <div>Sign in with Facebook</div>
+              </div>
               <div>OR</div>
-              <a
-                href={`${process.env.REACT_APP_COGNITO_DOMAIN}/oauth2/authorize?response_type=code&client_id=33i739in06rkqhtdn8kbitgbmi&redirect_uri=https://dev.gotronmusic.com/api/explore&state=12345&identity_provider=Google`}
-                target="_blank"
-                rel="noreferrer"
-              >
+              <a href={endpoint.google} target="_self" rel="noreferrer">
                 <div className="flex cursor-pointer items-center gap-2 rounded-[30px] bg-[#4c81e4] p-2 text-xs font-bold text-white">
                   <img src={IcLoginGoogle} />
                   <div>Sign in with Google</div>
