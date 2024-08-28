@@ -37,7 +37,7 @@ const ExploreDetail = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
-  const { isLogin } = useSelector((rootState: RootState) => rootState.ui);
+  const { isLogin } = useSelector((rootState: RootState) => rootState.auth);
   const me = useSelector((rootState: RootState) => rootState.me);
   const { id } = useParams();
   const [creation, setCreation] = useState<GetExploreIdResponse>();

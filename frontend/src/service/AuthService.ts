@@ -4,9 +4,10 @@ import { PostAuthLoginResponse } from 'src/model/backend/api/Auth';
 import { PatchUserRequest } from 'src/model/backend/api/User';
 import { RegistrationForm } from 'src/model/Form';
 import { reset as apiReset } from 'src/redux/apiSlice';
+import { setIsLogin } from 'src/redux/authSlice';
 import { reset as meReset } from 'src/redux/meSlice';
 import { dispatch } from 'src/redux/store';
-import { finishWaiting, setIsLogin, startWaiting } from 'src/redux/uiSlice';
+import { finishWaiting, startWaiting } from 'src/redux/uiSlice';
 import { sleep } from 'src/util/sleep';
 import { wsStop } from 'src/util/wsTick';
 

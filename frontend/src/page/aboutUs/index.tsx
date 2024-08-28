@@ -9,7 +9,7 @@ import { RootState } from 'src/redux/store';
 
 const AboutUs = () => {
   const navigate = useNavigate();
-  const { isLogin } = useSelector((rootState: RootState) => rootState.ui);
+  const { isLogin } = useSelector((rootState: RootState) => rootState.auth);
 
   return (
     <div>

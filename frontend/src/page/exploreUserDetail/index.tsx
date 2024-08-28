@@ -18,7 +18,7 @@ import { getUserById } from 'src/service/ExploreService';
 
 const ExploreUserDetail = () => {
   const navigate = useNavigate();
-  const { isLogin } = useSelector((rootState: RootState) => rootState.ui);
+  const { isLogin } = useSelector((rootState: RootState) => rootState.auth);
   const dispatch = useDispatch();
   const { id } = useParams();
   const [user, setUser] = useState<GetExploreUserIdResponse>();

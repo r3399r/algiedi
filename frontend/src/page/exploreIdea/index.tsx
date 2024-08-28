@@ -41,7 +41,7 @@ const ExploreIdea = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const query = useQuery<{ tab?: string; keyword?: string }>();
-  const { isLogin } = useSelector((rootState: RootState) => rootState.ui);
+  const { isLogin } = useSelector((rootState: RootState) => rootState.auth);
   const [idea, setIdea] = useState<GetExploreResponse>();
   const [genre, setGenre] = useState<string>('All');
   const [theme, setTheme] = useState<string>('All');

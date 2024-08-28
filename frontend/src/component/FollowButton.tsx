@@ -13,7 +13,7 @@ type Props = {
 
 const FollowButton = ({ id, following, doRefresh }: Props) => {
   const {
-    ui: { isLogin },
+    auth: { isLogin },
     me,
   } = useSelector((rootState: RootState) => rootState);
   const dispatch = useDispatch();

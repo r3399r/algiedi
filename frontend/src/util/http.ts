@@ -1,7 +1,7 @@
 import axios, { AxiosError, AxiosRequestConfig, RawAxiosRequestHeaders } from 'axios';
 import { PostAuthRefreshTokenResponse } from 'src/model/backend/api/Auth';
+import { setIsLogin } from 'src/redux/authSlice';
 import { dispatch } from 'src/redux/store';
-import { setIsLogin } from 'src/redux/uiSlice';
 import { emitter } from './eventBus';
 
 // eslint-disable-next-line

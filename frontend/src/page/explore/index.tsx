@@ -17,7 +17,7 @@ import { getExploreFeatured } from 'src/service/ExploreService';
 
 const Explore = () => {
   const navigate = useNavigate();
-  const { isLogin } = useSelector((rootState: RootState) => rootState.ui);
+  const { isLogin } = useSelector((rootState: RootState) => rootState.auth);
   const [tabMusic, setTabMusic] = useState<number>(0);
   const [tabLyrics, setTabLyrics] = useState<number>(0);
   const [tracks, setTracks] = useState<GetExploreFeaturedResponse['track']>();

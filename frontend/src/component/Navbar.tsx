@@ -15,7 +15,7 @@ import NavbarExploreMenu from './NavbarExploreMenu';
 const Navbar = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState<boolean>(false);
-  const { isLogin } = useSelector((rootState: RootState) => rootState.ui);
+  const { isLogin } = useSelector((rootState: RootState) => rootState.auth);
   const { avatar } = useSelector((rootState: RootState) => rootState.me);
   const pathname = useLocation().pathname;
   const exploreRef = useRef<HTMLDivElement>(null);

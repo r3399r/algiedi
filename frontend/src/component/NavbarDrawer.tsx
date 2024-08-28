@@ -13,7 +13,7 @@ type NavbarDrawerProps = DrawerProps & {
 
 const NavbarDrawer = ({ open, onClose }: NavbarDrawerProps) => {
   const navigate = useNavigate();
-  const { isLogin } = useSelector((rootState: RootState) => rootState.ui);
+  const { isLogin } = useSelector((rootState: RootState) => rootState.auth);
   const { avatar } = useSelector((rootState: RootState) => rootState.me);
   const pathname = useLocation().pathname;
 

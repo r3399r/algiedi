@@ -26,7 +26,7 @@ const DEFAULT_LIMIT = '10';
 const ExploreSong = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { isLogin } = useSelector((rootState: RootState) => rootState.ui);
+  const { isLogin } = useSelector((rootState: RootState) => rootState.auth);
   const [songs, setSongs] = useState<GetExploreResponse>();
   const [genre, setGenre] = useState<string>('All');
   const [theme, setTheme] = useState<string>('All');

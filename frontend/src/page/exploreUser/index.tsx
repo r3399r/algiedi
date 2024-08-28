@@ -24,7 +24,7 @@ const DEFAULT_LIMIT = '10';
 
 const ExploreUser = () => {
   const navigate = useNavigate();
-  const { isLogin } = useSelector((rootState: RootState) => rootState.ui);
+  const { isLogin } = useSelector((rootState: RootState) => rootState.auth);
   const query = useQuery<{ tab?: string; keyword?: string }>();
   const [user, setUser] = useState<GetExploreUserResponse>();
   const [role, setRole] = useState<string>('');

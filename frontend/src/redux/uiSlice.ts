@@ -4,7 +4,6 @@ import { Chat } from 'src/model/backend/api/Ws';
 export type UiState = {
   workload: number;
   isLoadingProfile: boolean;
-  isLogin: boolean;
   showSnackbar: boolean;
   snackbarType: 'success' | 'fail';
   snackbarMessage: string | undefined;
@@ -19,7 +18,6 @@ export type UiState = {
 const initialState: UiState = {
   workload: 0,
   isLoadingProfile: false,
-  isLogin: !!localStorage.getItem('token'),
   showSnackbar: false,
   snackbarType: 'success',
   snackbarMessage: undefined,
@@ -43,9 +41,6 @@ export const uiSlice = createSlice({
     },
     setLoadingProfile: (state: UiState, action: PayloadAction<boolean>) => {
       state.isLoadingProfile = action.payload;
-    },
-    setIsLogin: (state: UiState, action: PayloadAction<boolean>) => {
-      state.isLogin = action.payload;
     },
     openSuccessSnackbar: (state: UiState, action: PayloadAction<string>) => {
       state.showSnackbar = true;
@@ -86,7 +81,6 @@ export const {
   startWaiting,
   finishWaiting,
   setLoadingProfile,
-  setIsLogin,
   openSuccessSnackbar,
   openFailSnackbar,
   closeSnackbar,

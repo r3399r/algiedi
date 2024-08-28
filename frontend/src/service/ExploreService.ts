@@ -19,7 +19,7 @@ import { finishWaiting, startWaiting } from 'src/redux/uiSlice';
 
 export const getExplore = async () => {
   try {
-    const { isLogin } = getState().ui;
+    const { isLogin } = getState().auth;
     dispatch(startWaiting());
 
     const res = isLogin
@@ -56,7 +56,7 @@ export const getExploreSong = async (params: {
   keyword?: string;
 }) => {
   try {
-    const { isLogin } = getState().ui;
+    const { isLogin } = getState().auth;
     dispatch(startWaiting());
     let begin: string | undefined = undefined;
     let end: string | undefined = new Date().toISOString();
@@ -106,7 +106,7 @@ export const getExploreIdea = async (params: {
   keyword?: string;
 }) => {
   try {
-    const { isLogin } = getState().ui;
+    const { isLogin } = getState().auth;
     dispatch(startWaiting());
 
     let status: Status | undefined | 'null' = 'null';
@@ -138,7 +138,7 @@ export const getExploreUser = async (params: {
   role: string;
 }) => {
   try {
-    const { isLogin } = getState().ui;
+    const { isLogin } = getState().auth;
     dispatch(startWaiting());
 
     const exploreParams: GetExploreUserParams = {
@@ -159,7 +159,7 @@ export const getExploreUser = async (params: {
 
 export const getExploreById = async (id: string) => {
   try {
-    const { isLogin } = getState().ui;
+    const { isLogin } = getState().auth;
     dispatch(startWaiting());
 
     const res = isLogin
@@ -175,7 +175,7 @@ export const getExploreById = async (id: string) => {
 
 export const getUserById = async (id: string) => {
   try {
-    const { isLogin } = getState().ui;
+    const { isLogin } = getState().auth;
     dispatch(startWaiting());
 
     const res = isLogin
