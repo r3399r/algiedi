@@ -43,7 +43,10 @@ const Notification = () => {
             {!v.isRead && (
               <div
                 className="absolute left-3 top-3 h-[15px] w-[15px] cursor-pointer rounded-full bg-blue"
-                onClick={() => readNotification(v.id)}
+                onClick={(e: MouseEvent<HTMLDivElement>) => {
+                  e.stopPropagation();
+                  readNotification(v.id);
+                }}
               />
             )}
             <Cover
