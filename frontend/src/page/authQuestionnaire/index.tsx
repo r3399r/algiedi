@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Button from 'src/component/Button';
@@ -21,15 +21,10 @@ const AuthQuestionnaire = () => {
   const [language, setLanguage] = useState<string>('');
   const [instrument, setInstrument] = useState<string>('');
   const [favoriate, setFavoriate] = useState<string>('');
-  const [canGoNext, setCanGoNext] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (canGoNext) navigate(Page.Profile);
-  }, [canGoNext]);
 
   const onNext = () => {
     saveQuestionnaire({ age, region, role, language, instrument, favoriate })
-      .then(() => setCanGoNext(true))
+      .then(() => navigate(Page.Profile))
       .catch((err) => dispatch(openFailSnackbar(err)));
   };
 

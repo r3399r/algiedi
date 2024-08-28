@@ -28,7 +28,7 @@ import Upload from './page/upload';
 import { RootState } from './redux/store';
 
 const AppRoutes = () => {
-  const { isLogin } = useSelector((rootState: RootState) => rootState.ui);
+  const { isLogin } = useSelector((rootState: RootState) => rootState.auth);
 
   const router = createBrowserRouter([
     {

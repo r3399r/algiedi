@@ -1,17 +1,17 @@
 import { configureStore, PayloadAction, Store } from '@reduxjs/toolkit';
 import apiReducer, { ApiState } from './apiSlice';
+import authReducer, { AuthState } from './authSlice';
 import meReducer, { MeState } from './meSlice';
 import playlistReducer, { PlaylistState } from './playlistSlice';
 import uiReducer, { UiState } from './uiSlice';
 import uploadReducer, { UploadState } from './uploadSlice';
-import variableReducer, { VariableState } from './variableSlice';
 import wsReducer, { WsState } from './wsSlice';
 
 export type RootState = {
   me: MeState;
   api: ApiState;
   ui: UiState;
-  variable: VariableState;
+  auth: AuthState;
   ws: WsState;
   playlist: PlaylistState;
   upload: UploadState;
@@ -25,7 +25,7 @@ export const configStore = () => {
       api: apiReducer,
       me: meReducer,
       ui: uiReducer,
-      variable: variableReducer,
+      auth: authReducer,
       ws: wsReducer,
       playlist: playlistReducer,
       upload: uploadReducer,
