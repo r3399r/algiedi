@@ -37,6 +37,7 @@ export const uploadSlice = createSlice({
       state.theme = null;
       state.genre = null;
       state.language = null;
+      state.caption = '';
       state.errorTheme = false;
       state.errorGenre = false;
       state.errorLanguage = false;
