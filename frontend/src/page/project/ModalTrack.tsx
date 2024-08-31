@@ -36,23 +36,26 @@ const ModalTrack = ({ open, handleClose, targetTrack, targetProjectId, doRefresh
     return updateTabFile;
   }, [targetTrack, updateTrackFile, updateTabFile, trackFile]);
 
+  const reset = () => {
+    setUpdateTrackFile(false);
+    setUpdateTabFile(false);
+    setTrackFile(undefined);
+    setTabFile(undefined);
+  };
+
   const onClose = () => {
     if (!openConfirm && (updateTrackFile || updateTabFile || trackFile || tabFile))
       setOpenConfirm(true);
     else {
       handleClose();
-      setUpdateTrackFile(false);
-      setUpdateTabFile(false);
-      setTrackFile(undefined);
-      setTabFile(undefined);
+      reset();
     }
   };
 
   const onSuccess = () => {
     doRefresh();
-    onClose();
-    setTrackFile(undefined);
-    setTabFile(undefined);
+    handleClose();
+    reset();
     if (targetTrack) dispatch(removePlaylistId(targetTrack.id));
   };
 
