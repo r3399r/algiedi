@@ -19,7 +19,6 @@ import {
   UploadLyrics,
   UploadTrack,
 } from 'src/model/api/Upload';
-import { Type } from 'src/model/constant/Creation';
 import { NotificationType } from 'src/model/constant/Notification';
 import { Role, Status } from 'src/model/constant/Project';
 import { CaptionEntity } from 'src/model/entity/CaptionEntity';
@@ -137,9 +136,8 @@ export class UploadService {
     const creation = await this.viewCreationExploreAccess.findOneByIdOrFail(
       inspiredId
     );
-    if (creation.type === Type.Song) return inspiredId;
 
-    return creation.rootInspiredId;
+    return creation.rootInspiredId ?? inspiredId;
   }
 
   private async uploadLyrics(

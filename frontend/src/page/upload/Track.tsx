@@ -8,7 +8,7 @@ import Tooltip from 'src/component/Tooltip';
 import { Page } from 'src/constant/Page';
 import { GetExploreIdResponse } from 'src/model/backend/api/Explore';
 import { RootState } from 'src/redux/store';
-import { openFailSnackbar, openSuccessSnackbar } from 'src/redux/uiSlice';
+import { openFailSnackbar, openSuccessSnackbar, setHasUnsavedChanges } from 'src/redux/uiSlice';
 import { reset } from 'src/redux/uploadSlice';
 import { uploadTrack } from 'src/service/UploadService';
 import InspirationAntocomplete from './InspirationAutocomplete';
@@ -45,6 +45,7 @@ const Track = ({ inspiration }: Props) => {
 
   const onSubmit = () => {
     if (trackFile === undefined) return;
+    dispatch(setHasUnsavedChanges(false));
     uploadTrack(
       {
         name: info.name,
@@ -62,7 +63,10 @@ const Track = ({ inspiration }: Props) => {
         dispatch(openSuccessSnackbar('Uploaded Successfully'));
         dispatch(reset());
       })
-      .catch((err) => dispatch(openFailSnackbar(err)));
+      .catch((err) => {
+        dispatch(openFailSnackbar(err));
+        setHasUnsavedChanges(true);
+      });
   };
 
   return (
