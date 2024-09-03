@@ -4,16 +4,10 @@ When we need to deploy a new environment, we need to run `db/infra.sh` once. The
 
 For any modification, we just need to run `db/deploy.sh`.
 
-## install dependencies
-docker-compose -f docker-compose.builder.yml run --rm compile
-
 ## work with docker
 go to the folder you want to work in docker container and run
 ```
-docker run -dit -v .:/usr/src/app --name algiedi sleavely/node-awscli:18.x
-docker exec -it algiedi bash
+docker run -dit -v .:/usr/src/app --name gotron sleavely/node-awscli:18.x
+docker exec -it gotron bash
 ```
 then you can use vs-code extenstion, Remote Development, to attach to the container and work in it.
-
-## husky
-if you don't want to commit without checking. add `--no-verify`
