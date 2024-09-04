@@ -8,7 +8,6 @@ import { setIsLogin } from 'src/redux/authSlice';
 import { reset as meReset } from 'src/redux/meSlice';
 import { dispatch } from 'src/redux/store';
 import { finishWaiting, startWaiting } from 'src/redux/uiSlice';
-import { sleep } from 'src/util/sleep';
 import { wsStop } from 'src/util/wsTick';
 
 const setLoginState = async (data: PostAuthLoginResponse) => {
@@ -16,7 +15,6 @@ const setLoginState = async (data: PostAuthLoginResponse) => {
   localStorage.setItem('expiration', (Date.now() + data.expiresIn * 1000).toString());
   localStorage.setItem('refreshToken', data.refreshToken);
   dispatch(setIsLogin(true));
-  await sleep(100);
 };
 
 export const loginByGoogle = async (code: string, redirectUrl: string) => {

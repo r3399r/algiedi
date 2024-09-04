@@ -45,6 +45,7 @@ const AppRoutes = () => {
         { path: `${Page.Explore}/user/:id`, element: <ExploreUserDetail /> },
         { path: `${Page.Explore}/:id`, element: <ExploreDetail /> },
         { path: Page.Verify, element: <AuthVerify /> },
+        { path: Page.Login, element: <AuthLogin /> },
         ...(isLogin
           ? [
               { path: Page.Questionnaire, element: <AuthQuestionnaire /> },
@@ -55,7 +56,6 @@ const AppRoutes = () => {
               { path: Page.Notification, element: <Notification /> },
             ]
           : [
-              { path: Page.Login, element: <AuthLogin /> },
               { path: Page.Register, element: <AuthRegister /> },
               { path: Page.AuthCallback, element: <AuthCallback /> },
               { path: Page.Confirmation, element: <AuthConfirmation /> },

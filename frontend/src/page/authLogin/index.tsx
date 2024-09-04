@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -20,20 +21,20 @@ const AuthLogin = () => {
   const location = useLocation();
   const redirect = location.state as { from: string } | undefined;
   const endpoint = useLoginEndpoint();
+  const [quetionnaireFilled, setQuestionnaireFilled] = useState<boolean>();
+
+  useEffect(() => {
+    if (quetionnaireFilled === true)
+      if (redirect) navigate(redirect.from);
+      else navigate(Page.Profile);
+    else if (quetionnaireFilled === false) navigate(Page.Questionnaire);
+  }, [quetionnaireFilled]);
 
   const onSubmit = (data: LoginForm) => {
     loginByCognito(data.email, data.password)
       .then((res) => {
+        setQuestionnaireFilled(res);
         dispatch(openSuccessSnackbar('Login Successfully'));
-        if (res === false) navigate(Page.Questionnaire);
-        else {
-          if (redirect) {
-            navigate(redirect.from);
-
-            return;
-          }
-          navigate(Page.Profile);
-        }
       })
       .catch((err) => {
         if (err === 'User is not confirmed.')
