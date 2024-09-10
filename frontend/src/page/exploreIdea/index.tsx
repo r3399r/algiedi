@@ -173,6 +173,7 @@ const ExploreIdea = () => {
                         info: v.info,
                         fileUrl: v.fileUrl,
                         username: v.user[0].username,
+                        isProject: true,
                       });
                     }}
                   >

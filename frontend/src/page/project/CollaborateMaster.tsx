@@ -35,7 +35,7 @@ const CollaborateMaster = ({ project, doRefresh }: Props) => {
           <>
             <div className="mb-4 flex items-center gap-2">
               {project.fileUrl && (
-                <AudioPlayer creation={{ ...project, username: owner.username }} />
+                <AudioPlayer creation={{ ...project, username: owner.username, isProject: true }} />
               )}
               {project.fileUrl && owner.id === userId && (
                 <DownloadForOfflineIcon
@@ -55,7 +55,9 @@ const CollaborateMaster = ({ project, doRefresh }: Props) => {
                 <Accordion disableGutters defaultExpanded sx={{ border: 0 }}>
                   <AccordionSummary expandIcon={<ExpandMoreIcon />}>Lyrics</AccordionSummary>
                   <AccordionDetails>
-                    <div className="whitespace-pre-line">{project.lyricsText}</div>
+                    <div className="overflow-x-auto whitespace-pre-line pb-4">
+                      {project.lyricsText}
+                    </div>
                   </AccordionDetails>
                 </Accordion>
               </div>

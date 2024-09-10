@@ -37,6 +37,7 @@ const OpenProject = ({ project, className }: Props) => {
               fileUrl: collaborator.track.fileUrl,
               username:
                 project.collaborators.find((o) => o.user.id === userId)?.user.username ?? '',
+              isProject: true,
             }}
           />
         </div>

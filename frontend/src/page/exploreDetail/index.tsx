@@ -166,7 +166,9 @@ const ExploreDetail = () => {
         {creation.type !== Type.Lyrics && (
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
             {creation.fileUrl && (
-              <AudioPlayer creation={{ ...creation, username: creation.user[0].username }} />
+              <AudioPlayer
+                creation={{ ...creation, username: creation.user[0].username, isProject: false }}
+              />
             )}
           </div>
         )}
@@ -203,7 +205,9 @@ const ExploreDetail = () => {
             <Accordion disableGutters defaultExpanded sx={{ border: 0 }}>
               <AccordionSummary expandIcon={<ExpandMoreIcon />}>Lyrics</AccordionSummary>
               <AccordionDetails>
-                <div className="whitespace-pre-line">{creation.lyricsText}</div>
+                <div className="overflow-x-auto whitespace-pre-line pb-4">
+                  {creation.lyricsText}
+                </div>
               </AccordionDetails>
             </Accordion>
           </div>

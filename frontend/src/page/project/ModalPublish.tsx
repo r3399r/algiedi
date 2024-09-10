@@ -54,7 +54,7 @@ const ModalPublish = ({ open, handleClose, onPublish, project }: Props) => (
           <Accordion disableGutters defaultExpanded sx={{ border: 0 }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>Lyrics</AccordionSummary>
             <AccordionDetails>
-              <div className="whitespace-pre-line">{project.lyricsText}</div>
+              <div className="overflow-x-auto whitespace-pre-line pb-4">{project.lyricsText}</div>
             </AccordionDetails>
           </Accordion>
         </div>

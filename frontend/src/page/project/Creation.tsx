@@ -61,7 +61,9 @@ const Creation = ({
           )}
           <div className="mb-4 flex items-center gap-2">
             {track.fileUrl && track.user && (
-              <AudioPlayer creation={{ ...track, username: track.user.username }} />
+              <AudioPlayer
+                creation={{ ...track, username: track.user.username, isProject: true }}
+              />
             )}
             {track.fileUrl && downloadable && (
               <DownloadForOfflineIcon
@@ -91,7 +93,7 @@ const Creation = ({
               </div>
             </AccordionSummary>
             <AccordionDetails>
-              <div className="whitespace-pre-line">{lyrics.lyricsText}</div>
+              <div className="overflow-x-auto whitespace-pre-line pb-4">{lyrics.lyricsText}</div>
             </AccordionDetails>
           </Accordion>
         </div>

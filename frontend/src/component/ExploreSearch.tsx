@@ -66,7 +66,7 @@ const ExploreSearch = ({ className }: Props) => {
     <div className={classNames('flex items-center gap-4 py-4', className)}>
       <form
         onBlur={() => {
-          setTimeout(() => setOpen(false), 100);
+          setTimeout(() => setOpen(false), 600);
         }}
         onFocus={() => setOpen(true)}
         onSubmit={(e) => {

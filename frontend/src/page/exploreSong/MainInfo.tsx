@@ -40,6 +40,7 @@ const MainInfo = ({ creation }: Props) => {
                 info: creation.info,
                 fileUrl: creation.fileUrl,
                 username: creation.user[0].username,
+                isProject: false,
               });
             }}
           >
