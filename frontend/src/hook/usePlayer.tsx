@@ -11,8 +11,7 @@ const usePlayer = () => {
   return useCallback(
     (creation: Playlist) => {
       const idx =
-        playlist?.findIndex((v) => v.id === creation.id && v.isProject === creation.isProject) ??
-        -1;
+        playlist?.findIndex((v) => v.id === creation.id && v.fileUri === creation.fileUri) ?? -1;
       if (idx < 0) dispatch(pushPlaylist(creation));
       dispatch(setCurrent(idx < 0 ? playlist?.length ?? 0 : idx));
     },

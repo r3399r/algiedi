@@ -35,7 +35,7 @@ const CollaborateMaster = ({ project, doRefresh }: Props) => {
           <>
             <div className="mb-4 flex items-center gap-2">
               {project.fileUrl && (
-                <AudioPlayer creation={{ ...project, username: owner.username, isProject: true }} />
+                <AudioPlayer creation={{ ...project, username: owner.username }} />
               )}
               {project.fileUrl && owner.id === userId && (
                 <DownloadForOfflineIcon

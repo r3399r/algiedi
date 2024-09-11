@@ -51,8 +51,8 @@ const CoverInfo = ({ creation, size, navigateTo, showCount = false }: Props) => 
                   id: creation.id,
                   info: creation.info,
                   fileUrl: creation.fileUrl,
+                  fileUri: creation.fileUri,
                   username: creation.user[0].username,
-                  isProject: false,
                 });
               }
             }}

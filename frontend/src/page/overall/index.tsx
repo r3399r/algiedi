@@ -91,9 +91,9 @@ const Overall = () => {
                     id: v.id,
                     info: v.info,
                     fileUrl: v.fileUrl,
+                    fileUri: v.fileUri,
                     username:
                       v.collaborators.find((o) => o.role === Role.Owner)?.user.username ?? '',
-                    isProject: true,
                   }}
                 />
               </div>

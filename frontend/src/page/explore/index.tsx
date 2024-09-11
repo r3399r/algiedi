@@ -106,8 +106,8 @@ const Explore = () => {
                           id: v.id,
                           info: v.info,
                           fileUrl: v.fileUrl,
+                          fileUri: v.fileUri,
                           username: v.user[0].username,
-                          isProject: false,
                         });
                       }}
                     >

@@ -61,9 +61,7 @@ const Creation = ({
           )}
           <div className="mb-4 flex items-center gap-2">
             {track.fileUrl && track.user && (
-              <AudioPlayer
-                creation={{ ...track, username: track.user.username, isProject: true }}
-              />
+              <AudioPlayer creation={{ ...track, username: track.user.username }} />
             )}
             {track.fileUrl && downloadable && (
               <DownloadForOfflineIcon
